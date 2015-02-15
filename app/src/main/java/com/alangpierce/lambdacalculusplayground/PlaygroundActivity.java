@@ -1,17 +1,32 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.annotation.SuppressLint;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.Arrays;
 
 
 public class PlaygroundActivity extends ActionBarActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playground);
+        @SuppressLint("InflateParams") View layoutView =
+                getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
+
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.playground_layout, ExpressionFragment.create(100, 300, Arrays.asList("foo")))
+                    .commit();
+            getFragmentManager().beginTransaction()
+                    .add(R.id.playground_layout, ExpressionFragment.create(300, 100, Arrays.asList("bar")))
+                    .commit();
+        }
+
+        setContentView(layoutView);
     }
 
     @Override
