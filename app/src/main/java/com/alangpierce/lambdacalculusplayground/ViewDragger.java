@@ -7,8 +7,8 @@ import android.view.View;
 public class ViewDragger implements View.OnTouchListener {
     private final OnDragListener dragListener;
 
-    private float grabPointX;
-    private float grabPointY;
+    // An array of length 2 (x, y) with the screen coordinates of the last drag position.
+    private int[] lastCoords;
     private int activePointerId = MotionEvent.INVALID_POINTER_ID;
 
     public ViewDragger(OnDragListener dragListener) {
@@ -25,13 +25,29 @@ public class ViewDragger implements View.OnTouchListener {
         dragHandleView.setOnTouchListener(new ViewDragger(dragListener));
     }
 
+    /**
+     * Get raw screen coordinates for an event. We need to use raw screen coordinates because the
+     * drag handle (the origin point of our move operation) may or may not move as we drag.
+     *
+     * The API doesn't provide this, so we need to compute it more directly:
+     * http://stackoverflow.com/questions/6517494/get-motionevent-getrawx-getrawy-of-other-pointers
+     *
+     * @return An array of length 2 with (x, y) screen coordinates.
+     */
+    private int[] getRawCoords(View v, MotionEvent event, int pointerIndex) {
+        final int location[] = { 0, 0 };
+        v.getLocationOnScreen(location);
+        location[0] += event.getX(pointerIndex);
+        location[1] += event.getY(pointerIndex);
+        return location;
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 int pointerIndex = MotionEventCompat.getActionIndex(event);
-                grabPointX = event.getX(pointerIndex);
-                grabPointY = event.getY(pointerIndex);
+                lastCoords = getRawCoords(v, event, pointerIndex);
                 activePointerId = MotionEventCompat.getPointerId(event, pointerIndex);
                 return true;
             }
@@ -41,12 +57,9 @@ public class ViewDragger implements View.OnTouchListener {
                 if (pointerIndex == -1) {
                     return true;
                 }
-                // We assume that the drag handle itself is being moved.
-                float x = MotionEventCompat.getX(event, pointerIndex);
-                float y = MotionEventCompat.getY(event, pointerIndex);
-                float dx = x - grabPointX;
-                float dy = y - grabPointY;
-                dragListener.onDrag((int)dx, (int)dy);
+                int[] coords = getRawCoords(v, event, pointerIndex);
+                dragListener.onDrag(coords[0] - lastCoords[0], coords[1] - lastCoords[1]);
+                lastCoords = coords;
                 return true;
             }
             case MotionEvent.ACTION_UP: {
