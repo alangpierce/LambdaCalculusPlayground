@@ -11,8 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 
 /**
@@ -68,7 +72,7 @@ public class ExpressionFragment extends Fragment {
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        textView.setPadding(20, 20, 20, 20);
+        textView.setPadding(35, 20, 35, 20);
         return textView;
     }
 
@@ -88,15 +92,13 @@ public class ExpressionFragment extends Fragment {
         layoutView.setBackgroundResource(R.drawable.expression);
 
         for (int i = 0; i < tokens.size(); i++) {
-            String token = tokens.get(i);
+            final String token = tokens.get(i);
             TextView textView = makeTextView(token);
             if (i == 0) {
-                ViewDragger.attachToView(textView, new ViewDragger.OnDragListener() {
-                    @Override
-                    public void onDrag(int dx, int dy) {
-                        setPosition(xPos + dx, yPos + dy);
-                    }
-                });
+                attachExpressionDragHandle(textView);
+            }
+            if (i > 0 && tokens.get(i - 1).equals("λ")) {
+                attachVariableCreator(token, textView);
             }
             layoutView.addView(textView);
         }
@@ -104,11 +106,53 @@ public class ExpressionFragment extends Fragment {
     }
 
     /**
+     * Set the handle as a way to drag the expression itself.
+     */
+    private void attachExpressionDragHandle(View handle) {
+        ViewDragger.attachDragListenerToView(handle, new ViewDragger.OnDragListener() {
+            @Override
+            public void onDrag(int dx, int dy) {
+                translatePosition(dx, dy);
+            }
+        });
+    }
+
+    /**
+     * Set the given handle as a "factory" to create new expressions with the given token.
+     */
+    private void attachVariableCreator(final String token, final View handle) {
+        ViewDragger.attachStartListenerToView(handle, new ViewDragger.OnStartDragListener() {
+            @Override
+            public @Nullable ViewDragger.OnDragListener onStartDrag() {
+                // Find the variable's position relative to the playground view.
+                int variableX = xPos + handle.getLeft();
+                int variableY = yPos + handle.getTop();
+
+                final ExpressionFragment variableExpression =
+                        ExpressionFragment.create(
+                                variableX, variableY, ImmutableList.of(token));
+
+                // TODO(alan): Don't assume the parent is the playground_layout. Maybe inject a
+                // sibling factory or something.
+                getFragmentManager().beginTransaction()
+                        .add(R.id.playground_layout, variableExpression).commit();
+
+                return new ViewDragger.OnDragListener() {
+                    @Override
+                    public void onDrag(int dx, int dy) {
+                        variableExpression.translatePosition(dx, dy);
+                    }
+                };
+            }
+        });
+    }
+
+    /**
      * Update the stored position and redraw the view in the outer layout.
      */
-    public void setPosition(int newXPos, int newYPos) {
-        xPos = newXPos;
-        yPos = newYPos;
+    public void translatePosition(int dx, int dy) {
+        xPos += dx;
+        yPos += dy;
         RelativeLayout.LayoutParams layoutParams =
                 (RelativeLayout.LayoutParams)layoutView.getLayoutParams();
         layoutParams.leftMargin = xPos;
