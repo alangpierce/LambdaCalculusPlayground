@@ -19,10 +19,12 @@ public class PlaygroundActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(100, 300, Arrays.asList("foo")))
+                    .add(R.id.playground_layout, ExpressionFragment.create(100, 300,
+                            Arrays.asList("λ", "x", "x")))
                     .commit();
             getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(300, 100, Arrays.asList("bar")))
+                    .add(R.id.playground_layout, ExpressionFragment.create(300, 100,
+                            Arrays.asList("λ", "t", "λ", "f", "t")))
                     .commit();
         }
 

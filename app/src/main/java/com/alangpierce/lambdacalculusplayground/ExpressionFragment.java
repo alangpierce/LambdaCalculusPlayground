@@ -86,16 +86,20 @@ public class ExpressionFragment extends Fragment {
         layoutView.setLayoutParams(layoutParams);
 
         layoutView.setBackgroundResource(R.drawable.expression);
-        TextView lambdaView = makeTextView("λ");
-        ViewDragger.attachToView(lambdaView, new ViewDragger.OnDragListener() {
-            @Override
-            public void onDrag(int dx, int dy) {
-                setPosition(xPos + dx, yPos + dy);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+            TextView textView = makeTextView(token);
+            if (i == 0) {
+                ViewDragger.attachToView(textView, new ViewDragger.OnDragListener() {
+                    @Override
+                    public void onDrag(int dx, int dy) {
+                        setPosition(xPos + dx, yPos + dy);
+                    }
+                });
             }
-        });
-        layoutView.addView(lambdaView);
-        layoutView.addView(makeTextView("x"));
-        layoutView.addView(makeTextView("x"));
+            layoutView.addView(textView);
+        }
         return layoutView;
     }
 
