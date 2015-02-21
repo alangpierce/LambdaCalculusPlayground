@@ -1,10 +1,14 @@
 package com.alangpierce.lambdacalculusplayground;
 
 
+import android.animation.LayoutTransition;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -89,7 +93,9 @@ public class ExpressionFragment extends Fragment {
         layoutParams.topMargin = yPos;
         layoutView.setLayoutParams(layoutParams);
 
-        layoutView.setBackgroundResource(R.drawable.expression);
+//        layoutView.setBackgroundResource(R.drawable.expression);
+        layoutView.setBackgroundColor(Color.WHITE);
+        layoutView.setElevation(40);
 
         for (int i = 0; i < tokens.size(); i++) {
             final String token = tokens.get(i);
@@ -102,6 +108,55 @@ public class ExpressionFragment extends Fragment {
             }
             layoutView.addView(textView);
         }
+        layoutView.setLayoutTransition(new LayoutTransition());
+        layoutView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                ExpressionFragment sourceFragment = (ExpressionFragment)event.getLocalState();
+                switch (event.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        System.out.printf("View with tokens %s received event DRAG_STARTED%n", tokens);
+                        break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        System.out.printf("View with tokens %s received event DRAG_LOCATION%n", tokens);
+                        break;
+                    case DragEvent.ACTION_DROP:
+                        System.out.printf("View with tokens %s received event DROP%n", tokens);
+//                        layoutView.setBackgroundColor(Color.GREEN);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        System.out.printf("View with tokens %s received event DRAG_ENDED%n", tokens);
+//                        layoutView.setBackgroundColor(Color.GREEN);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        System.out.printf("View with tokens %s received event DRAG_ENTERED%n", tokens);
+//                        layoutView.setBackgroundColor(Color.RED);
+//                        sourceFragment.setVisible(false);
+                        layoutView.addView(makeTextView("foo"), 1);
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        System.out.printf("View with tokens %s received event DRAG_EXITED%n", tokens);
+//                        layoutView.setBackgroundColor(Color.GREEN);
+//                        sourceFragment.setVisible(true);
+                        layoutView.removeViewAt(1);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        layoutView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        System.out.printf("Tokens: %s, move action%n", tokens);
+                }
+                return true;
+            }
+        });
+
+
         return layoutView;
     }
 
@@ -109,7 +164,7 @@ public class ExpressionFragment extends Fragment {
      * Set the handle as a way to drag the expression itself.
      */
     private void attachExpressionDragHandle(View handle) {
-        ViewDragger.attachDragListenerToView(handle, new ViewDragger.OnDragListener() {
+        ViewDragger.attachDragListenerToView(handle, this, layoutView, new ViewDragger.OnDragListener() {
             @Override
             public void onDrag(int dx, int dy) {
                 translatePosition(dx, dy);
@@ -147,6 +202,16 @@ public class ExpressionFragment extends Fragment {
         });
     }
 
+    public void setPosition(int x, int y) {
+        xPos = x;
+        yPos = y;
+        RelativeLayout.LayoutParams layoutParams =
+                (RelativeLayout.LayoutParams)layoutView.getLayoutParams();
+        layoutParams.leftMargin = xPos;
+        layoutParams.topMargin = yPos;
+        layoutView.setLayoutParams(layoutParams);
+    }
+
     /**
      * Update the stored position and redraw the view in the outer layout.
      */
@@ -158,5 +223,13 @@ public class ExpressionFragment extends Fragment {
         layoutParams.leftMargin = xPos;
         layoutParams.topMargin = yPos;
         layoutView.setLayoutParams(layoutParams);
+    }
+
+    public void setVisible(boolean visible) {
+        if (visible) {
+            layoutView.setVisibility(View.VISIBLE);
+        } else {
+            layoutView.setVisibility(View.GONE);
+        }
     }
 }

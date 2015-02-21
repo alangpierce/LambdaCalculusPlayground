@@ -1,12 +1,15 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.support.v4.view.MotionEventCompat;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import javax.annotation.Nullable;
 
-public class ViewDragger implements View.OnTouchListener {
+public class ViewDragger {
     private final OnStartDragListener startDragListener;
 
     private @Nullable OnDragListener currentDragListener;
@@ -37,17 +40,40 @@ public class ViewDragger implements View.OnTouchListener {
 
     public static void attachStartListenerToView(
             View dragHandle, OnStartDragListener startListener) {
-        dragHandle.setOnTouchListener(new ViewDragger(startListener));
+//        dragHandle.setOnTouchListener(new ViewDragger(startListener));
     }
 
     public static void attachDragListenerToView(
-            View dragHandle, final OnDragListener dragListener) {
-        dragHandle.setOnTouchListener(new ViewDragger(new OnStartDragListener() {
+            final View dragHandle, final ExpressionFragment fragment, final View draggedView, final OnDragListener dragListener) {
+//        dragHandle.setOnTouchListener(new ViewDragger(new OnStartDragListener() {
+//            @Override
+//            public @Nullable OnDragListener onStartDrag() {
+//                return dragListener;
+//            }
+//        }));
+
+//        dragHandle.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                System.out.printf("View %s received click %n", v);
+//                ClipData clipData = new ClipData("foo", new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+//                        new ClipData.Item("blah"));
+//                dragHandle.startDrag(clipData, new View.DragShadowBuilder(dragHandle), null, 0);
+//                return true;
+//            }
+//        });
+        dragHandle.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public @Nullable OnDragListener onStartDrag() {
-                return dragListener;
+            public boolean onTouch(View v, MotionEvent event) {
+                System.out.printf("Received MotionEvent %s", event);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    fragment.setVisible(false);
+                    dragHandle.startDrag(null, new View.DragShadowBuilder(draggedView), fragment, 0);
+                    return true;
+                }
+                return true;
             }
-        }));
+        });
     }
 
     /**
@@ -67,37 +93,46 @@ public class ViewDragger implements View.OnTouchListener {
         return location;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                int pointerIndex = MotionEventCompat.getActionIndex(event);
-                lastCoords = getRawCoords(v, event, pointerIndex);
-                activePointerId = MotionEventCompat.getPointerId(event, pointerIndex);
-                currentDragListener = startDragListener.onStartDrag();
-                return true;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                if (currentDragListener == null) {
-                    return true;
-                }
-                int pointerIndex =
-                        MotionEventCompat.findPointerIndex(event, activePointerId);
-                if (pointerIndex == -1) {
-                    return true;
-                }
-                int[] coords = getRawCoords(v, event, pointerIndex);
-                currentDragListener.onDrag(coords[0] - lastCoords[0], coords[1] - lastCoords[1]);
-                lastCoords = coords;
-                return true;
-            }
-            case MotionEvent.ACTION_UP: {
-                activePointerId = MotionEvent.INVALID_POINTER_ID;
-                currentDragListener = null;
-                return true;
-            }
-            default:
-                return true;
-        }
-    }
+//    @Override
+//    public boolean onDrag(View v, DragEvent event) {
+//        switch (event.getAction()) {
+//            case DragEvent.ACTION_DRAG_STARTED: {
+//
+//            }
+//        }
+//    }
+
+//    @Override
+//    public boolean onTouch(View v, MotionEvent event) {
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN: {
+//                int pointerIndex = MotionEventCompat.getActionIndex(event);
+//                lastCoords = getRawCoords(v, event, pointerIndex);
+//                activePointerId = MotionEventCompat.getPointerId(event, pointerIndex);
+//                currentDragListener = startDragListener.onStartDrag();
+//                return true;
+//            }
+//            case MotionEvent.ACTION_MOVE: {
+//                if (currentDragListener == null) {
+//                    return true;
+//                }
+//                int pointerIndex =
+//                        MotionEventCompat.findPointerIndex(event, activePointerId);
+//                if (pointerIndex == -1) {
+//                    return true;
+//                }
+//                int[] coords = getRawCoords(v, event, pointerIndex);
+//                currentDragListener.onDrag(coords[0] - lastCoords[0], coords[1] - lastCoords[1]);
+//                lastCoords = coords;
+//                return true;
+//            }
+//            case MotionEvent.ACTION_UP: {
+//                activePointerId = MotionEvent.INVALID_POINTER_ID;
+//                currentDragListener = null;
+//                return true;
+//            }
+//            default:
+//                return true;
+//        }
+//    }
 }
