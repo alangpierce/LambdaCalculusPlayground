@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
+import java.io.Serializable;
+
 public class Lambda implements Expression {
     public final String varName;
     public final Expression body;

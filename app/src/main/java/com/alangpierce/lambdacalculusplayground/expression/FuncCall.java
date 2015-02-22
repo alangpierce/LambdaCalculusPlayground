@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
+import java.io.Serializable;
+
 public class FuncCall implements Expression {
     public final Expression func;
     public final Expression arg;

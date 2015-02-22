@@ -1,15 +1,20 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.view.DragEvent;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.Arrays;
+import com.alangpierce.lambdacalculusplayground.expression.Expression;
+import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
+import com.alangpierce.lambdacalculusplayground.expression.Lambda;
+import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 
 public class PlaygroundActivity extends ActionBarActivity {
@@ -20,55 +25,18 @@ public class PlaygroundActivity extends ActionBarActivity {
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(100, 300,
-                            Arrays.asList("λ", "x", "x")))
-                    .commit();
-            getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(300, 100,
-                            Arrays.asList("λ", "t", "λ", "f", "t")))
-                    .commit();
-            getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(200, 200,
-                            Arrays.asList("λ", "t")))
-                    .commit();
-            getFragmentManager().beginTransaction()
-                    .add(R.id.playground_layout, ExpressionFragment.create(300, 600,
-                            Arrays.asList("λ", "t", "λ", "f", "f")))
-                    .commit();
+            Expression yCombinatorSegment = new Lambda("x", new FuncCall(new Variable("f"),
+                            new FuncCall(new Variable("x"), new Variable("x"))));
+            Expression yCombinator = new Lambda("f",
+                    new FuncCall(yCombinatorSegment, yCombinatorSegment));
+
+            List<ScreenExpression> expressions = ImmutableList.of(
+                    new ScreenExpression(
+                            new Lambda("t", new Lambda("f", new Variable("t"))), 200, 200),
+                    new ScreenExpression(yCombinator, 100, 500));
+            Fragment fragment = PlaygroundFragment.create(expressions);
+            getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
-
-        layoutView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                ExpressionFragment sourceFragment = (ExpressionFragment)event.getLocalState();
-                switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        System.out.printf("Root view received event DRAG_STARTED%n");
-                        break;
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        System.out.printf("Root view received event DRAG_LOCATION%n");
-                        break;
-                    case DragEvent.ACTION_DROP:
-                        System.out.printf("Root view received event DROP%n");
-                        System.out.printf("x: %s, y: %s%n", event.getX(), event.getY());
-                        sourceFragment.setPosition((int)event.getX(), (int)event.getY());
-                        sourceFragment.setVisible(true);
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        System.out.printf("Root view received event DRAG_ENDED%n");
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        System.out.printf("Root view received event DRAG_ENTERED%n");
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        System.out.printf("Root view received event DRAG_EXITED%n");
-                        break;
-                }
-                return true;
-            }
-        });
-
         setContentView(layoutView);
     }
 

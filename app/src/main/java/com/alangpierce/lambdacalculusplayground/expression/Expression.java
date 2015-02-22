@@ -1,6 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
-public interface Expression {
+import java.io.Serializable;
+
+public interface Expression extends Serializable {
     <T> T visit(ExpressionVisitor<T> visitor);
 
     public interface ExpressionVisitor<T> {
