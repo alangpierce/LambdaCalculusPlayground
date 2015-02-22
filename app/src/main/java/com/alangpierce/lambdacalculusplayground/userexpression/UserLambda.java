@@ -1,16 +1,18 @@
-package com.alangpierce.lambdacalculusplayground.expression;
+package com.alangpierce.lambdacalculusplayground.userexpression;
 
-public class Lambda implements Expression {
+import javax.annotation.Nullable;
+
+public class UserLambda implements UserExpression {
     public final String varName;
-    public final Expression body;
+    public final @Nullable UserExpression body;
 
-    public Lambda(String varName, Expression body) {
+    public UserLambda(String varName, @Nullable UserExpression body) {
         this.varName = varName;
         this.body = body;
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(UserExpressionVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
@@ -19,11 +21,10 @@ public class Lambda implements Expression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Lambda lambda = (Lambda) o;
+        UserLambda that = (UserLambda) o;
 
-        if (body != null ? !body.equals(lambda.body) : lambda.body != null) return false;
-        if (varName != null ? !varName.equals(lambda.varName) : lambda.varName != null)
-            return false;
+        if (body != null ? !body.equals(that.body) : that.body != null) return false;
+        if (varName != null ? !varName.equals(that.varName) : that.varName != null) return false;
 
         return true;
     }
@@ -37,7 +38,7 @@ public class Lambda implements Expression {
 
     @Override
     public String toString() {
-        return "Lambda{" +
+        return "UserLambda{" +
                 "varName='" + varName + '\'' +
                 ", body=" + body +
                 '}';

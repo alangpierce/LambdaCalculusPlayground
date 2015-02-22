@@ -11,10 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
-import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
-import com.alangpierce.lambdacalculusplayground.expression.Lambda;
-import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -64,7 +64,7 @@ public class PlaygroundFragment extends Fragment {
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        textView.setPadding(20, 5, 20, 5);
+        textView.setPadding(20, 0, 20, 0);
         return textView;
     }
 
@@ -93,37 +93,56 @@ public class PlaygroundFragment extends Fragment {
 
     private LinearLayout styleLayout(LinearLayout layout) {
         layout.setBackgroundColor(Color.WHITE);
-        layout.setPadding(5, 5, 5, 5);
+        layout.setPadding(3, 3, 3, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(5, 5, 5, 5);
+        layoutParams.setMargins(3, 3, 3, 3);
         layout.setLayoutParams(layoutParams);
         layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
         layout.setElevation(10);
         return layout;
     }
 
-    private LinearLayout makeExpressionView(final Expression expr) {
-        return expr.visit(new Expression.ExpressionVisitor<LinearLayout>() {
+    private View makeMissingBodyView() {
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setBackgroundColor(0x44FF0000);
+        layout.setPadding(3, 3, 3, 3);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(3, 3, 3, 3);
+        layout.setLayoutParams(layoutParams);
+        layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
+        layout.setElevation(10);
+        layout.addView(makeTextView(" "));
+        return layout;
+    }
+
+    private LinearLayout makeExpressionView(final UserExpression expr) {
+        return expr.visit(new UserExpression.UserExpressionVisitor<LinearLayout>() {
             @Override
-            public LinearLayout visit(Lambda lambda) {
+            public LinearLayout visit(UserLambda lambda) {
                 LinearLayout expressionLayout = new LinearLayout(getActivity());
                 expressionLayout.addView(makeTextView("λ"));
                 TextView varView = makeTextView(lambda.varName);
                 expressionLayout.addView(varView);
-                expressionLayout.addView(styleLayout(makeExpressionView(lambda.body)));
+                if (lambda.body != null) {
+                    expressionLayout.addView(styleLayout(makeExpressionView(lambda.body)));
+                } else {
+                    expressionLayout.addView(makeMissingBodyView());
+                }
                 return expressionLayout;
             }
             @Override
-            public LinearLayout visit(FuncCall funcCall) {
+            public LinearLayout visit(UserFuncCall funcCall) {
                 LinearLayout expressionLayout = new LinearLayout(getActivity());
                 expressionLayout.addView(makeExpressionView(funcCall.func));
                 expressionLayout.addView(styleLayout(makeExpressionView(funcCall.arg)));
                 return expressionLayout;
             }
             @Override
-            public LinearLayout visit(Variable variable) {
+            public LinearLayout visit(UserVariable variable) {
                 LinearLayout expressionLayout = new LinearLayout(getActivity());
                 expressionLayout.addView(makeTextView(variable.varName));
                 return expressionLayout;

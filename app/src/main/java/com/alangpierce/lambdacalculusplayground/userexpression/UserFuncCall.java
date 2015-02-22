@@ -1,16 +1,16 @@
-package com.alangpierce.lambdacalculusplayground.expression;
+package com.alangpierce.lambdacalculusplayground.userexpression;
 
-public class FuncCall implements Expression {
-    public final Expression func;
-    public final Expression arg;
+public class UserFuncCall implements UserExpression {
+    public final UserExpression func;
+    public final UserExpression arg;
 
-    public FuncCall(Expression func, Expression arg) {
+    public UserFuncCall(UserExpression func, UserExpression arg) {
         this.func = func;
         this.arg = arg;
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(UserExpressionVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
@@ -19,10 +19,10 @@ public class FuncCall implements Expression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FuncCall funcCall = (FuncCall) o;
+        UserFuncCall that = (UserFuncCall) o;
 
-        if (arg != null ? !arg.equals(funcCall.arg) : funcCall.arg != null) return false;
-        if (func != null ? !func.equals(funcCall.func) : funcCall.func != null) return false;
+        if (arg != null ? !arg.equals(that.arg) : that.arg != null) return false;
+        if (func != null ? !func.equals(that.func) : that.func != null) return false;
 
         return true;
     }
@@ -36,7 +36,7 @@ public class FuncCall implements Expression {
 
     @Override
     public String toString() {
-        return "FuncCall{" +
+        return "UserFuncCall{" +
                 "func=" + func +
                 ", arg=" + arg +
                 '}';

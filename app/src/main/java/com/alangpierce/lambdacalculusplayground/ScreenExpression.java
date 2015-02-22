@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 import java.io.Serializable;
 
@@ -8,11 +8,11 @@ import java.io.Serializable;
  * Data object for a top-level expression visible on the screen.
  */
 public class ScreenExpression implements Serializable {
-    public final Expression expr;
+    public final UserExpression expr;
     public final int x;
     public final int y;
 
-    public ScreenExpression(Expression expr, int x, int y) {
+    public ScreenExpression(UserExpression expr, int x, int y) {
         this.expr = expr;
         this.x = x;
         this.y = y;

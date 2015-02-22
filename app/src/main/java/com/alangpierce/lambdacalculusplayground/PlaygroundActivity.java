@@ -12,6 +12,8 @@ import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -29,11 +31,12 @@ public class PlaygroundActivity extends ActionBarActivity {
                             new FuncCall(new Variable("x"), new Variable("x"))));
             Expression yCombinator = new Lambda("f",
                     new FuncCall(yCombinatorSegment, yCombinatorSegment));
+            Expression trueExpr = new Lambda("t", new Lambda("f", new Variable("t")));
 
             List<ScreenExpression> expressions = ImmutableList.of(
-                    new ScreenExpression(
-                            new Lambda("t", new Lambda("f", new Variable("t"))), 200, 200),
-                    new ScreenExpression(yCombinator, 100, 500));
+                    new ScreenExpression(UserExpressions.fromExpression(trueExpr), 200, 200),
+                    new ScreenExpression(UserExpressions.fromExpression(yCombinator), 100, 400),
+                    new ScreenExpression(new UserLambda("x", null), 150, 600));
             Fragment fragment = PlaygroundFragment.create(expressions);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
