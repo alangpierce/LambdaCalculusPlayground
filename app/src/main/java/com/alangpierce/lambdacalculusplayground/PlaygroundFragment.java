@@ -58,7 +58,8 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
-        ExpressionViewGenerator viewGenerator = component.getExpressionViewGenerator();
+        ExpressionViewGenerator viewGenerator =
+                component.getExpressionViewGeneratorFactory().create(rootLayout);
 
         for (ScreenExpression screenExpression : expressions) {
             View expressionView = viewGenerator.makeTopLevelExpressionView(screenExpression.expr);

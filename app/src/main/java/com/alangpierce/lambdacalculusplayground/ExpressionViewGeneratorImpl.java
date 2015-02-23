@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -16,22 +17,28 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
     private final Context context;
     private final DragTracker dragTracker;
+    private final RelativeLayout rootView;
 
-    public ExpressionViewGeneratorImpl(Context context, DragTracker dragTracker) {
+    public ExpressionViewGeneratorImpl(Context context, DragTracker dragTracker,
+                                       RelativeLayout rootView) {
         this.context = context;
         this.dragTracker = dragTracker;
+        this.rootView = rootView;
+    }
+
+    public static ExpressionViewGeneratorFactory createFactory(
+            final Context context, final DragTracker dragTracker) {
+        return new ExpressionViewGeneratorFactory() {
+            @Override
+            public ExpressionViewGenerator create(RelativeLayout rootView) {
+                return new ExpressionViewGeneratorImpl(context, dragTracker, rootView);
+            }
+        };
     }
 
     @Override
     public LinearLayout makeTopLevelExpressionView(UserExpression expr) {
-        final LinearLayout result = styleLayout(makeExpressionView(expr));
-        dragTracker.registerDraggableView(result, new DragTracker.StartDragHandler() {
-            @Override
-            public View onStartDrag() {
-                return result;
-            }
-        });
-        return result;
+        return styleLayout(makeExpressionView(expr));
     }
 
     private TextView makeTextView(String text) {
@@ -45,7 +52,7 @@ public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
         return textView;
     }
 
-    private LinearLayout styleLayout(LinearLayout layout) {
+    private LinearLayout styleLayout(final LinearLayout layout) {
         layout.setBackgroundColor(Color.WHITE);
         layout.setPadding(3, 3, 3, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -74,6 +81,34 @@ public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
     }
 
     private LinearLayout makeExpressionView(final UserExpression expr) {
+        final LinearLayout layout = renderExpression(expr);
+        dragTracker.registerDraggableView(layout, new DragTracker.StartDragHandler() {
+            @Override
+            public View onStartDrag() {
+                /*
+                 * TODO(alan): This call to styleLayout sets the LayoutParams, which we overwrite
+                 * later. Yuck!
+                 */
+                LinearLayout dragLayout = styleLayout(renderExpression(expr));
+                rootView.addView(dragLayout);
+                int[] rootScreenCoords = new int[2];
+                rootView.getLocationOnScreen(rootScreenCoords);
+                int[] layoutScreenCoords = new int[2];
+                layout.getLocationOnScreen(layoutScreenCoords);
+
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.leftMargin = layoutScreenCoords[0] - rootScreenCoords[0];
+                layoutParams.topMargin = layoutScreenCoords[1] - rootScreenCoords[1];
+                dragLayout.setLayoutParams(layoutParams);
+                return dragLayout;
+            }
+        });
+        return layout;
+    }
+
+    private LinearLayout renderExpression(UserExpression expr) {
         return expr.visit(new UserExpression.UserExpressionVisitor<LinearLayout>() {
             @Override
             public LinearLayout visit(UserLambda lambda) {
@@ -88,6 +123,7 @@ public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
                 }
                 return expressionLayout;
             }
+
             @Override
             public LinearLayout visit(UserFuncCall funcCall) {
                 LinearLayout expressionLayout = new LinearLayout(context);
@@ -95,6 +131,7 @@ public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
                 expressionLayout.addView(styleLayout(makeExpressionView(funcCall.arg)));
                 return expressionLayout;
             }
+
             @Override
             public LinearLayout visit(UserVariable variable) {
                 LinearLayout expressionLayout = new LinearLayout(context);

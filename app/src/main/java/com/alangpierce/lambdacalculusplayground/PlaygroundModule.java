@@ -2,6 +2,8 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
 
+import com.alangpierce.lambdacalculusplayground.ExpressionViewGenerator.ExpressionViewGeneratorFactory;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -15,18 +17,16 @@ public class PlaygroundModule {
         this.activity = activity;
     }
 
-    @Provides
-    Activity provideActivity() {
+    @Provides Activity provideActivity() {
         return activity;
     }
-
 
     @Provides @Singleton DragTracker provideDragTracker() {
         return new DragTrackerImpl();
     }
 
-    @Provides ExpressionViewGenerator provideExpressionViewGenerator(
+    @Provides ExpressionViewGeneratorFactory provideExpressionViewGeneratorFactory(
             Activity activity, DragTracker dragTracker) {
-        return new ExpressionViewGeneratorImpl(activity, dragTracker);
+        return ExpressionViewGeneratorImpl.createFactory(activity, dragTracker);
     }
 }
