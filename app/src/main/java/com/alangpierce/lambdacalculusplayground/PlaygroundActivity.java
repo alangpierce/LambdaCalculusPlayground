@@ -24,10 +24,14 @@ public class PlaygroundActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+        /*
+         * Note that we must set the component BEFORE calling super, since super might construct our
+         * fragments, which relies on our component being set.
+         */
         PlaygroundModule playgroundModule = new PlaygroundModule(this);
         component = Dagger_PlaygroundComponent.builder().playgroundModule(playgroundModule).build();
+
+        super.onCreate(savedInstanceState);
 
         @SuppressLint("InflateParams") final View layoutView =
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);

@@ -27,6 +27,6 @@ public class PlaygroundModule {
 
     @Provides ExpressionViewGenerator provideExpressionViewGenerator(
             Activity activity, DragTracker dragTracker) {
-        return new ExpressionViewGenerator(activity, dragTracker);
+        return new ExpressionViewGeneratorImpl(activity, dragTracker);
     }
 }
