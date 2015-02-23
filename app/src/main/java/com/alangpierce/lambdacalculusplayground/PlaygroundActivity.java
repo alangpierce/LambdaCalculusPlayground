@@ -20,9 +20,15 @@ import java.util.List;
 
 
 public class PlaygroundActivity extends ActionBarActivity {
+    private PlaygroundComponent component;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PlaygroundModule playgroundModule = new PlaygroundModule(this);
+        component = Dagger_PlaygroundComponent.builder().playgroundModule(playgroundModule).build();
+
         @SuppressLint("InflateParams") final View layoutView =
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
 
@@ -41,6 +47,10 @@ public class PlaygroundActivity extends ActionBarActivity {
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
         setContentView(layoutView);
+    }
+
+    public PlaygroundComponent getComponent() {
+        return component;
     }
 
     @Override

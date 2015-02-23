@@ -16,6 +16,7 @@ public class PlaygroundFragment extends Fragment {
     }
 
     private List<ScreenExpression> expressions;
+    private PlaygroundComponent component;
 
     public static PlaygroundFragment create(List<ScreenExpression> expressions) {
         Bundle args = new Bundle();
@@ -28,6 +29,7 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        component = ((PlaygroundActivity)getActivity()).getComponent();
         Bundle bundle = getArguments();
         if (savedInstanceState != null) {
             bundle = savedInstanceState;
@@ -56,10 +58,9 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
-        DragTracker dragTracker = new DragTrackerImpl();
+        ExpressionViewGenerator viewGenerator = component.getExpressionViewGenerator();
+
         for (ScreenExpression screenExpression : expressions) {
-            ExpressionViewGenerator viewGenerator =
-                    new ExpressionViewGenerator(getActivity(), dragTracker);
             View expressionView = viewGenerator.makeTopLevelExpressionView(screenExpression.expr);
             RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
