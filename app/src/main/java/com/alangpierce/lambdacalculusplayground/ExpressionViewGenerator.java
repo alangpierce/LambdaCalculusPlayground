@@ -15,13 +15,22 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 
 public class ExpressionViewGenerator {
     private final Context context;
+    private final DragTracker dragTracker;
 
-    public ExpressionViewGenerator(Context context) {
+    public ExpressionViewGenerator(Context context, DragTracker dragTracker) {
         this.context = context;
+        this.dragTracker = dragTracker;
     }
 
     public LinearLayout makeTopLevelExpressionView(UserExpression expr) {
-        return styleLayout(makeExpressionView(expr));
+        final LinearLayout result = styleLayout(makeExpressionView(expr));
+        dragTracker.registerDraggableView(result, new DragTracker.StartDragHandler() {
+            @Override
+            public View onStartDrag() {
+                return result;
+            }
+        });
+        return result;
     }
 
     private TextView makeTextView(String text) {

@@ -56,8 +56,10 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
+        DragTracker dragTracker = new DragTrackerImpl();
         for (ScreenExpression screenExpression : expressions) {
-            ExpressionViewGenerator viewGenerator = new ExpressionViewGenerator(getActivity());
+            ExpressionViewGenerator viewGenerator =
+                    new ExpressionViewGenerator(getActivity(), dragTracker);
             View expressionView = viewGenerator.makeTopLevelExpressionView(screenExpression.expr);
             RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
