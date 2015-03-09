@@ -3,43 +3,81 @@ package com.alangpierce.lambdacalculusplayground;
 import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+import rx.functions.Action1;
 
 public class DragTrackerImpl implements DragTracker {
     // An array of length 2 (x, y) with the screen coordinates of the last drag position.
     private int[] lastCoords;
     private int activePointerId = MotionEvent.INVALID_POINTER_ID;
     private View dragView;
+    private WeakHashMap<View, Observable<MotionEvent>> cachedEventObservables = new WeakHashMap<>();
+
+    /**
+     * Note that this should be the only touch listener for this view!
+     */
+    private Observable<MotionEvent> eventObservable(View view) {
+        if (!cachedEventObservables.containsKey(view)) {
+            final Map<Subscriber<? super MotionEvent>, Void> subscribers =
+                    Collections.synchronizedMap(
+                            new WeakHashMap<Subscriber<? super MotionEvent>, Void>());
+            cachedEventObservables.put(view, Observable.create(new OnSubscribe<MotionEvent>() {
+                @Override
+                public void call(Subscriber<? super MotionEvent> observer) {
+                    subscribers.put(observer, null);
+                }
+            }));
+            view.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    for (Subscriber<? super MotionEvent> subscriber : subscribers.keySet()) {
+                        subscriber.onNext(event);
+                    }
+                    return true;
+                }
+            });
+        }
+        return cachedEventObservables.get(view);
+    }
 
     @Override
-    public void registerDraggableView(View view, final StartDragHandler handler) {
-        view.setOnTouchListener(new View.OnTouchListener() {
+    public void registerDraggableView(final View view, final StartDragHandler handler) {
+        eventObservable(view).subscribe(new Action1<MotionEvent>() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void call(MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         if (activePointerId != MotionEvent.INVALID_POINTER_ID) {
-                            return true;
+                            return;
                         }
                         int pointerIndex = MotionEventCompat.getActionIndex(event);
-                        lastCoords = getRawCoords(v, event, pointerIndex);
+                        lastCoords = getRawCoords(view, event, pointerIndex);
                         activePointerId = MotionEventCompat.getPointerId(event, pointerIndex);
                         dragView = handler.onStartDrag();
-                        return true;
+                        return;
                     }
                     case MotionEvent.ACTION_MOVE: {
                         if (activePointerId == MotionEvent.INVALID_POINTER_ID) {
-                            return true;
+                            return;
                         }
                         int pointerIndex =
                                 MotionEventCompat.findPointerIndex(event, activePointerId);
                         if (pointerIndex == -1) {
-                            return true;
+                            return;
                         }
-                        int[] coords = getRawCoords(v, event, pointerIndex);
+                        int[] coords = getRawCoords(view, event, pointerIndex);
                         moveView(coords[0] - lastCoords[0], coords[1] - lastCoords[1]);
                         lastCoords = coords;
-                        return true;
+                        return;
                     }
                     case MotionEvent.ACTION_UP: {
                         int pointerIndex = MotionEventCompat.getActionIndex(event);
@@ -47,11 +85,10 @@ public class DragTrackerImpl implements DragTracker {
                         if (pointerId == activePointerId) {
                             activePointerId = MotionEvent.INVALID_POINTER_ID;
                         }
-                        return true;
+                        return;
                     }
                     default:
-                        return true;
-
+                        // Do nothing.
                 }
             }
         });
