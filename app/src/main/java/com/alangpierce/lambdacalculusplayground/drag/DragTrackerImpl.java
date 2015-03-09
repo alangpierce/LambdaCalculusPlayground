@@ -1,57 +1,27 @@
-package com.alangpierce.lambdacalculusplayground;
+package com.alangpierce.lambdacalculusplayground.drag;
 
 import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-
-import rx.Observable;
-import rx.Observable.OnSubscribe;
-import rx.Subscriber;
 import rx.functions.Action1;
 
 public class DragTrackerImpl implements DragTracker {
+    private final TouchObservableManager touchObservableManager;
+
     // An array of length 2 (x, y) with the screen coordinates of the last drag position.
     private int[] lastCoords;
     private int activePointerId = MotionEvent.INVALID_POINTER_ID;
     private View dragView;
-    private WeakHashMap<View, Observable<MotionEvent>> cachedEventObservables = new WeakHashMap<>();
 
-    /**
-     * Note that this should be the only touch listener for this view!
-     */
-    private Observable<MotionEvent> eventObservable(View view) {
-        if (!cachedEventObservables.containsKey(view)) {
-            final Map<Subscriber<? super MotionEvent>, Void> subscribers =
-                    Collections.synchronizedMap(
-                            new WeakHashMap<Subscriber<? super MotionEvent>, Void>());
-            cachedEventObservables.put(view, Observable.create(new OnSubscribe<MotionEvent>() {
-                @Override
-                public void call(Subscriber<? super MotionEvent> observer) {
-                    subscribers.put(observer, null);
-                }
-            }));
-            view.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    for (Subscriber<? super MotionEvent> subscriber : subscribers.keySet()) {
-                        subscriber.onNext(event);
-                    }
-                    return true;
-                }
-            });
-        }
-        return cachedEventObservables.get(view);
+    public DragTrackerImpl(TouchObservableManager touchObservableManager) {
+        this.touchObservableManager = touchObservableManager;
     }
 
     @Override
     public void registerDraggableView(final View view, final StartDragHandler handler) {
-        eventObservable(view).subscribe(new Action1<MotionEvent>() {
+        touchObservableManager.touchObservableForView(view).subscribe(new Action1<MotionEvent>() {
             @Override
             public void call(MotionEvent event) {
                 switch (event.getAction()) {

@@ -1,4 +1,4 @@
-package com.alangpierce.lambdacalculusplayground;
+package com.alangpierce.lambdacalculusplayground.drag;
 
 import android.view.View;
 

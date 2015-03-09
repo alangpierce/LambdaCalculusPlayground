@@ -3,6 +3,10 @@ package com.alangpierce.lambdacalculusplayground;
 import android.app.Activity;
 
 import com.alangpierce.lambdacalculusplayground.ExpressionViewGenerator.ExpressionViewGeneratorFactory;
+import com.alangpierce.lambdacalculusplayground.drag.DragTracker;
+import com.alangpierce.lambdacalculusplayground.drag.DragTrackerImpl;
+import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
+import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 
 import javax.inject.Singleton;
 
@@ -21,8 +25,14 @@ public class PlaygroundModule {
         return activity;
     }
 
-    @Provides @Singleton DragTracker provideDragTracker() {
-        return new DragTrackerImpl();
+    @Provides @Singleton
+    DragTracker provideDragTracker(TouchObservableManager touchObservableManager) {
+        return new DragTrackerImpl(touchObservableManager);
+    }
+
+    @Provides @Singleton
+    TouchObservableManager provideTouchObservableManager() {
+        return new TouchObservableManagerImpl();
     }
 
     @Provides ExpressionViewGeneratorFactory provideExpressionViewGeneratorFactory(
