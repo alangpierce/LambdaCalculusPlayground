@@ -19,22 +19,13 @@ public class TouchObservableManagerImpl implements TouchObservableManager {
     public Observable<MotionEvent> touchObservableForView(View view) {
         if (!cachedEventObservables.containsKey(view)) {
             final Map<Subscriber<? super MotionEvent>, Void> subscribers =
-                    Collections.synchronizedMap(
-                            new WeakHashMap<Subscriber<? super MotionEvent>, Void>());
-            cachedEventObservables.put(view, Observable.create(new OnSubscribe<MotionEvent>() {
-                @Override
-                public void call(Subscriber<? super MotionEvent> observer) {
-                    subscribers.put(observer, null);
+                    Collections.synchronizedMap(new WeakHashMap<>());
+            cachedEventObservables.put(view, Observable.create(observer -> subscribers.put(observer, null)));
+            view.setOnTouchListener((v, event) -> {
+                for (Subscriber<? super MotionEvent> subscriber : subscribers.keySet()) {
+                    subscriber.onNext(event);
                 }
-            }));
-            view.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    for (Subscriber<? super MotionEvent> subscriber : subscribers.keySet()) {
-                        subscriber.onNext(event);
-                    }
-                    return true;
-                }
+                return true;
             });
         }
         return cachedEventObservables.get(view);

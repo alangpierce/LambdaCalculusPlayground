@@ -18,8 +18,21 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import rx.plugins.RxJavaErrorHandler;
+import rx.plugins.RxJavaPlugins;
+
 
 public class PlaygroundActivity extends ActionBarActivity {
+    static {
+        RxJavaPlugins.getInstance().registerErrorHandler(new RxJavaErrorHandler() {
+            @Override
+            public void handleError(Throwable e) {
+                System.err.println("Exception thrown from observable.");
+                e.printStackTrace();
+            }
+        });
+    }
+
     private PlaygroundComponent component;
 
     @Override

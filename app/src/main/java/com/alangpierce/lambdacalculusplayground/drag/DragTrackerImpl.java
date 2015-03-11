@@ -8,17 +8,26 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import autovalue.shaded.com.google.common.common.base.Throwables;
 import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
 import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.functions.Func1;
+import rx.observables.GroupedObservable;
 
 public class DragTrackerImpl implements DragTracker {
     private final TouchObservableManager touchObservableManager;
 
     private Point lastPos;
-    private int activePointerId = MotionEvent.INVALID_POINTER_ID;
+    private boolean isActive = false;
     private View dragView;
 
     public DragTrackerImpl(TouchObservableManager touchObservableManager) {
@@ -28,35 +37,37 @@ public class DragTrackerImpl implements DragTracker {
     @Override
     public void registerDraggableView(final View view, final StartDragHandler handler) {
         Observable<MotionEvent> motions = touchObservableManager.touchObservableForView(view);
-        Observable<PointerMotionEvent> pointerEvents = processMotionEvents(view, motions);
-        pointerEvents.subscribe(new Action1<PointerMotionEvent>() {
-            @Override
-            public void call(PointerMotionEvent event) {
+        Observable<? extends Observable<PointerMotionEvent>> dragEvents =
+                // Raw stream of (pointer id, event) values.
+                processMotionEvents(view, motions)
+                // Split by pointer ID (which is guaranteed not to repeat).
+                .groupBy(PointerMotionEvent::getPointerId);
+
+        dragEvents.subscribe(dragObservable -> {
+            // Ignore drag events that come in while one is in progress.
+            if (isActive) {
+                dragObservable.take(0);
+                return;
+            }
+            isActive = true;
+            dragObservable.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
-                        if (activePointerId != MotionEvent.INVALID_POINTER_ID) {
-                            break;
-                        }
                         lastPos = event.getScreenPos();
-                        activePointerId = event.getPointerId();
                         dragView = handler.onStartDrag();
                         break;
                     }
-                    case MOVE:
-                        if (activePointerId != event.getPointerId()) {
-                            break;
-                        }
+                    case MOVE: {
                         Point pos = event.getScreenPos();
                         moveView(pos.getX() - lastPos.getX(), pos.getY() - lastPos.getY());
                         lastPos = pos;
                         break;
+                    }
                     case UP:
-                        if (event.getPointerId() == activePointerId) {
-                            activePointerId = MotionEvent.INVALID_POINTER_ID;
-                        }
+                        isActive = false;
                         break;
                 }
-            }
+            });
         });
     }
 
@@ -66,36 +77,52 @@ public class DragTrackerImpl implements DragTracker {
      */
     private Observable<PointerMotionEvent> processMotionEvents(
             final View view, Observable<MotionEvent> observable) {
-        return observable.flatMapIterable(
-                new Func1<MotionEvent, Iterable<? extends PointerMotionEvent>>() {
-            @Override
-            public Iterable<PointerMotionEvent> call(MotionEvent event) {
-                List<PointerMotionEvent> resultEvents = new ArrayList<>();
-                // The action itself can only describe a single pointer, so we see which one it is.
-                int actionIndex = MotionEventCompat.getActionIndex(event);
-                for (int i = 0; i < MotionEventCompat.getPointerCount(event); i++) {
-                    Action action = Action.MOVE;
+        /*
+         * Create nice-looking events that still have their "native" pointer ID: the one assigned by
+         * Android, which might repeat.
+         */
+        Observable<PointerMotionEvent> nativePointerEvents = observable.flatMapIterable(event -> {
+            List<PointerMotionEvent> resultEvents = new ArrayList<>();
+            // The action itself can only describe a single pointer, so we see which one it is.
+            int actionIndex = MotionEventCompat.getActionIndex(event);
+            for (int i = 0; i < MotionEventCompat.getPointerCount(event); i++) {
+                Action action = Action.MOVE;
+                int pointerId = MotionEventCompat.getPointerId(event, i);
+                Point pos = getRawCoords(view, event, i);
 
-                    if (i == actionIndex) {
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                            case MotionEvent.ACTION_POINTER_DOWN:
-                                action = Action.DOWN;
-                                break;
-                            case MotionEvent.ACTION_UP:
-                            case MotionEvent.ACTION_POINTER_UP:
-                                action = Action.UP;
-                                break;
-                        }
+                if (i == actionIndex) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                        case MotionEvent.ACTION_POINTER_DOWN:
+                            action = Action.DOWN;
+                            break;
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_POINTER_UP:
+                            action = Action.UP;
+                            break;
                     }
-
-                    int pointerId = MotionEventCompat.getPointerId(event, i);
-                    Point pos = getRawCoords(view, event, i);
-
-                    resultEvents.add(PointerMotionEvent.create(pointerId, action, pos));
                 }
-                return resultEvents;
+
+                resultEvents.add(PointerMotionEvent.create(pointerId, action, pos));
             }
+            return resultEvents;
+        });
+
+        /*
+         * Use a hash table to turn repeated pointer IDs into unique IDs. Note that it may make
+         * sense to later
+         */
+        final Map<Integer, Integer> idByNativeId = Collections.synchronizedMap(new HashMap<>());
+        final AtomicInteger nextId = new AtomicInteger();
+        return nativePointerEvents.map(event -> {
+            if (!idByNativeId.containsKey(event.getPointerId())) {
+                idByNativeId.put(event.getPointerId(), nextId.incrementAndGet());
+            }
+            PointerMotionEvent result = event.withPointerId(idByNativeId.get(event.getPointerId()));
+            if (event.getAction() == Action.UP) {
+                idByNativeId.remove(event.getPointerId());
+            }
+            return result;
         });
     }
 
