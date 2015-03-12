@@ -29,12 +29,7 @@ public class ExpressionViewGeneratorImpl implements ExpressionViewGenerator {
 
     public static ExpressionViewGeneratorFactory createFactory(
             final Context context, final DragTracker dragTracker) {
-        return new ExpressionViewGeneratorFactory() {
-            @Override
-            public ExpressionViewGenerator create(RelativeLayout rootView) {
-                return new ExpressionViewGeneratorImpl(context, dragTracker, rootView);
-            }
-        };
+        return rootView -> new ExpressionViewGeneratorImpl(context, dragTracker, rootView);
     }
 
     @Override
