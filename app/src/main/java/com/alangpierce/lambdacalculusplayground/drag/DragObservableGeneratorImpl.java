@@ -6,6 +6,9 @@ import android.view.View;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import autovalue.shaded.com.google.common.common.base.Throwables;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.observables.GroupedObservable;
@@ -28,7 +32,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
     public Observable<? extends Observable<PointerMotionEvent>> getDragObservable(View view) {
         Observable<MotionEvent> motions = touchObservableManager.touchObservableForView(view);
         // Raw stream of (pointer id, event) values.
-        return processMotionEvents(view, motions)
+        return processMotionEvents(motions)
                 // Split by pointer ID (which is guaranteed not to repeat).
                 .groupBy(PointerMotionEvent::getPointerId)
                 // Offset the points so we get a stream of positions of the top-left corner, not a
@@ -55,8 +59,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
      * Given a stream of raw motion events for a view, transform it into a nicer set of
      * PointerMotionEvents.
      */
-    private Observable<PointerMotionEvent> processMotionEvents(
-            final View view, Observable<MotionEvent> observable) {
+    private Observable<PointerMotionEvent> processMotionEvents(Observable<MotionEvent> observable) {
         /*
          * Create nice-looking events that still have their "native" pointer ID: the one assigned by
          * Android, which might repeat.
@@ -68,15 +71,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
             for (int i = 0; i < MotionEventCompat.getPointerCount(event); i++) {
                 Action action = Action.MOVE;
                 int pointerId = MotionEventCompat.getPointerId(event, i);
-                Point pos = getRawCoords(view, event, i);
-                /*
-                 * TODO(alan): Find a reliable way to get the raw coordinates for an arbitrary
-                 * cursor. Or just stop supporting multi-touch for specific views, since we don't
-                 * really need it anyway. The getRawCoords function almost works, but seems to break
-                 * when dealing with views that are re-parented while the touch event is in
-                 * progress.
-                 */
-                pos = Point.create((int)event.getRawX(), (int)event.getRawY());
+                Point pos = getRawCoords(event, i);
 
                 if (i == actionIndex) {
                     switch (event.getAction()) {
@@ -121,8 +116,24 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
      * The API doesn't provide this, so we need to compute it more directly:
      * http://stackoverflow.com/questions/6517494/get-motionevent-getrawx-getrawy-of-other-pointers
      */
-    private Point getRawCoords(View v, MotionEvent event, int pointerIndex) {
-        return Views.getScreenPos(v).plus(
-                Point.create((int) event.getX(pointerIndex), (int) event.getY(pointerIndex)));
+    private Point getRawCoords(MotionEvent event, int pointerIndex) {
+        try {
+            Method getRawAxisValueMethod = MotionEvent.class.getDeclaredMethod(
+                    "nativeGetRawAxisValue", long.class, int.class, int.class, int.class);
+            Field nativePtrField = MotionEvent.class.getDeclaredField("mNativePtr");
+            Field historyCurrentField = MotionEvent.class.getDeclaredField("HISTORY_CURRENT");
+            getRawAxisValueMethod.setAccessible(true);
+            nativePtrField.setAccessible(true);
+            historyCurrentField.setAccessible(true);
+
+            float x = (float) getRawAxisValueMethod.invoke(null, nativePtrField.get(event),
+                    MotionEvent.AXIS_X, pointerIndex, historyCurrentField.get(null));
+            float y = (float) getRawAxisValueMethod.invoke(null, nativePtrField.get(event),
+                    MotionEvent.AXIS_Y, pointerIndex, historyCurrentField.get(null));
+            return Point.create((int)x, (int)y);
+        } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException|
+                NoSuchFieldException e) {
+            throw Throwables.propagate(e);
+        }
     }
 }
