@@ -4,8 +4,6 @@ import android.app.Activity;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
-import com.alangpierce.lambdacalculusplayground.drag.DragTracker;
-import com.alangpierce.lambdacalculusplayground.drag.DragTrackerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -31,11 +29,6 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    DragTracker provideDragTracker(DragObservableGenerator dragObservableGenerator) {
-        return new DragTrackerImpl(dragObservableGenerator);
-    }
-
-    @Provides @Singleton
     DragObservableGenerator provideDragObservableGenerator(
             TouchObservableManager touchObservableManager) {
         return new DragObservableGeneratorImpl(touchObservableManager);
@@ -53,7 +46,7 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactoryFactory(
-            ExpressionViewRenderer viewRenderer) {
-        return ExpressionControllerFactoryImpl.createFactory(viewRenderer);
+            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator) {
+        return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator);
     }
 }

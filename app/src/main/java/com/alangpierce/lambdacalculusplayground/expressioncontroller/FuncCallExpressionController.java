@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -12,14 +13,13 @@ public class FuncCallExpressionController implements ExpressionController {
      * State kept by this class. Since this class corresponds to an actual Android view, we need to
      * care about what it's logically a part of as it moves around.
      */
+    private UserFuncCall userFuncCall;
     private OnChangeCallback onChangeCallback;
     private OnDetachCallback onDetachCallback;
-    private UserFuncCall userFuncCall;
-    private ExpressionController funcController;
-    private ExpressionController argController;
 
-    public FuncCallExpressionController(LinearLayout view) {
+    public FuncCallExpressionController(LinearLayout view, UserFuncCall userFuncCall) {
         this.view = view;
+        this.userFuncCall = userFuncCall;
     }
 
     @Override
@@ -33,15 +33,13 @@ public class FuncCallExpressionController implements ExpressionController {
         this.onDetachCallback = onDetachCallback;
     }
 
-    public void handleFuncDetach() {
-        view.removeView(funcController.getView());
-        funcController = null;
+    public void handleFuncDetach(View viewToDetach) {
+        view.removeView(viewToDetach);
         handleFuncChange(null);
     }
 
-    public void handleArgDetach() {
-        view.removeView(argController.getView());
-        argController = null;
+    public void handleArgDetach(View viewToDetach) {
+        view.removeView(viewToDetach);
         handleArgChange(null);
     }
 

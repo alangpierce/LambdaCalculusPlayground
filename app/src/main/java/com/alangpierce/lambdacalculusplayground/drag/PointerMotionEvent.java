@@ -21,6 +21,10 @@ public abstract class PointerMotionEvent {
         return toBuilder().pointerId(pointerId).build();
     }
 
+    public PointerMotionEvent withScreenPos(Point screenPos) {
+        return toBuilder().screenPos(screenPos).build();
+    }
+
     public enum Action {
         DOWN,
         MOVE,

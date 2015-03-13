@@ -1,17 +1,31 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
+import com.alangpierce.lambdacalculusplayground.drag.Point;
+import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
+import com.alangpierce.lambdacalculusplayground.drag.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import rx.Observable;
 
 public class LambdaExpressionController implements ExpressionController {
     private final LinearLayout view;
 
+    private UserLambda userLambda;
     private OnChangeCallback onChangeCallback;
     private OnDetachCallback onDetachCallback;
 
-    public LambdaExpressionController(LinearLayout view) {
+    public LambdaExpressionController(LinearLayout view, UserLambda userLambda) {
         this.view = view;
+        this.userLambda = userLambda;
     }
 
     @Override
@@ -25,11 +39,46 @@ public class LambdaExpressionController implements ExpressionController {
         return view;
     }
 
-    public void handleBodyChange(UserExpression newExpression) {
-
+    public void handleBodyDetach(View viewToDetach) {
+        view.removeView(viewToDetach);
+        handleBodyChange(null);
     }
 
-    public void handleBodyDetach() {
+    public void handleBodyChange(UserExpression newBody) {
+        userLambda = new UserLambda(userLambda.varName, newBody);
+        onChangeCallback.onChange(userLambda);
+    }
 
+    public void handleDragAction(
+            RelativeLayout rootView, Observable<PointerMotionEvent> eventObservable) {
+        eventObservable.subscribe(event -> {
+            switch (event.getAction()) {
+                case DOWN: {
+                    onDetachCallback.onDetach(view);
+                    setViewScreenPos(rootView, event.getScreenPos());
+                    rootView.addView(view);
+                    view.animate().setDuration(100)
+                            .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
+                    break;
+                }
+                case MOVE: {
+                    setViewScreenPos(rootView, event.getScreenPos());
+                    break;
+                }
+                case UP:
+                    view.animate().setDuration(100)
+                            .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
+                    break;
+            }
+        });
+    }
+
+    private void setViewScreenPos(RelativeLayout rootView, Point screenPos) {
+        Point relativePos = screenPos.minus(Views.getScreenPos(rootView));
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = relativePos.getX();
+        layoutParams.topMargin = relativePos.getY();
+        view.setLayoutParams(layoutParams);
     }
 }

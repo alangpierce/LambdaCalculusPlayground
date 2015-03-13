@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import rx.Observable;
+import rx.functions.Func1;
+import rx.observables.GroupedObservable;
 
 public class DragObservableGeneratorImpl implements DragObservableGenerator {
     private final TouchObservableManager touchObservableManager;
@@ -28,7 +30,25 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
         // Raw stream of (pointer id, event) values.
         return processMotionEvents(view, motions)
                 // Split by pointer ID (which is guaranteed not to repeat).
-                .groupBy(PointerMotionEvent::getPointerId);
+                .groupBy(PointerMotionEvent::getPointerId)
+                // Offset the points so we get a stream of positions of the top-left corner, not a
+                // stream of touch positions.
+                .map(new Func1<GroupedObservable<Integer, PointerMotionEvent>, Observable<PointerMotionEvent>>() {
+                     @Override
+                     public Observable<PointerMotionEvent> call(
+                             GroupedObservable<Integer, PointerMotionEvent> dragEvents) {
+                         Observable<PointerMotionEvent> cachedEvents = dragEvents.cache();
+                         return Observable.combineLatest(
+                                 // The view position at the time of the first event determines the
+                                 // offset within the view.
+                                 cachedEvents.first().map(event ->
+                                             event.getScreenPos().minus(Views.getScreenPos(view))),
+                                 cachedEvents,
+                                 // Shift all points by that offset.
+                                 (offset, event) ->
+                                         event.withScreenPos(event.getScreenPos().minus(offset)));
+                     }
+                });
     }
 
     /**
@@ -49,6 +69,14 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
                 Action action = Action.MOVE;
                 int pointerId = MotionEventCompat.getPointerId(event, i);
                 Point pos = getRawCoords(view, event, i);
+                /*
+                 * TODO(alan): Find a reliable way to get the raw coordinates for an arbitrary
+                 * cursor. Or just stop supporting multi-touch for specific views, since we don't
+                 * really need it anyway. The getRawCoords function almost works, but seems to break
+                 * when dealing with views that are re-parented while the touch event is in
+                 * progress.
+                 */
+                pos = Point.create((int)event.getRawX(), (int)event.getRawY());
 
                 if (i == actionIndex) {
                     switch (event.getAction()) {
@@ -94,10 +122,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
      * http://stackoverflow.com/questions/6517494/get-motionevent-getrawx-getrawy-of-other-pointers
      */
     private Point getRawCoords(View v, MotionEvent event, int pointerIndex) {
-        final int location[] = { 0, 0 };
-        v.getLocationOnScreen(location);
-        location[0] += event.getX(pointerIndex);
-        location[1] += event.getY(pointerIndex);
-        return Point.create(location[0], location[1]);
+        return Views.getScreenPos(v).plus(
+                Point.create((int) event.getX(pointerIndex), (int) event.getY(pointerIndex)));
     }
 }

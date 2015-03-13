@@ -67,6 +67,11 @@ public class PlaygroundFragment extends Fragment {
         for (ScreenExpression screenExpression : expressions) {
             ExpressionController controller =
                     expressionControllerFactory.createController(screenExpression.expr);
+            controller.setCallbacks(
+                    // TODO(alan): Set a real change listener to update the state.
+                    (newExpression) -> {},
+                    rootLayout::removeView
+            );
             RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
