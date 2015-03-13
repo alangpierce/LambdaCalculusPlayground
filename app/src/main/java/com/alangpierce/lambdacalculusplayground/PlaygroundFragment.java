@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -58,18 +61,18 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
-        ExpressionViewGenerator viewGenerator =
-                component.getExpressionViewGeneratorFactory().create(rootLayout);
+        ExpressionControllerFactory expressionControllerFactory =
+                component.getExpressionControllerFactoryFactory().create(rootLayout);
 
         for (ScreenExpression screenExpression : expressions) {
-            View expressionView = viewGenerator.makeTopLevelExpressionView(screenExpression.expr);
+            ExpressionController controller =
+                    expressionControllerFactory.createController(screenExpression.expr);
             RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             expressionParams.leftMargin = screenExpression.x;
             expressionParams.topMargin = screenExpression.y;
-            expressionView.setLayoutParams(expressionParams);
-            rootLayout.addView(expressionView);
+            rootLayout.addView(controller.getView(), expressionParams);
         }
         rootLayout.setBackgroundResource(R.drawable.expression);
         return rootLayout;

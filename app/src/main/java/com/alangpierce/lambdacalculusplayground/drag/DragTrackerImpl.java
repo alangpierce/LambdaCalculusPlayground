@@ -1,27 +1,9 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
-import android.support.v4.view.MotionEventCompat;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import autovalue.shaded.com.google.common.common.base.Throwables;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func0;
-import rx.functions.Func1;
-import rx.observables.GroupedObservable;
 
 public class DragTrackerImpl implements DragTracker {
     private final DragObservableGenerator dragObservableGenerator;
@@ -50,6 +32,7 @@ public class DragTrackerImpl implements DragTracker {
                     case DOWN: {
                         lastPos = event.getScreenPos();
                         dragView = handler.onStartDrag();
+                        dragView.animate().translationZBy(100);
                         break;
                     }
                     case MOVE: {
@@ -60,6 +43,7 @@ public class DragTrackerImpl implements DragTracker {
                     }
                     case UP:
                         isActive = false;
+                        dragView.animate().translationZBy(-100);
                         break;
                 }
             });
