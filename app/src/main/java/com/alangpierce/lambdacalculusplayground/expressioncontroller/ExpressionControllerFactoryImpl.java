@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -34,6 +35,16 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             DragObservableGenerator dragObservableGenerator) {
         return (rootView) -> new ExpressionControllerFactoryImpl(
                 rootView, viewRenderer, dragObservableGenerator);
+    }
+
+    @Override
+    public TopLevelExpressionController createTopLevelController(
+            ScreenExpression screenExpression) {
+        ExpressionController exprController = createController(screenExpression.expr);
+        TopLevelExpressionControllerImpl result =
+                new TopLevelExpressionControllerImpl(exprController.getView(), screenExpression);
+        exprController.setCallbacks(result::handleExprChange, result::handleExprDetach);
+        return result;
     }
 
     @Override

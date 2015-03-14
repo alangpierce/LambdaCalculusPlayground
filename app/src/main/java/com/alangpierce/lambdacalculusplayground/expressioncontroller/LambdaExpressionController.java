@@ -1,18 +1,14 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 
 import com.alangpierce.lambdacalculusplayground.drag.Point;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.drag.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import rx.Observable;
 
