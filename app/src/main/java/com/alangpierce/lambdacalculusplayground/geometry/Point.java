@@ -1,4 +1,4 @@
-package com.alangpierce.lambdacalculusplayground.drag;
+package com.alangpierce.lambdacalculusplayground.geometry;
 
 import com.google.auto.value.AutoValue;
 

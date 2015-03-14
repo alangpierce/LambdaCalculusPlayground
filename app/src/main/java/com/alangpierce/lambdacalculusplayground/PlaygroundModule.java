@@ -6,6 +6,8 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistry;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistryImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionViewRenderer;
@@ -39,6 +41,11 @@ public class PlaygroundModule {
         return new TouchObservableManagerImpl();
     }
 
+    @Provides @Singleton
+    DropTargetRegistry provideDropTargetRegistry() {
+        return new DropTargetRegistryImpl();
+    }
+
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(Activity activity) {
         return new ExpressionViewRendererImpl(activity);
@@ -46,7 +53,9 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactoryFactory(
-            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator) {
-        return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator);
+            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
+            DropTargetRegistry dropTargetRegistry) {
+        return ExpressionControllerFactoryImpl.createFactory(
+                viewRenderer, dragObservableGenerator, dropTargetRegistry);
     }
 }

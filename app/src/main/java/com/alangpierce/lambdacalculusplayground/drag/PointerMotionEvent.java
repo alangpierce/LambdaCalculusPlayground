@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.google.auto.value.AutoValue;
 
 @AutoValue

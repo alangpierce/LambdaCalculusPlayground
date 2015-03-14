@@ -5,6 +5,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
