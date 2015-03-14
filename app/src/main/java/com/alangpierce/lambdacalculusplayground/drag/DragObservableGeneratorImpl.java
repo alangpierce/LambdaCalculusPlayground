@@ -30,9 +30,10 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
 
     @Override
     public Observable<? extends Observable<PointerMotionEvent>> getDragObservable(View view) {
-        Observable<MotionEvent> motions = touchObservableManager.touchObservableForView(view);
-        // Raw stream of (pointer id, event) values.
-        return processMotionEvents(motions)
+        // Raw stream of Android MotionEvent objects.
+        return touchObservableManager.touchObservableForView(view)
+                // Raw stream of (pointer id, event) values.
+                .compose(this::processMotionEvents)
                 // Split by pointer ID (which is guaranteed not to repeat).
                 .groupBy(PointerMotionEvent::getPointerId)
                 // Offset the points so we get a stream of positions of the top-left corner, not a
