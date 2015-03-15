@@ -4,7 +4,6 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -13,7 +12,6 @@ import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -86,15 +84,14 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
-            UserExpression bodyExpression = userLambda.body;
-            Point bodyScreenPos = view.getScreenPos();
+            ScreenExpression newScreenExpression = ScreenExpression.create(
+                    userLambda.body, view.getBodyPos());
             subscription.unsubscribe();
-            // This detaches the view from the UI, so it's safe to add the root view as a parent. It=
+            // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
             handleBodyChange(null);
-            return controllerFactory.wrapInTopLevelController(
-                    bodyController, ScreenExpression.create(bodyExpression, bodyScreenPos));
+            return controllerFactory.wrapInTopLevelController(bodyController, newScreenExpression);
         }
     }
 

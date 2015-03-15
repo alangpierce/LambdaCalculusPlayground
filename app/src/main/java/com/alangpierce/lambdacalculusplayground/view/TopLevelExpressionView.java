@@ -14,14 +14,14 @@ public class TopLevelExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
     private final RelativeLayout rootView;
 
-    private final ExpressionView view;
+    private ExpressionView exprView;
 
     public TopLevelExpressionView(
             DragObservableGenerator dragObservableGenerator, RelativeLayout rootView,
-            ExpressionView view) {
+            ExpressionView exprView) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.rootView = rootView;
-        this.view = view;
+        this.exprView = exprView;
     }
 
     public static TopLevelExpressionView render(DragObservableGenerator dragObservableGenerator,
@@ -34,36 +34,44 @@ public class TopLevelExpressionView {
     }
 
     public Point getScreenPos() {
-        return Views.getScreenPos(view.getNativeView());
+        return Views.getScreenPos(exprView.getNativeView());
     }
 
     public void attachToRoot(Point initialScreenCoords) {
-        Preconditions.checkState(view.getNativeView().getParent() == null,
+        Preconditions.checkState(exprView.getNativeView().getParent() == null,
                 "Cannot attach an expression to the root that is already attached.");
-        rootView.addView(view.getNativeView(),
+        rootView.addView(exprView.getNativeView(),
                 Views.layoutParamsForScreenPosition(rootView, initialScreenCoords));
     }
 
     public void setScreenPos(Point screenPos) {
-        view.getNativeView().setLayoutParams(
+        exprView.getNativeView().setLayoutParams(
                 Views.layoutParamsForScreenPosition(rootView, screenPos));
     }
 
     public void detachFromRoot() {
-        rootView.removeView(view.getNativeView());
+        rootView.removeView(exprView.getNativeView());
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getExpressionObservable() {
-        return dragObservableGenerator.getDragObservable(view.getNativeView());
+        return dragObservableGenerator.getDragObservable(exprView.getNativeView());
     }
 
     public void startDrag() {
-        view.getNativeView().animate()
+        exprView.getNativeView().animate()
                 .setDuration(100).translationZBy(10).scaleX(1.05f).scaleY(1.05f);
     }
 
     public void endDrag() {
-        view.getNativeView().animate()
+        exprView.getNativeView().animate()
                 .setDuration(100).translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
+    }
+
+    public void handleExpressionChange(ExpressionView newExpression) {
+        Point screenPos = getScreenPos();
+        rootView.removeView(exprView.getNativeView());
+        rootView.addView(newExpression.getNativeView());
+        exprView = newExpression;
+        setScreenPos(screenPos);
     }
 }

@@ -83,4 +83,8 @@ public class
         }
         view.addView(bodyNativeView);
     }
+
+    public Point getBodyPos() {
+        return Views.getScreenPos(bodyNativeView);
+    }
 }

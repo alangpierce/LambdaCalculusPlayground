@@ -89,7 +89,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
                 FuncCallExpressionController result =
                         new FuncCallExpressionController(ExpressionControllerFactoryImpl.this, view,
-                                argController, funcCall);
+                                funcController, argController, funcCall);
                 for (DragSource dragSource : result.getDragSources()) {
                     dragManager.registerDragSource(dragSource);
                 }

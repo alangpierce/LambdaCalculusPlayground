@@ -4,12 +4,10 @@ import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
-import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 public class FuncCallView implements ExpressionView {
@@ -51,9 +49,29 @@ public class FuncCallView implements ExpressionView {
         return dragObservableGenerator.getDragObservable(argView.getNativeView());
     }
 
-    public ExpressionView detachArg() {
-        Preconditions.checkState(argView.getNativeView().getParent() == view);
+    /**
+     * Tear apart this view because the arg is being dragged out. The func needs to be detached so
+     * that it can be attached to a different view later, and the view itself should be removed so
+     * it doesn't stick around on the screen.
+     */
+    public void decommission() {
+        view.removeView(funcView.getNativeView());
         view.removeView(argView.getNativeView());
-        return argView;
+    }
+
+    public Point getArgPos() {
+        return Views.getScreenPos(argView.getNativeView());
+    }
+
+    public void handleFuncChange(ExpressionView newFuncView) {
+        view.removeView(funcView.getNativeView());
+        view.addView(newFuncView.getNativeView(), 0);
+        funcView = newFuncView;
+    }
+
+    public void handleArgChange(ExpressionView newArgView) {
+        view.removeView(argView.getNativeView());
+        view.addView(newArgView.getNativeView());
+        argView = newArgView;
     }
 }

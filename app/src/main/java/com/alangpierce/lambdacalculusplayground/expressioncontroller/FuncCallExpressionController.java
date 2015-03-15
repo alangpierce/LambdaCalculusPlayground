@@ -4,7 +4,6 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -19,6 +18,7 @@ import rx.Subscription;
 public class FuncCallExpressionController implements ExpressionController {
     private final ExpressionControllerFactory controllerFactory;
     private final FuncCallView view;
+    private final ExpressionController funcController;
     private final ExpressionController argController;
 
     /*
@@ -31,10 +31,11 @@ public class FuncCallExpressionController implements ExpressionController {
     public FuncCallExpressionController(
             ExpressionControllerFactory controllerFactory,
             FuncCallView view,
-            ExpressionController argController,
+            ExpressionController funcController, ExpressionController argController,
             UserFuncCall userFuncCall) {
         this.controllerFactory = controllerFactory;
         this.view = view;
+        this.funcController = funcController;
         this.argController = argController;
         this.userFuncCall = userFuncCall;
     }
@@ -66,13 +67,21 @@ public class FuncCallExpressionController implements ExpressionController {
 
     public void handleFuncChange(ExpressionController newFuncController) {
         userFuncCall = new UserFuncCall(newFuncController.getExpression(), userFuncCall.arg);
+        view.handleFuncChange(newFuncController.getView());
+        newFuncController.setOnChangeCallback(this::handleFuncChange);
         onChangeCallback.onChange(this);
     }
 
     public void handleArgChange(ExpressionController newArgController) {
-        // TODO: Support removing args.
         userFuncCall = new UserFuncCall(userFuncCall.func, newArgController.getExpression());
+        view.handleArgChange(newArgController.getView());
+        newArgController.setOnChangeCallback(this::handleArgChange);
         onChangeCallback.onChange(this);
+    }
+
+    private void handleArgDetach() {
+        view.decommission();
+        onChangeCallback.onChange(funcController);
     }
 
     private class ArgDragSource implements DragSource {
@@ -82,11 +91,11 @@ public class FuncCallExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+            ScreenExpression newScreenExpression = ScreenExpression.create(
+                    userFuncCall.arg, view.getScreenPos());
             subscription.unsubscribe();
-            ExpressionView argView = view.detachArg();
-            return controllerFactory.wrapInTopLevelController(
-                    argController,
-                    ScreenExpression.create(userFuncCall.arg, argView.getScreenPos()));
+            handleArgDetach();
+            return controllerFactory.wrapInTopLevelController(argController, newScreenExpression);
         }
     }
 }
