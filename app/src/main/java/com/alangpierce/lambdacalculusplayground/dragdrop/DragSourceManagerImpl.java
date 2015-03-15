@@ -44,13 +44,14 @@ public class DragSourceManagerImpl implements DragManager {
                         view.setScreenPos(event.getScreenPos());
                         break;
                     }
-                    case UP:
+                    case UP: {
                         TopLevelExpressionView view = viewReference.get();
                         if (view == null) {
                             break;
                         }
                         view.endDrag();
                         break;
+                    }
                 }
             });
         });

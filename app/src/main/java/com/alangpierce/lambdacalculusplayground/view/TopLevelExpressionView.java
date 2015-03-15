@@ -7,6 +7,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
+import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 public class TopLevelExpressionView {
@@ -37,6 +38,8 @@ public class TopLevelExpressionView {
     }
 
     public void attachToRoot(Point initialScreenCoords) {
+        Preconditions.checkState(view.getNativeView().getParent() == null,
+                "Cannot attach an expression to the root that is already attached.");
         rootView.addView(view.getNativeView(),
                 Views.layoutParamsForScreenPosition(rootView, initialScreenCoords));
     }

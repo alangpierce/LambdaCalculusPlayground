@@ -86,11 +86,11 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 ExpressionController argController = createController(funcCall.arg);
 
                 FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
-                        funcController.getView().getNativeView(),
-                        argController.getView().getNativeView());
+                        funcController.getView(), argController.getView());
 
                 FuncCallExpressionController result =
-                        new FuncCallExpressionController(view, funcCall);
+                        new FuncCallExpressionController(ExpressionControllerFactoryImpl.this, view,
+                                argController, funcCall);
                 funcController.setOnChangeCallback(result::handleFuncChange);
                 argController.setOnChangeCallback(result::handleArgChange);
                 return result;

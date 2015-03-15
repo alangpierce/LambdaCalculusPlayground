@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import com.alangpierce.lambdacalculusplayground.ScreenExpression;
+import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -10,8 +12,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import rx.Observable;
+
 public class FuncCallExpressionController implements ExpressionController {
+    private final ExpressionControllerFactory controllerFactory;
     private final FuncCallView view;
+    private final ExpressionController argController;
 
     /*
      * State kept by this class. Since this class corresponds to an actual Android view, we need to
@@ -20,8 +26,14 @@ public class FuncCallExpressionController implements ExpressionController {
     private UserFuncCall userFuncCall;
     private OnChangeCallback onChangeCallback;
 
-    public FuncCallExpressionController(FuncCallView view, UserFuncCall userFuncCall) {
+    public FuncCallExpressionController(
+            ExpressionControllerFactory controllerFactory,
+            FuncCallView view,
+            ExpressionController argController,
+            UserFuncCall userFuncCall) {
+        this.controllerFactory = controllerFactory;
         this.view = view;
+        this.argController = argController;
         this.userFuncCall = userFuncCall;
     }
 
@@ -37,7 +49,7 @@ public class FuncCallExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
-        return ImmutableList.of();
+        return ImmutableList.of(new ArgDragSource());
     }
 
     @Override
@@ -53,5 +65,19 @@ public class FuncCallExpressionController implements ExpressionController {
     public void handleArgChange(UserExpression newArg) {
         userFuncCall = new UserFuncCall(userFuncCall.func, newArg);
         onChangeCallback.onChange(userFuncCall);
+    }
+
+    private class ArgDragSource implements DragSource {
+        @Override
+        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
+            return view.getArgObservable();
+        }
+        @Override
+        public TopLevelExpressionController handleStartDrag() {
+            ExpressionView argView = view.detachArg();
+            return controllerFactory.wrapInTopLevelController(
+                    argController,
+                    ScreenExpression.create(userFuncCall.arg, argView.getScreenPos()));
+        }
     }
 }
