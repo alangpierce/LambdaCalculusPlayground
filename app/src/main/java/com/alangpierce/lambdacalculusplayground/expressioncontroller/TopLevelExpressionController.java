@@ -18,6 +18,4 @@ public interface TopLevelExpressionController {
     interface OnTopLevelDetachCallback {
         void onDetach(View viewToDetach);
     }
-
-
 }

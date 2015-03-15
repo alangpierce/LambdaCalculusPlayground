@@ -39,7 +39,7 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
-        return ImmutableList.of(new BodyDragSource());
+        return ImmutableList.of(new BodyDragSource(), new ParameterDragSource());
     }
 
     @Override
@@ -103,12 +103,34 @@ public class LambdaExpressionController implements ExpressionController {
     private class ParameterDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return null;
+            return view.getParameterObservable();
         }
         @Override
         public Observable<DragPacket> handleStartDrag(RelativeLayout rootView,
                 Observable<PointerMotionEvent> dragEvents) {
-            return null;
+            return dragEvents.map(event -> {
+                switch (event.getAction()) {
+                    case DOWN: {
+                        onDetachCallback.onDetach(view.getNativeView());
+                        setViewScreenPos(rootView, event.getScreenPos());
+                        rootView.addView(view.getNativeView());
+                        view.getNativeView().animate().setDuration(100)
+                                .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
+                        break;
+                    }
+                    case MOVE: {
+                        setViewScreenPos(rootView, event.getScreenPos());
+                        break;
+                    }
+                    case UP:
+                        view.getNativeView().animate().setDuration(100)
+                                .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
+                        break;
+                }
+                return DragPacket.create(
+                        Views.getBoundingBox(view.getNativeView()),
+                        LambdaExpressionController.this);
+            });
         }
         @Override
         public void handleCommit() {

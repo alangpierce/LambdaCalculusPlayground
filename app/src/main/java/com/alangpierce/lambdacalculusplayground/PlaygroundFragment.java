@@ -30,7 +30,6 @@ public class PlaygroundFragment extends Fragment {
     private Map<Integer, ScreenExpression> expressions = Maps.newHashMap();
     private int maxId = 0;
 
-    private PlaygroundComponent component;
     private RelativeLayout rootLayout;
 
     public static PlaygroundFragment create(List<ScreenExpression> expressions) {
@@ -44,7 +43,6 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        component = ((PlaygroundActivity)getActivity()).getComponent();
         Bundle bundle = getArguments();
         if (savedInstanceState != null) {
             bundle = savedInstanceState;
@@ -83,6 +81,8 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
+        PlaygroundComponent component = Dagger_PlaygroundComponent.builder()
+                .playgroundModule(new PlaygroundModule(getActivity())).build();
         ExpressionControllerFactory expressionControllerFactory =
                 component.getExpressionControllerFactoryFactory().create(rootLayout);
 
