@@ -12,7 +12,7 @@ import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
 import rx.Subscription;
 
-public class DragSourceManagerImpl implements DragManager {
+public class DragManagerImpl implements DragManager {
     private final List<DragSource> dragSources = Collections.synchronizedList(Lists.newArrayList());
     private final List<DropTarget> dropTargets = Collections.synchronizedList(Lists.newArrayList());
 

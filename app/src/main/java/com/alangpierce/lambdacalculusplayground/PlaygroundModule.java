@@ -8,7 +8,7 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceManagerImpl;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
@@ -60,7 +60,7 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     DragManager provideDragSourceRegistry() {
-        return new DragSourceManagerImpl();
+        return new DragManagerImpl();
     }
 
     @Provides
