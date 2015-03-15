@@ -10,6 +10,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
@@ -30,47 +31,48 @@ public class DragSourceManagerImpl implements DragManager {
                 dragSource.getDragObservable();
 
         dragObservable.subscribe(dragEvents -> {
-            /*
-             * TODO: We're assuming that the observable doesn't even get created until the drag
-             * action starts, which might not be true.
-             */
-            TopLevelExpressionController expressionController = dragSource.handleStartDrag();
-            LinearLayout view = expressionController.getView().getNativeView();
-            rootView.addView(view);
-            expressionController.setCallbacks(
-                    // onChange
-                    // TODO: Register the callback correctly.
-                    (newScreenExpression) -> {},
-//                    (newScreenExpression) ->
-//                            expressionState.modifyExpression(exprId, newScreenExpression),
-                    // onDetach
-                    rootView::removeView);
-
+            AtomicReference<LinearLayout> viewReference = new AtomicReference<>();
             dragEvents.subscribe(event -> {
                 switch (event.getAction()) {
-                    case DOWN:
+                    case DOWN: {
+                        TopLevelExpressionController expressionController = dragSource.handleStartDrag();
+                        LinearLayout view = expressionController.getView().getNativeView();
+                        viewReference.set(view);
+                        Point screenPos = expressionController.getView().getScreenPos();
+                        rootView.addView(view, Views.layoutParamsForScreenPosition(
+                                rootView, screenPos));
+                        expressionController.setCallbacks(
+                                // onChange
+                                // TODO: Register the callback correctly.
+                                (newScreenExpression) -> {
+                                },
+//                    (newScreenExpression) ->
+//                            expressionState.modifyExpression(exprId, newScreenExpression),
+                                // onDetach
+                                rootView::removeView);
+
                         view.animate().setDuration(100)
                                 .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
-                        // Fall through.
+                    }
                     case MOVE: {
-                        setViewScreenPos(view, event.getScreenPos());
+                        LinearLayout view = viewReference.get();
+                        if (view == null) {
+                            break;
+                        }
+                        view.setLayoutParams(Views.layoutParamsForScreenPosition(
+                                rootView, event.getScreenPos()));
                         break;
                     }
                     case UP:
+                        LinearLayout view = viewReference.get();
+                        if (view == null) {
+                            break;
+                        }
                         view.animate().setDuration(100)
                                 .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
                         break;
                 }
             });
         });
-    }
-
-    private void setViewScreenPos(LinearLayout view, Point screenPos) {
-        Point relativePos = screenPos.minus(Views.getScreenPos(rootView));
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.leftMargin = relativePos.getX();
-        layoutParams.topMargin = relativePos.getY();
-        view.setLayoutParams(layoutParams);
     }
 }
