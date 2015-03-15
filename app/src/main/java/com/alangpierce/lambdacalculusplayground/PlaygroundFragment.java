@@ -82,9 +82,9 @@ public class PlaygroundFragment extends Fragment {
         rootLayout.setLayoutParams(rootLayoutParams);
 
         PlaygroundComponent component = Dagger_PlaygroundComponent.builder()
-                .playgroundModule(new PlaygroundModule(getActivity())).build();
+                .playgroundModule(new PlaygroundModule(getActivity(), rootLayout)).build();
         ExpressionControllerFactory expressionControllerFactory =
-                component.getExpressionControllerFactoryFactory().create(rootLayout);
+                component.getExpressionControllerFactory();
 
         for (Entry<Integer, ScreenExpression> entry : expressions.entrySet()) {
             int exprId = entry.getKey();

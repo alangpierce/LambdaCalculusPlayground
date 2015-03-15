@@ -39,14 +39,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         this.dragSourceRegistry = dragSourceRegistry;
     }
 
-    public static ExpressionControllerFactoryFactory createFactory(
-            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry, DragSourceRegistry dragSourceRegistry) {
-        return (rootView) -> new ExpressionControllerFactoryImpl(
-                rootView, viewRenderer, dragObservableGenerator, dropTargetRegistry,
-                dragSourceRegistry);
-    }
-
     @Override
     public TopLevelExpressionController createTopLevelController(
             ScreenExpression screenExpression) {
