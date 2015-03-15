@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 
 import rx.Observable;
+import rx.Subscription;
 
 public interface DragSource {
     /**
@@ -14,6 +15,9 @@ public interface DragSource {
     /**
      * Called when a drag event starts. The DragSource should do whatever steps are necessary to
      * produce and register the top-level expression to be dragged, then return it.
+     *
+     * The observable subscription is provided to allow the handler to indicate that we should no
+     * longer care about events from the drag source.
      */
-    TopLevelExpressionController handleStartDrag();
+    TopLevelExpressionController handleStartDrag(Subscription subscription);
 }

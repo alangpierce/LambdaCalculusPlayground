@@ -16,6 +16,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import rx.Observable;
+import rx.Subscription;
 
 public class LambdaExpressionController implements ExpressionController {
     private final ExpressionControllerFactory controllerFactory;
@@ -72,7 +73,8 @@ public class LambdaExpressionController implements ExpressionController {
             return view.getBodyObservable();
         }
         @Override
-        public TopLevelExpressionController handleStartDrag() {
+        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+            subscription.unsubscribe();
             ExpressionView bodyView = view.detachBody();
             // TODO: Call handleBodyChange(null) in a way that works.
             return controllerFactory.wrapInTopLevelController(
@@ -87,7 +89,7 @@ public class LambdaExpressionController implements ExpressionController {
             return view.getParameterObservable();
         }
         @Override
-        public TopLevelExpressionController handleStartDrag() {
+        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
             return controllerFactory.createTopLevelController(ScreenExpression.create(
                     new UserVariable(userLambda.varName), view.getScreenPos()));
         }

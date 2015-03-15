@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscription;
 
 public class FuncCallExpressionController implements ExpressionController {
     private final ExpressionControllerFactory controllerFactory;
@@ -73,7 +74,8 @@ public class FuncCallExpressionController implements ExpressionController {
             return view.getArgObservable();
         }
         @Override
-        public TopLevelExpressionController handleStartDrag() {
+        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+            subscription.unsubscribe();
             ExpressionView argView = view.detachArg();
             return controllerFactory.wrapInTopLevelController(
                     argController,

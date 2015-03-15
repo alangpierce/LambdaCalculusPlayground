@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
+import rx.Subscription;
 
 public class DragSourceManagerImpl implements DragManager {
     private final List<DragSource> dragSources = Collections.synchronizedList(Lists.newArrayList());
@@ -20,12 +21,14 @@ public class DragSourceManagerImpl implements DragManager {
         Observable<? extends Observable<PointerMotionEvent>> dragObservable =
                 dragSource.getDragObservable();
 
-        dragObservable.subscribe(dragEvents -> {
+        AtomicReference<Subscription> subscription = new AtomicReference<>();
+        subscription.set(dragObservable.subscribe(dragEvents -> {
             AtomicReference<TopLevelExpressionView> viewReference = new AtomicReference<>();
             dragEvents.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
-                        TopLevelExpressionController expressionController = dragSource.handleStartDrag();
+                        TopLevelExpressionController expressionController =
+                                dragSource.handleStartDrag(subscription.get());
                         TopLevelExpressionView view = expressionController.getView();
                         viewReference.set(view);
                         view.attachToRoot();
@@ -54,6 +57,6 @@ public class DragSourceManagerImpl implements DragManager {
                     }
                 }
             });
-        });
+        }));
     }
 }

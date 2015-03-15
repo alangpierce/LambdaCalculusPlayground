@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscription;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
     private final TopLevelExpressionView view;
@@ -51,7 +52,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             return view.getExpressionObservable();
         }
         @Override
-        public TopLevelExpressionController handleStartDrag() {
+        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
             view.detachFromRoot();
             return TopLevelExpressionControllerImpl.this;
         }
