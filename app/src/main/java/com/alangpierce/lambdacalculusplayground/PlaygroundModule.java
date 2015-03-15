@@ -12,11 +12,11 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistryImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistry;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistryImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -26,20 +26,27 @@ import dagger.Provides;
 public class PlaygroundModule {
     private final Activity activity;
     private final RelativeLayout rootView;
+    private final TopLevelExpressionState expressionState;
 
-    public PlaygroundModule(Activity activity, RelativeLayout rootView) {
+    public PlaygroundModule(Activity activity, RelativeLayout rootView,
+            TopLevelExpressionState expressionState) {
         this.activity = activity;
         this.rootView = rootView;
+        this.expressionState = expressionState;
     }
 
     @Provides Activity provideActivity() {
         return activity;
     }
 
-    @interface RootView {}
-
+    @Qualifier @interface RootView {}
     @Provides @RootView RelativeLayout provideRootView() {
         return rootView;
+    }
+
+    @Provides @Singleton
+    TopLevelExpressionState provideTopLevelExpressionState() {
+        return expressionState;
     }
 
     @Provides @Singleton
@@ -67,6 +74,13 @@ public class PlaygroundModule {
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(Activity activity) {
         return new ExpressionViewRendererImpl(activity);
+    }
+
+    @Provides
+    TopLevelExpressionManager provideTopLevelExpressionManager(
+            TopLevelExpressionState expressionState, @RootView RelativeLayout rootView,
+            ExpressionControllerFactory controllerFactory) {
+        return new TopLevelExpressionManagerImpl(expressionState, rootView, controllerFactory);
     }
 
     @Provides

@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;

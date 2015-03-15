@@ -1,13 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nullable;
 
 import rx.Observable;
 

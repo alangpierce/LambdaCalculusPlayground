@@ -8,11 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     private final Context context;

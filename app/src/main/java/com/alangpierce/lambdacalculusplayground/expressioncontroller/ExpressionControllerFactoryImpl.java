@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;

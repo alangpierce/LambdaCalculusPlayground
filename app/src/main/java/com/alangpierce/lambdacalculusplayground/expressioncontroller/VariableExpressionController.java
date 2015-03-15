@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.widget.LinearLayout;
-
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;

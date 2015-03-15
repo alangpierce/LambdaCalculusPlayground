@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;

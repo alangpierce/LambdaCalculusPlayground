@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
