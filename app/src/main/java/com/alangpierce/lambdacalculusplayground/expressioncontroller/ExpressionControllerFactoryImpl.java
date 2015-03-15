@@ -53,7 +53,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 LambdaView view = LambdaView.render(
                         dragObservableGenerator, viewRenderer, lambda.varName,
                         bodyController != null ? bodyController.getView().getNativeView() : null);
-                LambdaExpressionController result = new LambdaExpressionController(view, lambda);
+                LambdaExpressionController result = new LambdaExpressionController(
+                        ExpressionControllerFactoryImpl.this, view, lambda);
                 for (DragSource dragSource : result.getDragSources()) {
                     dragManager.registerDragSource(dragSource);
                 }
