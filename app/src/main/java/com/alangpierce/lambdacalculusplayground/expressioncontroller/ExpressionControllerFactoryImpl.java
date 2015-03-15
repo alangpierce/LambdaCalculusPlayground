@@ -101,7 +101,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             public ExpressionController visit(UserVariable variable) {
                 VariableView view = VariableView.render(dragObservableGenerator, viewRenderer,
                         variable.varName);
-                return new VariableExpressionController(view);
+                return new VariableExpressionController(view, variable);
             }
         });
     }

@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import java.util.List;
 
 public interface ExpressionController {
+    UserExpression getExpression();
     ExpressionView getView();
     void setOnChangeCallback(OnChangeCallback onChangeCallback);
     /*
@@ -18,12 +19,10 @@ public interface ExpressionController {
     List<DropTarget> getDropTargets();
 
     /**
-     * Callback used for expressions to propagate changes in the actual backing UserExpression. For
-     * example, dragging an expression out of a larger expression will cause OnChange to propagate
-     * up to the top level, where it will be stored in the fragment's state and stored to the bundle
-     * if necessary.
+     * Callback for expressions to propagate changes, which include changes to the backing model,
+     * the display, and the callback hooks.
      */
     interface OnChangeCallback {
-        void onChange(UserExpression newExpression);
+        void onChange(ExpressionController newController);
     }
 }

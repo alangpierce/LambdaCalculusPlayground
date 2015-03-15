@@ -7,11 +7,12 @@ import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import java.util.List;
 
 public interface TopLevelExpressionController {
+    ScreenExpression getScreenExpression();
     TopLevelExpressionView getView();
     void setOnChangeCallback(OnTopLevelChangeCallback onChangeCallback);
     List<DragSource> getDragSources();
 
     interface OnTopLevelChangeCallback {
-        void onChange(ScreenExpression newScreenExpression);
+        void onChange(TopLevelExpressionController newExpressionController);
     }
 }

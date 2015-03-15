@@ -2,6 +2,8 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
 import com.google.common.collect.ImmutableList;
@@ -10,11 +12,18 @@ import java.util.List;
 
 public class VariableExpressionController implements ExpressionController {
     private final VariableView view;
+    private final UserVariable userVariable;
 
     private OnChangeCallback onChangeCallback;
 
-    public VariableExpressionController(VariableView view) {
+    public VariableExpressionController(VariableView view, UserVariable userVariable) {
         this.view = view;
+        this.userVariable = userVariable;
+    }
+
+    @Override
+    public UserExpression getExpression() {
+        return userVariable;
     }
 
     @Override

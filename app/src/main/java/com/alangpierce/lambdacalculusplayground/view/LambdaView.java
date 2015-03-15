@@ -28,25 +28,30 @@ public class
 
     // If null, then we should present a placeholder view instead.
     private @Nullable ExpressionView bodyView;
+    // Always non-null, and may be a placeholder.
+    private View bodyNativeView;
 
     public LambdaView(
             DragObservableGenerator dragObservableGenerator, ExpressionViewRenderer renderer,
-            LinearLayout view, View parameterView, @Nullable ExpressionView bodyView) {
+            LinearLayout view, View parameterView, @Nullable ExpressionView bodyView,
+            View bodyNativeView) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.renderer = renderer;
         this.view = view;
         this.parameterView = parameterView;
         this.bodyView = bodyView;
+        this.bodyNativeView = bodyNativeView;
     }
 
     public static LambdaView render(DragObservableGenerator dragObservableGenerator,
             ExpressionViewRenderer renderer, String varName, @Nullable ExpressionView bodyView) {
         View parameterView = renderer.makeTextView(varName);
+        View bodyNativeView =
+                bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView();
         LinearLayout mainView = renderer.makeLinearLayoutWithChildren(ImmutableList.of(
-                renderer.makeTextView("λ"),
-                parameterView,
-                bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView()));
-        return new LambdaView(dragObservableGenerator, renderer, mainView, parameterView, bodyView);
+                renderer.makeTextView("λ"), parameterView, bodyNativeView));
+        return new LambdaView(dragObservableGenerator, renderer, mainView, parameterView, bodyView,
+                bodyNativeView);
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
@@ -68,13 +73,14 @@ public class
         return Views.getScreenPos(view);
     }
 
-    /**
-     * Detach the body from this view and return it.
-     */
-    public ExpressionView detachBody() {
-        Preconditions.checkState(bodyView != null);
-        view.removeView(bodyView.getNativeView());
-        view.addView(renderer.makeMissingBodyView());
-        return bodyView;
+    public void handleBodyChange(@Nullable ExpressionView newBody) {
+        view.removeView(bodyNativeView);
+        bodyView = newBody;
+        if (newBody == null) {
+            bodyNativeView = renderer.makeMissingBodyView();
+        } else {
+            bodyNativeView = newBody.getNativeView();
+        }
+        view.addView(bodyNativeView);
     }
 }

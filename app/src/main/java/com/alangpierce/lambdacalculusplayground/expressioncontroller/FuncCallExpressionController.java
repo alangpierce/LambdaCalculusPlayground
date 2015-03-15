@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -39,6 +40,11 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     @Override
+    public UserExpression getExpression() {
+        return userFuncCall;
+    }
+
+    @Override
     public ExpressionView getView() {
         return view;
     }
@@ -58,14 +64,15 @@ public class FuncCallExpressionController implements ExpressionController {
         return ImmutableList.of();
     }
 
-    public void handleFuncChange(UserExpression newFunc) {
-        userFuncCall = new UserFuncCall(newFunc, userFuncCall.arg);
-        onChangeCallback.onChange(userFuncCall);
+    public void handleFuncChange(ExpressionController newFuncController) {
+        userFuncCall = new UserFuncCall(newFuncController.getExpression(), userFuncCall.arg);
+        onChangeCallback.onChange(this);
     }
 
-    public void handleArgChange(UserExpression newArg) {
-        userFuncCall = new UserFuncCall(userFuncCall.func, newArg);
-        onChangeCallback.onChange(userFuncCall);
+    public void handleArgChange(ExpressionController newArgController) {
+        // TODO: Support removing args.
+        userFuncCall = new UserFuncCall(userFuncCall.func, newArgController.getExpression());
+        onChangeCallback.onChange(this);
     }
 
     private class ArgDragSource implements DragSource {

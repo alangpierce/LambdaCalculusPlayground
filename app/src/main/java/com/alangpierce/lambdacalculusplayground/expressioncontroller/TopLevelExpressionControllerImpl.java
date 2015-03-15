@@ -26,6 +26,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
+    public ScreenExpression getScreenExpression() {
+        return screenExpression;
+    }
+
+    @Override
     public TopLevelExpressionView getView() {
         return view;
     }
@@ -35,10 +40,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         this.onChangeCallback = onChangeCallback;
     }
 
-    public void handleExprChange(UserExpression userExpression) {
+    public void handleExprChange(ExpressionController newExpressionController) {
+        UserExpression newExpression = newExpressionController.getExpression();
         screenExpression =
-                ScreenExpression.create(userExpression, screenExpression.getScreenCoords());
-        onChangeCallback.onChange(screenExpression);
+                ScreenExpression.create(newExpression, screenExpression.getScreenCoords());
+        onChangeCallback.onChange(this);
     }
 
     @Override

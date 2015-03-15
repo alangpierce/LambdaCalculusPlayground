@@ -45,8 +45,9 @@ public class TopLevelExpressionManagerImpl
                 controllerFactory.createTopLevelController(screenExpression);
         controller.setOnChangeCallback(
                 // onChange
-                (newScreenExpression) ->
-                        expressionState.modifyExpression(exprId, newScreenExpression));
+                (newController) ->
+                        expressionState.modifyExpression(
+                                exprId, newController.getScreenExpression()));
         controller.getView().attachToRoot(screenExpression.getScreenCoords());
         return controller;
     }
