@@ -12,7 +12,8 @@ import javax.annotation.Nullable;
 import rx.Observable;
 
 /**
- * Lambda views need to be able to
+ * Lambda views need to be able to expose the different subcomponents (parameter and body) and their
+ * state.
  */
 public class LambdaView implements ExpressionView {
     private final DragObservableGenerator dragObservableGenerator;

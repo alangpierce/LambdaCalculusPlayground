@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -28,7 +27,7 @@ public class DragSourceRegistryImpl implements DragSourceRegistry {
     @Override
     public void registerDragSource(RelativeLayout rootView, DragSource dragSource) {
         Observable<? extends Observable<PointerMotionEvent>> dragObservable =
-                dragObservableGenerator.getDragObservable(dragSource.getDragSourceView());
+                dragSource.getDragObservable();
         dragObservable.subscribe(eventObservable -> {
             dragSource.handleStartDrag(rootView, eventObservable)
                     // TODO: Actually do something here.

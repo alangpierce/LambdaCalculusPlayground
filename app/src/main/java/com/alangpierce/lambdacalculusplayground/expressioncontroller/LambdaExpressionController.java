@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
@@ -65,8 +64,8 @@ public class LambdaExpressionController implements ExpressionController {
 
     private class BodyDragSource implements DragSource {
         @Override
-        public View getDragSourceView() {
-            return view.getNativeView();
+        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
+            return view.getWholeViewObservable();
         }
         @Override
         public Observable<DragPacket> handleStartDrag(
@@ -103,7 +102,7 @@ public class LambdaExpressionController implements ExpressionController {
 
     private class ParameterDragSource implements DragSource {
         @Override
-        public View getDragSourceView() {
+        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
             return null;
         }
         @Override

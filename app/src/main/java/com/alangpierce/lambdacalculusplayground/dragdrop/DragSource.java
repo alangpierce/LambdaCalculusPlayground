@@ -11,7 +11,7 @@ public interface DragSource {
     /**
      * Return the view that can be used to initiate a drag operation with this drag source.
      */
-    View getDragSourceView();
+    Observable<? extends Observable<PointerMotionEvent>> getDragObservable();
 
     /**
      * Called when a drag event starts. The DragSource should deal with the dragging of the actual
