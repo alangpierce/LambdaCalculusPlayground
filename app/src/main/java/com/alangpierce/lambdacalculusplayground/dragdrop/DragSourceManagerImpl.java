@@ -3,7 +3,6 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
@@ -15,18 +14,13 @@ import java.util.List;
 import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
 
-public class DragSourceRegistryImpl implements DragSourceRegistry {
-    private final DragObservableGenerator dragObservableGenerator;
-    private final DropTargetRegistry dropTargetRegistry;
+public class DragSourceManagerImpl implements DragManager {
     private final RelativeLayout rootView;
 
     private final List<DragSource> dragSources = Collections.synchronizedList(Lists.newArrayList());
+    private final List<DropTarget> dropTargets = Collections.synchronizedList(Lists.newArrayList());
 
-    public DragSourceRegistryImpl(
-            DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry, RelativeLayout rootView) {
-        this.dragObservableGenerator = dragObservableGenerator;
-        this.dropTargetRegistry = dropTargetRegistry;
+    public DragSourceManagerImpl(RelativeLayout rootView) {
         this.rootView = rootView;
     }
 

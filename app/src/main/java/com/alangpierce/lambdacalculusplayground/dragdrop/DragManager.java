@@ -1,5 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
-public interface DragSourceRegistry {
+public interface DragManager {
     void registerDragSource(DragSource dragSource);
 }

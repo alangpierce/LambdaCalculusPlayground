@@ -7,10 +7,8 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistry;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistryImpl;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistry;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistryImpl;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
@@ -61,14 +59,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    DropTargetRegistry provideDropTargetRegistry() {
-        return new DropTargetRegistryImpl();
-    }
-
-    @Provides @Singleton
-    DragSourceRegistry provideDragSourceRegistry(DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry, @RootView RelativeLayout rootView) {
-        return new DragSourceRegistryImpl(dragObservableGenerator, dropTargetRegistry, rootView);
+    DragManager provideDragSourceRegistry(@RootView RelativeLayout rootView) {
+        return new DragSourceManagerImpl(rootView);
     }
 
     @Provides
@@ -86,8 +78,8 @@ public class PlaygroundModule {
     @Provides
     ExpressionControllerFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry, DragSourceRegistry dragSourceRegistry) {
+            DragManager dragManager) {
         return new ExpressionControllerFactoryImpl(viewRenderer, dragObservableGenerator,
-                dropTargetRegistry, dragSourceRegistry);
+                dragManager);
     }
 }

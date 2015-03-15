@@ -2,9 +2,8 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistry;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistry;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression.UserExpressionVisitor;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -20,18 +19,15 @@ import javax.annotation.Nullable;
 public class ExpressionControllerFactoryImpl implements ExpressionControllerFactory {
     private final ExpressionViewRenderer viewRenderer;
     private final DragObservableGenerator dragObservableGenerator;
-    private final DropTargetRegistry dropTargetRegistry;
-    private final DragSourceRegistry dragSourceRegistry;
+    private final DragManager dragManager;
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry,
-            DragSourceRegistry dragSourceRegistry) {
+            DragManager dragManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
-        this.dropTargetRegistry = dropTargetRegistry;
-        this.dragSourceRegistry = dragSourceRegistry;
+        this.dragManager = dragManager;
     }
 
     @Override
@@ -59,7 +55,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         bodyController != null ? bodyController.getView().getNativeView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(view, lambda);
                 for (DragSource dragSource : result.getDragSources()) {
-                    dragSourceRegistry.registerDragSource(dragSource);
+                    dragManager.registerDragSource(dragSource);
                 }
 
                 if (bodyController != null) {
