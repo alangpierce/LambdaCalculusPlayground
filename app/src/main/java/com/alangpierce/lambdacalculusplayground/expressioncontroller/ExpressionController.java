@@ -10,6 +10,10 @@ import java.util.List;
 public interface ExpressionController {
     ExpressionView getView();
     void setOnChangeCallback(OnChangeCallback onChangeCallback);
+    /*
+     * TODO: This has questionable value, currently. Either refactor things so we always register
+     * drag souces in a shared way, or just do it in each case.
+     */
     List<DragSource> getDragSources();
     List<DropTarget> getDropTargets();
 

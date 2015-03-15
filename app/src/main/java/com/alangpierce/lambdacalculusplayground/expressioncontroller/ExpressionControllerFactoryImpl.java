@@ -74,7 +74,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 for (DragSource dragSource : result.getDragSources()) {
                     dragManager.registerDragSource(dragSource);
                 }
-
                 if (bodyController != null) {
                     bodyController.setOnChangeCallback(result::handleBodyChange);
                 }
@@ -91,6 +90,9 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 FuncCallExpressionController result =
                         new FuncCallExpressionController(ExpressionControllerFactoryImpl.this, view,
                                 argController, funcCall);
+                for (DragSource dragSource : result.getDragSources()) {
+                    dragManager.registerDragSource(dragSource);
+                }
                 funcController.setOnChangeCallback(result::handleFuncChange);
                 argController.setOnChangeCallback(result::handleArgChange);
                 return result;
