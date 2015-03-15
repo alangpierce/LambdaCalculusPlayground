@@ -3,11 +3,18 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
+import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 public class FuncCallExpressionController implements ExpressionController {
-    private final LinearLayout view;
+    private final FuncCallView view;
 
     /*
      * State kept by this class. Since this class corresponds to an actual Android view, we need to
@@ -17,13 +24,13 @@ public class FuncCallExpressionController implements ExpressionController {
     private OnChangeCallback onChangeCallback;
     private OnDetachCallback onDetachCallback;
 
-    public FuncCallExpressionController(LinearLayout view, UserFuncCall userFuncCall) {
+    public FuncCallExpressionController(FuncCallView view, UserFuncCall userFuncCall) {
         this.view = view;
         this.userFuncCall = userFuncCall;
     }
 
     @Override
-    public LinearLayout getView() {
+    public ExpressionView getView() {
         return view;
     }
 
@@ -33,13 +40,23 @@ public class FuncCallExpressionController implements ExpressionController {
         this.onDetachCallback = onDetachCallback;
     }
 
+    @Override
+    public List<DragSource> getDragSources() {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public List<DropTarget> getDropTargets() {
+        return ImmutableList.of();
+    }
+
     public void handleFuncDetach(View viewToDetach) {
-        view.removeView(viewToDetach);
+        view.getNativeView().removeView(viewToDetach);
         handleFuncChange(null);
     }
 
     public void handleArgDetach(View viewToDetach) {
-        view.removeView(viewToDetach);
+        view.getNativeView().removeView(viewToDetach);
         handleArgChange(null);
     }
 
@@ -51,13 +68,5 @@ public class FuncCallExpressionController implements ExpressionController {
     public void handleArgChange(UserExpression newArg) {
         userFuncCall = new UserFuncCall(userFuncCall.func, newArg);
         onChangeCallback.onChange(userFuncCall);
-    }
-
-    private void receiveFunc(ExpressionController newFunc) {
-        view.addView(newFunc.getView(), 0);
-    }
-
-    private void receiveArg(ExpressionController newArg) {
-        view.addView(newArg.getView(), 1);
     }
 }

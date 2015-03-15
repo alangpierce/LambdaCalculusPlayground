@@ -108,6 +108,6 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         expressionParams.leftMargin = screenExpression.x;
         expressionParams.topMargin = screenExpression.y;
-        rootLayout.addView(controller.getView(), expressionParams);
+        rootLayout.addView(controller.getView().getNativeView(), expressionParams);
     }
 }

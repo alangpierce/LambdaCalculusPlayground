@@ -4,9 +4,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 
 public interface TopLevelExpressionController {
-    LinearLayout getView();
+    ExpressionView getView();
     void setCallbacks(OnTopLevelChangeCallback onChangeCallback,
                       OnTopLevelDetachCallback onDetachCallback);
 

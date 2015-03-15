@@ -6,12 +6,14 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistry;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSourceRegistryImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistry;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTargetRegistryImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionViewRenderer;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionViewRendererImpl;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 
 import javax.inject.Singleton;
 
@@ -46,6 +48,12 @@ public class PlaygroundModule {
         return new DropTargetRegistryImpl();
     }
 
+    @Provides @Singleton
+    DragSourceRegistry provideDragSourceRegistry(DragObservableGenerator dragObservableGenerator,
+            DropTargetRegistry dropTargetRegistry) {
+        return new DragSourceRegistryImpl(dragObservableGenerator, dropTargetRegistry);
+    }
+
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(Activity activity) {
         return new ExpressionViewRendererImpl(activity);
@@ -54,8 +62,8 @@ public class PlaygroundModule {
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactoryFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry) {
+            DropTargetRegistry dropTargetRegistry, DragSourceRegistry dragSourceRegistry) {
         return ExpressionControllerFactoryImpl.createFactory(
-                viewRenderer, dragObservableGenerator, dropTargetRegistry);
+                viewRenderer, dragObservableGenerator, dropTargetRegistry, dragSourceRegistry);
     }
 }

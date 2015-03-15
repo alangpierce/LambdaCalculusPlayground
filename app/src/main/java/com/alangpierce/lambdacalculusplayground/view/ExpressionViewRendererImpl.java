@@ -1,4 +1,4 @@
-package com.alangpierce.lambdacalculusplayground.expressioncontroller;
+package com.alangpierce.lambdacalculusplayground.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -22,25 +22,7 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     }
 
     @Override
-    public LinearLayout makeVariableView(String varName) {
-        return makeLinearLayoutWithChildren(ImmutableList.of(makeTextView(varName)));
-    }
-
-    @Override
-    public LinearLayout makeLambdaView(String varName, @Nullable LinearLayout body) {
-        return makeLinearLayoutWithChildren(ImmutableList.of(
-                makeTextView("λ"),
-                makeTextView(varName),
-                body != null ? body : makeMissingBodyView()
-        ));
-    }
-
-    @Override
-    public LinearLayout makeFuncCallView(LinearLayout func, LinearLayout arg) {
-        return makeLinearLayoutWithChildren(ImmutableList.of(func, arg));
-    }
-
-    private LinearLayout makeLinearLayoutWithChildren(List<View> children) {
+    public LinearLayout makeLinearLayoutWithChildren(List<View> children) {
         LinearLayout result = new LinearLayout(context);
         for (View child : children) {
             result.addView(child);
@@ -48,7 +30,8 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         return styleLayout(result);
     }
 
-    private TextView makeTextView(String text) {
+    @Override
+    public TextView makeTextView(String text) {
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setTextSize(30);
@@ -59,7 +42,8 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         return textView;
     }
 
-    private LinearLayout styleLayout(final LinearLayout layout) {
+    @Override
+    public LinearLayout styleLayout(final LinearLayout layout) {
         layout.setBackgroundColor(Color.WHITE);
         layout.setPadding(3, 3, 3, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -72,7 +56,8 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         return layout;
     }
 
-    private LinearLayout makeMissingBodyView() {
+    @Override
+    public LinearLayout makeMissingBodyView() {
         LinearLayout layout = new LinearLayout(context);
         layout.setBackgroundColor(0x44FF0000);
         layout.setPadding(3, 3, 3, 3);

@@ -5,21 +5,23 @@ import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
-    private final LinearLayout view;
+    private final ExpressionView view;
 
     private ScreenExpression screenExpression;
     private OnTopLevelChangeCallback onChangeCallback;
     private OnTopLevelDetachCallback onDetachCallback;
 
-    public TopLevelExpressionControllerImpl(LinearLayout view, ScreenExpression screenExpression) {
+    public TopLevelExpressionControllerImpl(ExpressionView view,
+            ScreenExpression screenExpression) {
         this.view = view;
         this.screenExpression = screenExpression;
     }
 
     @Override
-    public LinearLayout getView() {
+    public ExpressionView getView() {
         return view;
     }
 

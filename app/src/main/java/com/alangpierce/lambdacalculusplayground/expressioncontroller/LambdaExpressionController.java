@@ -7,21 +7,27 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragPacket;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
+import com.alangpierce.lambdacalculusplayground.view.LambdaView;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 import rx.Observable;
 
 public class LambdaExpressionController implements ExpressionController {
-    private final LinearLayout view;
+    private final LambdaView view;
 
     private UserLambda userLambda;
     private OnChangeCallback onChangeCallback;
     private OnDetachCallback onDetachCallback;
 
-    public LambdaExpressionController(LinearLayout view, UserLambda userLambda) {
+    public LambdaExpressionController(LambdaView view, UserLambda userLambda) {
         this.view = view;
         this.userLambda = userLambda;
     }
@@ -33,12 +39,22 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
-    public LinearLayout getView() {
+    public List<DragSource> getDragSources() {
+        return ImmutableList.of(new BodyDragSource());
+    }
+
+    @Override
+    public List<DropTarget> getDropTargets() {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public ExpressionView getView() {
         return view;
     }
 
     public void handleBodyDetach(View viewToDetach) {
-        view.removeView(viewToDetach);
+        view.getNativeView().removeView(viewToDetach);
         handleBodyChange(null);
     }
 
@@ -47,43 +63,58 @@ public class LambdaExpressionController implements ExpressionController {
         onChangeCallback.onChange(userLambda);
     }
 
-    public DragSource getDragSource() {
-        return new DragSource() {
-            @Override
-            public View getDragSourceView() {
-                return view;
-            }
-            @Override
-            public Observable<DragPacket> handleStartDrag(
-                    RelativeLayout rootView, Observable<PointerMotionEvent> dragEvents) {
-                return dragEvents.map(event -> {
-                    switch (event.getAction()) {
-                        case DOWN: {
-                            onDetachCallback.onDetach(view);
-                            setViewScreenPos(rootView, event.getScreenPos());
-                            rootView.addView(view);
-                            view.animate().setDuration(100)
-                                    .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
-                            break;
-                        }
-                        case MOVE: {
-                            setViewScreenPos(rootView, event.getScreenPos());
-                            break;
-                        }
-                        case UP:
-                            view.animate().setDuration(100)
-                                    .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
-                            break;
+    private class BodyDragSource implements DragSource {
+        @Override
+        public View getDragSourceView() {
+            return view.getNativeView();
+        }
+        @Override
+        public Observable<DragPacket> handleStartDrag(
+                RelativeLayout rootView, Observable<PointerMotionEvent> dragEvents) {
+            return dragEvents.map(event -> {
+                switch (event.getAction()) {
+                    case DOWN: {
+                        onDetachCallback.onDetach(view.getNativeView());
+                        setViewScreenPos(rootView, event.getScreenPos());
+                        rootView.addView(view.getNativeView());
+                        view.getNativeView().animate().setDuration(100)
+                                .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
+                        break;
                     }
-                    return DragPacket.create(
-                            Views.getBoundingBox(view), LambdaExpressionController.this);
-                });
-            }
-            @Override
-            public void handleCommit() {
-                // TODO: Detach the data here and the view elsewhere.
-            }
-        };
+                    case MOVE: {
+                        setViewScreenPos(rootView, event.getScreenPos());
+                        break;
+                    }
+                    case UP:
+                        view.getNativeView().animate().setDuration(100)
+                                .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
+                        break;
+                }
+                return DragPacket.create(
+                        Views.getBoundingBox(view.getNativeView()),
+                        LambdaExpressionController.this);
+            });
+        }
+        @Override
+        public void handleCommit() {
+            // TODO: Detach the data here and the view elsewhere.
+        }
+    }
+
+    private class ParameterDragSource implements DragSource {
+        @Override
+        public View getDragSourceView() {
+            return null;
+        }
+        @Override
+        public Observable<DragPacket> handleStartDrag(RelativeLayout rootView,
+                Observable<PointerMotionEvent> dragEvents) {
+            return null;
+        }
+        @Override
+        public void handleCommit() {
+            // No further data changes needed.
+        }
     }
 
     private void setViewScreenPos(RelativeLayout rootView, Point screenPos) {
@@ -92,6 +123,6 @@ public class LambdaExpressionController implements ExpressionController {
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.leftMargin = relativePos.getX();
         layoutParams.topMargin = relativePos.getY();
-        view.setLayoutParams(layoutParams);
+        view.getNativeView().setLayoutParams(layoutParams);
     }
 }

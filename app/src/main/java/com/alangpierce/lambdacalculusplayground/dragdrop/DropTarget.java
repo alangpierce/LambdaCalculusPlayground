@@ -26,7 +26,7 @@ public interface DropTarget {
     void handleExit();
 
     /**
-     * Update the display and data to indicate that the expressoin was dropped.
+     * Update the display and data to indicate that the expression was dropped.
      */
     void handleDrop(ExpressionController expressionController);
 }

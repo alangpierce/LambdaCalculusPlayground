@@ -3,11 +3,18 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
+
+import java.util.List;
 
 public interface ExpressionController {
-    LinearLayout getView();
+    ExpressionView getView();
     void setCallbacks(OnChangeCallback onChangeCallback, OnDetachCallback onDetachCallback);
+    List<DragSource> getDragSources();
+    List<DropTarget> getDropTargets();
 
     /**
      * Callback used for expressions to propagate changes in the actual backing UserExpression. For
