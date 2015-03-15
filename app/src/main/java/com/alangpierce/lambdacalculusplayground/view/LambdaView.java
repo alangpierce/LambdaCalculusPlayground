@@ -21,6 +21,7 @@ import rx.Observable;
 public class
         LambdaView implements ExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
+    private final ExpressionViewRenderer renderer;
 
     private final LinearLayout view;
     private final View parameterView;
@@ -29,9 +30,10 @@ public class
     private @Nullable ExpressionView bodyView;
 
     public LambdaView(
-            DragObservableGenerator dragObservableGenerator, LinearLayout view,
-            View parameterView, @Nullable ExpressionView bodyView) {
+            DragObservableGenerator dragObservableGenerator, ExpressionViewRenderer renderer,
+            LinearLayout view, View parameterView, @Nullable ExpressionView bodyView) {
         this.dragObservableGenerator = dragObservableGenerator;
+        this.renderer = renderer;
         this.view = view;
         this.parameterView = parameterView;
         this.bodyView = bodyView;
@@ -44,7 +46,7 @@ public class
                 renderer.makeTextView("λ"),
                 parameterView,
                 bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView()));
-        return new LambdaView(dragObservableGenerator, mainView, parameterView, bodyView);
+        return new LambdaView(dragObservableGenerator, renderer, mainView, parameterView, bodyView);
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
@@ -72,6 +74,7 @@ public class
     public ExpressionView detachBody() {
         Preconditions.checkState(bodyView != null);
         view.removeView(bodyView.getNativeView());
+        view.addView(renderer.makeMissingBodyView());
         return bodyView;
     }
 }
