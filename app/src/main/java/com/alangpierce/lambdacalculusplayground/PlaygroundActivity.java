@@ -12,6 +12,7 @@ import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.google.common.collect.ImmutableList;
@@ -48,9 +49,11 @@ public class PlaygroundActivity extends ActionBarActivity {
             Expression trueExpr = new Lambda("t", new Lambda("f", new Variable("t")));
 
             List<ScreenExpression> expressions = ImmutableList.of(
-                    new ScreenExpression(UserExpressions.fromExpression(trueExpr), 200, 200),
-                    new ScreenExpression(UserExpressions.fromExpression(yCombinator), 100, 400),
-                    new ScreenExpression(new UserLambda("x", null), 150, 600));
+                    ScreenExpression.create(
+                            UserExpressions.fromExpression(trueExpr), Point.create(200, 200)),
+                    ScreenExpression.create(
+                            UserExpressions.fromExpression(yCombinator),Point.create(100, 400)),
+                    ScreenExpression.create(new UserLambda("x", null), Point.create(150, 600)));
             Fragment fragment = PlaygroundFragment.create(expressions);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }

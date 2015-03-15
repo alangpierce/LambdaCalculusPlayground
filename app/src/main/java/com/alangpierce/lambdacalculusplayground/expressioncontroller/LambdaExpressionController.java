@@ -1,14 +1,12 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.view.View;
-import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.ScreenExpression;
+import com.alangpierce.lambdacalculusplayground.TopLevelExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragPacket;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -25,6 +23,7 @@ public class LambdaExpressionController implements ExpressionController {
     private UserLambda userLambda;
     private OnChangeCallback onChangeCallback;
     private OnDetachCallback onDetachCallback;
+    private TopLevelExpressionCreator topLevelExpressionCreator;
 
     public LambdaExpressionController(LambdaView view, UserLambda userLambda) {
         this.view = view;
@@ -39,7 +38,7 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
-        return ImmutableList.of(new BodyDragSource(), new ParameterDragSource());
+        return ImmutableList.of(new BodyDragSource());
     }
 
     @Override
@@ -67,83 +66,15 @@ public class LambdaExpressionController implements ExpressionController {
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
             return view.getWholeViewObservable();
         }
-        @Override
-        public Observable<DragPacket> handleStartDrag(
-                RelativeLayout rootView, Observable<PointerMotionEvent> dragEvents) {
-            return dragEvents.map(event -> {
-                switch (event.getAction()) {
-                    case DOWN: {
-                        onDetachCallback.onDetach(view.getNativeView());
-                        setViewScreenPos(rootView, event.getScreenPos());
-                        rootView.addView(view.getNativeView());
-                        view.getNativeView().animate().setDuration(100)
-                                .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
-                        break;
-                    }
-                    case MOVE: {
-                        setViewScreenPos(rootView, event.getScreenPos());
-                        break;
-                    }
-                    case UP:
-                        view.getNativeView().animate().setDuration(100)
-                                .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
-                        break;
-                }
-                return DragPacket.create(
-                        Views.getBoundingBox(view.getNativeView()),
-                        LambdaExpressionController.this);
-            });
-        }
-        @Override
-        public void handleCommit() {
-            // TODO: Detach the data here and the view elsewhere.
-        }
-    }
 
-    private class ParameterDragSource implements DragSource {
         @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return view.getParameterObservable();
+        public TopLevelExpressionController handleStartDrag() {
+            onDetachCallback.onDetach(view.getNativeView());
+            TopLevelExpressionControllerImpl result =
+                    new TopLevelExpressionControllerImpl(
+                            view, ScreenExpression.create(userLambda, view.getScreenPos()));
+            setCallbacks(result::handleExprChange, result::handleExprDetach);
+            return result;
         }
-        @Override
-        public Observable<DragPacket> handleStartDrag(RelativeLayout rootView,
-                Observable<PointerMotionEvent> dragEvents) {
-            return dragEvents.map(event -> {
-                switch (event.getAction()) {
-                    case DOWN: {
-                        onDetachCallback.onDetach(view.getNativeView());
-                        setViewScreenPos(rootView, event.getScreenPos());
-                        rootView.addView(view.getNativeView());
-                        view.getNativeView().animate().setDuration(100)
-                                .translationZBy(10).scaleX(1.05f).scaleY(1.05f);
-                        break;
-                    }
-                    case MOVE: {
-                        setViewScreenPos(rootView, event.getScreenPos());
-                        break;
-                    }
-                    case UP:
-                        view.getNativeView().animate().setDuration(100)
-                                .translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
-                        break;
-                }
-                return DragPacket.create(
-                        Views.getBoundingBox(view.getNativeView()),
-                        LambdaExpressionController.this);
-            });
-        }
-        @Override
-        public void handleCommit() {
-            // No further data changes needed.
-        }
-    }
-
-    private void setViewScreenPos(RelativeLayout rootView, Point screenPos) {
-        Point relativePos = screenPos.minus(Views.getScreenPos(rootView));
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.leftMargin = relativePos.getX();
-        layoutParams.topMargin = relativePos.getY();
-        view.getNativeView().setLayoutParams(layoutParams);
     }
 }

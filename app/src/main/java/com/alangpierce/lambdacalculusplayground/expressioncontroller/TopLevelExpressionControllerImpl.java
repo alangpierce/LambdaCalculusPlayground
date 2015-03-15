@@ -32,8 +32,8 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     public void handleExprChange(UserExpression userExpression) {
-        screenExpression = new ScreenExpression(
-                userExpression, screenExpression.x, screenExpression.y);
+        screenExpression =
+                ScreenExpression.create(userExpression, screenExpression.getScreenCoords());
         onChangeCallback.onChange(screenExpression);
     }
 

@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -20,18 +18,16 @@ import com.alangpierce.lambdacalculusplayground.view.VariableView;
 import javax.annotation.Nullable;
 
 public class ExpressionControllerFactoryImpl implements ExpressionControllerFactory {
-    private final RelativeLayout rootView;
     private final ExpressionViewRenderer viewRenderer;
     private final DragObservableGenerator dragObservableGenerator;
     private final DropTargetRegistry dropTargetRegistry;
     private final DragSourceRegistry dragSourceRegistry;
 
-    public ExpressionControllerFactoryImpl(RelativeLayout rootView,
+    public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
             DropTargetRegistry dropTargetRegistry,
             DragSourceRegistry dragSourceRegistry) {
-        this.rootView = rootView;
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.dropTargetRegistry = dropTargetRegistry;
@@ -41,7 +37,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     @Override
     public TopLevelExpressionController createTopLevelController(
             ScreenExpression screenExpression) {
-        ExpressionController exprController = createController(screenExpression.expr);
+        ExpressionController exprController = createController(screenExpression.getExpr());
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(exprController.getView(), screenExpression);
         exprController.setCallbacks(result::handleExprChange, result::handleExprDetach);
@@ -63,7 +59,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         bodyController != null ? bodyController.getView().getNativeView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(view, lambda);
                 for (DragSource dragSource : result.getDragSources()) {
-                    dragSourceRegistry.registerDragSource(rootView, dragSource);
+                    dragSourceRegistry.registerDragSource(dragSource);
                 }
 
                 if (bodyController != null) {

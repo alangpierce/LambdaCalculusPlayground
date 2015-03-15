@@ -4,6 +4,8 @@ import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
 import rx.Observable;
@@ -32,5 +34,10 @@ public class VariableView implements ExpressionView {
     @Override
     public LinearLayout getNativeView() {
         return view;
+    }
+
+    @Override
+    public Point getScreenPos() {
+        return Views.getScreenPos(view);
     }
 }

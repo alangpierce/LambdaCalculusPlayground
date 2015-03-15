@@ -4,10 +4,12 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import java.util.Map.Entry;
 
-public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
+public class TopLevelExpressionManagerImpl
+        implements TopLevelExpressionManager, TopLevelExpressionCreator {
     private final TopLevelExpressionState expressionState;
     private final RelativeLayout rootView;
     private final ExpressionControllerFactory controllerFactory;
@@ -29,10 +31,17 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         }
     }
 
+    @Override
+    public TopLevelExpressionController createNewExpression(ScreenExpression screenExpression) {
+        int exprId = expressionState.addScreenExpression(screenExpression);
+        return renderTopLevelExpression(exprId, screenExpression);
+    }
+
     /**
      * Given a new expression, create a view for it and hook up all necessary callbacks.
      */
-    private void renderTopLevelExpression(int exprId, ScreenExpression screenExpression) {
+    private TopLevelExpressionController renderTopLevelExpression(
+            int exprId, ScreenExpression screenExpression) {
         TopLevelExpressionController controller =
                 controllerFactory.createTopLevelController(screenExpression);
         controller.setCallbacks(
@@ -44,8 +53,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-        expressionParams.leftMargin = screenExpression.x;
-        expressionParams.topMargin = screenExpression.y;
-        rootView.addView(controller.getView().getNativeView(), expressionParams);
+        rootView.addView(controller.getView().getNativeView(),
+                Views.layoutParamsForScreenPosition(rootView, screenExpression.getScreenCoords()));
+        return controller;
     }
 }

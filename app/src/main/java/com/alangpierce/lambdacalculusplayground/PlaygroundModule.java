@@ -67,8 +67,8 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     DragSourceRegistry provideDragSourceRegistry(DragObservableGenerator dragObservableGenerator,
-            DropTargetRegistry dropTargetRegistry) {
-        return new DragSourceRegistryImpl(dragObservableGenerator, dropTargetRegistry);
+            DropTargetRegistry dropTargetRegistry, @RootView RelativeLayout rootView) {
+        return new DragSourceRegistryImpl(dragObservableGenerator, dropTargetRegistry, rootView);
     }
 
     @Provides
@@ -85,10 +85,9 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionControllerFactory provideExpressionControllerFactory(
-            @RootView RelativeLayout rootView, ExpressionViewRenderer viewRenderer,
-            DragObservableGenerator dragObservableGenerator, DropTargetRegistry dropTargetRegistry,
-            DragSourceRegistry dragSourceRegistry) {
-        return new ExpressionControllerFactoryImpl(rootView, viewRenderer, dragObservableGenerator,
+            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
+            DropTargetRegistry dropTargetRegistry, DragSourceRegistry dragSourceRegistry) {
+        return new ExpressionControllerFactoryImpl(viewRenderer, dragObservableGenerator,
                 dropTargetRegistry, dragSourceRegistry);
     }
 }
