@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.widget.RelativeLayout;
+
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
@@ -12,6 +14,7 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
+import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
 
 import javax.annotation.Nullable;
@@ -20,22 +23,32 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final ExpressionViewRenderer viewRenderer;
     private final DragObservableGenerator dragObservableGenerator;
     private final DragManager dragManager;
+    private final RelativeLayout rootView;
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
-            DragManager dragManager) {
+            DragManager dragManager, RelativeLayout rootView) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.dragManager = dragManager;
+        this.rootView = rootView;
     }
 
     @Override
     public TopLevelExpressionController createTopLevelController(
             ScreenExpression screenExpression) {
         ExpressionController exprController = createController(screenExpression.getExpr());
+        return wrapInTopLevelController(exprController, screenExpression);
+    }
+
+    @Override
+    public TopLevelExpressionController wrapInTopLevelController(
+            ExpressionController exprController, ScreenExpression screenExpression) {
+        TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
+                dragObservableGenerator, rootView, exprController.getView());
         TopLevelExpressionControllerImpl result =
-                new TopLevelExpressionControllerImpl(exprController.getView(), screenExpression);
+                new TopLevelExpressionControllerImpl(topLevelView, screenExpression);
         exprController.setOnChangeCallback(result::handleExprChange);
         return result;
     }
@@ -54,7 +67,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         dragObservableGenerator, viewRenderer, lambda.varName,
                         bodyController != null ? bodyController.getView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(
-                        ExpressionControllerFactoryImpl.this, view, lambda);
+                        ExpressionControllerFactoryImpl.this, view, lambda, bodyController);
                 for (DragSource dragSource : result.getDragSources()) {
                     dragManager.registerDragSource(dragSource);
                 }

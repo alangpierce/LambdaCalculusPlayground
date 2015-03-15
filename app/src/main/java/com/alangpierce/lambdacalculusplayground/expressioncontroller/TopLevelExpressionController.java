@@ -1,13 +1,15 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.view.View;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
+
+import java.util.List;
 
 public interface TopLevelExpressionController {
-    ExpressionView getView();
+    TopLevelExpressionView getView();
     void setOnChangeCallback(OnTopLevelChangeCallback onChangeCallback);
+    List<DragSource> getDragSources();
 
     interface OnTopLevelChangeCallback {
         void onChange(ScreenExpression newScreenExpression);

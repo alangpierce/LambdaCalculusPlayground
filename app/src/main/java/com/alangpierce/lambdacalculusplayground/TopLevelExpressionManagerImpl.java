@@ -4,7 +4,6 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import java.util.Map.Entry;
 
@@ -48,8 +47,7 @@ public class TopLevelExpressionManagerImpl
                 // onChange
                 (newScreenExpression) ->
                         expressionState.modifyExpression(exprId, newScreenExpression));
-        rootView.addView(controller.getView().getNativeView(),
-                Views.layoutParamsForScreenPosition(rootView, screenExpression.getScreenCoords()));
+        controller.getView().attachToRoot(screenExpression.getScreenCoords());
         return controller;
     }
 }

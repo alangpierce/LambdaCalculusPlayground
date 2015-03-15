@@ -18,7 +18,8 @@ import rx.Observable;
  * Lambda views need to be able to expose the different subcomponents (parameter and body) and their
  * state.
  */
-public class LambdaView implements ExpressionView {
+public class
+        LambdaView implements ExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
 
     private final LinearLayout view;

@@ -13,6 +13,13 @@ public interface ExpressionControllerFactory {
     TopLevelExpressionController createTopLevelController(ScreenExpression screenExpression);
 
     /**
+     * Don't actually create any views, but make a top-level controller for this existing view,
+     * which should be detached.
+     */
+    TopLevelExpressionController wrapInTopLevelController(
+            ExpressionController exprController, ScreenExpression screenExpression);
+
+    /**
      * Create a hierarchy of controllers and corresponding views. The resulting controller does not
      * have OnChangeCallback set, so it should be set immediately after creation.
      */

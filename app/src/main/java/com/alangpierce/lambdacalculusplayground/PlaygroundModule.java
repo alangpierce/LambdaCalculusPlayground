@@ -59,8 +59,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    DragManager provideDragSourceRegistry(@RootView RelativeLayout rootView) {
-        return new DragSourceManagerImpl(rootView);
+    DragManager provideDragSourceRegistry() {
+        return new DragSourceManagerImpl();
     }
 
     @Provides
@@ -78,8 +78,8 @@ public class PlaygroundModule {
     @Provides
     ExpressionControllerFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            DragManager dragManager) {
+            DragManager dragManager, @RootView RelativeLayout rootView) {
         return new ExpressionControllerFactoryImpl(viewRenderer, dragObservableGenerator,
-                dragManager);
+                dragManager, rootView);
     }
 }

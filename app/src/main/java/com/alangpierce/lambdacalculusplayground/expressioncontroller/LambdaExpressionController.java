@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.view.View;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -15,6 +13,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import rx.Observable;
 
 public class LambdaExpressionController implements ExpressionController {
@@ -22,15 +22,18 @@ public class LambdaExpressionController implements ExpressionController {
     private final LambdaView view;
 
     private UserLambda userLambda;
+    private @Nullable ExpressionController bodyController;
     private OnChangeCallback onChangeCallback;
 
     public LambdaExpressionController(
             ExpressionControllerFactory controllerFactory,
             LambdaView view,
-            UserLambda userLambda) {
+            UserLambda userLambda,
+            @Nullable ExpressionController bodyController) {
         this.controllerFactory = controllerFactory;
         this.view = view;
         this.userLambda = userLambda;
+        this.bodyController = bodyController;
     }
 
     @Override
@@ -71,13 +74,10 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             ExpressionView bodyView = view.detachBody();
-            TopLevelExpressionControllerImpl result =
-                    new TopLevelExpressionControllerImpl(
-                            bodyView,
-                            ScreenExpression.create(userLambda.body, bodyView.getScreenPos()));
-            setOnChangeCallback(result::handleExprChange);
             // TODO: Call handleBodyChange(null) in a way that works.
-            return result;
+            return controllerFactory.wrapInTopLevelController(
+                    bodyController,
+                    ScreenExpression.create(userLambda.body, bodyView.getScreenPos()));
         }
     }
 
