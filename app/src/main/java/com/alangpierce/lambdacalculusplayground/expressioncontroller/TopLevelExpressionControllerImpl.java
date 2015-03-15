@@ -11,7 +11,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     private ScreenExpression screenExpression;
     private OnTopLevelChangeCallback onChangeCallback;
-    private OnTopLevelDetachCallback onDetachCallback;
 
     public TopLevelExpressionControllerImpl(ExpressionView view,
             ScreenExpression screenExpression) {
@@ -25,19 +24,13 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public void setCallbacks(OnTopLevelChangeCallback onChangeCallback,
-                             OnTopLevelDetachCallback onDetachCallback) {
+    public void setOnChangeCallback(OnTopLevelChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
-        this.onDetachCallback = onDetachCallback;
     }
 
     public void handleExprChange(UserExpression userExpression) {
         screenExpression =
                 ScreenExpression.create(userExpression, screenExpression.getScreenCoords());
         onChangeCallback.onChange(screenExpression);
-    }
-
-    public void handleExprDetach(View view) {
-        onDetachCallback.onDetach(view);
     }
 }

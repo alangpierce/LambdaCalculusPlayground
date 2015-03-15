@@ -36,7 +36,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         ExpressionController exprController = createController(screenExpression.getExpr());
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(exprController.getView(), screenExpression);
-        exprController.setCallbacks(result::handleExprChange, result::handleExprDetach);
+        exprController.setOnChangeCallback(result::handleExprChange);
         return result;
     }
 
@@ -52,7 +52,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 }
                 LambdaView view = LambdaView.render(
                         dragObservableGenerator, viewRenderer, lambda.varName,
-                        bodyController != null ? bodyController.getView().getNativeView() : null);
+                        bodyController != null ? bodyController.getView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(
                         ExpressionControllerFactoryImpl.this, view, lambda);
                 for (DragSource dragSource : result.getDragSources()) {
@@ -60,7 +60,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 }
 
                 if (bodyController != null) {
-                    bodyController.setCallbacks(result::handleBodyChange, result::handleBodyDetach);
+                    bodyController.setOnChangeCallback(result::handleBodyChange);
                 }
                 return result;
             }
@@ -75,8 +75,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
                 FuncCallExpressionController result =
                         new FuncCallExpressionController(view, funcCall);
-                funcController.setCallbacks(result::handleFuncChange, result::handleFuncDetach);
-                argController.setCallbacks(result::handleArgChange, result::handleArgDetach);
+                funcController.setOnChangeCallback(result::handleFuncChange);
+                argController.setOnChangeCallback(result::handleArgChange);
                 return result;
             }
             @Override

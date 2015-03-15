@@ -12,7 +12,6 @@ public class VariableExpressionController implements ExpressionController {
     private final VariableView view;
 
     private OnChangeCallback onChangeCallback;
-    private OnDetachCallback onDetachCallback;
 
     public VariableExpressionController(VariableView view) {
         this.view = view;
@@ -24,9 +23,8 @@ public class VariableExpressionController implements ExpressionController {
     }
 
     @Override
-    public void setCallbacks(OnChangeCallback onChangeCallback, OnDetachCallback onDetachCallback) {
+    public void setOnChangeCallback(OnChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
-        this.onDetachCallback = onDetachCallback;
     }
 
     @Override

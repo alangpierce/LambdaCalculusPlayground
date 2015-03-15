@@ -44,15 +44,10 @@ public class TopLevelExpressionManagerImpl
             int exprId, ScreenExpression screenExpression) {
         TopLevelExpressionController controller =
                 controllerFactory.createTopLevelController(screenExpression);
-        controller.setCallbacks(
+        controller.setOnChangeCallback(
                 // onChange
                 (newScreenExpression) ->
-                        expressionState.modifyExpression(exprId, newScreenExpression),
-                // onDetach
-                rootView::removeView);
-        RelativeLayout.LayoutParams expressionParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        expressionState.modifyExpression(exprId, newScreenExpression));
         rootView.addView(controller.getView().getNativeView(),
                 Views.layoutParamsForScreenPosition(rootView, screenExpression.getScreenCoords()));
         return controller;

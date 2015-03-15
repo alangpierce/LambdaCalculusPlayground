@@ -41,15 +41,11 @@ public class DragSourceManagerImpl implements DragManager {
                         Point screenPos = expressionController.getView().getScreenPos();
                         rootView.addView(view, Views.layoutParamsForScreenPosition(
                                 rootView, screenPos));
-                        expressionController.setCallbacks(
+                        expressionController.setOnChangeCallback(
                                 // onChange
                                 // TODO: Register the callback correctly.
                                 (newScreenExpression) -> {
-                                },
-//                    (newScreenExpression) ->
-//                            expressionState.modifyExpression(exprId, newScreenExpression),
-                                // onDetach
-                                rootView::removeView);
+                                });
 
                         view.animate().setDuration(100)
                                 .translationZBy(10).scaleX(1.05f).scaleY(1.05f);

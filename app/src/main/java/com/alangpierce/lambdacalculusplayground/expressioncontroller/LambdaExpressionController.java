@@ -3,7 +3,6 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 import android.view.View;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
@@ -24,7 +23,6 @@ public class LambdaExpressionController implements ExpressionController {
 
     private UserLambda userLambda;
     private OnChangeCallback onChangeCallback;
-    private OnDetachCallback onDetachCallback;
 
     public LambdaExpressionController(
             ExpressionControllerFactory controllerFactory,
@@ -36,14 +34,18 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
-    public void setCallbacks(OnChangeCallback onChangeCallback, OnDetachCallback onDetachCallback) {
+    public void setOnChangeCallback(OnChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
-        this.onDetachCallback = onDetachCallback;
     }
 
     @Override
     public List<DragSource> getDragSources() {
-        return ImmutableList.of(new BodyDragSource(), new ParameterDragSource());
+        ImmutableList.Builder<DragSource> resultBuilder = ImmutableList.builder();
+        if (userLambda.body != null) {
+            resultBuilder.add(new BodyDragSource());
+        }
+        resultBuilder.add(new ParameterDragSource());
+        return resultBuilder.build();
     }
 
     @Override
@@ -56,11 +58,6 @@ public class LambdaExpressionController implements ExpressionController {
         return view;
     }
 
-    public void handleBodyDetach(View viewToDetach) {
-        view.getNativeView().removeView(viewToDetach);
-        handleBodyChange(null);
-    }
-
     public void handleBodyChange(UserExpression newBody) {
         userLambda = new UserLambda(userLambda.varName, newBody);
         onChangeCallback.onChange(userLambda);
@@ -69,15 +66,17 @@ public class LambdaExpressionController implements ExpressionController {
     private class BodyDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return view.getWholeViewObservable();
+            return view.getBodyObservable();
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            onDetachCallback.onDetach(view.getNativeView());
+            ExpressionView bodyView = view.detachBody();
             TopLevelExpressionControllerImpl result =
                     new TopLevelExpressionControllerImpl(
-                            view, ScreenExpression.create(userLambda, view.getScreenPos()));
-            setCallbacks(result::handleExprChange, result::handleExprDetach);
+                            bodyView,
+                            ScreenExpression.create(userLambda.body, bodyView.getScreenPos()));
+            setOnChangeCallback(result::handleExprChange);
+            // TODO: Call handleBodyChange(null) in a way that works.
             return result;
         }
     }

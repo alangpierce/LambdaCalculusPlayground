@@ -27,10 +27,6 @@ public class FuncCallView implements ExpressionView {
         return new FuncCallView(dragObservableGenerator, mainView);
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getWholeViewObservable() {
-        return dragObservableGenerator.getDragObservable(view);
-    }
-
     @Override
     public LinearLayout getNativeView() {
         return view;

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ExpressionController {
     ExpressionView getView();
-    void setCallbacks(OnChangeCallback onChangeCallback, OnDetachCallback onDetachCallback);
+    void setOnChangeCallback(OnChangeCallback onChangeCallback);
     List<DragSource> getDragSources();
     List<DropTarget> getDropTargets();
 
@@ -23,12 +23,5 @@ public interface ExpressionController {
      */
     interface OnChangeCallback {
         void onChange(UserExpression newExpression);
-    }
-
-    /**
-     * Used to indicate to the parent that we should be removed.
-     */
-    interface OnDetachCallback {
-        void onDetach(View viewToDetach);
     }
 }

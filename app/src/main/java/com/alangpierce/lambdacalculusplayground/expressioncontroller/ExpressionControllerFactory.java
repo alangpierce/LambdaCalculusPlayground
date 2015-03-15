@@ -14,8 +14,7 @@ public interface ExpressionControllerFactory {
 
     /**
      * Create a hierarchy of controllers and corresponding views. The resulting controller does not
-     * have OnChangeCallback or OnDetachCallback set, so those should be set immediately after
-     * creation.
+     * have OnChangeCallback set, so it should be set immediately after creation.
      */
     ExpressionController createController(UserExpression userExpression);
 

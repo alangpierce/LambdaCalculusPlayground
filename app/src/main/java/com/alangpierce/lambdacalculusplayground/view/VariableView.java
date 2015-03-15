@@ -27,10 +27,6 @@ public class VariableView implements ExpressionView {
         return new VariableView(dragObservableGenerator, mainView);
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getWholeViewObservable() {
-        return dragObservableGenerator.getDragObservable(view);
-    }
-
     @Override
     public LinearLayout getNativeView() {
         return view;

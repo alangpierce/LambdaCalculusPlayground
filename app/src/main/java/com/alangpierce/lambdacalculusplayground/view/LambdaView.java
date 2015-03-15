@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
+import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 /**
@@ -24,11 +25,11 @@ public class LambdaView implements ExpressionView {
     private final View parameterView;
 
     // If null, then we should present a placeholder view instead.
-    private @Nullable LinearLayout bodyView;
+    private @Nullable ExpressionView bodyView;
 
     public LambdaView(
             DragObservableGenerator dragObservableGenerator, LinearLayout view,
-            View parameterView, LinearLayout bodyView) {
+            View parameterView, @Nullable ExpressionView bodyView) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.view = view;
         this.parameterView = parameterView;
@@ -36,17 +37,18 @@ public class LambdaView implements ExpressionView {
     }
 
     public static LambdaView render(DragObservableGenerator dragObservableGenerator,
-            ExpressionViewRenderer renderer, String varName, @Nullable LinearLayout bodyView) {
+            ExpressionViewRenderer renderer, String varName, @Nullable ExpressionView bodyView) {
         View parameterView = renderer.makeTextView(varName);
         LinearLayout mainView = renderer.makeLinearLayoutWithChildren(ImmutableList.of(
                 renderer.makeTextView("λ"),
                 parameterView,
-                bodyView != null ? bodyView : renderer.makeMissingBodyView()));
+                bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView()));
         return new LambdaView(dragObservableGenerator, mainView, parameterView, bodyView);
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getWholeViewObservable() {
-        return dragObservableGenerator.getDragObservable(view);
+    public Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
+        Preconditions.checkState(bodyView != null);
+        return dragObservableGenerator.getDragObservable(bodyView.getNativeView());
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getParameterObservable() {
@@ -61,5 +63,14 @@ public class LambdaView implements ExpressionView {
     @Override
     public Point getScreenPos() {
         return Views.getScreenPos(view);
+    }
+
+    /**
+     * Detach the body from this view and return it.
+     */
+    public ExpressionView detachBody() {
+        Preconditions.checkState(bodyView != null);
+        view.removeView(bodyView.getNativeView());
+        return bodyView;
     }
 }

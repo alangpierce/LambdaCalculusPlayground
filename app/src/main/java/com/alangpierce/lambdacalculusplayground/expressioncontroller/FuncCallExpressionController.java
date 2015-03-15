@@ -21,7 +21,6 @@ public class FuncCallExpressionController implements ExpressionController {
      */
     private UserFuncCall userFuncCall;
     private OnChangeCallback onChangeCallback;
-    private OnDetachCallback onDetachCallback;
 
     public FuncCallExpressionController(FuncCallView view, UserFuncCall userFuncCall) {
         this.view = view;
@@ -34,9 +33,8 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     @Override
-    public void setCallbacks(OnChangeCallback onChangeCallback, OnDetachCallback onDetachCallback) {
+    public void setOnChangeCallback(OnChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
-        this.onDetachCallback = onDetachCallback;
     }
 
     @Override
@@ -47,16 +45,6 @@ public class FuncCallExpressionController implements ExpressionController {
     @Override
     public List<DropTarget> getDropTargets() {
         return ImmutableList.of();
-    }
-
-    public void handleFuncDetach(View viewToDetach) {
-        view.getNativeView().removeView(viewToDetach);
-        handleFuncChange(null);
-    }
-
-    public void handleArgDetach(View viewToDetach) {
-        view.getNativeView().removeView(viewToDetach);
-        handleArgChange(null);
     }
 
     public void handleFuncChange(UserExpression newFunc) {
