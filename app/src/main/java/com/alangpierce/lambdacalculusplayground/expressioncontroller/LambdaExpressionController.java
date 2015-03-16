@@ -129,14 +129,18 @@ public class LambdaExpressionController implements ExpressionController {
     private class BodyDropTarget implements DropTarget {
         @Override
         public boolean hitTest(Rect dragRect) {
-            return view.bodyIntersectsWith(dragRect);
+            return userLambda.body == null && view.bodyIntersectsWith(dragRect);
         }
         @Override
-        public void handleEnter(ExpressionController expressionController) {
+        public void handleEnter(TopLevelExpressionController expressionController) {
             view.handleDragEnter();
         }
         @Override
         public void handleExit() {
+            // Don't change our display unless we're actually accepting drops.
+            if (userLambda.body != null) {
+                return;
+            }
             view.handleDragExit();
         }
         @Override

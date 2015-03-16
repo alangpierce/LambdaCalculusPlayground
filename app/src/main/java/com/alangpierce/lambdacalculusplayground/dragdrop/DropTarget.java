@@ -18,7 +18,7 @@ public interface DropTarget {
     /**
      * Change the display of the drop target to indicate that it is accepting drops.
      */
-    void handleEnter(ExpressionController expressionController);
+    void handleEnter(TopLevelExpressionController expressionController);
 
     /**
      * Change the display of the drop target back to normal.

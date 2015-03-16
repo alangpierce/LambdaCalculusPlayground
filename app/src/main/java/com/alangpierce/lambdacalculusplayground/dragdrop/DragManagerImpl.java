@@ -3,11 +3,15 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Rect;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.annotation.Nullable;
 
 import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
@@ -61,12 +65,43 @@ public class DragManagerImpl implements DragManager {
     private void handleMove(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
         view.setScreenPos(event.getScreenPos());
+        DropTarget bestDropTarget = getBestDropTarget(view);
+
+        // TODO: Be smarter about this. We probably don't want to redo every drop target every time.
+        for (DropTarget dropTarget : dropTargets) {
+            if (dropTarget == bestDropTarget) {
+                dropTarget.handleEnter(controller);
+            } else {
+                dropTarget.handleExit();
+            }
+        }
     }
 
     private void handleUp(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
         view.endDrag();
-        defaultHandleDrop(controller, event.getScreenPos());
+        DropTarget bestDropTarget = getBestDropTarget(view);
+        if (bestDropTarget == null) {
+            defaultHandleDrop(controller, event.getScreenPos());
+        } else {
+            bestDropTarget.handleDrop(controller);
+        }
+    }
+
+    /**
+     * Figure out which drop target is the best one for this situation. Returns null if no drop
+     * targets match.
+     *
+     * TODO: Make this smarter! Currently, we just pick any one that passes the hit test.
+     */
+    private @Nullable DropTarget getBestDropTarget(TopLevelExpressionView dragView) {
+        Rect dragRect = dragView.getBoundingBox();
+        for (DropTarget dropTarget : dropTargets) {
+            if (dropTarget.hitTest(dragRect)) {
+                return dropTarget;
+            }
+        }
+        return null;
     }
 
     private void defaultHandleDrop(
