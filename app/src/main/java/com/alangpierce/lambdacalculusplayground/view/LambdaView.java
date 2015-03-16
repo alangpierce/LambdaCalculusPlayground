@@ -1,11 +1,13 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -87,5 +89,17 @@ public class
 
     public Point getBodyPos() {
         return Views.getScreenPos(bodyNativeView);
+    }
+
+    public boolean bodyIntersectsWith(Rect rect) {
+        return Views.intersectsWithRect(bodyNativeView, rect);
+    }
+
+    public void handleDragEnter() {
+        bodyNativeView.setBackgroundColor(Color.GREEN);
+    }
+
+    public void handleDragExit() {
+        bodyNativeView.setBackgroundColor(0x44FF0000);
     }
 }

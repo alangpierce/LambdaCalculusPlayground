@@ -5,6 +5,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -66,7 +67,7 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DropTarget> getDropTargets() {
-        return ImmutableList.of();
+        return ImmutableList.of(new BodyDropTarget());
     }
 
     public void handleBodyChange(@Nullable ExpressionController newBodyController) {
@@ -122,6 +123,25 @@ public class LambdaExpressionController implements ExpressionController {
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
             return topLevelExpressionManager.createNewExpression(
                     new UserVariable(userLambda.varName), view.getScreenPos());
+        }
+    }
+
+    private class BodyDropTarget implements DropTarget {
+        @Override
+        public boolean hitTest(Rect dragRect) {
+            return view.bodyIntersectsWith(dragRect);
+        }
+        @Override
+        public void handleEnter(ExpressionController expressionController) {
+            view.handleDragEnter();
+        }
+        @Override
+        public void handleExit() {
+            view.handleDragExit();
+        }
+        @Override
+        public void handleDrop(TopLevelExpressionController expressionController) {
+
         }
     }
 }

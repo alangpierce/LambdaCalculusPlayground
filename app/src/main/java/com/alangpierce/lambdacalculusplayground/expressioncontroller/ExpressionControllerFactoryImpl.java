@@ -7,6 +7,7 @@ import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression.UserExpressionVisitor;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -85,6 +86,9 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         topLevelExpressionManager, view, lambda, bodyController);
                 for (DragSource dragSource : result.getDragSources()) {
                     dragManager.registerDragSource(dragSource);
+                }
+                for (DropTarget dropTarget : result.getDropTargets()) {
+                    dragManager.registerDropTarget(dropTarget);
                 }
                 if (bodyController != null) {
                     bodyController.setOnChangeCallback(result::handleBodyChange);
