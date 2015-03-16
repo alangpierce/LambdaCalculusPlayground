@@ -91,9 +91,8 @@ public class DragManagerImpl implements DragManager {
      * TODO: Make this smarter! Currently, we just pick any one that passes the hit test.
      */
     private @Nullable DropTarget getBestDropTarget(TopLevelExpressionView dragView) {
-        Rect dragRect = dragView.getBoundingBox();
         for (DropTarget dropTarget : dropTargets) {
-            if (dropTarget.hitTest(dragRect)) {
+            if (dropTarget.hitTest(dragView)) {
                 return dropTarget;
             }
         }

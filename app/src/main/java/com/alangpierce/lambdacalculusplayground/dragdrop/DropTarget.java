@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Rect;
+import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 public interface DropTarget {
     /**
@@ -12,7 +13,7 @@ public interface DropTarget {
      * - Change API so we can find the "closest" drop target out of all hits.
      * - Use a snazzy geometric data structure.
      */
-    boolean hitTest(Rect dragRect);
+    boolean hitTest(TopLevelExpressionView dragView);
 
     /**
      * Change the display of the drop target to indicate that it is accepting drops.

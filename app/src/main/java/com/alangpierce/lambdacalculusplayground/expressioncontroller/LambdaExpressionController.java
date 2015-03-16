@@ -11,6 +11,7 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
+import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -127,8 +128,8 @@ public class LambdaExpressionController implements ExpressionController {
 
     private class BodyDropTarget implements DropTarget {
         @Override
-        public boolean hitTest(Rect dragRect) {
-            return userLambda.body == null && view.bodyIntersectsWith(dragRect);
+        public boolean hitTest(TopLevelExpressionView dragView) {
+            return userLambda.body == null && view.bodyIntersectsWith(dragView);
         }
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {

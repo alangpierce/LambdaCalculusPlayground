@@ -92,8 +92,14 @@ public class
         return Views.getScreenPos(bodyNativeView);
     }
 
-    public boolean bodyIntersectsWith(Rect rect) {
-        return Views.intersectsWithRect(bodyNativeView, rect);
+    /**
+     * Do a hit test to determine if the dragged view is over the body. If this lambda is part of
+     * the dragged view, we want to return false.
+     */
+    public boolean bodyIntersectsWith(TopLevelExpressionView dragView) {
+        LinearLayout dragNativeView = dragView.getNativeView();
+        return !Views.isAncestor(bodyNativeView, dragNativeView) &&
+                Views.viewsIntersect(bodyNativeView, dragNativeView);
     }
 
     public void handleDragEnter() {

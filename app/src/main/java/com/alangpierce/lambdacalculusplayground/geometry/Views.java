@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.geometry;
 
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
 public class Views {
@@ -19,9 +20,22 @@ public class Views {
         return Rect.create(topLeft, topLeft.plus(Point.create(view.getWidth(), view.getHeight())));
     }
 
-    public static boolean intersectsWithRect(View view, Rect rect) {
-        Rect viewRect = getBoundingBox(view);
-        return viewRect.intersectsWith(rect);
+    public static boolean viewsIntersect(View view1, View view2) {
+        return getBoundingBox(view1).intersectsWith(getBoundingBox(view2));
+    }
+
+    public static boolean isAncestor(View possibleDescendant, View possibleAncestor) {
+        if (possibleDescendant == possibleAncestor) {
+            return true;
+        }
+        ViewParent view = possibleDescendant.getParent();
+        while (view != null) {
+            if (view == possibleAncestor) {
+                return true;
+            }
+            view = view.getParent();
+        }
+        return false;
     }
 
     public static RelativeLayout.LayoutParams layoutParamsForRelativePos(Point relativePos) {

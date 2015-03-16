@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -45,8 +46,8 @@ public class TopLevelExpressionView {
                 Views.layoutParamsForScreenPos(rootView, screenPos));
     }
 
-    public Rect getBoundingBox() {
-        return Views.getBoundingBox(exprView.getNativeView());
+    public LinearLayout getNativeView() {
+        return exprView.getNativeView();
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getExpressionObservable() {
