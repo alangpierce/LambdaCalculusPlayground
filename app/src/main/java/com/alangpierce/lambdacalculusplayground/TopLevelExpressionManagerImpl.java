@@ -1,23 +1,18 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 
 import java.util.Map.Entry;
 
-public class TopLevelExpressionManagerImpl
-        implements TopLevelExpressionManager, TopLevelExpressionCreator {
+public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
     private final TopLevelExpressionState expressionState;
-    private final RelativeLayout rootView;
     private final ExpressionControllerFactory controllerFactory;
 
     public TopLevelExpressionManagerImpl(
-            TopLevelExpressionState expressionState, RelativeLayout rootView,
+            TopLevelExpressionState expressionState,
             ExpressionControllerFactory controllerFactory) {
         this.expressionState = expressionState;
-        this.rootView = rootView;
         this.controllerFactory = controllerFactory;
     }
 

@@ -3,6 +3,7 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
@@ -46,6 +47,12 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     @Override
     public void setOnChangeCallback(OnTopLevelChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
+    }
+
+    @Override
+    public void handlePositionChange(Point screenPos) {
+        screenExpression = ScreenExpression.create(screenExpression.getExpr(), screenPos);
+        onChangeCallback.onChange(this);
     }
 
     public void handleExprChange(ExpressionController newExpressionController) {

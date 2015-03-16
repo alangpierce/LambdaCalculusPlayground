@@ -70,9 +70,9 @@ public class PlaygroundModule {
 
     @Provides
     TopLevelExpressionManager provideTopLevelExpressionManager(
-            TopLevelExpressionState expressionState, @RootView RelativeLayout rootView,
+            TopLevelExpressionState expressionState,
             ExpressionControllerFactory controllerFactory) {
-        return new TopLevelExpressionManagerImpl(expressionState, rootView, controllerFactory);
+        return new TopLevelExpressionManagerImpl(expressionState, controllerFactory);
     }
 
     @Provides

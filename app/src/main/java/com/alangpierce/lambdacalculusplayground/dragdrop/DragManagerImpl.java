@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 import java.util.Collections;
@@ -70,6 +71,12 @@ public class DragManagerImpl implements DragManager {
     private void handleUp(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
         view.endDrag();
+        defaultHandleDrop(controller, event.getScreenPos());
+    }
+
+    private void defaultHandleDrop(
+            TopLevelExpressionController expressionController, Point screenPos) {
+        expressionController.handlePositionChange(screenPos);
     }
 
     @Override

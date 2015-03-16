@@ -3,6 +3,7 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 import android.graphics.Rect;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 
 public interface DropTarget {
     /**
@@ -28,5 +29,5 @@ public interface DropTarget {
     /**
      * Update the display and data to indicate that the expression was dropped.
      */
-    void handleDrop(ExpressionController expressionController);
+    void handleDrop(TopLevelExpressionController expressionController);
 }
