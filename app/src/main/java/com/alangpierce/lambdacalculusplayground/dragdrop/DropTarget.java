@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 public interface DropTarget {

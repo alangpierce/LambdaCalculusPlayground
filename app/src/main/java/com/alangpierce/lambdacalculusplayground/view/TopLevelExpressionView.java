@@ -6,7 +6,6 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
-import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import autovalue.shaded.com.google.common.common.base.Preconditions;
