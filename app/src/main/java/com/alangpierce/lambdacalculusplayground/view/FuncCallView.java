@@ -30,8 +30,10 @@ public class FuncCallView implements ExpressionView {
 
     public static FuncCallView render(DragObservableGenerator dragObservableGenerator,
             ExpressionViewRenderer renderer, ExpressionView funcView, ExpressionView argView) {
+        LinearLayout funcNativeView = renderer.styleLayout(funcView.getNativeView());
+        LinearLayout argNativeView = renderer.styleLayout(argView.getNativeView());
         LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
-                ImmutableList.of(funcView.getNativeView(), argView.getNativeView()));
+                ImmutableList.of(funcNativeView, argNativeView));
         return new FuncCallView(dragObservableGenerator, mainView, funcView, argView);
     }
 

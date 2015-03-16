@@ -15,29 +15,13 @@ public abstract class Rect {
     }
 
     public boolean intersectsWith(Rect other) {
-        for (Point corner : getCorners()) {
-            if (other.containsPoint(corner)) {
-                return true;
-            }
-        }
-        for (Point corner : other.getCorners()) {
-            if (containsPoint(corner)) {
-                return true;
-            }
-        }
-        return false;
+        return getBottomRight().getX() >= other.getTopLeft().getX() &&
+                getTopLeft().getX() <= other.getBottomRight().getX() &&
+                getBottomRight().getY() >= other.getTopLeft().getY() &&
+                getTopLeft().getY() <= other.getBottomRight().getY();
     }
 
-    public boolean containsPoint(Point point) {
-        return point.getX() >= getTopLeft().getX() &&
-                point.getY() >= getTopLeft().getY() &&
-                point.getX() <= getBottomRight().getX() &&
-                point.getY() <= getBottomRight().getY();
-    }
-
-    public List<Point> getCorners() {
-        return ImmutableList.of(getTopLeft(), getBottomRight(),
-                Point.create(getTopLeft().getX(), getBottomRight().getY()),
-                Point.create(getBottomRight().getX(), getTopLeft().getY()));
+    public Rect rightEdge() {
+        return create(Point.create(getBottomRight().getX(), getTopLeft().getY()), getBottomRight());
     }
 }

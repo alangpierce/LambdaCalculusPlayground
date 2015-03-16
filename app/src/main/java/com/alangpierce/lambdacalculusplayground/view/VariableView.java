@@ -1,9 +1,12 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.graphics.Color;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -32,5 +35,24 @@ public class VariableView implements ExpressionView {
     @Override
     public Point getScreenPos() {
         return Views.getScreenPos(view);
+    }
+
+    public boolean rightEdgeIntersectsWith(TopLevelExpressionView dragView) {
+        LinearLayout dragNativeView = dragView.getNativeView();
+        return !Views.isAncestor(view, dragNativeView) &&
+                Views.getBoundingBox(view).rightEdge()
+                        .intersectsWith(Views.getBoundingBox(dragNativeView));
+    }
+
+    public void handleDragEnter() {
+        view.setBackgroundColor(Color.GREEN);
+    }
+
+    public void handleDragExit() {
+        view.setBackgroundColor(Color.WHITE);
+    }
+
+    public void detach() {
+        ((ViewGroup)view.getParent()).removeView(view);
     }
 }

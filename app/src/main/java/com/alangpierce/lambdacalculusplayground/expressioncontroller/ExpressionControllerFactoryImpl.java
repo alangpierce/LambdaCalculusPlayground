@@ -73,7 +73,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     @Override
     public ExpressionController createController(
             UserExpression userExpression) {
-        return userExpression.visit(new UserExpressionVisitor<ExpressionController>() {
+        ExpressionController result = userExpression.visit(
+                new UserExpressionVisitor<ExpressionController>() {
             @Override
             public ExpressionController visit(UserLambda lambda) {
                 @Nullable ExpressionController bodyController = null;
@@ -85,12 +86,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         bodyController != null ? bodyController.getView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(
                         topLevelExpressionManager, view, lambda, bodyController);
-                for (DragSource dragSource : result.getDragSources()) {
-                    dragManager.registerDragSource(dragSource);
-                }
-                for (DropTarget dropTarget : result.getDropTargets()) {
-                    dragManager.registerDropTarget(dropTarget);
-                }
                 if (bodyController != null) {
                     bodyController.setOnChangeCallback(result::handleBodyChange);
                 }
@@ -107,9 +102,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 FuncCallExpressionController result =
                         new FuncCallExpressionController(topLevelExpressionManager, view,
                                 funcController, argController, funcCall);
-                for (DragSource dragSource : result.getDragSources()) {
-                    dragManager.registerDragSource(dragSource);
-                }
                 funcController.setOnChangeCallback(result::handleFuncChange);
                 argController.setOnChangeCallback(result::handleArgChange);
                 return result;
@@ -118,8 +110,41 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             public ExpressionController visit(UserVariable variable) {
                 VariableView view = VariableView.render(dragObservableGenerator, viewRenderer,
                         variable.varName);
-                return new VariableExpressionController(view, variable);
+                return new VariableExpressionController(
+                        ExpressionControllerFactoryImpl.this::createFuncCall, view, variable);
             }
         });
+        for (DragSource dragSource : result.getDragSources()) {
+            dragManager.registerDragSource(dragSource);
+        }
+        for (DropTarget dropTarget : result.getDropTargets()) {
+            dragManager.registerDropTarget(dropTarget);
+        }
+        return result;
+    }
+
+    /**
+     * Special routine for building a function, like we do when handling a drop.
+     *
+     * TODO: Get rid of the code duplication here.
+     */
+    private FuncCallExpressionController createFuncCall(
+            ExpressionController funcController, ExpressionController argController) {
+        UserFuncCall funcCall = new UserFuncCall(
+                funcController.getExpression(), argController.getExpression());
+        FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
+                funcController.getView(), argController.getView());
+        FuncCallExpressionController result =
+                new FuncCallExpressionController(topLevelExpressionManager, view,
+                        funcController, argController, funcCall);
+        funcController.setOnChangeCallback(result::handleFuncChange);
+        argController.setOnChangeCallback(result::handleArgChange);
+        for (DragSource dragSource : result.getDragSources()) {
+            dragManager.registerDragSource(dragSource);
+        }
+        for (DropTarget dropTarget : result.getDropTargets()) {
+            dragManager.registerDropTarget(dropTarget);
+        }
+        return result;
     }
 }

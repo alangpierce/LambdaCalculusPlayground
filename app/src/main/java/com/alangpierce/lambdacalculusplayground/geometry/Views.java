@@ -29,7 +29,8 @@ public class Views {
             return true;
         }
         ViewParent view = possibleDescendant.getParent();
-        while (view != null) {
+        // Give up after 100 iterations in case we have a cycle.
+        for (int i = 0; view != null && i < 100; i++) {
             if (view == possibleAncestor) {
                 return true;
             }

@@ -66,7 +66,8 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     public void handleExprChange(ExpressionController newExpressionController) {
         UserExpression newExpression = newExpressionController.getExpression();
         screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
-        view.handleExpressionChange(newExpressionController.getView());
+        view.handleExpressionChange(
+                newExpressionController.getView(), screenExpression.getCanvasPos());
         newExpressionController.setOnChangeCallback(this::handleExprChange);
         expressionController = newExpressionController;
         updateDragActionSubscription();

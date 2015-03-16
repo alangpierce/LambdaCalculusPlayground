@@ -45,6 +45,10 @@ public class TopLevelExpressionView {
                 Views.layoutParamsForScreenPos(rootView, screenPos));
     }
 
+    public void setCanvasPos(Point canvasPos) {
+        exprView.getNativeView().setLayoutParams(Views.layoutParamsForRelativePos(canvasPos));
+    }
+
     public LinearLayout getNativeView() {
         return exprView.getNativeView();
     }
@@ -63,12 +67,11 @@ public class TopLevelExpressionView {
                 .setDuration(100).translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
     }
 
-    public void handleExpressionChange(ExpressionView newExpression) {
-        Point screenPos = getScreenPos();
+    public void handleExpressionChange(ExpressionView newExpression, Point canvasPos) {
         rootView.removeView(exprView.getNativeView());
         rootView.addView(newExpression.getNativeView());
         exprView = newExpression;
-        setScreenPos(screenPos);
+        setCanvasPos(canvasPos);
     }
 
     public void decommission() {
