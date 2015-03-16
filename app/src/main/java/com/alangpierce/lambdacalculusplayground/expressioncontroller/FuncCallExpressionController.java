@@ -12,21 +12,29 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import rx.Observable;
 import rx.Subscription;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 public class FuncCallExpressionController implements ExpressionController {
     private final ExpressionControllerFactory controllerFactory;
     private final FuncCallView view;
-    private final ExpressionController funcController;
-    private final ExpressionController argController;
 
     /*
      * State kept by this class. Since this class corresponds to an actual Android view, we need to
      * care about what it's logically a part of as it moves around.
      */
+    private ExpressionController funcController;
+    private ExpressionController argController;
     private UserFuncCall userFuncCall;
     private OnChangeCallback onChangeCallback;
+
+    private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
+            argDragActionSubject = PublishSubject.create();
+    private @Nullable Subscription argDragActionSubscription;
 
     public FuncCallExpressionController(
             ExpressionControllerFactory controllerFactory,
@@ -57,6 +65,7 @@ public class FuncCallExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
+        updateDragActionSubscription();
         return ImmutableList.of(new ArgDragSource());
     }
 
@@ -69,14 +78,25 @@ public class FuncCallExpressionController implements ExpressionController {
         userFuncCall = new UserFuncCall(newFuncController.getExpression(), userFuncCall.arg);
         view.handleFuncChange(newFuncController.getView());
         newFuncController.setOnChangeCallback(this::handleFuncChange);
+        funcController = newFuncController;
         onChangeCallback.onChange(this);
     }
 
     public void handleArgChange(ExpressionController newArgController) {
         userFuncCall = new UserFuncCall(userFuncCall.func, newArgController.getExpression());
         view.handleArgChange(newArgController.getView());
+        updateDragActionSubscription();
         newArgController.setOnChangeCallback(this::handleArgChange);
+        argController = newArgController;
         onChangeCallback.onChange(this);
+    }
+
+    private void updateDragActionSubscription() {
+        if (argDragActionSubscription != null) {
+            argDragActionSubscription.unsubscribe();
+            argDragActionSubscription = null;
+        }
+        argDragActionSubscription = view.getArgObservable().subscribe(argDragActionSubject);
     }
 
     private void handleArgDetach() {
@@ -87,7 +107,7 @@ public class FuncCallExpressionController implements ExpressionController {
     private class ArgDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return view.getArgObservable();
+            return argDragActionSubject;
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {

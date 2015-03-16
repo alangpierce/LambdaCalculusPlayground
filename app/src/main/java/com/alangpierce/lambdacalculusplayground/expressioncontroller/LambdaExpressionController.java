@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 public class LambdaExpressionController implements ExpressionController {
     private final ExpressionControllerFactory controllerFactory;
@@ -25,6 +27,10 @@ public class LambdaExpressionController implements ExpressionController {
     private UserLambda userLambda;
     private @Nullable ExpressionController bodyController;
     private OnChangeCallback onChangeCallback;
+
+    private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
+            bodyDragActionSubject = PublishSubject.create();
+    private @Nullable Subscription bodyDragActionSubscription;
 
     public LambdaExpressionController(
             ExpressionControllerFactory controllerFactory,
@@ -54,12 +60,8 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
-        ImmutableList.Builder<DragSource> resultBuilder = ImmutableList.builder();
-        if (userLambda.body != null) {
-            resultBuilder.add(new BodyDragSource());
-        }
-        resultBuilder.add(new ParameterDragSource());
-        return resultBuilder.build();
+        updateDragActionSubscription();
+        return ImmutableList.of(new BodyDragSource(), new ParameterDragSource());
     }
 
     @Override
@@ -67,37 +69,55 @@ public class LambdaExpressionController implements ExpressionController {
         return ImmutableList.of();
     }
 
-    public void handleBodyChange(@Nullable ExpressionController newBody) {
+    public void handleBodyChange(@Nullable ExpressionController newBodyController) {
         userLambda = new UserLambda(
-                userLambda.varName, newBody != null ? newBody.getExpression() : null);
-        view.handleBodyChange(newBody != null ? newBody.getView() : null);
-        if (newBody != null) {
-            newBody.setOnChangeCallback(this::handleBodyChange);
+                userLambda.varName,
+                newBodyController != null ? newBodyController.getExpression() : null);
+        view.handleBodyChange(newBodyController != null ? newBodyController.getView() : null);
+        updateDragActionSubscription();
+        if (newBodyController != null) {
+            newBodyController.setOnChangeCallback(this::handleBodyChange);
         }
+        bodyController = newBodyController;
         onChangeCallback.onChange(this);
+    }
+
+    private void updateDragActionSubscription() {
+        if (bodyDragActionSubscription != null) {
+            bodyDragActionSubscription.unsubscribe();
+            bodyDragActionSubscription = null;
+        }
+        @Nullable Observable<? extends Observable<PointerMotionEvent>> bodyObservable =
+                view.getBodyObservable();
+        if (bodyObservable != null) {
+            bodyDragActionSubscription = bodyObservable.subscribe(bodyDragActionSubject);
+        }
     }
 
     private class BodyDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return view.getBodyObservable();
+            return bodyDragActionSubject;
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
             ScreenExpression newScreenExpression = ScreenExpression.create(
                     userLambda.body, view.getBodyPos());
+            ExpressionController controllerToDrag = bodyController;
             subscription.unsubscribe();
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
             handleBodyChange(null);
-            return controllerFactory.wrapInTopLevelController(bodyController, newScreenExpression);
+            return controllerFactory.wrapInTopLevelController(
+                    controllerToDrag, newScreenExpression);
         }
     }
 
     private class ParameterDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
+            // The parameter shouldn't ever change, so no need to use a subject.
             return view.getParameterObservable();
         }
         @Override

@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
-import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 /**
@@ -54,8 +53,10 @@ public class
                 bodyNativeView);
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
-        Preconditions.checkState(bodyView != null);
+    public @Nullable Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
+        if (bodyView == null) {
+            return null;
+        }
         return dragObservableGenerator.getDragObservable(bodyView.getNativeView());
     }
 
