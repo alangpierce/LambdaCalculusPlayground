@@ -1,9 +1,12 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.widget.RelativeLayout;
+
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
@@ -19,6 +22,7 @@ import rx.subjects.Subject;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
     private final TopLevelExpressionView view;
+    private final RelativeLayout rootView;
 
     private ScreenExpression screenExpression;
     private OnTopLevelChangeCallback onChangeCallback;
@@ -28,9 +32,10 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private @Nullable Subscription dragActionSubscription;
 
     public TopLevelExpressionControllerImpl(
-            TopLevelExpressionView view,
+            TopLevelExpressionView view, RelativeLayout rootView,
             ScreenExpression screenExpression) {
         this.view = view;
+        this.rootView = rootView;
         this.screenExpression = screenExpression;
     }
 
@@ -51,14 +56,14 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public void handlePositionChange(Point screenPos) {
-        screenExpression = ScreenExpression.create(screenExpression.getExpr(), screenPos);
+        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView));
+        screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
         onChangeCallback.onChange(this);
     }
 
     public void handleExprChange(ExpressionController newExpressionController) {
         UserExpression newExpression = newExpressionController.getExpression();
-        screenExpression =
-                ScreenExpression.create(newExpression, screenExpression.getScreenCoords());
+        screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
         view.handleExpressionChange(newExpressionController.getView());
         newExpressionController.setOnChangeCallback(this::handleExprChange);
         updateDragActionSubscription();
@@ -86,7 +91,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
-            view.detachFromRoot();
             return TopLevelExpressionControllerImpl.this;
         }
     }

@@ -2,11 +2,16 @@ package com.alangpierce.lambdacalculusplayground.geometry;
 
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class Views {
     public static Point getScreenPos(View view) {
-        final int location[] = { 0, 0 };
+        final int location[] = { Integer.MIN_VALUE, Integer.MIN_VALUE };
         view.getLocationOnScreen(location);
+        if (location[0] == Integer.MIN_VALUE && location[1] == Integer.MIN_VALUE) {
+            throw new IllegalStateException("Cannot accurately compute the screen position for " +
+                    "view " + view + " because it is not on the screen.");
+        }
         return Point.create(location[0], location[1]);
     }
 
@@ -15,14 +20,17 @@ public class Views {
         return Rect.create(topLeft, topLeft.plus(Point.create(view.getWidth(), view.getHeight())));
     }
 
-    public static RelativeLayout.LayoutParams layoutParamsForScreenPosition(
-            View rootView, Point screenPos) {
+    public static RelativeLayout.LayoutParams layoutParamsForRelativePos(Point relativePos) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-        Point relativePos = screenPos.minus(Views.getScreenPos(rootView));
         params.leftMargin = relativePos.getX();
         params.topMargin = relativePos.getY();
         return params;
+    }
+
+    public static RelativeLayout.LayoutParams layoutParamsForScreenPos(
+            View rootView, Point screenPos) {
+        return layoutParamsForRelativePos(screenPos.minus(Views.getScreenPos(rootView)));
     }
 }

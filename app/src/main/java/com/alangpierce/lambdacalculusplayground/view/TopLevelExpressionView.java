@@ -29,28 +29,19 @@ public class TopLevelExpressionView {
         return new TopLevelExpressionView(dragObservableGenerator, rootView, exprView);
     }
 
-    public void attachToRoot() {
-        attachToRoot(getScreenPos());
-    }
-
     public Point getScreenPos() {
         return Views.getScreenPos(exprView.getNativeView());
     }
 
-    public void attachToRoot(Point initialScreenCoords) {
+    public void attachToRoot(Point canvasPos) {
         Preconditions.checkState(exprView.getNativeView().getParent() == null,
                 "Cannot attach an expression to the root that is already attached.");
-        rootView.addView(exprView.getNativeView(),
-                Views.layoutParamsForScreenPosition(rootView, initialScreenCoords));
+        rootView.addView(exprView.getNativeView(), Views.layoutParamsForRelativePos(canvasPos));
     }
 
     public void setScreenPos(Point screenPos) {
         exprView.getNativeView().setLayoutParams(
-                Views.layoutParamsForScreenPosition(rootView, screenPos));
-    }
-
-    public void detachFromRoot() {
-        rootView.removeView(exprView.getNativeView());
+                Views.layoutParamsForScreenPos(rootView, screenPos));
     }
 
     public Observable<? extends Observable<PointerMotionEvent>> getExpressionObservable() {

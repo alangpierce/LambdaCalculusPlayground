@@ -12,9 +12,9 @@ import java.io.Serializable;
 @AutoValue
 public abstract class ScreenExpression implements Serializable {
     public abstract UserExpression getExpr();
-    public abstract Point getScreenCoords();
+    public abstract Point getCanvasPos();
 
-    public static ScreenExpression create(UserExpression expr, Point screenCoords) {
-        return new AutoValue_ScreenExpression(expr, screenCoords);
+    public static ScreenExpression create(UserExpression expr, Point canvasPos) {
+        return new AutoValue_ScreenExpression(expr, canvasPos);
     }
 }

@@ -14,7 +14,9 @@ public interface DragSource {
 
     /**
      * Called when a drag event starts. The DragSource should do whatever steps are necessary to
-     * produce and register the top-level expression to be dragged, then return it.
+     * produce and register the top-level expression to be dragged, then return it. The returned
+     * controller should be for an expression that already is attached to the root view and has all
+     * callbacks set up appropriately.
      *
      * The observable subscription is provided to allow the handler to indicate that we should no
      * longer care about events from the drag source.

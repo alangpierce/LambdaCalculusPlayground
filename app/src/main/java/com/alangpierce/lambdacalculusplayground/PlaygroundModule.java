@@ -10,6 +10,7 @@ import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
@@ -71,15 +72,15 @@ public class PlaygroundModule {
     @Provides
     TopLevelExpressionManager provideTopLevelExpressionManager(
             TopLevelExpressionState expressionState,
-            ExpressionControllerFactory controllerFactory) {
-        return new TopLevelExpressionManagerImpl(expressionState, controllerFactory);
+            ExpressionControllerFactoryFactory controllerFactoryFactory) {
+        return new TopLevelExpressionManagerImpl(expressionState, controllerFactoryFactory);
     }
 
     @Provides
-    ExpressionControllerFactory provideExpressionControllerFactory(
+    ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             DragManager dragManager, @RootView RelativeLayout rootView) {
-        return new ExpressionControllerFactoryImpl(viewRenderer, dragObservableGenerator,
+        return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
                 dragManager, rootView);
     }
 }

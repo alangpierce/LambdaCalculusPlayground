@@ -1,19 +1,19 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 
 import java.util.Map.Entry;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
     private final TopLevelExpressionState expressionState;
-    private final ExpressionControllerFactory controllerFactory;
+    private final ExpressionControllerFactoryFactory controllerFactoryFactory;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
-            ExpressionControllerFactory controllerFactory) {
+            ExpressionControllerFactoryFactory controllerFactoryFactory) {
         this.expressionState = expressionState;
-        this.controllerFactory = controllerFactory;
+        this.controllerFactoryFactory = controllerFactoryFactory;
     }
 
     @Override
@@ -37,13 +37,13 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private TopLevelExpressionController renderTopLevelExpression(
             int exprId, ScreenExpression screenExpression) {
         TopLevelExpressionController controller =
-                controllerFactory.createTopLevelController(screenExpression);
+                controllerFactoryFactory.create(this).createTopLevelController(screenExpression);
         controller.setOnChangeCallback(
                 // onChange
                 (newController) ->
                         expressionState.modifyExpression(
                                 exprId, newController.getScreenExpression()));
-        controller.getView().attachToRoot(screenExpression.getScreenCoords());
+        controller.getView().attachToRoot(screenExpression.getCanvasPos());
         return controller;
     }
 }

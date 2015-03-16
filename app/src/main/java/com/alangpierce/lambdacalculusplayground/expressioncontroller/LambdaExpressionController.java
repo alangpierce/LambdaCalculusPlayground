@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -101,16 +102,14 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
-            ScreenExpression newScreenExpression = ScreenExpression.create(
-                    userLambda.body, view.getBodyPos());
+            Point screenPos = view.getBodyPos();
             ExpressionController controllerToDrag = bodyController;
             subscription.unsubscribe();
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
             handleBodyChange(null);
-            return controllerFactory.wrapInTopLevelController(
-                    controllerToDrag, newScreenExpression);
+            return controllerFactory.wrapInTopLevelController(controllerToDrag, screenPos);
         }
     }
 
@@ -122,8 +121,8 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
-            return controllerFactory.createTopLevelController(ScreenExpression.create(
-                    new UserVariable(userLambda.varName), view.getScreenPos()));
+            return controllerFactory.createTopLevelController(
+                    new UserVariable(userLambda.varName), view.getScreenPos());
         }
     }
 }

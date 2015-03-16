@@ -54,12 +54,7 @@ public class DragManagerImpl implements DragManager {
 
     private void handleDown(TopLevelExpressionController controller) {
         TopLevelExpressionView view = controller.getView();
-        view.attachToRoot();
-        controller.setOnChangeCallback(
-                // onChange
-                // TODO: Register the callback correctly.
-                (newScreenExpression) -> {
-                });
+        // TODO: Make sure all callers properly set change callback and attach to the root view.
         view.startDrag();
     }
 
