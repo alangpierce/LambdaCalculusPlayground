@@ -82,7 +82,8 @@ public class
         if (newBody == null) {
             bodyNativeView = renderer.makeMissingBodyView();
         } else {
-            bodyNativeView = newBody.getNativeView();
+            // We need to re-style the view because it may have changed to a top-level expression.
+            bodyNativeView = renderer.styleLayout(newBody.getNativeView());
         }
         view.addView(bodyNativeView);
     }

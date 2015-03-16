@@ -25,6 +25,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private final RelativeLayout rootView;
 
     private ScreenExpression screenExpression;
+    private ExpressionController expressionController;
     private OnTopLevelChangeCallback onChangeCallback;
 
     private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
@@ -33,10 +34,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     public TopLevelExpressionControllerImpl(
             TopLevelExpressionView view, RelativeLayout rootView,
-            ScreenExpression screenExpression) {
+            ScreenExpression screenExpression, ExpressionController expressionController) {
         this.view = view;
         this.rootView = rootView;
         this.screenExpression = screenExpression;
+        this.expressionController = expressionController;
     }
 
     @Override
@@ -66,6 +68,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
         view.handleExpressionChange(newExpressionController.getView());
         newExpressionController.setOnChangeCallback(this::handleExprChange);
+        expressionController = newExpressionController;
         updateDragActionSubscription();
         onChangeCallback.onChange(this);
     }
@@ -82,6 +85,16 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     public List<DragSource> getDragSources() {
         updateDragActionSubscription();
         return ImmutableList.of(new TopLevelExpressionDragSource());
+    }
+
+    @Override
+    public ExpressionController decommission() {
+        onChangeCallback.onChange(null);
+        if (dragActionSubscription != null) {
+            dragActionSubscription.unsubscribe();
+        }
+        view.decommission();
+        return expressionController;
     }
 
     private class TopLevelExpressionDragSource implements DragSource {

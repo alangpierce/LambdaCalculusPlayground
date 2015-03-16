@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 public interface TopLevelExpressionState {
     Iterable<Entry<Integer, ScreenExpression>> expressionsById();
     void modifyExpression(int key, ScreenExpression expression);
+    void deleteExpression(int exprId);
 
     /**
      * Modify the state to create a new expression. Note that this does not do any rendering.

@@ -35,6 +35,11 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     }
 
     @Override
+    public void deleteExpression(int exprId) {
+        expressions.remove(exprId);
+    }
+
+    @Override
     public int addScreenExpression(ScreenExpression screenExpression) {
         int exprId = maxId.incrementAndGet();
         expressions.put(exprId, screenExpression);

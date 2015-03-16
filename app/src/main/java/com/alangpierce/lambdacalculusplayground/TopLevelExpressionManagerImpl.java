@@ -71,9 +71,14 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             int exprId, TopLevelExpressionController controller, Point canvasPos) {
         controller.setOnChangeCallback(
                 // onChange
-                (newController) ->
+                (newController) -> {
+                    if (newController != null) {
                         expressionState.modifyExpression(
-                                exprId, newController.getScreenExpression()));
+                                exprId, newController.getScreenExpression());
+                    } else {
+                        expressionState.deleteExpression(exprId);
+                    }
+                });
         controller.getView().attachToRoot(canvasPos);
     }
 }

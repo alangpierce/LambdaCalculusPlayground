@@ -61,7 +61,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
                 dragObservableGenerator, rootView, exprController.getView());
         TopLevelExpressionControllerImpl result =
-                new TopLevelExpressionControllerImpl(topLevelView, rootView, screenExpression);
+                new TopLevelExpressionControllerImpl(topLevelView, rootView, screenExpression,
+                        exprController);
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }

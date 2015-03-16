@@ -145,7 +145,8 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public void handleDrop(TopLevelExpressionController expressionController) {
-
+            ExpressionController bodyController = expressionController.decommission();
+            handleBodyChange(bodyController);
         }
     }
 }

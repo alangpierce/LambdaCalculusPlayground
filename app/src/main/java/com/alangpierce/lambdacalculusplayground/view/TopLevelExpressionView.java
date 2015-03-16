@@ -70,4 +70,8 @@ public class TopLevelExpressionView {
         exprView = newExpression;
         setScreenPos(screenPos);
     }
+
+    public void decommission() {
+        rootView.removeView(exprView.getNativeView());
+    }
 }
