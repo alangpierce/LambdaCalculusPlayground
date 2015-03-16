@@ -13,7 +13,6 @@ import rx.Observable;
 import rx.Subscription;
 
 public class DragManagerImpl implements DragManager {
-    private final List<DragSource> dragSources = Collections.synchronizedList(Lists.newArrayList());
     private final List<DropTarget> dropTargets = Collections.synchronizedList(Lists.newArrayList());
 
     @Override
@@ -23,40 +22,58 @@ public class DragManagerImpl implements DragManager {
 
         AtomicReference<Subscription> subscription = new AtomicReference<>();
         subscription.set(dragObservable.subscribe(dragEvents -> {
-            AtomicReference<TopLevelExpressionView> viewReference = new AtomicReference<>();
+            AtomicReference<TopLevelExpressionController> controllerReference =
+                    new AtomicReference<>();
             dragEvents.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
-                        TopLevelExpressionController expressionController =
+                        TopLevelExpressionController controller =
                                 dragSource.handleStartDrag(subscription.get());
-                        TopLevelExpressionView view = expressionController.getView();
-                        viewReference.set(view);
-                        view.attachToRoot();
-                        expressionController.setOnChangeCallback(
-                                // onChange
-                                // TODO: Register the callback correctly.
-                                (newScreenExpression) -> {
-                                });
-                        view.startDrag();
+                        controllerReference.set(controller);
+                        handleDown(controller);
                     }
                     case MOVE: {
-                        TopLevelExpressionView view = viewReference.get();
-                        if (view == null) {
-                            break;
+                        TopLevelExpressionController controller = controllerReference.get();
+                        if (controller != null) {
+                            handleMove(controller, event);
                         }
-                        view.setScreenPos(event.getScreenPos());
                         break;
                     }
                     case UP: {
-                        TopLevelExpressionView view = viewReference.get();
-                        if (view == null) {
-                            break;
+                        TopLevelExpressionController controller = controllerReference.get();
+                        if (controller != null) {
+                            handleUp(controller, event);
                         }
-                        view.endDrag();
                         break;
                     }
                 }
             });
         }));
+    }
+
+    private void handleDown(TopLevelExpressionController controller) {
+        TopLevelExpressionView view = controller.getView();
+        view.attachToRoot();
+        controller.setOnChangeCallback(
+                // onChange
+                // TODO: Register the callback correctly.
+                (newScreenExpression) -> {
+                });
+        view.startDrag();
+    }
+
+    private void handleMove(TopLevelExpressionController controller, PointerMotionEvent event) {
+        TopLevelExpressionView view = controller.getView();
+        view.setScreenPos(event.getScreenPos());
+    }
+
+    private void handleUp(TopLevelExpressionController controller, PointerMotionEvent event) {
+        TopLevelExpressionView view = controller.getView();
+        view.endDrag();
+    }
+
+    @Override
+    public void registerDropTarget(DropTarget dropTarget) {
+        dropTargets.add(dropTarget);
     }
 }
