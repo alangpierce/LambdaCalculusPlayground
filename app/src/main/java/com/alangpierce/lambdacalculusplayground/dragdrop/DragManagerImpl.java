@@ -4,7 +4,6 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Rect;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 import java.util.Collections;
@@ -15,7 +14,6 @@ import javax.annotation.Nullable;
 
 import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
-import rx.Subscription;
 
 public class DragManagerImpl implements DragManager {
     private final List<DropTarget> dropTargets = Collections.synchronizedList(Lists.newArrayList());
@@ -25,15 +23,13 @@ public class DragManagerImpl implements DragManager {
         Observable<? extends Observable<PointerMotionEvent>> dragObservable =
                 dragSource.getDragObservable();
 
-        AtomicReference<Subscription> subscription = new AtomicReference<>();
-        subscription.set(dragObservable.subscribe(dragEvents -> {
+        dragObservable.subscribe(dragEvents -> {
             AtomicReference<TopLevelExpressionController> controllerReference =
                     new AtomicReference<>();
             dragEvents.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
-                        TopLevelExpressionController controller =
-                                dragSource.handleStartDrag(subscription.get());
+                        TopLevelExpressionController controller = dragSource.handleStartDrag();
                         controllerReference.set(controller);
                         handleDown(controller);
                     }
@@ -53,7 +49,7 @@ public class DragManagerImpl implements DragManager {
                     }
                 }
             });
-        }));
+        });
     }
 
     private void handleDown(TopLevelExpressionController controller) {

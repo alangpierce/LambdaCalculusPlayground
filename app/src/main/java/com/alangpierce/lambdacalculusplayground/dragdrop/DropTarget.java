@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Rect;
 

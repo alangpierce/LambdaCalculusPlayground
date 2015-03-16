@@ -101,10 +101,9 @@ public class LambdaExpressionController implements ExpressionController {
             return bodyDragActionSubject;
         }
         @Override
-        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+        public TopLevelExpressionController handleStartDrag() {
             Point screenPos = view.getBodyPos();
             ExpressionController controllerToDrag = bodyController;
-            subscription.unsubscribe();
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
@@ -120,7 +119,7 @@ public class LambdaExpressionController implements ExpressionController {
             return view.getParameterObservable();
         }
         @Override
-        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+        public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
                     new UserVariable(userLambda.varName), view.getScreenPos());
         }

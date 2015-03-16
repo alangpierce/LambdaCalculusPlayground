@@ -103,7 +103,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             return dragActionSubject;
         }
         @Override
-        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+        public TopLevelExpressionController handleStartDrag() {
             return TopLevelExpressionControllerImpl.this;
         }
     }

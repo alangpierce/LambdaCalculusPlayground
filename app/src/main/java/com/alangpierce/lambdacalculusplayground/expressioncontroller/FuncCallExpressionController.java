@@ -110,9 +110,8 @@ public class FuncCallExpressionController implements ExpressionController {
             return argDragActionSubject;
         }
         @Override
-        public TopLevelExpressionController handleStartDrag(Subscription subscription) {
+        public TopLevelExpressionController handleStartDrag() {
             Point screenPos = view.getScreenPos();
-            subscription.unsubscribe();
             handleArgDetach();
             return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);
         }
