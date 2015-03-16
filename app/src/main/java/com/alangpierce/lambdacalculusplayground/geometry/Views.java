@@ -6,9 +6,10 @@ import android.widget.RelativeLayout;
 
 public class Views {
     public static Point getScreenPos(View view) {
-        final int location[] = { Integer.MIN_VALUE, Integer.MIN_VALUE };
+        final int location[] = { 0, 0 };
         view.getLocationOnScreen(location);
-        if (location[0] == Integer.MIN_VALUE && location[1] == Integer.MIN_VALUE) {
+        // TODO: Make this check still work for views that are actually at (0, 0).
+        if (location[0] == 0 && location[1] == 0) {
             throw new IllegalStateException("Cannot accurately compute the screen position for " +
                     "view " + view + " because it is not on the screen.");
         }

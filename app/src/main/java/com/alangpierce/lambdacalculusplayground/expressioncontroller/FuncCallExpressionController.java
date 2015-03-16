@@ -99,9 +99,11 @@ public class FuncCallExpressionController implements ExpressionController {
         argDragActionSubscription = view.getArgObservable().subscribe(argDragActionSubject);
     }
 
-    private void handleArgDetach() {
+    private void decommission() {
+        if (argDragActionSubscription != null) {
+            argDragActionSubscription.unsubscribe();
+        }
         view.decommission();
-        onChangeCallback.onChange(funcController);
     }
 
     private class ArgDragSource implements DragSource {
@@ -112,7 +114,8 @@ public class FuncCallExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             Point screenPos = view.getScreenPos();
-            handleArgDetach();
+            decommission();
+            onChangeCallback.onChange(funcController);
             return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);
         }
     }
