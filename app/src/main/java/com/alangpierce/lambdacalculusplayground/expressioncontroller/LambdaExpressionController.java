@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
+import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
@@ -22,7 +23,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class LambdaExpressionController implements ExpressionController {
-    private final ExpressionControllerFactory controllerFactory;
+    private final TopLevelExpressionManager topLevelExpressionManager;
     private final LambdaView view;
 
     private UserLambda userLambda;
@@ -34,11 +35,10 @@ public class LambdaExpressionController implements ExpressionController {
     private @Nullable Subscription bodyDragActionSubscription;
 
     public LambdaExpressionController(
-            ExpressionControllerFactory controllerFactory,
-            LambdaView view,
+            TopLevelExpressionManager topLevelExpressionManager, LambdaView view,
             UserLambda userLambda,
             @Nullable ExpressionController bodyController) {
-        this.controllerFactory = controllerFactory;
+        this.topLevelExpressionManager = topLevelExpressionManager;
         this.view = view;
         this.userLambda = userLambda;
         this.bodyController = bodyController;
@@ -109,7 +109,7 @@ public class LambdaExpressionController implements ExpressionController {
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
             handleBodyChange(null);
-            return controllerFactory.wrapInTopLevelController(controllerToDrag, screenPos);
+            return topLevelExpressionManager.sendExpressionToTopLevel(controllerToDrag, screenPos);
         }
     }
 
@@ -121,7 +121,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag(Subscription subscription) {
-            return controllerFactory.createTopLevelController(
+            return topLevelExpressionManager.createNewExpression(
                     new UserVariable(userLambda.varName), view.getScreenPos());
         }
     }
