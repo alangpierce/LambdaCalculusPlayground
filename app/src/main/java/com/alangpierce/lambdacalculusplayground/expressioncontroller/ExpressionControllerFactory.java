@@ -1,10 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 /**

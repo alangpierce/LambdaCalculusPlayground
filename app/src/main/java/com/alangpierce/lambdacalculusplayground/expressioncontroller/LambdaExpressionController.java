@@ -1,6 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;

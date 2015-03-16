@@ -9,7 +9,6 @@ import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;

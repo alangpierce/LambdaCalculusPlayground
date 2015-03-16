@@ -2,7 +2,6 @@ package com.alangpierce.lambdacalculusplayground.geometry;
 
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 
 public class Views {
     public static Point getScreenPos(View view) {

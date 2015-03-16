@@ -2,8 +2,10 @@ package com.alangpierce.lambdacalculusplayground.geometry;
 
 import com.google.auto.value.AutoValue;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class Point {
+public abstract class Point implements Serializable {
     public abstract int getX();
     public abstract int getY();
 
