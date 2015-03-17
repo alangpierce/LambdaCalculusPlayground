@@ -45,11 +45,11 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     @Override
     public LinearLayout styleLayout(final LinearLayout layout) {
         layout.setBackgroundColor(Color.WHITE);
-        layout.setPadding(3, 3, 3, 3);
+        layout.setPadding(6, 3, 6, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(3, 3, 3, 3);
+        layoutParams.setMargins(6, 3, 6, 3);
         layout.setLayoutParams(layoutParams);
         layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
         layout.setElevation(10);
