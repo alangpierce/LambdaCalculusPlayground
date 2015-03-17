@@ -3,12 +3,14 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
+import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
@@ -22,6 +24,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
+    private final TopLevelExpressionManager topLevelExpressionManager;
     private final TopLevelExpressionView view;
     private final RelativeLayout rootView;
 
@@ -34,8 +37,10 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private @Nullable Subscription dragActionSubscription;
 
     public TopLevelExpressionControllerImpl(
-            TopLevelExpressionView view, RelativeLayout rootView,
-            ScreenExpression screenExpression, ExpressionController expressionController) {
+            TopLevelExpressionManager topLevelExpressionManager, TopLevelExpressionView view,
+            RelativeLayout rootView, ScreenExpression screenExpression,
+            ExpressionController expressionController) {
+        this.topLevelExpressionManager = topLevelExpressionManager;
         this.view = view;
         this.rootView = rootView;
         this.screenExpression = screenExpression;
@@ -84,8 +89,21 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         dragActionSubscription = view.getExpressionObservable().subscribe(dragActionSubject);
     }
 
+    private void handleExecuteClick() {
+        @Nullable UserExpression newExpr = UserExpressions.evaluate(screenExpression.getExpr());
+        if (newExpr == null) {
+            // For now, just ignore expressions that infinite loop.
+            return;
+        }
+        topLevelExpressionManager.createNewExpression(
+                newExpr, view.getScreenPos().plus(Point.create(100, 150)));
+    }
+
     @Override
     public List<DragSource> getDragSources() {
+        // TODO: Put this in a better place or re-purpose this function.
+        view.setOnExecuteListener(this::handleExecuteClick);
+
         updateDragActionSubscription();
         return ImmutableList.of(new TopLevelExpressionDragSource());
     }

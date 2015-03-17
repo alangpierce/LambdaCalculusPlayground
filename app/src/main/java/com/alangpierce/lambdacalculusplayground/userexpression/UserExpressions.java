@@ -74,4 +74,20 @@ public class UserExpressions {
     public static boolean canStep(UserExpression userExpression) {
         return step(userExpression) != null;
     }
+
+    /**
+     * Run an expression to completion.
+     *
+     * Returns null if we suspect that we're in an infinite loop.
+     */
+    public static @Nullable UserExpression evaluate(UserExpression userExpression) {
+        for (int i = 0; canStep(userExpression); i++) {
+            if (i == 100) {
+                return null;
+            }
+            userExpression = step(userExpression);
+        }
+        return userExpression;
+    }
+
 }

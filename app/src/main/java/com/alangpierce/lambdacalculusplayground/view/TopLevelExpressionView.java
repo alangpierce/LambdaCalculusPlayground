@@ -126,4 +126,12 @@ public class TopLevelExpressionView {
         rootView.removeView(exprView.getNativeView());
         rootView.removeView(executeButton);
     }
+
+    public interface OnExecuteListener {
+        void execute();
+    }
+
+    public void setOnExecuteListener(OnExecuteListener listener) {
+        executeButton.setOnClickListener((view) -> listener.execute());
+    }
 }
