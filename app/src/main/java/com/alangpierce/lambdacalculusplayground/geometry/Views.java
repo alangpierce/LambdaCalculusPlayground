@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.geometry;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
@@ -47,6 +48,14 @@ public class Views {
         params.leftMargin = relativePos.getX();
         params.topMargin = relativePos.getY();
         return params;
+    }
+
+    public static void updateLayoutParamsToRelativePos(View view, Point relativePos) {
+        RelativeLayout.LayoutParams layoutParams =
+                (RelativeLayout.LayoutParams)view.getLayoutParams();
+        layoutParams.leftMargin = relativePos.getX();
+        layoutParams.topMargin = relativePos.getY();
+        view.setLayoutParams(layoutParams);
     }
 
     public static RelativeLayout.LayoutParams layoutParamsForScreenPos(

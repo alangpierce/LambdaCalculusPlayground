@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
@@ -66,8 +67,9 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     public void handleExprChange(ExpressionController newExpressionController) {
         UserExpression newExpression = newExpressionController.getExpression();
         screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
+        boolean isExecutable = UserExpressions.canStep(newExpression);
         view.handleExpressionChange(
-                newExpressionController.getView(), screenExpression.getCanvasPos());
+                newExpressionController.getView(), screenExpression.getCanvasPos(), isExecutable);
         newExpressionController.setOnChangeCallback(this::handleExprChange);
         expressionController = newExpressionController;
         updateDragActionSubscription();

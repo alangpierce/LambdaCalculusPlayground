@@ -10,6 +10,7 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression.UserExpressionVisitor;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -58,8 +59,10 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     @Override
     public TopLevelExpressionController wrapInTopLevelController(
             ExpressionController exprController, ScreenExpression screenExpression) {
+        boolean isExecutable = UserExpressions.canStep(screenExpression.getExpr());
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
-                dragObservableGenerator, rootView, exprController.getView());
+                viewRenderer, dragObservableGenerator, rootView, exprController.getView(),
+                isExecutable);
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(topLevelView, rootView, screenExpression,
                         exprController);

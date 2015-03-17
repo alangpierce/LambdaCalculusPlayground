@@ -5,8 +5,13 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.alangpierce.lambdacalculusplayground.R;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
@@ -66,5 +71,17 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         layout.setElevation(10);
         layout.addView(makeTextView(" "));
         return layout;
+    }
+
+    public View makeExecuteButton() {
+        FloatingActionButton button = new FloatingActionButton(context);
+        button.setType(FloatingActionButton.TYPE_MINI);
+        button.setImageResource(R.drawable.ic_av_play_arrow);
+        button.setColorNormal(0xFF00AA00);
+        button.setColorRipple(0xFF00BB00);
+        button.setColorPressed(0xFF00CC00);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
+        button.setLayoutParams(params);
+        return button;
     }
 }
