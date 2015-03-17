@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -73,9 +72,9 @@ public class PlaygroundModule {
     TopLevelExpressionManager provideTopLevelExpressionManager(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            @RootView RelativeLayout rootView, Activity activity) {
+            DragManager dragManager, Activity activity, @RootView RelativeLayout rootView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, rootView, activity);
+                expressionState, controllerFactoryFactory, dragManager, rootView, activity);
     }
 
     @Provides

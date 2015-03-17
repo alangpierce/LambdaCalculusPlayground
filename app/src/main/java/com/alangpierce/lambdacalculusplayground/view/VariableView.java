@@ -39,9 +39,15 @@ public class VariableView implements ExpressionView {
 
     public boolean rightEdgeIntersectsWith(TopLevelExpressionView dragView) {
         LinearLayout dragNativeView = dragView.getNativeView();
-        return !Views.isAncestor(view, dragNativeView) &&
-                Views.getBoundingBox(view).rightEdge()
-                        .intersectsWith(Views.getBoundingBox(dragNativeView));
+        try {
+            return !Views.isAncestor(view, dragNativeView) &&
+                    Views.getBoundingBox(view).rightEdge()
+                            .intersectsWith(Views.getBoundingBox(dragNativeView));
+        } catch (IllegalStateException e) {
+            // TODO: Handle this in a cleaner way. This happens when one of the views isn't on the
+            // screen anymore.
+            return false;
+        }
     }
 
     public void handleDragEnter() {

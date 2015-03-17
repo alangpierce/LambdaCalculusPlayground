@@ -5,12 +5,15 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
@@ -19,15 +22,17 @@ import java.util.Map.Entry;
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
     private final TopLevelExpressionState expressionState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
+    private final DragManager dragManager;
     private final RelativeLayout rootView;
     private final Context context;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            RelativeLayout rootView, Context context) {
+            DragManager dragManager, RelativeLayout rootView, Context context) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
+        this.dragManager = dragManager;
         this.rootView = rootView;
         this.context = context;
     }
@@ -39,24 +44,19 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression);
         }
-        renderPaletteBackground();
+        renderPalette();
+    }
+
+    private void renderPalette() {
+        PaletteView view = PaletteView.render(context, rootView);
+        PaletteController controller = new PaletteController(view);
+        controller.registerCallbacks(dragManager);
+
         int yPos = 100;
         for (String varName : ImmutableList.of("x", "y", "t", "f", "s", "z")) {
             renderPaletteLambda(Point.create(1750, yPos), varName);
             yPos += 200;
         }
-    }
-
-    private void renderPaletteBackground() {
-        // TODO: Move this into a better place.
-        TextView view = new TextView(context);
-        view.setBackgroundColor(0xFFE6CEA3);
-        // Just below top-level expressions.
-        view.setElevation(9);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(500, 2000);
-        layoutParams.topMargin = 0;
-        layoutParams.leftMargin = 1675;
-        rootView.addView(view, layoutParams);
     }
 
     private void renderPaletteLambda(Point canvasPos, String varName) {

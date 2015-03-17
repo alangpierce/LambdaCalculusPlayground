@@ -23,7 +23,13 @@ public class Views {
     }
 
     public static boolean viewsIntersect(View view1, View view2) {
-        return getBoundingBox(view1).intersectsWith(getBoundingBox(view2));
+        try {
+            return getBoundingBox(view1).intersectsWith(getBoundingBox(view2));
+        } catch (IllegalStateException e) {
+            // TODO: Handle this in a cleaner way. This happens when one of the views isn't on the
+            // screen anymore.
+            return false;
+        }
     }
 
     public static boolean isAncestor(View possibleDescendant, View possibleAncestor) {
