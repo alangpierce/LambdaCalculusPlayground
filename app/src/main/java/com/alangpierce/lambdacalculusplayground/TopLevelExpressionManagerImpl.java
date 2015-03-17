@@ -1,6 +1,9 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.content.Context;
+import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -17,14 +20,16 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final TopLevelExpressionState expressionState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final RelativeLayout rootView;
+    private final Context context;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            RelativeLayout rootView) {
+            RelativeLayout rootView, Context context) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.rootView = rootView;
+        this.context = context;
     }
 
     @Override
@@ -34,11 +39,24 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression);
         }
+        renderPaletteBackground();
         int yPos = 100;
         for (String varName : ImmutableList.of("x", "y", "t", "f", "s", "z")) {
             renderPaletteLambda(Point.create(1750, yPos), varName);
             yPos += 200;
         }
+    }
+
+    private void renderPaletteBackground() {
+        // TODO: Move this into a better place.
+        TextView view = new TextView(context);
+        view.setBackgroundColor(0xFFE6CEA3);
+        // Just below top-level expressions.
+        view.setElevation(9);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(500, 2000);
+        layoutParams.topMargin = 0;
+        layoutParams.leftMargin = 1675;
+        rootView.addView(view, layoutParams);
     }
 
     private void renderPaletteLambda(Point canvasPos, String varName) {
