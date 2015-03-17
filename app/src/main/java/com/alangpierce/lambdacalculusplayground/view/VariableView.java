@@ -10,20 +10,16 @@ import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
 public class VariableView implements ExpressionView {
-    private final DragObservableGenerator dragObservableGenerator;
-
     private final LinearLayout view;
 
-    public VariableView(DragObservableGenerator dragObservableGenerator, LinearLayout view) {
-        this.dragObservableGenerator = dragObservableGenerator;
+    public VariableView(LinearLayout view) {
         this.view = view;
     }
 
-    public static VariableView render(DragObservableGenerator dragObservableGenerator,
-            ExpressionViewRenderer renderer, String varName) {
+    public static VariableView render(ExpressionViewRenderer renderer, String varName) {
         LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
                 ImmutableList.of(renderer.makeTextView(varName)));
-        return new VariableView(dragObservableGenerator, mainView);
+        return new VariableView(mainView);
     }
 
     @Override

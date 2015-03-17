@@ -73,7 +73,8 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
-        return ImmutableList.of(new BodyDropTarget());
+        return ImmutableList.of(
+                new BodyDropTarget(), new FuncCallDropTarget(this, view, funcCallFactory));
     }
 
     public void handleBodyChange(@Nullable ExpressionController newBodyController) {
