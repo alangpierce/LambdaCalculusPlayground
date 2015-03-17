@@ -10,6 +10,8 @@ import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
@@ -116,6 +118,24 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         }
         view.decommission();
         return expressionController;
+    }
+
+    @Override
+    public boolean isTrivialExpression() {
+        return screenExpression.getExpr().visit(new UserExpression.UserExpressionVisitor<Boolean>() {
+            @Override
+            public Boolean visit(UserLambda lambda) {
+                return lambda.body == null;
+            }
+            @Override
+            public Boolean visit(UserFuncCall funcCall) {
+                return false;
+            }
+            @Override
+            public Boolean visit(UserVariable variable) {
+                return true;
+            }
+        });
     }
 
     private class TopLevelExpressionDragSource implements DragSource {

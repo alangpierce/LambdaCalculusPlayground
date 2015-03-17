@@ -17,6 +17,12 @@ public interface TopLevelExpressionController {
     List<DragSource> getDragSources();
 
     /**
+     * An expression so simple that we don't need to warn when deleting it. We do this so the
+     * palette doesn't turn red when creating initial lambda expressions.
+     */
+    boolean isTrivialExpression();
+
+    /**
      * Get rid of this top-level expression and return the underlying expression controller. This is
      * used when dropping top-level expressions into other expressions.
      */

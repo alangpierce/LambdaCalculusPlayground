@@ -1,16 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
-
-import rx.Observable;
 
 public class PaletteController {
     private final PaletteView view;
@@ -31,7 +26,9 @@ public class PaletteController {
 
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {
-            view.handleDeleteDragEnter();
+            if (!expressionController.isTrivialExpression()) {
+                view.handleDeleteDragEnter();
+            }
         }
 
         @Override

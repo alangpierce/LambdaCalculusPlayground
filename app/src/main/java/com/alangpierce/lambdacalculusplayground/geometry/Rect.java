@@ -1,9 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.geometry;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
 
 @AutoValue
 public abstract class Rect {

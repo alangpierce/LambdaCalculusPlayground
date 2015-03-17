@@ -9,8 +9,6 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
-import javax.annotation.Nullable;
-
 import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 

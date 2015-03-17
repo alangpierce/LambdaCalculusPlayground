@@ -5,7 +5,6 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
-import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
 import com.google.common.collect.ImmutableList;

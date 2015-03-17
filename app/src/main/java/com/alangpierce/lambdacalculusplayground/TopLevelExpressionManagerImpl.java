@@ -1,9 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;

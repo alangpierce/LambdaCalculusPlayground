@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
@@ -13,7 +11,6 @@ import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.google.common.collect.ImmutableList;
