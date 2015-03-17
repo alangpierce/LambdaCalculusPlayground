@@ -54,6 +54,10 @@ public class
                 bodyNativeView);
     }
 
+    public Observable<? extends Observable<PointerMotionEvent>> getWholeExpressionObservable() {
+        return dragObservableGenerator.getDragObservable(view);
+    }
+
     public @Nullable Observable<? extends Observable<PointerMotionEvent>> getBodyObservable() {
         if (bodyView == null) {
             return null;

@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 /**
@@ -20,6 +21,8 @@ public interface ExpressionControllerFactory {
      * have OnChangeCallback set, so it should be set immediately after creation.
      */
     ExpressionController createController(UserExpression userExpression);
+
+    PaletteLambdaController createPaletteLambdaController(String varName);
 
     /**
      * We need to pass the expression manager in dynamically in order to avoid a circular reference.

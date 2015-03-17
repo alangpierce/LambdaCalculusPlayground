@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression.UserExpressionVisitor;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
@@ -148,6 +149,15 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DropTarget dropTarget : result.getDropTargets()) {
             dragManager.registerDropTarget(dropTarget);
         }
+        return result;
+    }
+
+    @Override
+    public PaletteLambdaController createPaletteLambdaController(String varName) {
+        LambdaView view = LambdaView.render(dragObservableGenerator, viewRenderer, varName, null);
+        PaletteLambdaController result =
+                new PaletteLambdaController(topLevelExpressionManager, view, varName);
+        result.registerCallbacks(dragManager);
         return result;
     }
 }

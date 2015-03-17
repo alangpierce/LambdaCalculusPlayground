@@ -7,7 +7,9 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Map.Entry;
 
@@ -32,6 +34,18 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression);
         }
+        int yPos = 100;
+        for (String varName : ImmutableList.of("x", "y", "t", "f", "s", "z")) {
+            renderPaletteLambda(Point.create(1750, yPos), varName);
+            yPos += 200;
+        }
+    }
+
+    private void renderPaletteLambda(Point canvasPos, String varName) {
+        PaletteLambdaController controller = controllerFactoryFactory.create(this)
+                .createPaletteLambdaController(varName);
+        rootView.addView(controller.getView().getNativeView(),
+                Views.layoutParamsForRelativePos(canvasPos));
     }
 
     @Override
