@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -64,13 +65,18 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     @Override
+    public OnChangeCallback getOnChangeCallback() {
+        return onChangeCallback;
+    }
+
+    @Override
     public List<DragSource> getDragSources() {
         updateDragActionSubscription();
         return ImmutableList.of(new ArgDragSource());
     }
 
     @Override
-    public List<DropTarget> getDropTargets() {
+    public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of();
     }
 

@@ -35,29 +35,4 @@ public class VariableView implements ExpressionView {
     public Point getScreenPos() {
         return Views.getScreenPos(view);
     }
-
-    public boolean rightEdgeIntersectsWith(TopLevelExpressionView dragView) {
-        LinearLayout dragNativeView = dragView.getNativeView();
-        try {
-            return !Views.isAncestor(view, dragNativeView) &&
-                    Views.getBoundingBox(view).rightEdge()
-                            .intersectsWith(Views.getBoundingBox(dragNativeView));
-        } catch (IllegalStateException e) {
-            // TODO: Handle this in a cleaner way. This happens when one of the views isn't on the
-            // screen anymore.
-            return false;
-        }
-    }
-
-    public void handleDragEnter() {
-        view.setBackgroundColor(Color.GREEN);
-    }
-
-    public void handleDragExit() {
-        view.setBackgroundColor(Color.WHITE);
-    }
-
-    public void detach() {
-        ((ViewGroup)view.getParent()).removeView(view);
-    }
 }

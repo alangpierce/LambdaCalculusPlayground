@@ -114,14 +114,13 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             public ExpressionController visit(UserVariable variable) {
                 VariableView view = VariableView.render(dragObservableGenerator, viewRenderer,
                         variable.varName);
-                return new VariableExpressionController(
-                        ExpressionControllerFactoryImpl.this::createFuncCall, view, variable);
+                return new VariableExpressionController(view, variable);
             }
         });
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }
-        for (DropTarget dropTarget : result.getDropTargets()) {
+        for (DropTarget dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
         }
         return result;
@@ -146,7 +145,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }
-        for (DropTarget dropTarget : result.getDropTargets()) {
+        for (DropTarget dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
         }
         return result;

@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
@@ -50,6 +51,11 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
+    public OnChangeCallback getOnChangeCallback() {
+        return onChangeCallback;
+    }
+
+    @Override
     public UserExpression getExpression() {
         return userLambda;
     }
@@ -66,7 +72,7 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
-    public List<DropTarget> getDropTargets() {
+    public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(new BodyDropTarget());
     }
 
@@ -132,7 +138,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {
-            view.handleDragEnter();
+            view.handleBodyDragEnter();
         }
         @Override
         public void handleExit() {
@@ -140,11 +146,11 @@ public class LambdaExpressionController implements ExpressionController {
             if (userLambda.body != null) {
                 return;
             }
-            view.handleDragExit();
+            view.handleBodyDragExit();
         }
         @Override
         public void handleDrop(TopLevelExpressionController expressionController) {
-            view.handleDragExit();
+            view.handleBodyDragExit();
             ExpressionController bodyController = expressionController.decommission();
             handleBodyChange(bodyController);
         }

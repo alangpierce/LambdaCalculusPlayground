@@ -105,11 +105,11 @@ public class
                 Views.viewsIntersect(bodyNativeView, dragNativeView);
     }
 
-    public void handleDragEnter() {
+    public void handleBodyDragEnter() {
         bodyNativeView.setBackgroundColor(Color.GREEN);
     }
 
-    public void handleDragExit() {
+    public void handleBodyDragExit() {
         bodyNativeView.setBackgroundColor(0x44FF0000);
     }
 }
