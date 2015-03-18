@@ -47,6 +47,7 @@ public class FuncCallExpressionController implements ExpressionController {
         this.funcController = funcController;
         this.argController = argController;
         this.userFuncCall = userFuncCall;
+        setFuncViewEnabled(false);
     }
 
     @Override
@@ -81,11 +82,16 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     public void handleFuncChange(ExpressionController newFuncController) {
+        setFuncViewEnabled(true);
+        // Start accepting touch events for the arg view.
+        funcController.getView().getNativeView().setEnabled(false);
+
         userFuncCall = new UserFuncCall(newFuncController.getExpression(), userFuncCall.arg);
         view.handleFuncChange(newFuncController.getView());
         newFuncController.setOnChangeCallback(this::handleFuncChange);
         funcController = newFuncController;
         onChangeCallback.onChange(this);
+        setFuncViewEnabled(false);
     }
 
     public void handleArgChange(ExpressionController newArgController) {
@@ -106,10 +112,23 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     private void decommission() {
+        setFuncViewEnabled(true);
         if (argDragActionSubscription != null) {
             argDragActionSubscription.unsubscribe();
         }
         view.decommission();
+    }
+
+    /**
+     * Enable or disable touch events for the function view. The behavior of function calls is that
+     * the left side should not itself be draggable, and should fall through to the function call
+     * drag handler. Unfortunately, the drag observable code always consumes motion events on any
+     * views that have ever been registered, so it's hard to make it fall through in that case.
+     * Instead, we tell Android to skip the touch handler completely by setting its enabled state to
+     * false.
+     */
+    private void setFuncViewEnabled(boolean enabled) {
+        funcController.getView().getNativeView().setEnabled(enabled);
     }
 
     private class ArgDragSource implements DragSource {
