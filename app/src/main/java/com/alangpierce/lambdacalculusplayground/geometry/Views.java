@@ -46,6 +46,22 @@ public class Views {
         return false;
     }
 
+    /**
+     * Get the "deepest" view in the view hierarchy.
+     *
+     * This is a nice rough approximation for drop priority.
+     */
+    public static int viewDepth(View view) {
+        ViewParent currentView = view.getParent();
+        for (int i = 0; i < 100; i++) {
+            if (currentView == null) {
+                return i;
+            }
+            currentView = currentView.getParent();
+        }
+        return 100;
+    }
+
     public static RelativeLayout.LayoutParams layoutParamsForRelativePos(Point relativePos) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,

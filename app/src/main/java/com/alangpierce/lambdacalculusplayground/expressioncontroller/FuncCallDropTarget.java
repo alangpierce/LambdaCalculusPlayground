@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViews;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
@@ -23,8 +24,12 @@ public class FuncCallDropTarget implements DropTarget {
     }
 
     @Override
-    public boolean hitTest(TopLevelExpressionView dragView) {
-        return ExpressionViews.rightEdgeIntersectsWith(targetView, dragView);
+    public int hitTest(TopLevelExpressionView dragView) {
+        if (ExpressionViews.rightEdgeIntersectsWith(targetView, dragView)) {
+            return Views.viewDepth(targetView.getNativeView());
+        } else {
+            return DropTarget.NOT_HIT;
+        }
     }
     @Override
     public void handleEnter(TopLevelExpressionController expressionController) {

@@ -134,8 +134,12 @@ public class LambdaExpressionController implements ExpressionController {
 
     private class BodyDropTarget implements DropTarget {
         @Override
-        public boolean hitTest(TopLevelExpressionView dragView) {
-            return userLambda.body == null && view.bodyIntersectsWith(dragView);
+        public int hitTest(TopLevelExpressionView dragView) {
+            if (userLambda.body == null && view.bodyIntersectsWith(dragView)) {
+                return view.getBodyViewDepth();
+            } else {
+                return DropTarget.NOT_HIT;
+            }
         }
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {

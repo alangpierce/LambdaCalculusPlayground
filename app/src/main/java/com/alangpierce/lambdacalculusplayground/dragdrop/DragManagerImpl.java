@@ -90,12 +90,17 @@ public class DragManagerImpl implements DragManager {
      * TODO: Make this smarter! Currently, we just pick any one that passes the hit test.
      */
     private @Nullable DropTarget getBestDropTarget(TopLevelExpressionView dragView) {
+        DropTarget bestTarget = null;
+        int bestPriority = DropTarget.NOT_HIT;
+
         for (DropTarget dropTarget : dropTargets) {
-            if (dropTarget.hitTest(dragView)) {
-                return dropTarget;
+            int hitTestResult = dropTarget.hitTest(dragView);
+            if (hitTestResult > bestPriority) {
+                bestTarget = dropTarget;
+                bestPriority = hitTestResult;
             }
         }
-        return null;
+        return bestTarget;
     }
 
     private void defaultHandleDrop(

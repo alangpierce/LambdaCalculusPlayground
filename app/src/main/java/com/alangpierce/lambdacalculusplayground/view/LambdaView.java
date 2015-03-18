@@ -112,4 +112,8 @@ public class
     public void handleBodyDragExit() {
         bodyNativeView.setBackgroundColor(0x44FF0000);
     }
+
+    public int getBodyViewDepth() {
+        return Views.viewDepth(bodyNativeView);
+    }
 }
