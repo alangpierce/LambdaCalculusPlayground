@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.view.View;
+import android.view.View.MeasureSpec;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
@@ -97,8 +99,24 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             // For now, just ignore expressions that infinite loop.
             return;
         }
-        topLevelExpressionManager.createNewExpression(
-                newExpr, view.getScreenPos().plus(Point.create(100, 150)));
+        TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
+                newExpr, view.getScreenPos().plus(Point.create(100, 200)));
+
+        Point newScreenPos = computeExecuteResultScreenPos(newExpression);
+        newExpression.getView().setScreenPos(newScreenPos);
+        newExpression.handlePositionChange(newScreenPos);
+    }
+
+    private Point computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
+        Point thisViewPos = view.getScreenPos();
+        int thisViewWidth = view.getNativeView().getWidth();
+        int thisViewHeight = view.getNativeView().getHeight();
+
+        newExpression.getView().getNativeView().measure(
+                MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+        int viewWidth = newExpression.getView().getNativeView().getMeasuredWidth();
+        return Point.create(thisViewPos.getX() + (thisViewWidth / 2) - (viewWidth / 2),
+                thisViewPos.getY() + thisViewHeight + 50);
     }
 
     @Override
