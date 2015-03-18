@@ -49,14 +49,15 @@ public class PlaygroundActivity extends ActionBarActivity {
             Expression simpleExecutableExpr = new FuncCall(idExpr, new Variable("y"));
 
             List<ScreenExpression> expressions = ImmutableList.of(
-                    ScreenExpression.create(
-                            UserExpressions.fromExpression(trueExpr), Point.create(200, 200)),
-                    ScreenExpression.create(
-                            UserExpressions.fromExpression(yCombinator),Point.create(100, 400)),
-                    ScreenExpression.create(new UserLambda("x", null), Point.create(150, 600)),
-                    ScreenExpression.create(
-                            UserExpressions.fromExpression(simpleExecutableExpr),
-                            Point.create(50, 50)));
+//                    ScreenExpression.create(
+//                            UserExpressions.fromExpression(trueExpr), Point.create(200, 200)),
+//                    ScreenExpression.create(
+//                            UserExpressions.fromExpression(yCombinator),Point.create(100, 400)),
+//                    ScreenExpression.create(new UserLambda("x", null), Point.create(150, 600)),
+//                    ScreenExpression.create(
+//                            UserExpressions.fromExpression(simpleExecutableExpr),
+//                            Point.create(50, 50))
+            );
             Fragment fragment = PlaygroundFragment.create(expressions);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }

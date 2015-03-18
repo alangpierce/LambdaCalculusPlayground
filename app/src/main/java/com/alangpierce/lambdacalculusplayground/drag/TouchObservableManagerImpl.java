@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -15,7 +16,8 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class TouchObservableManagerImpl implements TouchObservableManager {
-    private WeakHashMap<View, Observable<MotionEvent>> cachedEventObservables = new WeakHashMap<>();
+    // TODO: Use weak references when necessary to avoid memory leaks.
+    private Map<View, Observable<MotionEvent>> cachedEventObservables = Maps.newConcurrentMap();
 
     @Override
     public Observable<MotionEvent> touchObservableForView(View view) {
