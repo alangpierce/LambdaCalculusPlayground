@@ -102,4 +102,37 @@ public class Expressions {
             }
         });
     }
+
+    /**
+     * Since we sometimes can get variable names with primes in them, try removing them if they're
+     * no longer needed.
+     */
+    public static Expression normalizeNames(Expression e) {
+        return e.visit(new ExpressionVisitor<Expression>() {
+            @Override
+            public Expression visit(Lambda lambda) {
+                String varName = lambda.varName;
+                Expression body = lambda.body;
+                if (varName.endsWith("'")) {
+                    String newVarName = varName;
+                    while (newVarName.endsWith("'")) {
+                        newVarName = newVarName.substring(0, newVarName.length() - 1);
+                    }
+                    if (!containsVariableUsage(lambda.body, newVarName)) {
+                        body = replaceVariable(body, varName, new Variable(newVarName));
+                        varName = newVarName;
+                    }
+                }
+                return new Lambda(varName, normalizeNames(body));
+            }
+            @Override
+            public Expression visit(FuncCall funcCall) {
+                return new FuncCall(normalizeNames(funcCall.func), normalizeNames(funcCall.arg));
+            }
+            @Override
+            public Expression visit(Variable variable) {
+                return variable;
+            }
+        });
+    }
 }

@@ -87,6 +87,12 @@ public class UserExpressions {
             }
             userExpression = step(userExpression);
         }
+        // TODO: Move this type of logic to just be in Expressions. I think this null check is
+        // unnecessary, but I'm not 100% sure.
+        if (userExpression != null) {
+            userExpression =
+                    fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
+        }
         return userExpression;
     }
 
