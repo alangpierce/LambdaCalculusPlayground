@@ -100,7 +100,11 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
          */
         final Map<Integer, Integer> idByNativeId = Collections.synchronizedMap(new HashMap<>());
         final AtomicInteger nextId = new AtomicInteger();
-        return nativePointerEvents.map(event -> {
+        return nativePointerEvents.flatMap(event -> {
+            if (!idByNativeId.containsKey(event.getPointerId()) &&
+                    event.getAction() != Action.DOWN) {
+                return Observable.empty();
+            }
             if (!idByNativeId.containsKey(event.getPointerId())) {
                 idByNativeId.put(event.getPointerId(), nextId.incrementAndGet());
             }
@@ -108,7 +112,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
             if (event.getAction() == Action.UP) {
                 idByNativeId.remove(event.getPointerId());
             }
-            return result;
+            return Observable.just(result);
         });
     }
 

@@ -31,7 +31,7 @@ public class LambdaExpressionController implements ExpressionController {
     private @Nullable ExpressionController bodyController;
     private OnChangeCallback onChangeCallback;
 
-    private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
+    private final Subject<Observable<PointerMotionEvent>, Observable<PointerMotionEvent>>
             bodyDragActionSubject = PublishSubject.create();
     private @Nullable Subscription bodyDragActionSubscription;
 
