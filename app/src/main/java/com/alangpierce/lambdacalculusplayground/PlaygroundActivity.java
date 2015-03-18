@@ -30,6 +30,10 @@ public class PlaygroundActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
         });
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            System.out.println("Thread had uncaught exception.");
+            throwable.printStackTrace();
+        });
     }
 
     @Override

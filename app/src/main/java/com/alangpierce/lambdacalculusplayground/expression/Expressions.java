@@ -50,7 +50,8 @@ public class Expressions {
                 if (lambda.varName.equals(varName)) {
                     return lambda;
                 }
-                return new Lambda(lambda.varName, replaceVariable(lambda, varName, replacement));
+                return new Lambda(lambda.varName,
+                        replaceVariable(lambda.body, varName, replacement));
             }
             @Override
             public Expression visit(FuncCall funcCall) {
