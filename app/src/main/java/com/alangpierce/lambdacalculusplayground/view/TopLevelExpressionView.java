@@ -13,7 +13,6 @@ import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 public class TopLevelExpressionView {
-    private final ExpressionViewRenderer renderer;
     private final DragObservableGenerator dragObservableGenerator;
     private final RelativeLayout rootView;
 
@@ -22,11 +21,9 @@ public class TopLevelExpressionView {
     private View executeButton;
     private boolean isExecutable;
 
-    public TopLevelExpressionView(
-            ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
+    public TopLevelExpressionView(DragObservableGenerator dragObservableGenerator,
             RelativeLayout rootView, ExpressionView exprView, View executeButton,
             boolean isExecutable) {
-        this.renderer = renderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.rootView = rootView;
         this.exprView = exprView;
@@ -38,7 +35,7 @@ public class TopLevelExpressionView {
             ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
             RelativeLayout rootView, ExpressionView exprView, boolean isExecutable) {
         View executeButton = renderer.makeExecuteButton();
-        return new TopLevelExpressionView(renderer, dragObservableGenerator, rootView, exprView,
+        return new TopLevelExpressionView(dragObservableGenerator, rootView, exprView,
                 executeButton, isExecutable);
     }
 
@@ -51,21 +48,14 @@ public class TopLevelExpressionView {
                 "Cannot attach an expression to the root that is already attached.");
         LinearLayout exprNativeView = exprView.getNativeView();
         rootView.addView(exprNativeView, Views.layoutParamsForRelativePos(canvasPos));
-        exprView.getNativeView().measure(
-                View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        Views.updateLayoutParamsToRelativePos(executeButton, canvasPos.plus(
-                Point.create(exprNativeView.getMeasuredWidth() - 40,
-                        exprNativeView.getMeasuredHeight() - 40)));
-        if (isExecutable) {
-            rootView.addView(executeButton);
-        }
+        invalidateExecuteButton(canvasPos);
     }
 
     public void setScreenPos(Point screenPos) {
         exprView.getNativeView().setLayoutParams(
                 Views.layoutParamsForScreenPos(rootView, screenPos));
 
-        // TODO: Consolidate with code in attachToRoot.
+        // TODO: Consolidate with invalidateExecuteButton.
         LinearLayout exprNativeView = exprView.getNativeView();
         Views.updateLayoutParamsToRelativePos(executeButton,
                 screenPos.minus(Views.getScreenPos(rootView)).plus(
@@ -75,13 +65,7 @@ public class TopLevelExpressionView {
 
     public void setCanvasPos(Point canvasPos) {
         exprView.getNativeView().setLayoutParams(Views.layoutParamsForRelativePos(canvasPos));
-
-        // TODO: Consolidate with code in attachToRoot.
-        LinearLayout exprNativeView = exprView.getNativeView();
-        Views.updateLayoutParamsToRelativePos(executeButton, canvasPos.plus(
-                Point.create(exprNativeView.getMeasuredWidth() - 40,
-                        exprNativeView.getMeasuredHeight() - 40)));
-
+        invalidateExecuteButton(canvasPos);
     }
 
     public LinearLayout getNativeView() {
@@ -113,11 +97,8 @@ public class TopLevelExpressionView {
         exprView = newExpression;
         isExecutable = newIsExecutable;
         setCanvasPos(canvasPos);
-        if (isExecutable) {
-            rootView.addView(executeButton);
-        } else {
-            rootView.removeView(executeButton);
-        }
+        invalidateExecuteButton(canvasPos);
+
     }
 
     public void decommission() {
@@ -131,5 +112,17 @@ public class TopLevelExpressionView {
 
     public void setOnExecuteListener(OnExecuteListener listener) {
         executeButton.setOnClickListener((view) -> listener.execute());
+    }
+
+    private void invalidateExecuteButton(Point canvasPos) {
+        rootView.removeView(executeButton);
+        if (isExecutable) {
+            LinearLayout exprNativeView = exprView.getNativeView();
+            exprNativeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            Views.updateLayoutParamsToRelativePos(executeButton, canvasPos.plus(
+                    Point.create(exprNativeView.getMeasuredWidth() - 40,
+                            exprNativeView.getMeasuredHeight() - 40)));
+            rootView.addView(executeButton);
+        }
     }
 }
