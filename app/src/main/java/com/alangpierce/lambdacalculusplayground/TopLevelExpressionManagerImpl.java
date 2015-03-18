@@ -50,10 +50,10 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         PaletteController controller = new PaletteController(view);
         controller.registerCallbacks(dragManager);
 
-        int yPos = 100;
-        for (String varName : ImmutableList.of("x", "y", "t", "f", "s", "z")) {
+        int yPos = 50;
+        for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
             renderPaletteLambda(Point.create(1750, yPos), varName);
-            yPos += 200;
+            yPos += 145;
         }
     }
 
