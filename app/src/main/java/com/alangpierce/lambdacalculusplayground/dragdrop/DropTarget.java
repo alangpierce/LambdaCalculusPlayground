@@ -14,7 +14,7 @@ public interface DropTarget {
      * Returns NOT_HIT if the view was not hit. Otherwise, returns an integer which is the priority
      * of the drop target. The priority is used to break ties when there are mulitple drop targets.
      */
-    int hitTest(TopLevelExpressionView dragView);
+    int hitTest(TopLevelExpressionController dragController);
 
     int NOT_HIT = -1;
 

@@ -24,8 +24,8 @@ public class FuncCallDropTarget implements DropTarget {
     }
 
     @Override
-    public int hitTest(TopLevelExpressionView dragView) {
-        if (ExpressionViews.rightEdgeIntersectsWith(targetView, dragView)) {
+    public int hitTest(TopLevelExpressionController dragController) {
+        if (ExpressionViews.rightEdgeIntersectsWith(targetView, dragController.getView())) {
             return Views.viewDepth(targetView.getNativeView());
         } else {
             return DropTarget.NOT_HIT;

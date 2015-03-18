@@ -60,7 +60,7 @@ public class DragManagerImpl implements DragManager {
     private void handleMove(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
         view.setScreenPos(event.getScreenPos());
-        DropTarget bestDropTarget = getBestDropTarget(view);
+        DropTarget bestDropTarget = getBestDropTarget(controller);
 
         // TODO: Be smarter about this. We probably don't want to redo every drop target every time.
         for (DropTarget dropTarget : dropTargets) {
@@ -75,7 +75,7 @@ public class DragManagerImpl implements DragManager {
     private void handleUp(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
         view.endDrag();
-        DropTarget bestDropTarget = getBestDropTarget(view);
+        DropTarget bestDropTarget = getBestDropTarget(controller);
         if (bestDropTarget == null) {
             defaultHandleDrop(controller, event.getScreenPos());
         } else {
@@ -86,15 +86,13 @@ public class DragManagerImpl implements DragManager {
     /**
      * Figure out which drop target is the best one for this situation. Returns null if no drop
      * targets match.
-     *
-     * TODO: Make this smarter! Currently, we just pick any one that passes the hit test.
      */
-    private @Nullable DropTarget getBestDropTarget(TopLevelExpressionView dragView) {
+    private @Nullable DropTarget getBestDropTarget(TopLevelExpressionController dragController) {
         DropTarget bestTarget = null;
         int bestPriority = DropTarget.NOT_HIT;
 
         for (DropTarget dropTarget : dropTargets) {
-            int hitTestResult = dropTarget.hitTest(dragView);
+            int hitTestResult = dropTarget.hitTest(dragController);
             if (hitTestResult > bestPriority) {
                 bestTarget = dropTarget;
                 bestPriority = hitTestResult;

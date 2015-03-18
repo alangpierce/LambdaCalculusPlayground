@@ -74,7 +74,9 @@ public class LambdaExpressionController implements ExpressionController {
     @Override
     public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(
-                new BodyDropTarget(), new FuncCallDropTarget(this, view, funcCallFactory));
+                new BodyDropTarget(),
+                new FuncCallDropTarget(this, view, funcCallFactory),
+                new ParameterDropTarget());
     }
 
     public void handleBodyChange(@Nullable ExpressionController newBodyController) {
@@ -134,8 +136,8 @@ public class LambdaExpressionController implements ExpressionController {
 
     private class BodyDropTarget implements DropTarget {
         @Override
-        public int hitTest(TopLevelExpressionView dragView) {
-            if (userLambda.body == null && view.bodyIntersectsWith(dragView)) {
+        public int hitTest(TopLevelExpressionController dragController) {
+            if (userLambda.body == null && view.bodyIntersectsWith(dragController.getView())) {
                 return view.getBodyViewDepth();
             } else {
                 return DropTarget.NOT_HIT;
@@ -158,6 +160,37 @@ public class LambdaExpressionController implements ExpressionController {
             view.handleBodyDragExit();
             ExpressionController bodyController = expressionController.decommission();
             handleBodyChange(bodyController);
+        }
+    }
+
+    /**
+     * Dropping a variable back should make it disappear instead of awkwardly stick around on the
+     * canvas.
+     */
+    private class ParameterDropTarget implements DropTarget {
+        @Override
+        public int hitTest(TopLevelExpressionController dragController) {
+            if (dragController.getScreenExpression().getExpr() instanceof UserVariable &&
+                    view.parameterIntersectsWith(dragController.getView())) {
+                // Always have the lowest possible priority, since the only thing we're avoiding
+                // here is putting
+                return 0;
+            } else {
+                return DropTarget.NOT_HIT;
+            }
+        }
+        @Override
+        public void handleEnter(TopLevelExpressionController expressionController) {
+            // Do nothing
+        }
+        @Override
+        public void handleExit() {
+            // Do nothing
+        }
+        @Override
+        public void handleDrop(TopLevelExpressionController expressionController) {
+            // Just throw the variable away.
+            expressionController.decommission();
         }
     }
 }

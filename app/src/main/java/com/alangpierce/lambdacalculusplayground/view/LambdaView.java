@@ -105,6 +105,10 @@ public class
                 Views.viewsIntersect(bodyNativeView, dragNativeView);
     }
 
+    public boolean parameterIntersectsWith(TopLevelExpressionView dragView) {
+        return Views.viewsIntersect(parameterView, dragView.getNativeView());
+    }
+
     public void handleBodyDragEnter() {
         bodyNativeView.setBackgroundColor(Color.GREEN);
     }

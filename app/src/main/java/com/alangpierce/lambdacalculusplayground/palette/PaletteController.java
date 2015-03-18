@@ -20,8 +20,9 @@ public class PaletteController {
 
     private class PaletteDeleteDropTarget implements DropTarget {
         @Override
-        public int hitTest(TopLevelExpressionView dragView) {
-            if (Views.viewsIntersect(view.getNativeView(), dragView.getNativeView())) {
+        public int hitTest(TopLevelExpressionController dragController) {
+            if (Views.viewsIntersect(view.getNativeView(),
+                    dragController.getView().getNativeView())) {
                 // Don't let drop target shadowing let people drag things to the delete area.
                 return Integer.MAX_VALUE;
             } else {
@@ -44,7 +45,7 @@ public class PaletteController {
         @Override
         public void handleDrop(TopLevelExpressionController expressionController) {
             view.handleDeleteDragExit();
-            ExpressionController bodyController = expressionController.decommission();
+            expressionController.decommission();
         }
     }
 }
