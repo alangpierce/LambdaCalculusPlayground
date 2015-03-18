@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
+import com.alangpierce.lambdacalculusplayground.expression.Expression.ExpressionVisitor;
+
 import javax.annotation.Nullable;
 
 public class Expressions {
@@ -50,8 +52,21 @@ public class Expressions {
                 if (lambda.varName.equals(varName)) {
                     return lambda;
                 }
-                return new Lambda(lambda.varName,
-                        replaceVariable(lambda.body, varName, replacement));
+
+                /*
+                 * If the lambda parameter exists in the replacement expression, we'll introduce a
+                 * name clash. To solve this, bump our variable name to be different by adding a
+                 * prime to the end, and do that replacement in the whole expression.
+                 */
+                String newVarName = lambda.varName;
+                while (containsVariableUsage(replacement, newVarName)) {
+                    newVarName += "'";
+                }
+                Expression newBody = lambda.body;
+                if (!newVarName.equals(lambda.varName)) {
+                    newBody = replaceVariable(newBody, lambda.varName, new Variable(newVarName));
+                }
+                return new Lambda(newVarName, replaceVariable(newBody, varName, replacement));
             }
             @Override
             public Expression visit(FuncCall funcCall) {
@@ -65,6 +80,25 @@ public class Expressions {
                 } else {
                     return variable;
                 }
+            }
+        });
+    }
+
+    public static boolean containsVariableUsage(Expression e, String varName) {
+        return e.visit(new ExpressionVisitor<Boolean>() {
+            @Override
+            public Boolean visit(Lambda lambda) {
+                return lambda.varName.equals(varName) ||
+                        containsVariableUsage(lambda.body, varName);
+            }
+            @Override
+            public Boolean visit(FuncCall funcCall) {
+                return containsVariableUsage(funcCall.func, varName) ||
+                        containsVariableUsage(funcCall.arg, varName);
+            }
+            @Override
+            public Boolean visit(Variable variable) {
+                return variable.varName.equals(varName);
             }
         });
     }
