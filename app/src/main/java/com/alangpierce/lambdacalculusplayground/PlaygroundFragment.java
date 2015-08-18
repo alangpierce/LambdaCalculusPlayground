@@ -56,7 +56,7 @@ public class PlaygroundFragment extends Fragment {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.setLayoutParams(rootLayoutParams);
 
-        PlaygroundComponent component = Dagger_PlaygroundComponent.builder()
+        PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(new PlaygroundModule(getActivity(), rootLayout, expressionState))
                 .build();
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
