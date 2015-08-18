@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
-import com.alangpierce.lambdacalculusplayground.expression.Expression.ExpressionVisitor;
-
 import javax.annotation.Nullable;
 
 public class Expressions {
@@ -11,96 +9,81 @@ public class Expressions {
      * @return An expression, or null if this expression cannot be computed any further.
      */
     public static @Nullable Expression step(Expression e) {
-        return e.visit(new Expression.ExpressionVisitor<Expression>() {
-            @Override
-            public @Nullable Expression visit(Lambda lambda) {
-                Expression newBody = step(lambda.body);
-                if (newBody == null) {
+        return e.visit(
+                lambda -> {
+                    Expression newBody = step(lambda.body());
+                    if (newBody == null) {
+                        return null;
+                    }
+                    return Lambda.create(lambda.varName(), newBody);
+                },
+                funcCall -> {
+                    if (funcCall.func() instanceof Lambda) {
+                        Lambda func = (Lambda) funcCall.func();
+                        return replaceVariable(func.body(), func.varName(), funcCall.arg());
+                    }
+                    @Nullable Expression steppedFunc = step(funcCall.func());
+                    if (steppedFunc != null) {
+                        return FuncCall.create(steppedFunc, funcCall.arg());
+                    }
+                    @Nullable Expression steppedArg = step(funcCall.arg());
+                    if (steppedArg != null) {
+                        return FuncCall.create(funcCall.func(), steppedArg);
+                    }
                     return null;
-                }
-                return new Lambda(lambda.varName, newBody);
-            }
-            @Override
-            public @Nullable Expression visit(final FuncCall funcCall) {
-                if (funcCall.func instanceof Lambda) {
-                    Lambda func = (Lambda)funcCall.func;
-                    return replaceVariable(func.body, func.varName, funcCall.arg);
-                }
-                @Nullable Expression steppedFunc = step(funcCall.func);
-                if (steppedFunc != null) {
-                    return new FuncCall(steppedFunc, funcCall.arg);
-                }
-                @Nullable Expression steppedArg = step(funcCall.arg);
-                if (steppedArg != null) {
-                    return new FuncCall(funcCall.func, steppedArg);
-                }
-                return null;
-            }
-            @Override
-            public @Nullable Expression visit(Variable variable) {
-                return null;
-            }
-        });
+                },
+                variable -> null
+        );
     }
 
     public static Expression replaceVariable(Expression e, final String varName,
                                              final Expression replacement) {
-        return e.visit(new Expression.ExpressionVisitor<Expression>() {
-            @Override
-            public Expression visit(Lambda lambda) {
-                // Lambda variable shadows outer variable name.
-                if (lambda.varName.equals(varName)) {
-                    return lambda;
-                }
+        return e.visit(
+                lambda -> {
+                    // Lambda variable shadows outer variable name.
+                    if (lambda.varName().equals(varName)) {
+                        return lambda;
+                    }
 
-                /*
-                 * If the lambda parameter exists in the replacement expression, we'll introduce a
-                 * name clash. To solve this, bump our variable name to be different by adding a
-                 * prime to the end, and do that replacement in the whole expression.
-                 */
-                String newVarName = lambda.varName;
-                while (containsVariableUsage(replacement, newVarName)) {
-                    newVarName += "'";
+                    /*
+                     * If the lambda parameter exists in the replacement expression, we'll introduce
+                     * a name clash. To solve this, bump our variable name to be different by adding
+                     * a prime to the end, and do that replacement in the whole expression.
+                     */
+                    String newVarName = lambda.varName();
+                    while (containsVariableUsage(replacement, newVarName)) {
+                        newVarName += "'";
+                    }
+                    Expression newBody = lambda.body();
+                    if (!newVarName.equals(lambda.varName())) {
+                        newBody =
+                                replaceVariable(newBody, lambda.varName(),
+                                        Variable.create(newVarName));
+                    }
+                    return Lambda
+                            .create(newVarName, replaceVariable(newBody, varName, replacement));
+                },
+                funcCall -> FuncCall.create(
+                        replaceVariable(funcCall.func(), varName, replacement),
+                        replaceVariable(funcCall.arg(), varName, replacement)),
+                variable -> {
+                    if (variable.varName().equals(varName)) {
+                        return replacement;
+                    } else {
+                        return variable;
+                    }
                 }
-                Expression newBody = lambda.body;
-                if (!newVarName.equals(lambda.varName)) {
-                    newBody = replaceVariable(newBody, lambda.varName, new Variable(newVarName));
-                }
-                return new Lambda(newVarName, replaceVariable(newBody, varName, replacement));
-            }
-            @Override
-            public Expression visit(FuncCall funcCall) {
-                return new FuncCall(replaceVariable(funcCall.func, varName, replacement),
-                        replaceVariable(funcCall.arg, varName, replacement));
-            }
-            @Override
-            public Expression visit(Variable variable) {
-                if (variable.varName.equals(varName)) {
-                    return replacement;
-                } else {
-                    return variable;
-                }
-            }
-        });
+        );
     }
 
     public static boolean containsVariableUsage(Expression e, String varName) {
-        return e.visit(new ExpressionVisitor<Boolean>() {
-            @Override
-            public Boolean visit(Lambda lambda) {
-                return lambda.varName.equals(varName) ||
-                        containsVariableUsage(lambda.body, varName);
-            }
-            @Override
-            public Boolean visit(FuncCall funcCall) {
-                return containsVariableUsage(funcCall.func, varName) ||
-                        containsVariableUsage(funcCall.arg, varName);
-            }
-            @Override
-            public Boolean visit(Variable variable) {
-                return variable.varName.equals(varName);
-            }
-        });
+        return e.visit(
+                lambda -> lambda.varName().equals(varName) ||
+                        containsVariableUsage(lambda.body(), varName),
+                funcCall -> containsVariableUsage(funcCall.func(), varName) ||
+                        containsVariableUsage(funcCall.arg(), varName),
+                variable -> variable.varName().equals(varName)
+        );
     }
 
     /**
@@ -108,31 +91,25 @@ public class Expressions {
      * no longer needed.
      */
     public static Expression normalizeNames(Expression e) {
-        return e.visit(new ExpressionVisitor<Expression>() {
-            @Override
-            public Expression visit(Lambda lambda) {
-                String varName = lambda.varName;
-                Expression body = lambda.body;
-                if (varName.endsWith("'")) {
-                    String newVarName = varName;
-                    while (newVarName.endsWith("'")) {
-                        newVarName = newVarName.substring(0, newVarName.length() - 1);
+        return e.visit(
+                lambda -> {
+                    String varName = lambda.varName();
+                    Expression body = lambda.body();
+                    if (varName.endsWith("'")) {
+                        String newVarName = varName;
+                        while (newVarName.endsWith("'")) {
+                            newVarName = newVarName.substring(0, newVarName.length() - 1);
+                        }
+                        if (!containsVariableUsage(lambda.body(), newVarName)) {
+                            body = replaceVariable(body, varName, Variable.create(newVarName));
+                            varName = newVarName;
+                        }
                     }
-                    if (!containsVariableUsage(lambda.body, newVarName)) {
-                        body = replaceVariable(body, varName, new Variable(newVarName));
-                        varName = newVarName;
-                    }
-                }
-                return new Lambda(varName, normalizeNames(body));
-            }
-            @Override
-            public Expression visit(FuncCall funcCall) {
-                return new FuncCall(normalizeNames(funcCall.func), normalizeNames(funcCall.arg));
-            }
-            @Override
-            public Expression visit(Variable variable) {
-                return variable;
-            }
-        });
+                    return Lambda.create(varName, normalizeNames(body));
+                },
+                funcCall -> FuncCall.create(
+                        normalizeNames(funcCall.func()), normalizeNames(funcCall.arg())),
+                variable -> variable
+        );
     }
 }

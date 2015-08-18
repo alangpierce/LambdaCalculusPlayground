@@ -1,39 +1,18 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
-public class Variable implements Expression {
-    public final String varName;
+import com.google.auto.value.AutoValue;
 
-    public Variable(String varName) {
-        this.varName = varName;
+@AutoValue
+public abstract class Variable implements Expression {
+    public abstract String varName();
+
+    public static Variable create(String varName) {
+        return new AutoValue_Variable(varName);
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Variable variable = (Variable) o;
-
-        if (varName != null ? !varName.equals(variable.varName) : variable.varName != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return varName != null ? varName.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Variable{" +
-                "varName='" + varName + '\'' +
-                '}';
+    public <T> T visit(Visitor<Lambda, T> lambdaVisitor, Visitor<FuncCall, T> funcCallVisitor,
+            Visitor<Variable, T> variableVisitor) {
+        return variableVisitor.accept(this);
     }
 }

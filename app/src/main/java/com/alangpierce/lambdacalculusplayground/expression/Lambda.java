@@ -1,45 +1,19 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
-public class Lambda implements Expression {
-    public final String varName;
-    public final Expression body;
+import com.google.auto.value.AutoValue;
 
-    public Lambda(String varName, Expression body) {
-        this.varName = varName;
-        this.body = body;
+@AutoValue
+public abstract class Lambda implements Expression {
+    public abstract String varName();
+    public abstract Expression body();
+
+    public static Lambda create(String varName, Expression body) {
+        return new AutoValue_Lambda(varName, body);
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Lambda lambda = (Lambda) o;
-
-        if (body != null ? !body.equals(lambda.body) : lambda.body != null) return false;
-        if (varName != null ? !varName.equals(lambda.varName) : lambda.varName != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = varName != null ? varName.hashCode() : 0;
-        result = 31 * result + (body != null ? body.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Lambda{" +
-                "varName='" + varName + '\'' +
-                ", body=" + body +
-                '}';
+    public <T> T visit(Visitor<Lambda, T> lambdaVisitor, Visitor<FuncCall, T> funcCallVisitor,
+            Visitor<Variable, T> variableVisitor) {
+        return lambdaVisitor.accept(this);
     }
 }

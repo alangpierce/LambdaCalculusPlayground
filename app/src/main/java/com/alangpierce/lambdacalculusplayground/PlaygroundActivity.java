@@ -10,9 +10,6 @@ import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -44,13 +41,13 @@ public class PlaygroundActivity extends ActionBarActivity {
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
 
         if (savedInstanceState == null) {
-            Expression yCombinatorSegment = new Lambda("x", new FuncCall(new Variable("f"),
-                            new FuncCall(new Variable("x"), new Variable("x"))));
-            Expression yCombinator = new Lambda("f",
-                    new FuncCall(yCombinatorSegment, yCombinatorSegment));
-            Expression trueExpr = new Lambda("t", new Lambda("f", new Variable("t")));
-            Expression idExpr = new Lambda("x", new Variable("x"));
-            Expression simpleExecutableExpr = new FuncCall(idExpr, new Variable("y"));
+            Expression yCombinatorSegment = Lambda.create("x", FuncCall.create(Variable.create("f"),
+                    FuncCall.create(Variable.create("x"), Variable.create("x"))));
+            Expression yCombinator = Lambda.create("f",
+                    FuncCall.create(yCombinatorSegment, yCombinatorSegment));
+            Expression trueExpr = Lambda.create("t", Lambda.create("f", Variable.create("t")));
+            Expression idExpr = Lambda.create("x", Variable.create("x"));
+            Expression simpleExecutableExpr = FuncCall.create(idExpr, Variable.create("y"));
 
             List<ScreenExpression> expressions = ImmutableList.of(
 //                    ScreenExpression.create(

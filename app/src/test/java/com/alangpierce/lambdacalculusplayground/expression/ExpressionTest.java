@@ -4,8 +4,8 @@ import junit.framework.TestCase;
 
 public class ExpressionTest extends TestCase {
     public void testStepExpression() {
-        Expression identity = new Lambda("x", new Variable("x"));
-        Expression result = Expressions.step(new FuncCall(identity, new Variable("y")));
-        assertEquals(new Variable("y"), result);
+        Expression identity = Lambda.create("x", Variable.create("x"));
+        Expression result = Expressions.step(FuncCall.create(identity, Variable.create("y")));
+        assertEquals(Variable.create("y"), result);
     }
 }

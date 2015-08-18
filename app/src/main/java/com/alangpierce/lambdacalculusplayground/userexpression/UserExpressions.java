@@ -13,22 +13,13 @@ public class UserExpressions {
      * Given an expression, convert to a UserExpression. This will always succeed.
      */
     public static UserExpression fromExpression(Expression e) {
-        return e.visit(new Expression.ExpressionVisitor<UserExpression>() {
-            @Override
-            public UserExpression visit(Lambda lambda) {
-                return new UserLambda(lambda.varName, fromExpression(lambda.body));
-            }
-            @Override
-            public UserExpression visit(FuncCall funcCall) {
-                return new UserFuncCall(
-                        fromExpression(funcCall.func),
-                        fromExpression(funcCall.arg));
-            }
-            @Override
-            public UserExpression visit(Variable variable) {
-                return new UserVariable(variable.varName);
-            }
-        });
+        return e.visit(
+                lambda -> new UserLambda(lambda.varName(), fromExpression(lambda.body())),
+                funcCall -> new UserFuncCall(
+                        fromExpression(funcCall.func()),
+                        fromExpression(funcCall.arg())),
+                variable -> new UserVariable(variable.varName())
+        );
     }
 
     public static class InvalidExpressionException extends RuntimeException {}
@@ -45,15 +36,15 @@ public class UserExpressions {
                 if (lambda.body == null) {
                     throw new InvalidExpressionException();
                 }
-                return new Lambda(lambda.varName, toExpression(lambda.body));
+                return Lambda.create(lambda.varName, toExpression(lambda.body));
             }
             @Override
             public Expression visit(UserFuncCall funcCall) {
-                return new FuncCall(toExpression(funcCall.func), toExpression(funcCall.arg));
+                return FuncCall.create(toExpression(funcCall.func), toExpression(funcCall.arg));
             }
             @Override
             public Expression visit(UserVariable variable) {
-                return new Variable(variable.varName);
+                return Variable.create(variable.varName);
             }
         });
     }
