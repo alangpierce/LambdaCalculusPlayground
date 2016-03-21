@@ -6,6 +6,7 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
@@ -68,17 +69,27 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public void handlePositionChange(ScreenPoint screenPos) {
-        DrawableAreaPoint canvasPos = pointConverter.toDrawableAreaPoint(screenPos);
+        CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
         screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
         onChangeCallback.onChange(this);
+    }
+
+    @Override
+    public void onPan() {
+        // All DrawableAreaPoint values might be invalid, so recompute them and move if necessary.
+        DrawableAreaPoint drawableAreaPoint =
+                pointConverter.toDrawableAreaPoint(screenExpression.getCanvasPos());
+        view.setCanvasPos(drawableAreaPoint);
     }
 
     public void handleExprChange(ExpressionController newExpressionController) {
         UserExpression newExpression = newExpressionController.getExpression();
         screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
         boolean isExecutable = UserExpressions.canStep(newExpression);
+        DrawableAreaPoint drawableAreaPoint =
+                pointConverter.toDrawableAreaPoint(screenExpression.getCanvasPos());
         view.handleExpressionChange(
-                newExpressionController.getView(), screenExpression.getCanvasPos(), isExecutable);
+                newExpressionController.getView(), drawableAreaPoint, isExecutable);
         newExpressionController.setOnChangeCallback(this::handleExprChange);
         expressionController = newExpressionController;
         updateDragActionSubscription();

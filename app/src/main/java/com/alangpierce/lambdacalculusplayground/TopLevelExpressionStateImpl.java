@@ -2,10 +2,13 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.os.Bundle;
 
+import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import autovalue.shaded.com.google.common.common.collect.ImmutableList;
 import autovalue.shaded.com.google.common.common.collect.Maps;
@@ -23,6 +26,8 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
      */
     private Map<Integer, ScreenExpression> expressions = Maps.newConcurrentMap();
     private AtomicInteger maxId = new AtomicInteger();
+    private AtomicReference<PointDifference> panOffset =
+            new AtomicReference<>(PointDifference.create(0, 0));
 
     @Override
     public Iterable<Entry<Integer, ScreenExpression>> expressionsById() {
@@ -46,6 +51,16 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
         return exprId;
     }
 
+    @Override
+    public PointDifference getPanOffset() {
+        return panOffset.get();
+    }
+
+    @Override
+    public void setPanOffset(PointDifference panOffset) {
+        this.panOffset.set(panOffset);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void hydrateFromBundle(Bundle bundle) {
@@ -54,10 +69,15 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
         for (ScreenExpression expression : screenExpressions) {
             addScreenExpression(expression);
         }
+        PointDifference panOffset = (PointDifference) bundle.getSerializable("panOffset");
+        if (panOffset != null) {
+            this.panOffset.set(panOffset);
+        }
     }
 
     @Override
     public void persistToBundle(Bundle bundle) {
         bundle.putSerializable("expressions", ImmutableList.copyOf(expressions.values()));
+        bundle.putSerializable("panOffset", panOffset.get());
     }
 }

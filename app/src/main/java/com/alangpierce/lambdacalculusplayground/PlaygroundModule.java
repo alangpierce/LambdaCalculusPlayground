@@ -58,8 +58,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    PointConverter providePointConverter(@RootView RelativeLayout rootView) {
-        return new PointConverterImpl(rootView);
+    PointConverter providePointConverter(@RootView RelativeLayout rootView, PanManager panManager) {
+        return new PointConverterImpl(rootView, panManager);
     }
 
     @Provides @Singleton

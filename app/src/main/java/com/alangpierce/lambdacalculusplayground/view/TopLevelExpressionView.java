@@ -6,6 +6,7 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
+import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
@@ -49,12 +50,13 @@ public class TopLevelExpressionView {
         return Views.getScreenPos(exprView.getNativeView());
     }
 
-    public void attachToRoot(DrawableAreaPoint canvasPos) {
+    public void attachToRoot(CanvasPoint canvasPos) {
         Preconditions.checkState(exprView.getNativeView().getParent() == null,
                 "Cannot attach an expression to the root that is already attached.");
         LinearLayout exprNativeView = exprView.getNativeView();
-        rootView.addView(exprNativeView, Views.layoutParamsForRelativePos(canvasPos));
-        invalidateExecuteButton(canvasPos);
+        DrawableAreaPoint drawableAreaPoint = pointConverter.toDrawableAreaPoint(canvasPos);
+        rootView.addView(exprNativeView, Views.layoutParamsForRelativePos(drawableAreaPoint));
+        invalidateExecuteButton(drawableAreaPoint);
     }
 
     public void setScreenPos(ScreenPoint screenPos) {
@@ -71,6 +73,9 @@ public class TopLevelExpressionView {
     }
 
     public void setCanvasPos(DrawableAreaPoint canvasPos) {
+        System.out.println("Would set point to " + canvasPos);
+        System.out.println("Native view is " + exprView.getNativeView());
+        System.out.println("Native view parent is " + exprView.getNativeView().getParent());
         exprView.getNativeView().setLayoutParams(Views.layoutParamsForRelativePos(canvasPos));
         invalidateExecuteButton(canvasPos);
     }
@@ -98,14 +103,13 @@ public class TopLevelExpressionView {
     }
 
     public void handleExpressionChange(
-            ExpressionView newExpression, DrawableAreaPoint canvasPos, boolean newIsExecutable) {
+            ExpressionView newExpression, DrawableAreaPoint drawableAreaPoint,
+            boolean newIsExecutable) {
         rootView.removeView(exprView.getNativeView());
         rootView.addView(newExpression.getNativeView());
         exprView = newExpression;
         isExecutable = newIsExecutable;
-        setCanvasPos(canvasPos);
-        invalidateExecuteButton(canvasPos);
-
+        setCanvasPos(drawableAreaPoint);
     }
 
     public void decommission() {
@@ -121,12 +125,12 @@ public class TopLevelExpressionView {
         executeButton.setOnClickListener((view) -> listener.execute());
     }
 
-    private void invalidateExecuteButton(DrawableAreaPoint canvasPos) {
+    private void invalidateExecuteButton(DrawableAreaPoint drawableAreaPoint) {
         rootView.removeView(executeButton);
         if (isExecutable) {
             LinearLayout exprNativeView = exprView.getNativeView();
             exprNativeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            Views.updateLayoutParamsToRelativePos(executeButton, canvasPos.plus(
+            Views.updateLayoutParamsToRelativePos(executeButton, drawableAreaPoint.plus(
                     PointDifference.create(exprNativeView.getMeasuredWidth() - 40,
                             exprNativeView.getMeasuredHeight() - 40)));
             rootView.addView(executeButton);
