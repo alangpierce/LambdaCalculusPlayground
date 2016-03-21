@@ -79,10 +79,4 @@ public class Views {
         layoutParams.topMargin = pos.getY();
         view.setLayoutParams(layoutParams);
     }
-
-    public static RelativeLayout.LayoutParams layoutParamsForScreenPos(
-            View rootView, ScreenPoint screenPos) {
-        return layoutParamsForRelativePos(
-                Points.screenPointToDrawableAreaPoint(screenPos, rootView));
-    }
 }

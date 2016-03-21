@@ -1,15 +1,14 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.view.View.MeasureSpec;
-import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
-import com.alangpierce.lambdacalculusplayground.geometry.Points;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
@@ -31,7 +30,7 @@ import rx.subjects.Subject;
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
     private final TopLevelExpressionManager topLevelExpressionManager;
     private final TopLevelExpressionView view;
-    private final RelativeLayout rootView;
+    private final PointConverter pointConverter;
 
     private ScreenExpression screenExpression;
     private ExpressionController expressionController;
@@ -43,11 +42,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     public TopLevelExpressionControllerImpl(
             TopLevelExpressionManager topLevelExpressionManager, TopLevelExpressionView view,
-            RelativeLayout rootView, ScreenExpression screenExpression,
+            PointConverter pointConverter, ScreenExpression screenExpression,
             ExpressionController expressionController) {
         this.topLevelExpressionManager = topLevelExpressionManager;
         this.view = view;
-        this.rootView = rootView;
+        this.pointConverter = pointConverter;
         this.screenExpression = screenExpression;
         this.expressionController = expressionController;
     }
@@ -69,7 +68,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public void handlePositionChange(ScreenPoint screenPos) {
-        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
+        DrawableAreaPoint canvasPos = pointConverter.toDrawableAreaPoint(screenPos);
         screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
         onChangeCallback.onChange(this);
     }

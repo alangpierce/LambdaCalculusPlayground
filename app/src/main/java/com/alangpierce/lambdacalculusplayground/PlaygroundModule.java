@@ -11,6 +11,8 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
@@ -50,9 +52,14 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    PanManager providePanManager(@RootView  RelativeLayout rootView,
+    PanManager providePanManager(@RootView RelativeLayout rootView,
             DragObservableGenerator dragObservableGenerator) {
         return new PanManagerImpl(rootView, dragObservableGenerator);
+    }
+
+    @Provides @Singleton
+    PointConverter providePointConverter(@RootView RelativeLayout rootView) {
+        return new PointConverterImpl(rootView);
     }
 
     @Provides @Singleton
@@ -80,18 +87,19 @@ public class PlaygroundModule {
     TopLevelExpressionManager provideTopLevelExpressionManager(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, PanManager panManager, Activity activity,
-            @RootView RelativeLayout rootView) {
+            DragManager dragManager, PointConverter pointConverter, PanManager panManager,
+            Activity activity, @RootView RelativeLayout rootView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, dragManager, rootView, panManager,
-                activity);
+                expressionState, controllerFactoryFactory, dragManager, pointConverter, rootView,
+                panManager, activity);
     }
 
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            DragManager dragManager, @RootView RelativeLayout rootView) {
+            PointConverter pointConverter, DragManager dragManager,
+            @RootView RelativeLayout rootView) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                dragManager, rootView);
+                pointConverter, dragManager, rootView);
     }
 }

@@ -8,7 +8,7 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.Points;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
@@ -24,6 +24,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final TopLevelExpressionState expressionState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final DragManager dragManager;
+    private final PointConverter pointConverter;
     private final RelativeLayout rootView;
     private final Context context;
     private final PanManager panManager;
@@ -31,11 +32,12 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, RelativeLayout rootView, PanManager panManager,
-            Context context) {
+            DragManager dragManager, PointConverter pointConverter, RelativeLayout rootView,
+            PanManager panManager, Context context) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
+        this.pointConverter = pointConverter;
         this.rootView = rootView;
         this.panManager = panManager;
         this.context = context;
@@ -74,7 +76,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     @Override
     public TopLevelExpressionController createNewExpression(
             UserExpression expression, ScreenPoint screenPos) {
-        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
+        DrawableAreaPoint canvasPos = pointConverter.toDrawableAreaPoint(screenPos);
         ScreenExpression screenExpression = ScreenExpression.create(expression, canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
         return renderTopLevelExpression(exprId, screenExpression);
@@ -83,7 +85,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     @Override
     public TopLevelExpressionController sendExpressionToTopLevel(
             ExpressionController expression, ScreenPoint screenPos) {
-        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
+        DrawableAreaPoint canvasPos = pointConverter.toDrawableAreaPoint(screenPos);
         ScreenExpression screenExpression = ScreenExpression.create(
                 expression.getExpression(), canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);

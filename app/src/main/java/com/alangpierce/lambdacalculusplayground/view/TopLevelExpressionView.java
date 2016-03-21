@@ -7,8 +7,8 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
-import com.alangpierce.lambdacalculusplayground.geometry.Points;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
@@ -17,6 +17,7 @@ import rx.Observable;
 
 public class TopLevelExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
+    private final PointConverter pointConverter;
     private final RelativeLayout rootView;
 
     private ExpressionView exprView;
@@ -25,9 +26,10 @@ public class TopLevelExpressionView {
     private boolean isExecutable;
 
     public TopLevelExpressionView(DragObservableGenerator dragObservableGenerator,
-            RelativeLayout rootView, ExpressionView exprView, View executeButton,
-            boolean isExecutable) {
+            PointConverter pointConverter, RelativeLayout rootView, ExpressionView exprView,
+            View executeButton,  boolean isExecutable) {
         this.dragObservableGenerator = dragObservableGenerator;
+        this.pointConverter = pointConverter;
         this.rootView = rootView;
         this.exprView = exprView;
         this.executeButton = executeButton;
@@ -36,10 +38,11 @@ public class TopLevelExpressionView {
 
     public static TopLevelExpressionView render(
             ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
-            RelativeLayout rootView, ExpressionView exprView, boolean isExecutable) {
+            PointConverter pointConverter, RelativeLayout rootView, ExpressionView exprView,
+            boolean isExecutable) {
         View executeButton = renderer.makeExecuteButton();
-        return new TopLevelExpressionView(dragObservableGenerator, rootView, exprView,
-                executeButton, isExecutable);
+        return new TopLevelExpressionView(dragObservableGenerator, pointConverter, rootView,
+                exprView, executeButton, isExecutable);
     }
 
     public ScreenPoint getScreenPos() {
@@ -56,7 +59,7 @@ public class TopLevelExpressionView {
 
     public void setScreenPos(ScreenPoint screenPos) {
         exprView.getNativeView().setLayoutParams(
-                Views.layoutParamsForScreenPos(rootView, screenPos));
+                Views.layoutParamsForRelativePos(pointConverter.toDrawableAreaPoint(screenPos)));
 
         // TODO: Consolidate with invalidateExecuteButton.
         LinearLayout exprNativeView = exprView.getNativeView();
@@ -64,7 +67,7 @@ public class TopLevelExpressionView {
                 exprNativeView.getMeasuredWidth() - 40,
                 exprNativeView.getMeasuredHeight() - 40));
         Views.updateLayoutParamsToRelativePos(executeButton,
-                Points.screenPointToDrawableAreaPoint(executeScreenPos, rootView));
+                pointConverter.toDrawableAreaPoint(executeScreenPos));
     }
 
     public void setCanvasPos(DrawableAreaPoint canvasPos) {
