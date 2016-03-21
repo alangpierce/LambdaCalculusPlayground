@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.auto.value.AutoValue;
 
@@ -12,9 +12,9 @@ import java.io.Serializable;
 @AutoValue
 public abstract class ScreenExpression implements Serializable {
     public abstract UserExpression getExpr();
-    public abstract Point getCanvasPos();
+    public abstract DrawableAreaPoint getCanvasPos();
 
-    public static ScreenExpression create(UserExpression expr, Point canvasPos) {
+    public static ScreenExpression create(UserExpression expr, DrawableAreaPoint canvasPos) {
         return new AutoValue_ScreenExpression(expr, canvasPos);
     }
 }

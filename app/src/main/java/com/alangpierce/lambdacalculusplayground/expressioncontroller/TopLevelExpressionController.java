@@ -2,7 +2,7 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface TopLevelExpressionController {
     ScreenExpression getScreenExpression();
     TopLevelExpressionView getView();
     void setOnChangeCallback(OnTopLevelChangeCallback onChangeCallback);
-    void handlePositionChange(Point screenPos);
+    void handlePositionChange(ScreenPoint screenPos);
     List<DragSource> getDragSources();
 
     /**

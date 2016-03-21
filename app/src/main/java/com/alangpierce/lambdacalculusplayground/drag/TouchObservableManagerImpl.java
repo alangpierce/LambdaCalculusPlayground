@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import autovalue.shaded.com.google.common.common.collect.Maps;
 import rx.Observable;

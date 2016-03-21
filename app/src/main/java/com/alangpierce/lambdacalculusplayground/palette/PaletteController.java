@@ -2,10 +2,8 @@ package com.alangpierce.lambdacalculusplayground.palette;
 
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
-import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 public class PaletteController {
     private final PaletteView view;

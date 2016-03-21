@@ -2,7 +2,7 @@ package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class DragManagerImpl implements DragManager {
 
     private void handleMove(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
-        view.setScreenPos(event.getScreenPos().asPoint());
+        view.setScreenPos(event.getScreenPos());
         DropTarget bestDropTarget = getBestDropTarget(controller);
 
         // TODO: Be smarter about this. We probably don't want to redo every drop target every time.
@@ -77,7 +77,7 @@ public class DragManagerImpl implements DragManager {
         view.endDrag();
         DropTarget bestDropTarget = getBestDropTarget(controller);
         if (bestDropTarget == null) {
-            defaultHandleDrop(controller, event.getScreenPos().asPoint());
+            defaultHandleDrop(controller, event.getScreenPos());
         } else {
             bestDropTarget.handleDrop(controller);
         }
@@ -102,7 +102,7 @@ public class DragManagerImpl implements DragManager {
     }
 
     private void defaultHandleDrop(
-            TopLevelExpressionController expressionController, Point screenPos) {
+            TopLevelExpressionController expressionController, ScreenPoint screenPos) {
         expressionController.handlePositionChange(screenPos);
     }
 

@@ -25,10 +25,5 @@ public abstract class ScreenPoint {
     public ScreenPoint minus(PointDifference other) {
         return ScreenPoint.create(getX() - other.getX(), getY() - other.getY());
     }
-
-    // Legacy method to convert to untyped points.
-    public Point asPoint() {
-        return Point.create(getX(), getY());
-    }
 }
 

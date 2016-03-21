@@ -7,9 +7,10 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.alangpierce.lambdacalculusplayground.geometry.Points;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -67,8 +68,8 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public void handlePositionChange(Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
+    public void handlePositionChange(ScreenPoint screenPos) {
+        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
         screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
         onChangeCallback.onChange(this);
     }
@@ -100,23 +101,25 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             return;
         }
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
-                newExpr, view.getScreenPos().plus(PointDifference.create(100, 200)).asPoint());
+                newExpr, view.getScreenPos().plus(PointDifference.create(100, 200)));
 
-        Point newScreenPos = computeExecuteResultScreenPos(newExpression);
+        ScreenPoint newScreenPos = computeExecuteResultScreenPos(newExpression);
         newExpression.getView().setScreenPos(newScreenPos);
         newExpression.handlePositionChange(newScreenPos);
     }
 
-    private Point computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
-        Point thisViewPos = view.getScreenPos().asPoint();
+    private ScreenPoint computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
+        ScreenPoint thisViewPos = view.getScreenPos();
         int thisViewWidth = view.getNativeView().getWidth();
         int thisViewHeight = view.getNativeView().getHeight();
 
         newExpression.getView().getNativeView().measure(
                 MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int viewWidth = newExpression.getView().getNativeView().getMeasuredWidth();
-        return Point.create(thisViewPos.getX() + (thisViewWidth / 2) - (viewWidth / 2),
-                thisViewPos.getY() + thisViewHeight + 50);
+
+        int dx = (thisViewWidth / 2) - (viewWidth / 2);
+        int dy = thisViewHeight + 50;
+        return thisViewPos.plus(PointDifference.create(dx, dy));
     }
 
     @Override

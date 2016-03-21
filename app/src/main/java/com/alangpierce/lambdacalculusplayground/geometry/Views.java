@@ -63,25 +63,26 @@ public class Views {
         return 100;
     }
 
-    public static RelativeLayout.LayoutParams layoutParamsForRelativePos(Point relativePos) {
+    public static RelativeLayout.LayoutParams layoutParamsForRelativePos(DrawableAreaPoint pos) {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.leftMargin = relativePos.getX();
-        params.topMargin = relativePos.getY();
+        params.leftMargin = pos.getX();
+        params.topMargin = pos.getY();
         return params;
     }
 
-    public static void updateLayoutParamsToRelativePos(View view, Point relativePos) {
+    public static void updateLayoutParamsToRelativePos(View view, DrawableAreaPoint pos) {
         RelativeLayout.LayoutParams layoutParams =
                 (RelativeLayout.LayoutParams)view.getLayoutParams();
-        layoutParams.leftMargin = relativePos.getX();
-        layoutParams.topMargin = relativePos.getY();
+        layoutParams.leftMargin = pos.getX();
+        layoutParams.topMargin = pos.getY();
         view.setLayoutParams(layoutParams);
     }
 
     public static RelativeLayout.LayoutParams layoutParamsForScreenPos(
-            View rootView, Point screenPos) {
-        return layoutParamsForRelativePos(screenPos.minus(Views.getScreenPos(rootView).asPoint()));
+            View rootView, ScreenPoint screenPos) {
+        return layoutParamsForRelativePos(
+                Points.screenPointToDrawableAreaPoint(screenPos, rootView));
     }
 }

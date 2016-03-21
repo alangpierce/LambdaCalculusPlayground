@@ -7,7 +7,9 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.Points;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
@@ -57,12 +59,12 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
         int yPos = 50;
         for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
-            renderPaletteLambda(Point.create(1750, yPos), varName);
+            renderPaletteLambda(DrawableAreaPoint.create(1750, yPos), varName);
             yPos += 145;
         }
     }
 
-    private void renderPaletteLambda(Point canvasPos, String varName) {
+    private void renderPaletteLambda(DrawableAreaPoint canvasPos, String varName) {
         PaletteLambdaController controller = controllerFactoryFactory.create(this)
                 .createPaletteLambdaController(varName);
         rootView.addView(controller.getView().getNativeView(),
@@ -71,8 +73,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
     @Override
     public TopLevelExpressionController createNewExpression(
-            UserExpression expression, Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
+            UserExpression expression, ScreenPoint screenPos) {
+        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
         ScreenExpression screenExpression = ScreenExpression.create(expression, canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
         return renderTopLevelExpression(exprId, screenExpression);
@@ -80,8 +82,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
     @Override
     public TopLevelExpressionController sendExpressionToTopLevel(
-            ExpressionController expression, Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
+            ExpressionController expression, ScreenPoint screenPos) {
+        DrawableAreaPoint canvasPos = Points.screenPointToDrawableAreaPoint(screenPos, rootView);
         ScreenExpression screenExpression = ScreenExpression.create(
                 expression.getExpression(), canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
@@ -103,7 +105,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     private void registerTopLevelExpression(
-            int exprId, TopLevelExpressionController controller, Point canvasPos) {
+            int exprId, TopLevelExpressionController controller, DrawableAreaPoint canvasPos) {
         controller.setOnChangeCallback(
                 // onChange
                 (newController) -> {

@@ -5,7 +5,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -110,7 +110,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            Point screenPos = view.getBodyPos().asPoint();
+            ScreenPoint screenPos = view.getBodyPos();
             ExpressionController controllerToDrag = bodyController;
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
@@ -129,7 +129,7 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    new UserVariable(userLambda.varName), view.getScreenPos().asPoint());
+                    new UserVariable(userLambda.varName), view.getScreenPos());
         }
     }
 

@@ -4,7 +4,6 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViews;
-import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 public class FuncCallDropTarget implements DropTarget {
     private final ExpressionController targetController;

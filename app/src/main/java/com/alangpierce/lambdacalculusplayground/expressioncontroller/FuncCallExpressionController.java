@@ -5,7 +5,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -138,7 +138,7 @@ public class FuncCallExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            Point screenPos = view.getScreenPos().asPoint();
+            ScreenPoint screenPos = view.getScreenPos();
             decommission();
             onChangeCallback.onChange(funcController);
             return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);

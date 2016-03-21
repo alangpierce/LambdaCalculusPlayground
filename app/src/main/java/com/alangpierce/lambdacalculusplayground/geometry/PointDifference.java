@@ -17,9 +17,5 @@ public abstract class PointDifference {
     public PointDifference plus(PointDifference other) {
         return create(getX() + other.getX(), getY() + other.getY());
     }
-
-    public PointDifference minus(PointDifference other) {
-        return create(getX() - other.getX(), getY() - other.getY());
-    }
 }
 
