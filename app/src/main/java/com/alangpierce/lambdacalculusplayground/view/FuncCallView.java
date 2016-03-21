@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -43,7 +44,7 @@ public class FuncCallView implements ExpressionView {
     }
 
     @Override
-    public Point getScreenPos() {
+    public ScreenPoint getScreenPos() {
         return Views.getScreenPos(view);
     }
 
@@ -61,7 +62,7 @@ public class FuncCallView implements ExpressionView {
         view.removeView(argView.getNativeView());
     }
 
-    public Point getArgPos() {
+    public ScreenPoint getArgPos() {
         return Views.getScreenPos(argView.getNativeView());
     }
 

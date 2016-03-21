@@ -3,7 +3,8 @@ package com.alangpierce.lambdacalculusplayground.pan;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 
 public class PanManagerImpl implements PanManager {
     private final RelativeLayout rootView;
@@ -12,10 +13,13 @@ public class PanManagerImpl implements PanManager {
     // panOffset is the point in canvas coordinates that should be used as the origin of the
     // drawable area. In other words, it's the position value that should be added to all
     // expressions when displaying them.
-    private Point panOffset = Point.create(0, 0);
-    // currentDragOffset is difference between the pan offset and the drag origin for the current
-    // drag operation. It stays constant for the lifetime of a drag operation.
-    private Point currentDragOffset = null;
+    private PointDifference panOffset = PointDifference.create(0, 0);
+
+    // Keep track of the original screen position of the RelativeLayout as well as the original
+    // panOffset value when the drag started. Note that we don't technically need both, but it makes
+    // this easier to reason about.
+    private ScreenPoint currentDragStartPoint = null;
+    private PointDifference currentDragOriginalPanOffset = null;
 
     public PanManagerImpl(RelativeLayout rootView,
             DragObservableGenerator dragObservableGenerator) {
@@ -32,14 +36,18 @@ public class PanManagerImpl implements PanManager {
             panEvents.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
-                        currentDragOffset = panOffset.minus(event.getScreenPos());
+                        currentDragStartPoint = event.getScreenPos();
+                        currentDragOriginalPanOffset = panOffset;
                     }
                     case MOVE: {
-                        panOffset = event.getScreenPos().plus(currentDragOffset);
+                        PointDifference dragDelta =
+                                event.getScreenPos().minus(currentDragStartPoint);
+                        panOffset = currentDragOriginalPanOffset.plus(dragDelta);
                         break;
                     }
                     case UP: {
-                        currentDragOffset = null;
+                        currentDragStartPoint = null;
+                        currentDragOriginalPanOffset = null;
                         break;
                     }
                 }
@@ -48,7 +56,7 @@ public class PanManagerImpl implements PanManager {
     }
 
     @Override
-    public Point getPanOffset() {
+    public PointDifference getPanOffset() {
         return panOffset;
     }
 }

@@ -138,7 +138,7 @@ public class FuncCallExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            Point screenPos = view.getScreenPos();
+            Point screenPos = view.getScreenPos().asPoint();
             decommission();
             onChangeCallback.onChange(funcController);
             return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);

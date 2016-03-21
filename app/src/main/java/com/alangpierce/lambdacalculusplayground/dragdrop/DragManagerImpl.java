@@ -59,7 +59,7 @@ public class DragManagerImpl implements DragManager {
 
     private void handleMove(TopLevelExpressionController controller, PointerMotionEvent event) {
         TopLevelExpressionView view = controller.getView();
-        view.setScreenPos(event.getScreenPos());
+        view.setScreenPos(event.getScreenPos().asPoint());
         DropTarget bestDropTarget = getBestDropTarget(controller);
 
         // TODO: Be smarter about this. We probably don't want to redo every drop target every time.
@@ -77,7 +77,7 @@ public class DragManagerImpl implements DragManager {
         view.endDrag();
         DropTarget bestDropTarget = getBestDropTarget(controller);
         if (bestDropTarget == null) {
-            defaultHandleDrop(controller, event.getScreenPos());
+            defaultHandleDrop(controller, event.getScreenPos().asPoint());
         } else {
             bestDropTarget.handleDrop(controller);
         }

@@ -5,7 +5,7 @@ import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
 public class Views {
-    public static Point getScreenPos(View view) {
+    public static ScreenPoint getScreenPos(View view) {
         final int location[] = { 0, 0 };
         view.getLocationOnScreen(location);
         // TODO: Make this check still work for views that are actually at (0, 0).
@@ -13,12 +13,13 @@ public class Views {
             throw new IllegalStateException("Cannot accurately compute the screen position for " +
                     "view " + view + " because it is not on the screen.");
         }
-        return Point.create(location[0], location[1]);
+        return ScreenPoint.create(location[0], location[1]);
     }
 
-    public static Rect getBoundingBox(View view) {
-        Point topLeft = getScreenPos(view);
-        return Rect.create(topLeft, topLeft.plus(Point.create(view.getWidth(), view.getHeight())));
+    public static ScreenRect getBoundingBox(View view) {
+        ScreenPoint topLeft = getScreenPos(view);
+        return ScreenRect.create(
+                topLeft, topLeft.plus(PointDifference.create(view.getWidth(), view.getHeight())));
     }
 
     public static boolean viewsIntersect(View view1, View view2) {
@@ -81,6 +82,6 @@ public class Views {
 
     public static RelativeLayout.LayoutParams layoutParamsForScreenPos(
             View rootView, Point screenPos) {
-        return layoutParamsForRelativePos(screenPos.minus(Views.getScreenPos(rootView)));
+        return layoutParamsForRelativePos(screenPos.minus(Views.getScreenPos(rootView).asPoint()));
     }
 }

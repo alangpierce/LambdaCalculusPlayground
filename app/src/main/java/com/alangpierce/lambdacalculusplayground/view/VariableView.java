@@ -1,11 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.graphics.Color;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -28,7 +25,7 @@ public class VariableView implements ExpressionView {
     }
 
     @Override
-    public Point getScreenPos() {
+    public ScreenPoint getScreenPos() {
         return Views.getScreenPos(view);
     }
 }

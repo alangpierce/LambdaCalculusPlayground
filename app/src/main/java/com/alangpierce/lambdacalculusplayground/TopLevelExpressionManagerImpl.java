@@ -72,7 +72,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     @Override
     public TopLevelExpressionController createNewExpression(
             UserExpression expression, Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView));
+        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
         ScreenExpression screenExpression = ScreenExpression.create(expression, canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
         return renderTopLevelExpression(exprId, screenExpression);
@@ -81,7 +81,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     @Override
     public TopLevelExpressionController sendExpressionToTopLevel(
             ExpressionController expression, Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView));
+        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
         ScreenExpression screenExpression = ScreenExpression.create(
                 expression.getExpression(), canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);

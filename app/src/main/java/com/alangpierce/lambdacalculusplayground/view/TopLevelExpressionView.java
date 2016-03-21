@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 import autovalue.shaded.com.google.common.common.base.Preconditions;
@@ -39,7 +40,7 @@ public class TopLevelExpressionView {
                 executeButton, isExecutable);
     }
 
-    public Point getScreenPos() {
+    public ScreenPoint getScreenPos() {
         return Views.getScreenPos(exprView.getNativeView());
     }
 
@@ -58,7 +59,7 @@ public class TopLevelExpressionView {
         // TODO: Consolidate with invalidateExecuteButton.
         LinearLayout exprNativeView = exprView.getNativeView();
         Views.updateLayoutParamsToRelativePos(executeButton,
-                screenPos.minus(Views.getScreenPos(rootView)).plus(
+                screenPos.minus(Views.getScreenPos(rootView).asPoint()).plus(
                         Point.create(exprNativeView.getMeasuredWidth() - 40,
                                 exprNativeView.getMeasuredHeight() - 40)));
     }

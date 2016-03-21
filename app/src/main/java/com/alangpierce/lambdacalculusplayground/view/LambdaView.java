@@ -6,7 +6,7 @@ import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -75,7 +75,7 @@ public class
     }
 
     @Override
-    public Point getScreenPos() {
+    public ScreenPoint getScreenPos() {
         return Views.getScreenPos(view);
     }
 
@@ -91,7 +91,7 @@ public class
         view.addView(bodyNativeView);
     }
 
-    public Point getBodyPos() {
+    public ScreenPoint getBodyPos() {
         return Views.getScreenPos(bodyNativeView);
     }
 

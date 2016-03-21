@@ -11,7 +11,6 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
-import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -111,7 +110,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            Point screenPos = view.getBodyPos();
+            Point screenPos = view.getBodyPos().asPoint();
             ExpressionController controllerToDrag = bodyController;
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
@@ -130,7 +129,7 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    new UserVariable(userLambda.varName), view.getScreenPos());
+                    new UserVariable(userLambda.varName), view.getScreenPos().asPoint());
         }
     }
 

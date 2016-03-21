@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
@@ -67,7 +68,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public void handlePositionChange(Point screenPos) {
-        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView));
+        Point canvasPos = screenPos.minus(Views.getScreenPos(rootView).asPoint());
         screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
         onChangeCallback.onChange(this);
     }
@@ -99,7 +100,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             return;
         }
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
-                newExpr, view.getScreenPos().plus(Point.create(100, 200)));
+                newExpr, view.getScreenPos().plus(PointDifference.create(100, 200)).asPoint());
 
         Point newScreenPos = computeExecuteResultScreenPos(newExpression);
         newExpression.getView().setScreenPos(newScreenPos);
@@ -107,7 +108,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private Point computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
-        Point thisViewPos = view.getScreenPos();
+        Point thisViewPos = view.getScreenPos().asPoint();
         int thisViewWidth = view.getNativeView().getWidth();
         int thisViewHeight = view.getNativeView().getHeight();
 

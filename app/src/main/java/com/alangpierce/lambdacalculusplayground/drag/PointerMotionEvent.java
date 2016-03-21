@@ -1,15 +1,15 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
-import com.alangpierce.lambdacalculusplayground.geometry.Point;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
 public abstract class PointerMotionEvent {
     public abstract int getPointerId();
     public abstract Action getAction();
-    public abstract Point getScreenPos();
+    public abstract ScreenPoint getScreenPos();
 
-    public static PointerMotionEvent create(int pointerId, Action action, Point screenPos) {
+    public static PointerMotionEvent create(int pointerId, Action action, ScreenPoint screenPos) {
         return new AutoValue_PointerMotionEvent.Builder()
                 .pointerId(pointerId).action(action).screenPos(screenPos).build();
     }
@@ -22,7 +22,7 @@ public abstract class PointerMotionEvent {
         return toBuilder().pointerId(pointerId).build();
     }
 
-    public PointerMotionEvent withScreenPos(Point screenPos) {
+    public PointerMotionEvent withScreenPos(ScreenPoint screenPos) {
         return toBuilder().screenPos(screenPos).build();
     }
 
@@ -36,7 +36,7 @@ public abstract class PointerMotionEvent {
     public interface Builder {
         Builder pointerId(int pointerId);
         Builder action(Action action);
-        Builder screenPos(Point screenPos);
+        Builder screenPos(ScreenPoint screenPos);
         PointerMotionEvent build();
     }
 }
