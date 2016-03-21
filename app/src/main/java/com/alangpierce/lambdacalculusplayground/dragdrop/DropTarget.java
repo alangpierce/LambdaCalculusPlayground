@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 
 public interface DropTarget {
     /**
@@ -12,7 +11,7 @@ public interface DropTarget {
      * - Use a snazzy geometric data structure.
      *
      * Returns NOT_HIT if the view was not hit. Otherwise, returns an integer which is the priority
-     * of the drop target. The priority is used to break ties when there are mulitple drop targets.
+     * of the drop target. The priority is used to break ties when there are multiple drop targets.
      */
     int hitTest(TopLevelExpressionController dragController);
 

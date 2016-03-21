@@ -12,6 +12,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
+import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
@@ -23,15 +24,18 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final DragManager dragManager;
     private final RelativeLayout rootView;
     private final Context context;
+    private final PanManager panManager;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, RelativeLayout rootView, Context context) {
+            DragManager dragManager, RelativeLayout rootView, PanManager panManager,
+            Context context) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
         this.rootView = rootView;
+        this.panManager = panManager;
         this.context = context;
     }
 
@@ -43,6 +47,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             renderTopLevelExpression(exprId, screenExpression);
         }
         renderPalette();
+        panManager.init();
     }
 
     private void renderPalette() {

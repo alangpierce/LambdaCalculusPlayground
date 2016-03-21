@@ -11,6 +11,8 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
+import com.alangpierce.lambdacalculusplayground.pan.PanManager;
+import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 
@@ -48,6 +50,12 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
+    PanManager providePanManager(@RootView  RelativeLayout rootView,
+            DragObservableGenerator dragObservableGenerator) {
+        return new PanManagerImpl(rootView, dragObservableGenerator);
+    }
+
+    @Provides @Singleton
     DragObservableGenerator provideDragObservableGenerator(
             TouchObservableManager touchObservableManager) {
         return new DragObservableGeneratorImpl(touchObservableManager);
@@ -72,9 +80,11 @@ public class PlaygroundModule {
     TopLevelExpressionManager provideTopLevelExpressionManager(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, Activity activity, @RootView RelativeLayout rootView) {
+            DragManager dragManager, PanManager panManager, Activity activity,
+            @RootView RelativeLayout rootView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, dragManager, rootView, activity);
+                expressionState, controllerFactoryFactory, dragManager, rootView, panManager,
+                activity);
     }
 
     @Provides
