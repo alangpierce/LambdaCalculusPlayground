@@ -87,6 +87,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jill" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/mockable-android-21.jar" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/mockable-android-23.jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/packaged" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
@@ -99,9 +100,8 @@
       <excludeFolder url="file://$MODULE_DIR$/build/retrolambda" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-21" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.24.0" level="project" />
@@ -109,6 +109,7 @@
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" name="rxjava-1.0.4" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.2.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-23" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="javax.annotation-10.0-b28" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />

@@ -73,9 +73,6 @@ public class TopLevelExpressionView {
     }
 
     public void setCanvasPos(DrawableAreaPoint canvasPos) {
-        System.out.println("Would set point to " + canvasPos);
-        System.out.println("Native view is " + exprView.getNativeView());
-        System.out.println("Native view parent is " + exprView.getNativeView().getParent());
         exprView.getNativeView().setLayoutParams(Views.layoutParamsForRelativePos(canvasPos));
         invalidateExecuteButton(canvasPos);
     }

@@ -3,7 +3,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion "21.1.2"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId "com.alangpierce.lambdacalculusplayground"
         minSdkVersion 21
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
