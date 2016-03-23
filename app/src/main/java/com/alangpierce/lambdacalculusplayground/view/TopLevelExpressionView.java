@@ -63,13 +63,8 @@ public class TopLevelExpressionView {
         exprView.getNativeView().setLayoutParams(
                 Views.layoutParamsForRelativePos(pointConverter.toDrawableAreaPoint(screenPos)));
 
-        // TODO: Consolidate with invalidateExecuteButton.
-        LinearLayout exprNativeView = exprView.getNativeView();
-        ScreenPoint executeScreenPos = screenPos.plus(PointDifference.create(
-                exprNativeView.getMeasuredWidth() - 40,
-                exprNativeView.getMeasuredHeight() - 40));
-        Views.updateLayoutParamsToRelativePos(executeButton,
-                pointConverter.toDrawableAreaPoint(executeScreenPos));
+        DrawableAreaPoint expressionPos = pointConverter.toDrawableAreaPoint(screenPos);
+        recomputeExecuteButtonPosition(expressionPos);
     }
 
     public void setCanvasPos(DrawableAreaPoint canvasPos) {
@@ -122,15 +117,21 @@ public class TopLevelExpressionView {
         executeButton.setOnClickListener((view) -> listener.execute());
     }
 
-    private void invalidateExecuteButton(DrawableAreaPoint drawableAreaPoint) {
+    private void invalidateExecuteButton(DrawableAreaPoint expressionPos) {
         rootView.removeView(executeButton);
         if (isExecutable) {
-            LinearLayout exprNativeView = exprView.getNativeView();
-            exprNativeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            Views.updateLayoutParamsToRelativePos(executeButton, drawableAreaPoint.plus(
-                    PointDifference.create(exprNativeView.getMeasuredWidth() - 40,
-                            exprNativeView.getMeasuredHeight() - 40)));
+            recomputeExecuteButtonPosition(expressionPos);
             rootView.addView(executeButton);
         }
+    }
+
+    private void recomputeExecuteButtonPosition(DrawableAreaPoint expressionPos) {
+        LinearLayout exprNativeView = exprView.getNativeView();
+        exprNativeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        executeButton.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        DrawableAreaPoint executePos = expressionPos.plus(PointDifference.create(
+                exprNativeView.getMeasuredWidth() - (executeButton.getMeasuredWidth() / 4),
+                exprNativeView.getMeasuredHeight() - (executeButton.getMeasuredHeight() / 4)));
+        Views.updateLayoutParamsToRelativePos(executeButton, executePos);
     }
 }
