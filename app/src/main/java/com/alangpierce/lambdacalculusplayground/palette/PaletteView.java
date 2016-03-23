@@ -1,14 +1,13 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
-import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
@@ -20,37 +19,11 @@ public class PaletteView {
         this.linearLayout = linearLayout;
     }
 
-    public static class PaletteScrollView extends ScrollView {
-        public PaletteScrollView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(MotionEvent ev) {
-            // This method is called when doing a touch operation on a child view. Generally, the
-            // rule is that the ScrollView takes over once a touch event has exceeded the touch
-            // slop. However, in our case, we know that we never want to scroll unless the touch
-            // event is on the ScrollView directly, so just always return false here.
-            // TODO: Ideally an up/down gesture would scroll up/down even if it starts on a palette
-            // lambda. We could implement this method in a smarter way to allow that.
-            return false;
-        }
-    }
-
-    public static PaletteView render(Context context, RelativeLayout rootView) {
-        ScrollView scrollView = new PaletteScrollView(context);
-        LinearLayout linearLayout = new LinearLayout(context);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(linearLayout);
-
-        scrollView.setBackgroundColor(0xFFE6CEA3);
-        // Just below top-level expressions.
-        scrollView.setElevation(9);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        rootView.addView(scrollView, layoutParams);
+    public static PaletteView render(DrawerLayout rootView) {
+        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.palette_scroll_view);
+        LinearLayout linearLayout =
+                (LinearLayout) rootView.findViewById(R.id.palette_linear_layout);
+        rootView.setScrimColor(Color.TRANSPARENT);
         return new PaletteView(scrollView, linearLayout);
     }
 

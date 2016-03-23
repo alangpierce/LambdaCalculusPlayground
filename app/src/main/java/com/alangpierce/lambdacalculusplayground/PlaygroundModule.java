@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
+import android.support.v4.widget.DrawerLayout;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -28,12 +29,14 @@ import dagger.Provides;
 public class PlaygroundModule {
     private final Activity activity;
     private final RelativeLayout rootView;
+    private final DrawerLayout drawerRoot;
     private final TopLevelExpressionState expressionState;
 
-    public PlaygroundModule(Activity activity, RelativeLayout rootView,
+    public PlaygroundModule(Activity activity, RelativeLayout rootView, DrawerLayout drawerRoot,
             TopLevelExpressionState expressionState) {
         this.activity = activity;
         this.rootView = rootView;
+        this.drawerRoot = drawerRoot;
         this.expressionState = expressionState;
     }
 
@@ -44,6 +47,12 @@ public class PlaygroundModule {
     @Qualifier @interface RootView {}
     @Provides @RootView RelativeLayout provideRootView() {
         return rootView;
+    }
+
+    @Qualifier @interface DrawerRoot {}
+    @Provides @DrawerRoot
+    DrawerLayout provideDrawerRoot() {
+        return drawerRoot;
     }
 
     @Provides @Singleton
@@ -88,9 +97,9 @@ public class PlaygroundModule {
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, PanManager panManager,
-            Activity activity, @RootView RelativeLayout rootView) {
+            Activity activity, @DrawerRoot DrawerLayout drawerRoot) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, dragManager, pointConverter, rootView,
+                expressionState, controllerFactoryFactory, dragManager, pointConverter, drawerRoot,
                 panManager, activity);
     }
 

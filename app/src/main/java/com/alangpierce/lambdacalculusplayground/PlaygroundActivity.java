@@ -3,7 +3,12 @@ package com.alangpierce.lambdacalculusplayground;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
@@ -39,6 +44,9 @@ public class PlaygroundActivity extends ActionBarActivity {
 
         @SuppressLint("InflateParams") final View layoutView =
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
+        setContentView(layoutView);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             Expression yCombinatorSegment = Lambda.create("x", FuncCall.create(Variable.create("f"),
@@ -62,6 +70,27 @@ public class PlaygroundActivity extends ActionBarActivity {
             Fragment fragment = PlaygroundFragment.create(expressions);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
-        setContentView(layoutView);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_playground, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_palette) {
+            DrawerLayout drawerRoot = (DrawerLayout) findViewById(R.id.drawer_root_view);
+            if (drawerRoot != null) {
+                if (drawerRoot.isDrawerOpen(Gravity.END)) {
+                    drawerRoot.closeDrawer(Gravity.END);
+                } else {
+                    drawerRoot.openDrawer(Gravity.END);
+                }
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

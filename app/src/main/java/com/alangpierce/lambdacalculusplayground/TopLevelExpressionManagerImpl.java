@@ -1,7 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.content.Context;
-import android.widget.RelativeLayout;
+import android.support.v4.widget.DrawerLayout;
 
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
@@ -24,20 +24,20 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final DragManager dragManager;
     private final PointConverter pointConverter;
-    private final RelativeLayout rootView;
+    private final DrawerLayout drawerRoot;
     private final Context context;
     private final PanManager panManager;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, PointConverter pointConverter, RelativeLayout rootView,
+            DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
             PanManager panManager, Context context) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
         this.pointConverter = pointConverter;
-        this.rootView = rootView;
+        this.drawerRoot = drawerRoot;
         this.panManager = panManager;
         this.context = context;
     }
@@ -59,7 +59,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     private void renderPalette() {
-        PaletteView view = PaletteView.render(context, rootView);
+        PaletteView view = PaletteView.render(drawerRoot);
         PaletteController controller = new PaletteController(view);
         controller.registerCallbacks(dragManager);
 

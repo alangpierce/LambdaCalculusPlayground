@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,19 +51,18 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RelativeLayout rootLayout = new RelativeLayout(getActivity());
-        RelativeLayout.LayoutParams rootLayoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
-        rootLayout.setLayoutParams(rootLayoutParams);
+        DrawerLayout root = (DrawerLayout)
+                inflater.inflate(R.layout.fragment_playground, container, false);
+        RelativeLayout canvasView = (RelativeLayout) root.findViewById(R.id.canvas_view);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(new PlaygroundModule(getActivity(), rootLayout, expressionState))
+                .playgroundModule(
+                        new PlaygroundModule(getActivity(), canvasView, root, expressionState))
                 .build();
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
         expressionManager.renderInitialExpressions();
 
-        rootLayout.setBackgroundResource(R.drawable.expression);
-        return rootLayout;
+        canvasView.setBackgroundResource(R.drawable.expression);
+        return root;
     }
 }
