@@ -8,10 +8,8 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
@@ -65,18 +63,11 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         PaletteController controller = new PaletteController(view);
         controller.registerCallbacks(dragManager);
 
-        int yPos = 50;
         for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
-            renderPaletteLambda(DrawableAreaPoint.create(1750, yPos), varName);
-            yPos += 145;
+            PaletteLambdaController lambdaController =
+                    controllerFactoryFactory.create(this).createPaletteLambdaController(varName);
+            view.addChild(lambdaController.getView());
         }
-    }
-
-    private void renderPaletteLambda(DrawableAreaPoint canvasPos, String varName) {
-        PaletteLambdaController controller = controllerFactoryFactory.create(this)
-                .createPaletteLambdaController(varName);
-        rootView.addView(controller.getView().getNativeView(),
-                Views.layoutParamsForRelativePos(canvasPos));
     }
 
     @Override
