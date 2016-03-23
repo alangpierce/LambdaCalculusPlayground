@@ -1,10 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -56,9 +56,10 @@ public class PaletteView {
 
     public void addChild(LambdaView lambdaView) {
         LinearLayout nativeView = lambdaView.getNativeView();
-        MarginLayoutParams layoutParams = (MarginLayoutParams) nativeView.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) nativeView.getLayoutParams();
         // TODO: Use dps here instead of pixels.
         layoutParams.setMargins(30, 30, 30, 30);
+        layoutParams.gravity = Gravity.CENTER;
         nativeView.setLayoutParams(layoutParams);
         linearLayout.addView(nativeView);
     }
