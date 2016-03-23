@@ -8,13 +8,17 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
+    private final DrawerLayout drawerRoot;
     private final ScrollView scrollView;
     private final LinearLayout linearLayout;
 
-    public PaletteView(ScrollView scrollView, LinearLayout linearLayout) {
+    public PaletteView(DrawerLayout drawerRoot, ScrollView scrollView,
+            LinearLayout linearLayout) {
+        this.drawerRoot = drawerRoot;
         this.scrollView = scrollView;
         this.linearLayout = linearLayout;
     }
@@ -24,7 +28,7 @@ public class PaletteView {
         LinearLayout linearLayout =
                 (LinearLayout) rootView.findViewById(R.id.palette_linear_layout);
         rootView.setScrimColor(Color.TRANSPARENT);
-        return new PaletteView(scrollView, linearLayout);
+        return new PaletteView(rootView, scrollView, linearLayout);
     }
 
     public void addChild(LambdaView lambdaView) {
@@ -35,6 +39,11 @@ public class PaletteView {
         layoutParams.gravity = Gravity.CENTER;
         nativeView.setLayoutParams(layoutParams);
         linearLayout.addView(nativeView);
+    }
+
+    public boolean intersectsWithView(View other) {
+        // Only allow intersection if the drawer is actually open.
+        return drawerRoot.isDrawerOpen(Gravity.END) && Views.viewsIntersect(scrollView, other);
     }
 
     public View getNativeView() {

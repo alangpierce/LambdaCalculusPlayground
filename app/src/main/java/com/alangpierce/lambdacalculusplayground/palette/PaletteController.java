@@ -3,7 +3,6 @@ package com.alangpierce.lambdacalculusplayground.palette;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 public class PaletteController {
     private final PaletteView view;
@@ -19,8 +18,7 @@ public class PaletteController {
     private class PaletteDeleteDropTarget implements DropTarget {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
-            if (Views.viewsIntersect(view.getNativeView(),
-                    dragController.getView().getNativeView())) {
+            if (view.intersectsWithView(dragController.getView().getNativeView())) {
                 // Don't let drop target shadowing let people drag things to the delete area.
                 return Integer.MAX_VALUE;
             } else {
