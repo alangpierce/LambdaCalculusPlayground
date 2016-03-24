@@ -45,7 +45,7 @@ public class PlaygroundActivity extends ActionBarActivity {
         @SuppressLint("InflateParams") final View layoutView =
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
         setContentView(layoutView);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.playground_toolbar);
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
