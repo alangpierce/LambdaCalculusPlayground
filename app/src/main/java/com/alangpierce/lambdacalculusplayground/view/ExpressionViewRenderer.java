@@ -15,6 +15,7 @@ import java.util.List;
 public interface ExpressionViewRenderer {
     LinearLayout makeLinearLayoutWithChildren(List<View> children);
     TextView makeTextView(String text);
+    View makeBracketView(String text);
     LinearLayout styleLayout(final LinearLayout layout);
     LinearLayout makeMissingBodyView();
     View makeExecuteButton();

@@ -1,18 +1,29 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.R;
+import com.google.common.collect.ImmutableMap;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.io.BufferedReader;
 import java.util.List;
+import java.util.Map;
 
 public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     private final Context context;
@@ -56,11 +67,32 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setTextSize(30);
+        // For now, just use black to make the text consistent with the bracket images, which are
+        // black.
+        // TODO: Use some kind of dark gray color instead of black.
+        textView.setTextColor(Color.BLACK);
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
         textView.setPadding(20, 0, 20, 0);
         return textView;
+    }
+
+    Map<String, Integer> BRACKET_DRAWABLE_BY_STRING = ImmutableMap.of(
+            "(", R.drawable.drawable_left_paren,
+            ")", R.drawable.drawable_right_paren,
+            "[", R.drawable.drawable_left_bracket,
+            "]", R.drawable.drawable_right_bracket);
+
+    @Override
+    public View makeBracketView(String text) {
+        ImageView imageView = new ImageView(context);
+        int resId = BRACKET_DRAWABLE_BY_STRING.get(text);
+        imageView.setImageDrawable(context.getResources().getDrawable(resId, null));
+        // TODO: Don't use pixels here.
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(20, LayoutParams.MATCH_PARENT));
+        imageView.setScaleType(ScaleType.FIT_XY);
+        return imageView;
     }
 
     @Override

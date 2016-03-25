@@ -33,7 +33,11 @@ public class FuncCallView implements ExpressionView {
         LinearLayout funcNativeView = renderer.styleLayout(funcView.getNativeView());
         LinearLayout argNativeView = renderer.styleLayout(argView.getNativeView());
         LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
-                ImmutableList.of(funcNativeView, argNativeView));
+                ImmutableList.of(
+                        funcNativeView,
+                        renderer.makeBracketView("("),
+                        argNativeView,
+                        renderer.makeBracketView(")")));
         return new FuncCallView(dragObservableGenerator, mainView, funcView, argView);
     }
 
@@ -73,7 +77,8 @@ public class FuncCallView implements ExpressionView {
 
     public void handleArgChange(ExpressionView newArgView) {
         view.removeView(argView.getNativeView());
-        view.addView(newArgView.getNativeView());
+        // The arg is at position 2, after the arg and the open paren.
+        view.addView(newArgView.getNativeView(), 2);
         argView = newArgView;
     }
 }

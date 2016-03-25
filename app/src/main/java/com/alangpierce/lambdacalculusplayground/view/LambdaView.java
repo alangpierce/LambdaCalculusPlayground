@@ -47,8 +47,13 @@ public class LambdaView implements ExpressionView {
         View parameterView = renderer.makeTextView(varName);
         View bodyNativeView =
                 bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView();
-        LinearLayout mainView = renderer.makeLinearLayoutWithChildren(ImmutableList.of(
-                renderer.makeTextView("λ"), parameterView, bodyNativeView));
+        LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
+                ImmutableList.of(
+                        renderer.makeTextView("λ"),
+                        parameterView,
+                        renderer.makeBracketView("["),
+                        bodyNativeView,
+                        renderer.makeBracketView("]")));
         return new LambdaView(dragObservableGenerator, renderer, mainView, parameterView, bodyView,
                 bodyNativeView);
     }
@@ -87,7 +92,9 @@ public class LambdaView implements ExpressionView {
             // We need to re-style the view because it may have changed to a top-level expression.
             bodyNativeView = renderer.styleLayout(newBody.getNativeView());
         }
-        view.addView(bodyNativeView);
+        // The native view is at the position 3, after the lambda, the variable, and the open
+        // bracket.
+        view.addView(bodyNativeView, 3);
     }
 
     public ScreenPoint getBodyPos() {
