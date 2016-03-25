@@ -110,19 +110,8 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     }
 
     @Override
-    public LinearLayout makeMissingBodyView() {
-        LinearLayout layout = new LinearLayout(context);
-        layout.setBackgroundColor(getColor(R.color.empty_body));
-        layout.setPadding(3, 3, 3, 3);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(3, 3, 3, 3);
-        layout.setLayoutParams(layoutParams);
-        layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
-        layout.setElevation(10);
-        layout.addView(makeTextView(" "));
-        return layout;
+    public View makeMissingBodyView() {
+        return layoutInflater.inflate(R.layout.missing_body, rootView, false);
     }
 
     @Override

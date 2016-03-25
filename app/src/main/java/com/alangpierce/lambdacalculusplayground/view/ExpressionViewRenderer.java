@@ -19,6 +19,6 @@ public interface ExpressionViewRenderer {
     TextView makeTextView(String text);
     View makeBracketView(String text);
     LinearLayout styleLayout(final LinearLayout layout);
-    LinearLayout makeMissingBodyView();
+    View makeMissingBodyView();
     View makeExecuteButton();
 }
