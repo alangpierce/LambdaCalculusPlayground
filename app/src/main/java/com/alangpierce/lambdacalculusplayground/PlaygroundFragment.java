@@ -3,6 +3,7 @@ package com.alangpierce.lambdacalculusplayground;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,10 @@ public class PlaygroundFragment extends Fragment {
         // Required empty public constructor.
     }
 
+    private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
+
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
+    private DrawerLayout drawerRoot;
 
     public static PlaygroundFragment create(List<ScreenExpression> expressions) {
         Bundle args = new Bundle();
@@ -51,18 +55,35 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        DrawerLayout root = (DrawerLayout)
-                inflater.inflate(R.layout.fragment_playground, container, false);
-        RelativeLayout canvasView = (RelativeLayout) root.findViewById(R.id.canvas_view);
+        drawerRoot = (DrawerLayout) inflater.inflate(R.layout.fragment_playground, container, false);
+        RelativeLayout canvasView = (RelativeLayout) drawerRoot.findViewById(R.id.canvas_view);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(
-                        new PlaygroundModule(getActivity(), canvasView, root, expressionState))
+                        new PlaygroundModule(getActivity(), canvasView, drawerRoot, expressionState))
                 .build();
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
         expressionManager.renderInitialExpressions();
 
         canvasView.setBackgroundResource(R.drawable.expression);
-        return root;
+
+        // If this is the first time opening the app, open the drawer after a short delay. This
+        // makes it so the palette animates in, which emphasizes that it's a drawer and makes sure
+        // the user starts with it visible.
+        if (savedInstanceState == null) {
+            drawerRoot.postDelayed(() -> {
+                if (drawerRoot != null) {
+                    drawerRoot.openDrawer(Gravity.END);
+                }
+            }, INITIAL_DRAWER_OPEN_DELAY_MS);
+        }
+
+        return drawerRoot;
+    }
+
+    @Override
+    public void onDestroyView() {
+        drawerRoot = null;
+        super.onDestroyView();
     }
 }
