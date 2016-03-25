@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
 import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -60,7 +61,7 @@ public class PaletteView {
         scrollView.setBackgroundColor(getColor(R.color.palette));
     }
 
-    private int getColor(int resId) {
+    private int getColor(@ColorRes int resId) {
         return ContextCompat.getColor(drawerRoot.getContext(), resId);
     }
 }

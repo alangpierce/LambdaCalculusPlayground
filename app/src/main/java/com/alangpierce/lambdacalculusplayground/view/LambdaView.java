@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -124,7 +125,7 @@ public class LambdaView implements ExpressionView {
         bodyNativeView.setBackgroundColor(getColor(R.color.empty_body));
     }
 
-    private int getColor(int resId) {
+    private int getColor(@ColorRes int resId) {
         return ContextCompat.getColor(bodyNativeView.getContext(), resId);
     }
 

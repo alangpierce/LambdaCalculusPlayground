@@ -1,7 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.support.annotation.ColorRes;
+import android.support.annotation.LayoutRes;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -64,18 +65,9 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public TextView makeTextView(String text) {
-        TextView textView = new TextView(context);
-        textView.setText(text);
-        textView.setTextSize(30);
-        // For now, just use black to make the text consistent with the bracket images, which are
-        // black.
-        // TODO: Use some kind of dark gray color instead of black.
-        textView.setTextColor(Color.BLACK);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
-        textView.setPadding(20, 0, 20, 0);
-        return textView;
+        TextView result = (TextView) inflate(R.layout.expression_text);
+        result.setText(text);
+        return result;
     }
 
     Map<String, Integer> BRACKET_DRAWABLE_BY_STRING = ImmutableMap.of(
@@ -111,15 +103,22 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public View makeMissingBodyView() {
-        return layoutInflater.inflate(R.layout.missing_body, rootView, false);
+        return inflate(R.layout.missing_body);
     }
 
     @Override
     public View makeExecuteButton() {
-        return layoutInflater.inflate(R.layout.execute_button, rootView, false);
+        return inflate(R.layout.execute_button);
     }
 
-    private int getColor(int resId) {
+    // We always want to inflate the view in a way where we inform the inflater about the root (so
+    // that the generated view has the right layout params), but we never want to actually attach to
+    // that root.
+    private View inflate(@LayoutRes int resId) {
+        return layoutInflater.inflate(resId, rootView, false);
+    }
+
+    private int getColor(@ColorRes int resId) {
         return ContextCompat.getColor(context, resId);
     }
 }
