@@ -9,11 +9,8 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression.UserExpressionVisitor;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
@@ -82,44 +79,40 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     public ExpressionController createController(
             UserExpression userExpression) {
         ExpressionController result = userExpression.visit(
-                new UserExpressionVisitor<ExpressionController>() {
-            @Override
-            public ExpressionController visit(UserLambda lambda) {
-                @Nullable ExpressionController bodyController = null;
-                if (lambda.body() != null) {
-                    bodyController = createController(lambda.body());
-                }
-                LambdaView view = LambdaView.render(
-                        dragObservableGenerator, viewRenderer, lambda.varName(),
-                        bodyController != null ? bodyController.getView() : null);
-                LambdaExpressionController result = new LambdaExpressionController(
-                        topLevelExpressionManager, view, lambda, bodyController);
-                if (bodyController != null) {
-                    bodyController.setOnChangeCallback(result::handleBodyChange);
-                }
-                return result;
-            }
-            @Override
-            public ExpressionController visit(UserFuncCall funcCall) {
-                ExpressionController funcController = createController(funcCall.func());
-                ExpressionController argController = createController(funcCall.arg());
+                lambda -> {
+                    @Nullable ExpressionController bodyController = null;
+                    if (lambda.body() != null) {
+                        bodyController = createController(lambda.body());
+                    }
+                    LambdaView view = LambdaView.render(
+                            dragObservableGenerator, viewRenderer, lambda.varName(),
+                            bodyController != null ? bodyController.getView() : null);
+                    LambdaExpressionController controller = new LambdaExpressionController(
+                            topLevelExpressionManager, view, lambda, bodyController);
+                    if (bodyController != null) {
+                        bodyController.setOnChangeCallback(controller::handleBodyChange);
+                    }
+                    return controller;
+                },
+                funcCall -> {
+                    ExpressionController funcController = createController(funcCall.func());
+                    ExpressionController argController = createController(funcCall.arg());
 
-                FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
-                        funcController.getView(), argController.getView());
+                    FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
+                            funcController.getView(), argController.getView());
 
-                FuncCallExpressionController result =
-                        new FuncCallExpressionController(topLevelExpressionManager, view,
-                                funcController, argController, funcCall);
-                funcController.setOnChangeCallback(result::handleFuncChange);
-                argController.setOnChangeCallback(result::handleArgChange);
-                return result;
-            }
-            @Override
-            public ExpressionController visit(UserVariable variable) {
-                VariableView view = VariableView.render(viewRenderer, variable.varName());
-                return new VariableExpressionController(view, variable);
-            }
-        });
+                    FuncCallExpressionController controller =
+                            new FuncCallExpressionController(topLevelExpressionManager, view,
+                                    funcController, argController, funcCall);
+                    funcController.setOnChangeCallback(controller::handleFuncChange);
+                    argController.setOnChangeCallback(controller::handleArgChange);
+                    return controller;
+                },
+                variable -> {
+                    VariableView view = VariableView.render(viewRenderer, variable.varName());
+                    return new VariableExpressionController(view, variable);
+                }
+        );
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }
@@ -131,7 +124,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
     /**
      * Special routine for building a function, like we do when handling a drop.
-     *
+     * <p>
      * TODO: Get rid of the code duplication here.
      */
     private FuncCallExpressionController createFuncCall(

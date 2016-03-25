@@ -12,7 +12,9 @@ public abstract class UserFuncCall implements UserExpression {
     }
 
     @Override
-    public <T> T visit(UserExpressionVisitor<T> visitor) {
-        return visitor.visit(this);
+    public <T> T visit(Visitor<UserLambda, T> lambdaVisitor,
+                       Visitor<UserFuncCall, T> funcCallVisitor,
+                       Visitor<UserVariable, T> variableVisitor) {
+        return funcCallVisitor.accept(this);
     }
 }

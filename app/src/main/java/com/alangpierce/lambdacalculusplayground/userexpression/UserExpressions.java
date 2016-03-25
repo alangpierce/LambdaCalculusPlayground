@@ -22,31 +22,25 @@ public class UserExpressions {
         );
     }
 
-    public static class InvalidExpressionException extends RuntimeException {}
+    public static class InvalidExpressionException extends RuntimeException {
+    }
 
     /**
      * Given a UserExpression, convert to an Expression if possible.
-     *
+     * <p>
      * throws InvalidExpressionException if there was a problem.
      */
     public static Expression toExpression(UserExpression e) throws InvalidExpressionException {
-        return e.visit(new UserExpression.UserExpressionVisitor<Expression>() {
-            @Override
-            public Expression visit(UserLambda lambda) {
-                if (lambda.body() == null) {
-                    throw new InvalidExpressionException();
-                }
-                return Lambda.create(lambda.varName(), toExpression(lambda.body()));
-            }
-            @Override
-            public Expression visit(UserFuncCall funcCall) {
-                return FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg()));
-            }
-            @Override
-            public Expression visit(UserVariable variable) {
-                return Variable.create(variable.varName());
-            }
-        });
+        return e.visit(
+                lambda -> {
+                    if (lambda.body() == null) {
+                        throw new InvalidExpressionException();
+                    }
+                    return Lambda.create(lambda.varName(), toExpression(lambda.body()));
+                },
+                funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
+                variable -> Variable.create(variable.varName())
+        );
     }
 
     public static UserExpression step(UserExpression userExpression) {
@@ -68,10 +62,12 @@ public class UserExpressions {
 
     /**
      * Run an expression to completion.
-     *
+     * <p>
      * Returns null if we suspect that we're in an infinite loop.
      */
-    public static @Nullable UserExpression evaluate(UserExpression userExpression) {
+    public static
+    @Nullable
+    UserExpression evaluate(UserExpression userExpression) {
         for (int i = 0; canStep(userExpression); i++) {
             if (i == 100) {
                 return null;

@@ -8,11 +8,12 @@ import java.io.Serializable;
  * step while creating a lambda expression.
  */
 public interface UserExpression extends Serializable {
-    <T> T visit(UserExpressionVisitor<T> visitor);
+    <T> T visit(
+            Visitor<UserLambda, T> lambdaVisitor,
+            Visitor<UserFuncCall, T> funcCallVisitor,
+            Visitor<UserVariable, T> variableVisitor);
 
-    interface UserExpressionVisitor<T> {
-        T visit(UserLambda lambda);
-        T visit(UserFuncCall funcCall);
-        T visit(UserVariable variable);
+    interface Visitor<V, R> {
+        R accept(V value);
     }
 }
