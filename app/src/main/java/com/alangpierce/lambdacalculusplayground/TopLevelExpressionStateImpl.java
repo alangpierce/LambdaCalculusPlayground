@@ -65,8 +65,10 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     public void hydrateFromBundle(Bundle bundle) {
         List<ScreenExpression> screenExpressions =
                 (List<ScreenExpression>)bundle.getSerializable("expressions");
-        for (ScreenExpression expression : screenExpressions) {
-            addScreenExpression(expression);
+        if (screenExpressions != null) {
+            for (ScreenExpression expression : screenExpressions) {
+                addScreenExpression(expression);
+            }
         }
         PointDifference panOffset = (PointDifference) bundle.getSerializable("panOffset");
         if (panOffset != null) {
