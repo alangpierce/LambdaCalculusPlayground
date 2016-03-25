@@ -1,9 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 public class ExpressionViews {
@@ -23,11 +24,15 @@ public class ExpressionViews {
     }
 
     public static void handleDragEnter(ExpressionView view) {
-        view.getNativeView().setBackgroundColor(Color.parseColor("#66DD66"));
+        view.getNativeView().setBackgroundColor(getColor(view, R.color.expression_highlight));
     }
 
     public static void handleDragExit(ExpressionView view) {
-        view.getNativeView().setBackgroundColor(Color.WHITE);
+        view.getNativeView().setBackgroundColor(getColor(view, R.color.expression_background));
+    }
+
+    private static int getColor(ExpressionView view, int resId) {
+        return ContextCompat.getColor(view.getNativeView().getContext(), resId);
     }
 
     public static void detach(ExpressionView view) {

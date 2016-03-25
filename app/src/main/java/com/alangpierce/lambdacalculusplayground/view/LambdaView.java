@@ -1,9 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
@@ -116,11 +117,15 @@ public class LambdaView implements ExpressionView {
     }
 
     public void handleBodyDragEnter() {
-        bodyNativeView.setBackgroundColor(Color.parseColor("#66DD66"));
+        bodyNativeView.setBackgroundColor(getColor(R.color.expression_highlight));
     }
 
     public void handleBodyDragExit() {
-        bodyNativeView.setBackgroundColor(0x44FF0000);
+        bodyNativeView.setBackgroundColor(getColor(R.color.empty_body));
+    }
+
+    private int getColor(int resId) {
+        return ContextCompat.getColor(bodyNativeView.getContext(), resId);
     }
 
     public int getBodyViewDepth() {

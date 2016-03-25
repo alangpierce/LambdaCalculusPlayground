@@ -1,6 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
@@ -43,7 +45,7 @@ public class PaletteView {
 
     public boolean intersectsWithView(View other) {
         // Only allow intersection if the drawer is actually open.
-        return drawerRoot.isDrawerOpen(Gravity.END) && Views.viewsIntersect(scrollView, other);
+        return drawerRoot.isDrawerOpen(GravityCompat.END) && Views.viewsIntersect(scrollView, other);
     }
 
     public View getNativeView() {
@@ -51,10 +53,14 @@ public class PaletteView {
     }
 
     public void handleDeleteDragEnter() {
-        scrollView.setBackgroundColor(0xFFAA0000);
+        scrollView.setBackgroundColor(getColor(R.color.palette_delete));
     }
 
     public void handleDeleteDragExit() {
-        scrollView.setBackgroundColor(0xFFE6CEA3);
+        scrollView.setBackgroundColor(getColor(R.color.palette));
+    }
+
+    private int getColor(int resId) {
+        return ContextCompat.getColor(drawerRoot.getContext(), resId);
     }
 }

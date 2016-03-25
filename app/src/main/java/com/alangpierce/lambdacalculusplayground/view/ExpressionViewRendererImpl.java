@@ -7,6 +7,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +98,7 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public LinearLayout styleLayout(final LinearLayout layout) {
-        layout.setBackgroundColor(Color.WHITE);
+        layout.setBackgroundColor(getColor(R.color.expression_background));
         layout.setPadding(6, 3, 6, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -112,7 +113,7 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     @Override
     public LinearLayout makeMissingBodyView() {
         LinearLayout layout = new LinearLayout(context);
-        layout.setBackgroundColor(0x44FF0000);
+        layout.setBackgroundColor(getColor(R.color.empty_body));
         layout.setPadding(3, 3, 3, 3);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -129,11 +130,15 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         FloatingActionButton button = new FloatingActionButton(context);
         button.setType(FloatingActionButton.TYPE_MINI);
         button.setImageResource(R.drawable.ic_av_play_arrow);
-        button.setColorNormal(0xFF00AA00);
-        button.setColorRipple(0xFF00BB00);
-        button.setColorPressed(0xFF00CC00);
+        button.setColorNormal(getColor(R.color.execute_normal));
+        button.setColorRipple(getColor(R.color.execute_ripple));
+        button.setColorPressed(getColor(R.color.execute_pressed));
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
         button.setLayoutParams(params);
         return button;
+    }
+
+    private int getColor(int resId) {
+        return ContextCompat.getColor(context, resId);
     }
 }
