@@ -116,7 +116,7 @@ public class LambdaView implements ExpressionView {
     }
 
     public void handleBodyDragEnter() {
-        bodyNativeView.setBackgroundColor(Color.GREEN);
+        bodyNativeView.setBackgroundColor(Color.parseColor("#66DD66"));
     }
 
     public void handleBodyDragExit() {

@@ -23,7 +23,7 @@ public class ExpressionViews {
     }
 
     public static void handleDragEnter(ExpressionView view) {
-        view.getNativeView().setBackgroundColor(Color.GREEN);
+        view.getNativeView().setBackgroundColor(Color.parseColor("#66DD66"));
     }
 
     public static void handleDragExit(ExpressionView view) {
