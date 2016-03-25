@@ -155,7 +155,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         return screenExpression.getExpr().visit(new UserExpression.UserExpressionVisitor<Boolean>() {
             @Override
             public Boolean visit(UserLambda lambda) {
-                return lambda.body == null;
+                return lambda.body() == null;
             }
             @Override
             public Boolean visit(UserFuncCall funcCall) {

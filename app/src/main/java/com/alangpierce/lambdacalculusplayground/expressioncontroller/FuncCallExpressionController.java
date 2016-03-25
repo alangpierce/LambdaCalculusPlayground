@@ -85,7 +85,7 @@ public class FuncCallExpressionController implements ExpressionController {
         // Start accepting touch events for the arg view.
         funcController.getView().getNativeView().setEnabled(false);
 
-        userFuncCall = new UserFuncCall(newFuncController.getExpression(), userFuncCall.arg);
+        userFuncCall = UserFuncCall.create(newFuncController.getExpression(), userFuncCall.arg());
         view.handleFuncChange(newFuncController.getView());
         newFuncController.setOnChangeCallback(this::handleFuncChange);
         funcController = newFuncController;
@@ -94,7 +94,7 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     public void handleArgChange(ExpressionController newArgController) {
-        userFuncCall = new UserFuncCall(userFuncCall.func, newArgController.getExpression());
+        userFuncCall = UserFuncCall.create(userFuncCall.func(), newArgController.getExpression());
         view.handleArgChange(newArgController.getView());
         updateDragActionSubscription();
         newArgController.setOnChangeCallback(this::handleArgChange);

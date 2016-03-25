@@ -86,11 +86,11 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             @Override
             public ExpressionController visit(UserLambda lambda) {
                 @Nullable ExpressionController bodyController = null;
-                if (lambda.body != null) {
-                    bodyController = createController(lambda.body);
+                if (lambda.body() != null) {
+                    bodyController = createController(lambda.body());
                 }
                 LambdaView view = LambdaView.render(
-                        dragObservableGenerator, viewRenderer, lambda.varName,
+                        dragObservableGenerator, viewRenderer, lambda.varName(),
                         bodyController != null ? bodyController.getView() : null);
                 LambdaExpressionController result = new LambdaExpressionController(
                         topLevelExpressionManager, view, lambda, bodyController);
@@ -101,8 +101,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             }
             @Override
             public ExpressionController visit(UserFuncCall funcCall) {
-                ExpressionController funcController = createController(funcCall.func);
-                ExpressionController argController = createController(funcCall.arg);
+                ExpressionController funcController = createController(funcCall.func());
+                ExpressionController argController = createController(funcCall.arg());
 
                 FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
                         funcController.getView(), argController.getView());
@@ -116,7 +116,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             }
             @Override
             public ExpressionController visit(UserVariable variable) {
-                VariableView view = VariableView.render(viewRenderer, variable.varName);
+                VariableView view = VariableView.render(viewRenderer, variable.varName());
                 return new VariableExpressionController(view, variable);
             }
         });
@@ -136,7 +136,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
      */
     private FuncCallExpressionController createFuncCall(
             ExpressionController funcController, ExpressionController argController) {
-        UserFuncCall funcCall = new UserFuncCall(
+        UserFuncCall funcCall = UserFuncCall.create(
                 funcController.getExpression(), argController.getExpression());
         FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
                 funcController.getView(), argController.getView());

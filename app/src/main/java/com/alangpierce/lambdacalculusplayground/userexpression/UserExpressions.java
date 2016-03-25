@@ -14,11 +14,11 @@ public class UserExpressions {
      */
     public static UserExpression fromExpression(Expression e) {
         return e.visit(
-                lambda -> new UserLambda(lambda.varName(), fromExpression(lambda.body())),
-                funcCall -> new UserFuncCall(
+                lambda -> UserLambda.create(lambda.varName(), fromExpression(lambda.body())),
+                funcCall -> UserFuncCall.create(
                         fromExpression(funcCall.func()),
                         fromExpression(funcCall.arg())),
-                variable -> new UserVariable(variable.varName())
+                variable -> UserVariable.create(variable.varName())
         );
     }
 
@@ -33,18 +33,18 @@ public class UserExpressions {
         return e.visit(new UserExpression.UserExpressionVisitor<Expression>() {
             @Override
             public Expression visit(UserLambda lambda) {
-                if (lambda.body == null) {
+                if (lambda.body() == null) {
                     throw new InvalidExpressionException();
                 }
-                return Lambda.create(lambda.varName, toExpression(lambda.body));
+                return Lambda.create(lambda.varName(), toExpression(lambda.body()));
             }
             @Override
             public Expression visit(UserFuncCall funcCall) {
-                return FuncCall.create(toExpression(funcCall.func), toExpression(funcCall.arg));
+                return FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg()));
             }
             @Override
             public Expression visit(UserVariable variable) {
-                return Variable.create(variable.varName);
+                return Variable.create(variable.varName());
             }
         });
     }

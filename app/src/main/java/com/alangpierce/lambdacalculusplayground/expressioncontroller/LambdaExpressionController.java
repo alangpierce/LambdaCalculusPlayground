@@ -78,8 +78,8 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     public void handleBodyChange(@Nullable ExpressionController newBodyController) {
-        userLambda = new UserLambda(
-                userLambda.varName,
+        userLambda = UserLambda.create(
+                userLambda.varName(),
                 newBodyController != null ? newBodyController.getExpression() : null);
         view.handleBodyChange(newBodyController != null ? newBodyController.getView() : null);
         updateDragActionSubscription();
@@ -128,14 +128,14 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    new UserVariable(userLambda.varName), view.getScreenPos());
+                    UserVariable.create(userLambda.varName()), view.getScreenPos());
         }
     }
 
     private class BodyDropTarget implements DropTarget {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
-            if (userLambda.body == null && view.bodyIntersectsWith(dragController.getView())) {
+            if (userLambda.body() == null && view.bodyIntersectsWith(dragController.getView())) {
                 return view.getBodyViewDepth();
             } else {
                 return DropTarget.NOT_HIT;
@@ -148,7 +148,7 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public void handleExit() {
             // Don't change our display unless we're actually accepting drops.
-            if (userLambda.body != null) {
+            if (userLambda.body() != null) {
                 return;
             }
             view.handleBodyDragExit();
