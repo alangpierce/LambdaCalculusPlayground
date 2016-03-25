@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.pan;
 
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -11,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PanManagerImpl implements PanManager {
+    private static final String TAG = "PanManagerImpl";
+
     private final RelativeLayout rootView;
     private final DragObservableGenerator dragObservableGenerator;
 
@@ -74,7 +77,7 @@ public class PanManagerImpl implements PanManager {
     public void unregisterPanListener(PanListener panListener) {
         boolean wasModified = panListeners.remove(panListener);
         if (!wasModified) {
-            System.out.println("Warning: unregistered a listener that wasn't registered.");
+            Log.w(TAG, "Unregistered a listener that wasn't registered.");
         }
     }
 

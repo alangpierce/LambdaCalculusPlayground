@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,17 +25,17 @@ import rx.plugins.RxJavaPlugins;
 
 
 public class PlaygroundActivity extends ActionBarActivity {
+    private static final String TAG = "PlaygroundActivity";
+
     static {
         RxJavaPlugins.getInstance().registerErrorHandler(new RxJavaErrorHandler() {
             @Override
             public void handleError(Throwable e) {
-                System.err.println("Exception thrown from observable.");
-                e.printStackTrace();
+                Log.e(TAG, "Exception thrown from observable.", e);
             }
         });
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("Thread had uncaught exception.");
-            throwable.printStackTrace();
+            Log.e(TAG, "Thread had uncaught exception.", throwable);
         });
     }
 
