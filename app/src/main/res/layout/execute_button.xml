@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.FloatingActionButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/ic_av_play_arrow"
+    app:backgroundTint="@color/execute_button"
+    app:fabSize="mini"
+    >
+
+</android.support.design.widget.FloatingActionButton>

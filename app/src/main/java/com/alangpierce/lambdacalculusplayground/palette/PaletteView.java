@@ -1,5 +1,9 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
+import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.alangpierce.lambdacalculusplayground.view.LambdaView;
+
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -8,10 +12,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-
-import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
-import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
     private final DrawerLayout drawerRoot;
@@ -35,7 +35,7 @@ public class PaletteView {
 
     public void addChild(LambdaView lambdaView) {
         LinearLayout nativeView = lambdaView.getNativeView();
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) nativeView.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(nativeView.getLayoutParams());
         // TODO: Use dps here instead of pixels.
         layoutParams.setMargins(30, 30, 30, 30);
         layoutParams.gravity = Gravity.CENTER;

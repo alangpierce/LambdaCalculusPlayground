@@ -74,7 +74,7 @@ public class Views {
 
     public static void updateLayoutParamsToRelativePos(View view, DrawableAreaPoint pos) {
         RelativeLayout.LayoutParams layoutParams =
-                (RelativeLayout.LayoutParams)view.getLayoutParams();
+                new RelativeLayout.LayoutParams(view.getLayoutParams());
         layoutParams.leftMargin = pos.getX();
         layoutParams.topMargin = pos.getY();
         view.setLayoutParams(layoutParams);

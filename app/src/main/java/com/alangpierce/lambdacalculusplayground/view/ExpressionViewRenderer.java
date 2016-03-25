@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.view;
 
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -18,5 +19,10 @@ public interface ExpressionViewRenderer {
     View makeBracketView(String text);
     LinearLayout styleLayout(final LinearLayout layout);
     LinearLayout makeMissingBodyView();
-    View makeExecuteButton();
+
+    /**
+     * Create an execute button, although don't attach it to the root. We just need the root so that
+     * the inflater can know what kind of LayoutParams to make.
+     */
+    View makeExecuteButton(RelativeLayout rootView);
 }

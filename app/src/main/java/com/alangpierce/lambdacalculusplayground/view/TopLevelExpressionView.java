@@ -1,9 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
+import autovalue.shaded.com.google.common.common.base.Preconditions;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
@@ -12,9 +9,11 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
-
-import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
+
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class TopLevelExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
@@ -41,7 +40,7 @@ public class TopLevelExpressionView {
             ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, RelativeLayout rootView, ExpressionView exprView,
             boolean isExecutable) {
-        View executeButton = renderer.makeExecuteButton();
+        View executeButton = renderer.makeExecuteButton(rootView);
         return new TopLevelExpressionView(dragObservableGenerator, pointConverter, rootView,
                 exprView, executeButton, isExecutable);
     }

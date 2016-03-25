@@ -1,14 +1,13 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import com.alangpierce.lambdacalculusplayground.R;
+import com.google.common.collect.ImmutableMap;
+
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -18,11 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alangpierce.lambdacalculusplayground.R;
-import com.google.common.collect.ImmutableMap;
-import com.melnykov.fab.FloatingActionButton;
-
-import java.io.BufferedReader;
 import java.util.List;
 import java.util.Map;
 
@@ -126,16 +120,10 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         return layout;
     }
 
-    public View makeExecuteButton() {
-        FloatingActionButton button = new FloatingActionButton(context);
-        button.setType(FloatingActionButton.TYPE_MINI);
-        button.setImageResource(R.drawable.ic_av_play_arrow);
-        button.setColorNormal(getColor(R.color.execute_normal));
-        button.setColorRipple(getColor(R.color.execute_ripple));
-        button.setColorPressed(getColor(R.color.execute_pressed));
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
-        button.setLayoutParams(params);
-        return button;
+    public View makeExecuteButton(RelativeLayout rootView) {
+        LayoutInflater layoutInflater = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return layoutInflater.inflate(R.layout.execute_button, rootView, false);
     }
 
     private int getColor(int resId) {
