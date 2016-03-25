@@ -1,9 +1,9 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
-import rx.Observable;
-
 import android.view.MotionEvent;
 import android.view.View;
+
+import rx.Observable;
 
 /**
  * Class that provides a stream of MotionEvent instances for any view. Listeners should transform

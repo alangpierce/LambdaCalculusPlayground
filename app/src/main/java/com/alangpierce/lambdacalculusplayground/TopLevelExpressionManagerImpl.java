@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.support.v4.widget.DrawerLayout;
+
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -13,8 +15,6 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
-
-import android.support.v4.widget.DrawerLayout;
 
 import java.util.Map.Entry;
 

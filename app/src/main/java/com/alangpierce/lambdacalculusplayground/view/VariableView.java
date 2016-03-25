@@ -1,10 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.widget.LinearLayout;
+
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
-
-import android.widget.LinearLayout;
 
 public class VariableView implements ExpressionView {
     private final LinearLayout view;

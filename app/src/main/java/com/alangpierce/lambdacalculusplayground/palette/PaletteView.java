@@ -1,9 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
-import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
-import com.alangpierce.lambdacalculusplayground.view.LambdaView;
-
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +8,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+
+import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
     private final DrawerLayout drawerRoot;

@@ -1,8 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.geometry;
 
-import com.alangpierce.lambdacalculusplayground.pan.PanManager;
-
 import android.view.View;
+
+import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 
 public class PointConverterImpl implements PointConverter {
     private final View rootView;
