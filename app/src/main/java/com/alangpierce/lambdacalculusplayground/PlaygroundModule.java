@@ -1,5 +1,10 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.app.Activity;
+import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
+import android.widget.RelativeLayout;
+
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
@@ -14,15 +19,12 @@ import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
-import dagger.Module;
-import dagger.Provides;
-
-import android.app.Activity;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.RelativeLayout;
 
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class PlaygroundModule {
@@ -41,6 +43,11 @@ public class PlaygroundModule {
 
     @Provides Activity provideActivity() {
         return activity;
+    }
+
+    @Provides
+    LayoutInflater provideLayoutInflater(Activity activity) {
+        return activity.getLayoutInflater();
     }
 
     @Qualifier @interface RootView {}
@@ -87,8 +94,9 @@ public class PlaygroundModule {
     }
 
     @Provides
-    ExpressionViewRenderer provideExpressionViewRenderer(Activity activity) {
-        return new ExpressionViewRendererImpl(activity);
+    ExpressionViewRenderer provideExpressionViewRenderer(
+            Activity activity, @RootView RelativeLayout rootView, LayoutInflater layoutInflater) {
+        return new ExpressionViewRendererImpl(activity, rootView, layoutInflater);
     }
 
     @Provides

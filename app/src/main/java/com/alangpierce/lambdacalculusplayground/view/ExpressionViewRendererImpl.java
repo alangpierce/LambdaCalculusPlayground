@@ -1,8 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import com.alangpierce.lambdacalculusplayground.R;
-import com.google.common.collect.ImmutableMap;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
@@ -17,14 +14,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alangpierce.lambdacalculusplayground.R;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
 import java.util.Map;
 
 public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     private final Context context;
+    private final RelativeLayout rootView;
+    private final LayoutInflater layoutInflater;
 
-    public ExpressionViewRendererImpl(Context context) {
+    public ExpressionViewRendererImpl(Context context, RelativeLayout rootView,
+                                      LayoutInflater layoutInflater) {
         this.context = context;
+        this.rootView = rootView;
+        this.layoutInflater = layoutInflater;
     }
 
     /**
@@ -120,9 +125,8 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         return layout;
     }
 
-    public View makeExecuteButton(RelativeLayout rootView) {
-        LayoutInflater layoutInflater = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    @Override
+    public View makeExecuteButton() {
         return layoutInflater.inflate(R.layout.execute_button, rootView, false);
     }
 

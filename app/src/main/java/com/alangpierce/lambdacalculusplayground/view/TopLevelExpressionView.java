@@ -40,7 +40,7 @@ public class TopLevelExpressionView {
             ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, RelativeLayout rootView, ExpressionView exprView,
             boolean isExecutable) {
-        View executeButton = renderer.makeExecuteButton(rootView);
+        View executeButton = renderer.makeExecuteButton();
         return new TopLevelExpressionView(dragObservableGenerator, pointConverter, rootView,
                 exprView, executeButton, isExecutable);
     }
