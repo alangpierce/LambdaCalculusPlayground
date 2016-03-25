@@ -12,15 +12,14 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import rx.Observable;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class LambdaExpressionController implements ExpressionController {
     private final TopLevelExpressionManager topLevelExpressionManager;

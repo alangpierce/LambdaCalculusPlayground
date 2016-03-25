@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -21,6 +19,8 @@ import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
+
+import android.widget.RelativeLayout;
 
 import javax.annotation.Nullable;
 

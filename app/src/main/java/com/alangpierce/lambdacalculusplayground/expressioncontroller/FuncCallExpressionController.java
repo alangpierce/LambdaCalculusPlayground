@@ -11,15 +11,14 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import rx.Observable;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class FuncCallExpressionController implements ExpressionController {
     private final TopLevelExpressionManager topLevelExpressionManager;

@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.view.View.MeasureSpec;
-
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
@@ -18,15 +16,16 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import rx.Observable;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+
+import android.view.View.MeasureSpec;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
     private final TopLevelExpressionManager topLevelExpressionManager;

@@ -7,7 +7,6 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
-
 import rx.Observable;
 
 public class PaletteLambdaController {

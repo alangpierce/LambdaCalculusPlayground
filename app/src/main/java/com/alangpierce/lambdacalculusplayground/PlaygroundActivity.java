@@ -1,27 +1,26 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
 import rx.plugins.RxJavaErrorHandler;
 import rx.plugins.RxJavaPlugins;
+
+import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+import java.util.List;
 
 
 public class PlaygroundActivity extends ActionBarActivity {
@@ -84,10 +83,10 @@ public class PlaygroundActivity extends ActionBarActivity {
         if (item.getItemId() == R.id.action_palette) {
             DrawerLayout drawerRoot = (DrawerLayout) findViewById(R.id.drawer_root_view);
             if (drawerRoot != null) {
-                if (drawerRoot.isDrawerOpen(Gravity.END)) {
-                    drawerRoot.closeDrawer(Gravity.END);
+                if (drawerRoot.isDrawerOpen(GravityCompat.END)) {
+                    drawerRoot.closeDrawer(GravityCompat.END);
                 } else {
-                    drawerRoot.openDrawer(Gravity.END);
+                    drawerRoot.openDrawer(GravityCompat.END);
                 }
             }
         }

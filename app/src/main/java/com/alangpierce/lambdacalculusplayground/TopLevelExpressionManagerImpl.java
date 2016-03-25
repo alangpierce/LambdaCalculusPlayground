@@ -1,8 +1,5 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
-
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -17,6 +14,8 @@ import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
+import android.support.v4.widget.DrawerLayout;
+
 import java.util.Map.Entry;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
@@ -25,21 +24,19 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final DragManager dragManager;
     private final PointConverter pointConverter;
     private final DrawerLayout drawerRoot;
-    private final Context context;
     private final PanManager panManager;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
-            PanManager panManager, Context context) {
+            PanManager panManager) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
         this.pointConverter = pointConverter;
         this.drawerRoot = drawerRoot;
         this.panManager = panManager;
-        this.context = context;
     }
 
     @Override

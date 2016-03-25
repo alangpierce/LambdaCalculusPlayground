@@ -10,7 +10,7 @@ import java.io.Serializable;
 public interface UserExpression extends Serializable {
     <T> T visit(UserExpressionVisitor<T> visitor);
 
-    public interface UserExpressionVisitor<T> {
+    interface UserExpressionVisitor<T> {
         T visit(UserLambda lambda);
         T visit(UserFuncCall funcCall);
         T visit(UserVariable variable);

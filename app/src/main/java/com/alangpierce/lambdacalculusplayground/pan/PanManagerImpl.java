@@ -1,11 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.pan;
 
-import android.util.Log;
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+
+import android.util.Log;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;

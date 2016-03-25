@@ -1,8 +1,8 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.os.Bundle;
-
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+
+import android.os.Bundle;
 
 import java.util.Map.Entry;
 

@@ -2,8 +2,8 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +73,7 @@ public class PlaygroundFragment extends Fragment {
         if (savedInstanceState == null) {
             drawerRoot.postDelayed(() -> {
                 if (drawerRoot != null) {
-                    drawerRoot.openDrawer(Gravity.END);
+                    drawerRoot.openDrawer(GravityCompat.END);
                 }
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }

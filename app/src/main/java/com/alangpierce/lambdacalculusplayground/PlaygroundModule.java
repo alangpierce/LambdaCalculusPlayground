@@ -1,9 +1,5 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.app.Activity;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.RelativeLayout;
-
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
@@ -18,12 +14,15 @@ import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
+import dagger.Module;
+import dagger.Provides;
+
+import android.app.Activity;
+import android.support.v4.widget.DrawerLayout;
+import android.widget.RelativeLayout;
 
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
 
 @Module
 public class PlaygroundModule {
@@ -97,10 +96,10 @@ public class PlaygroundModule {
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, PanManager panManager,
-            Activity activity, @DrawerRoot DrawerLayout drawerRoot) {
+            @DrawerRoot DrawerLayout drawerRoot) {
         return new TopLevelExpressionManagerImpl(
                 expressionState, controllerFactoryFactory, dragManager, pointConverter, drawerRoot,
-                panManager, activity);
+                panManager);
     }
 
     @Provides

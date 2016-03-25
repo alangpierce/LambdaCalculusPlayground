@@ -1,11 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
+
 import android.support.v4.content.ContextCompat;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
-import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 public class ExpressionViews {
     public static boolean rightEdgeIntersectsWith(

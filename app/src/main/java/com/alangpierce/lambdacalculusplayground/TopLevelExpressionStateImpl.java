@@ -1,17 +1,16 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.os.Bundle;
-
+import autovalue.shaded.com.google.common.common.collect.ImmutableList;
+import autovalue.shaded.com.google.common.common.collect.Maps;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+
+import android.os.Bundle;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import autovalue.shaded.com.google.common.common.collect.ImmutableList;
-import autovalue.shaded.com.google.common.common.collect.Maps;
 
 /**
  * Stateful class for keeping track of the full set of expressions.

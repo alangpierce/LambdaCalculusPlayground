@@ -1,12 +1,16 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
-import android.support.v4.view.MotionEventCompat;
-import android.view.MotionEvent;
-import android.view.View;
-
+import autovalue.shaded.com.google.common.common.base.Throwables;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import rx.Observable;
+import rx.functions.Func1;
+import rx.observables.GroupedObservable;
+
+import android.support.v4.view.MotionEventCompat;
+import android.view.MotionEvent;
+import android.view.View;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -17,11 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import autovalue.shaded.com.google.common.common.base.Throwables;
-import rx.Observable;
-import rx.functions.Func1;
-import rx.observables.GroupedObservable;
 
 public class DragObservableGeneratorImpl implements DragObservableGenerator {
     private final TouchObservableManager touchObservableManager;

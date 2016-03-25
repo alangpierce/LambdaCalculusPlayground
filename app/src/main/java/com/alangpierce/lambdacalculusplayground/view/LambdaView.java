@@ -1,19 +1,18 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.support.v4.content.ContextCompat;
-import android.view.View;
-import android.widget.LinearLayout;
-
 import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
+import rx.Observable;
+
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import javax.annotation.Nullable;
-
-import rx.Observable;
 
 /**
  * Lambda views need to be able to expose the different subcomponents (parameter and body) and their

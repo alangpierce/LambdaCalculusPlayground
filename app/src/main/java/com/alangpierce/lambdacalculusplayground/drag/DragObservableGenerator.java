@@ -1,8 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.drag;
 
-import android.view.View;
-
 import rx.Observable;
+
+import android.view.View;
 
 /**
  * For a given view, make an observable for all "drag" strokes originating at that view. Each of
