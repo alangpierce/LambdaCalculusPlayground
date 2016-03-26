@@ -7,10 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -78,13 +75,10 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public View makeBracketView(String text) {
-        ImageView imageView = new ImageView(context);
+        ImageView result = (ImageView) inflate(R.layout.bracket);
         int resId = BRACKET_DRAWABLE_BY_STRING.get(text);
-        imageView.setImageDrawable(context.getResources().getDrawable(resId, null));
-        // TODO: Don't use pixels here.
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(20, LayoutParams.MATCH_PARENT));
-        imageView.setScaleType(ScaleType.FIT_XY);
-        return imageView;
+        result.setImageDrawable(context.getResources().getDrawable(resId, null));
+        return result;
     }
 
     @Override
