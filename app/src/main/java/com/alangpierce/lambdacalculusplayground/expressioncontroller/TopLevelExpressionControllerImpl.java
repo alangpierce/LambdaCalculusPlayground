@@ -107,11 +107,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private void handleExecuteClick() {
-        @Nullable UserExpression newExpr = UserExpressions.evaluate(screenExpression.getExpr());
-        if (newExpr == null) {
-            // For now, just ignore expressions that infinite loop.
-            return;
-        }
+        UserExpression newExpr = UserExpressions.evaluate(screenExpression.getExpr());
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
                 newExpr, view.getScreenPos().plus(PointDifference.create(100, 200)));
 

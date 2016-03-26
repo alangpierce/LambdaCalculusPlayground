@@ -62,15 +62,13 @@ public class UserExpressions {
 
     /**
      * Run an expression to completion.
-     * <p>
-     * Returns null if we suspect that we're in an infinite loop.
+     *
+     * If it takes more than 100 steps to finish, just run it 100 steps.
      */
-    public static
-    @Nullable
-    UserExpression evaluate(UserExpression userExpression) {
+    public static UserExpression evaluate(UserExpression userExpression) {
         for (int i = 0; canStep(userExpression); i++) {
             if (i == 100) {
-                return null;
+                break;
             }
             userExpression = step(userExpression);
         }
