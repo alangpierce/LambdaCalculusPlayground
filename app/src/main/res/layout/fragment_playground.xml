@@ -13,15 +13,13 @@
 
     </RelativeLayout>
     <!-- Palette navigation drawer. -->
-    <!-- TODO: Change elevation units to dps. For now we use 9 pixels, since that's just below
-         top-level expressions. -->
     <com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView
         android:id="@+id/palette_scroll_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="#FFE6CEA3"
-        android:elevation="9px">
+        android:elevation="4dp">
 
         <LinearLayout
             android:id="@+id/palette_linear_layout"

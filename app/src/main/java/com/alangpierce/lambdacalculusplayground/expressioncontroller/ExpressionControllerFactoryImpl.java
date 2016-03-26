@@ -124,7 +124,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
     /**
      * Special routine for building a function, like we do when handling a drop.
-     * <p>
+     *
      * TODO: Get rid of the code duplication here.
      */
     private FuncCallExpressionController createFuncCall(
