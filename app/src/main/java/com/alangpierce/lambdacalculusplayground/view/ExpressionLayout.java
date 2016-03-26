@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 /**
@@ -17,6 +18,12 @@ import android.widget.LinearLayout;
 public class ExpressionLayout extends LinearLayout {
     public ExpressionLayout(Context context) {
         super(context);
+    }
+    public ExpressionLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    public ExpressionLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

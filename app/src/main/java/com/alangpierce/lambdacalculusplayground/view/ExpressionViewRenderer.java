@@ -15,7 +15,7 @@ import java.util.List;
  * The views returned from these methods are always unattached.
  */
 public interface ExpressionViewRenderer {
-    LinearLayout makeLinearLayoutWithChildren(List<View> children);
+    LinearLayout makeExpressionViewWithChildren(List<View> children);
     TextView makeTextView(String text);
     View makeBracketView(String text);
     View makeMissingBodyView();

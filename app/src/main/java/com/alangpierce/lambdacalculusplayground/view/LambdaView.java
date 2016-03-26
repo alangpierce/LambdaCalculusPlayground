@@ -50,7 +50,7 @@ public class LambdaView implements ExpressionView {
         View parameterView = renderer.makeTextView(varName);
         View bodyNativeView =
                 bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView();
-        LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
+        LinearLayout mainView = renderer.makeExpressionViewWithChildren(
                 ImmutableList.of(
                         renderer.makeTextView("λ"),
                         parameterView,

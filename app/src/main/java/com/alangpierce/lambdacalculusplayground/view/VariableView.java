@@ -14,7 +14,7 @@ public class VariableView implements ExpressionView {
     }
 
     public static VariableView render(ExpressionViewRenderer renderer, String varName) {
-        LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
+        LinearLayout mainView = renderer.makeExpressionViewWithChildren(
                 ImmutableList.of(renderer.makeTextView(varName)));
         return new VariableView(mainView);
     }

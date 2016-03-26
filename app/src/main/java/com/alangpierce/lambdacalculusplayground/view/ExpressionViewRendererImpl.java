@@ -1,10 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
 import android.support.annotation.LayoutRes;
-import android.support.v4.content.ContextCompat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,37 +17,25 @@ import java.util.Map;
 
 public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     private final Context context;
-    private final RelativeLayout rootView;
     private final LayoutInflater layoutInflater;
 
-    public ExpressionViewRendererImpl(Context context, RelativeLayout rootView,
-                                      LayoutInflater layoutInflater) {
+    public ExpressionViewRendererImpl(Context context, LayoutInflater layoutInflater) {
         this.context = context;
-        this.rootView = rootView;
         this.layoutInflater = layoutInflater;
     }
 
     @Override
-    public LinearLayout makeLinearLayoutWithChildren(List<View> children) {
-        LinearLayout layout = new ExpressionLayout(context);
+    public LinearLayout makeExpressionViewWithChildren(List<View> children) {
+        LinearLayout layout = (LinearLayout) inflateExpressionComponent(R.layout.expression_layout);
         for (View child : children) {
             layout.addView(child);
         }
-        layout.setBackgroundColor(getColor(R.color.expression_background));
-        layout.setPadding(6, 3, 6, 3);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(6, 3, 6, 3);
-        layout.setLayoutParams(layoutParams);
-        layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
-        layout.setElevation(10);
         return layout;
     }
 
     @Override
     public TextView makeTextView(String text) {
-        TextView result = (TextView) inflate(R.layout.expression_text);
+        TextView result = (TextView) inflateExpressionComponent(R.layout.expression_text);
         result.setText(text);
         return result;
     }
@@ -63,7 +48,7 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public View makeBracketView(String text) {
-        ImageView result = (ImageView) inflate(R.layout.bracket);
+        ImageView result = (ImageView) inflateExpressionComponent(R.layout.bracket);
         int resId = BRACKET_DRAWABLE_BY_STRING.get(text);
         result.setImageDrawable(context.getResources().getDrawable(resId, null));
         return result;
@@ -71,22 +56,22 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public View makeMissingBodyView() {
-        return inflate(R.layout.missing_body);
+        return inflateExpressionComponent(R.layout.missing_body);
     }
 
     @Override
     public View makeExecuteButton() {
-        return inflate(R.layout.execute_button);
+        return inflateAbsolute(R.layout.execute_button);
     }
 
-    // We always want to inflate the view in a way where we inform the inflater about the root (so
-    // that the generated view has the right layout params), but we never want to actually attach to
-    // that root.
-    private View inflate(@LayoutRes int resId) {
-        return layoutInflater.inflate(resId, rootView, false);
+    // Inflate an element that will generally be absolutely positioned (a child of the
+    // RelativeLayout).
+    private View inflateAbsolute(@LayoutRes int resId) {
+        return layoutInflater.inflate(resId, new RelativeLayout(context), false);
     }
 
-    private int getColor(@ColorRes int resId) {
-        return ContextCompat.getColor(context, resId);
+    // Inflate an element that will be inside an expression (a child of a LinearLayout).
+    private View inflateExpressionComponent(@LayoutRes int resId) {
+        return layoutInflater.inflate(resId, new LinearLayout(context), false);
     }
 }

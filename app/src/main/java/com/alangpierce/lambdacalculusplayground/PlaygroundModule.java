@@ -95,8 +95,8 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
-            Activity activity, @RootView RelativeLayout rootView, LayoutInflater layoutInflater) {
-        return new ExpressionViewRendererImpl(activity, rootView, layoutInflater);
+            Activity activity, LayoutInflater layoutInflater) {
+        return new ExpressionViewRendererImpl(activity, layoutInflater);
     }
 
     @Provides

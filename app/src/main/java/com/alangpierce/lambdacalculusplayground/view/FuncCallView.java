@@ -31,7 +31,7 @@ public class FuncCallView implements ExpressionView {
 
     public static FuncCallView render(DragObservableGenerator dragObservableGenerator,
             ExpressionViewRenderer renderer, ExpressionView funcView, ExpressionView argView) {
-        LinearLayout mainView = renderer.makeLinearLayoutWithChildren(
+        LinearLayout mainView = renderer.makeExpressionViewWithChildren(
                 ImmutableList.of(
                         funcView.getNativeView(),
                         renderer.makeBracketView("("),
