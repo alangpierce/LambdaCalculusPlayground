@@ -63,6 +63,7 @@ public class DragManagerImpl implements DragManager {
         DropTarget bestDropTarget = getBestDropTarget(controller);
 
         // TODO: Be smarter about this. We probably don't want to redo every drop target every time.
+        // Note that this assumes that exit is idempotent, which restricts what we can do.
         for (DropTarget dropTarget : dropTargets) {
             if (dropTarget == bestDropTarget) {
                 dropTarget.handleEnter(controller);
@@ -73,6 +74,11 @@ public class DragManagerImpl implements DragManager {
     }
 
     private void handleUp(TopLevelExpressionController controller, PointerMotionEvent event) {
+        // Reset all drop targets to the un-highlighted state.
+        for (DropTarget dropTarget : dropTargets) {
+            dropTarget.handleExit();
+        }
+
         TopLevelExpressionView view = controller.getView();
         view.endDrag();
         DropTarget bestDropTarget = getBestDropTarget(controller);

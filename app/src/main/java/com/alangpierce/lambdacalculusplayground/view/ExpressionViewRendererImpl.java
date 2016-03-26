@@ -3,9 +3,7 @@ package com.alangpierce.lambdacalculusplayground.view;
 import android.content.Context;
 import android.support.annotation.ColorRes;
 import android.support.annotation.LayoutRes;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +32,20 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
 
     @Override
     public LinearLayout makeLinearLayoutWithChildren(List<View> children) {
-        LinearLayout result = new ExpressionLayout(context);
+        LinearLayout layout = new ExpressionLayout(context);
         for (View child : children) {
-            result.addView(child);
+            layout.addView(child);
         }
-        return styleLayout(result);
+        layout.setBackgroundColor(getColor(R.color.expression_background));
+        layout.setPadding(6, 3, 6, 3);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(6, 3, 6, 3);
+        layout.setLayoutParams(layoutParams);
+        layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
+        layout.setElevation(10);
+        return layout;
     }
 
     @Override
@@ -60,20 +67,6 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
         int resId = BRACKET_DRAWABLE_BY_STRING.get(text);
         result.setImageDrawable(context.getResources().getDrawable(resId, null));
         return result;
-    }
-
-    @Override
-    public LinearLayout styleLayout(final LinearLayout layout) {
-        layout.setBackgroundColor(getColor(R.color.expression_background));
-        layout.setPadding(6, 3, 6, 3);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(6, 3, 6, 3);
-        layout.setLayoutParams(layoutParams);
-        layout.setVerticalGravity(Gravity.CENTER_VERTICAL);
-        layout.setElevation(10);
-        return layout;
     }
 
     @Override

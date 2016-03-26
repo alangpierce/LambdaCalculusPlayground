@@ -91,8 +91,7 @@ public class LambdaView implements ExpressionView {
         if (newBody == null) {
             bodyNativeView = renderer.makeMissingBodyView();
         } else {
-            // We need to re-style the view because it may have changed to a top-level expression.
-            bodyNativeView = renderer.styleLayout(newBody.getNativeView());
+            bodyNativeView = newBody.getNativeView();
         }
         // The native view is at the position 3, after the lambda, the variable, and the open
         // bracket.
