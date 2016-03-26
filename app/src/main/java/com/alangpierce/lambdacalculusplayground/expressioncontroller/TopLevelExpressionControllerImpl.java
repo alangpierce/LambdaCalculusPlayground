@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.util.TypedValue;
 import android.view.View.MeasureSpec;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
@@ -128,8 +129,13 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
                 MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int viewWidth = newExpression.getView().getNativeView().getMeasuredWidth();
 
+        // Shift down by 15dp.
+        int shiftPixels = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 15f,
+                view.getNativeView().getResources().getDisplayMetrics());
+
         int dx = (thisViewWidth / 2) - (viewWidth / 2);
-        int dy = thisViewHeight + 50;
+        int dy = thisViewHeight + shiftPixels;
         return thisViewPos.plus(PointDifference.create(dx, dy));
     }
 

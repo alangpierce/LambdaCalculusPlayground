@@ -5,6 +5,7 @@ import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -37,8 +38,10 @@ public class PaletteView {
     public void addChild(LambdaView lambdaView) {
         LinearLayout nativeView = lambdaView.getNativeView();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(nativeView.getLayoutParams());
-        // TODO: Use dps here instead of pixels.
-        layoutParams.setMargins(30, 30, 30, 30);
+        // Convert 10dp to pixels.
+        int marginPixels = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10f, drawerRoot.getResources().getDisplayMetrics());
+        layoutParams.setMargins(marginPixels, marginPixels, marginPixels, marginPixels);
         layoutParams.gravity = Gravity.CENTER;
         nativeView.setLayoutParams(layoutParams);
         linearLayout.addView(nativeView);
