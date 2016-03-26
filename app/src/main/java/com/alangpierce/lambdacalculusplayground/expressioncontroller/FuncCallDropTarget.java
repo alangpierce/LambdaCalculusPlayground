@@ -43,11 +43,11 @@ public class FuncCallDropTarget implements DropTarget {
         // Setting up the top-level expression modifies our callback so save it first.
         ExpressionController.OnChangeCallback changeCallback =
                 targetController.getOnChangeCallback();
-        ExpressionViews.detach(targetView);
         ExpressionController funcController = targetController;
         ExpressionController argController = expressionController.decommission();
-        FuncCallExpressionController funcCallController =
-                funcCallFactory.createFuncCall(funcController, argController);
-        changeCallback.onChange(funcCallController);
+        // Delay the creation of the new function call view, since it relies on the existing
+        // function view being detached from the view hierarchy.
+        changeCallback.onChange(
+                () -> funcCallFactory.createFuncCall(funcController, argController));
     }
 }

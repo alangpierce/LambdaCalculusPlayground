@@ -6,6 +6,7 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import rx.Observable;
@@ -63,18 +64,24 @@ public class FuncCallView implements ExpressionView {
         view.removeView(argView.getNativeView());
     }
 
-    public ScreenPoint getArgPos() {
-        return Views.getScreenPos(argView.getNativeView());
+    public void detachFunc() {
+        view.removeView(funcView.getNativeView());
+        funcView = null;
     }
 
-    public void handleFuncChange(ExpressionView newFuncView) {
-        view.removeView(funcView.getNativeView());
+    public void attachFunc(ExpressionView newFuncView) {
+        Preconditions.checkState(funcView == null);
         view.addView(newFuncView.getNativeView(), 0);
         funcView = newFuncView;
     }
 
-    public void handleArgChange(ExpressionView newArgView) {
+    public void detachArg() {
         view.removeView(argView.getNativeView());
+        argView = null;
+    }
+
+    public void attachArg(ExpressionView newArgView) {
+        Preconditions.checkState(argView == null);
         // The arg is at position 2, after the arg and the open paren.
         view.addView(newArgView.getNativeView(), 2);
         argView = newArgView;

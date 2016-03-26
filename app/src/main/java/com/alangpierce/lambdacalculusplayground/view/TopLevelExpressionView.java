@@ -12,8 +12,8 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.google.common.base.Preconditions;
 
-import autovalue.shaded.com.google.common.common.base.Preconditions;
 import rx.Observable;
 
 public class TopLevelExpressionView {
@@ -22,6 +22,13 @@ public class TopLevelExpressionView {
     private final RelativeLayout rootView;
 
     private ExpressionView exprView;
+    // This is the original LayoutParams for the view that's attached to the root, or null if the
+    // view is not attached to the root. When we detach, we set the layout params back. This is
+    // necessary because layout params are both for the margin when in a LinearLayout and for the
+    // position when in a RelativeLayout, and the original layout params came from an XML file, so
+    // it's not trivial to just restore them.
+    private LinearLayout.LayoutParams savedLayoutParams;
+
     // The execute button, which may or may not be attached to the root view.
     private View executeButton;
     private boolean isExecutable;
@@ -51,12 +58,33 @@ public class TopLevelExpressionView {
     }
 
     public void attachToRoot(CanvasPoint canvasPos) {
-        Preconditions.checkState(exprView.getNativeView().getParent() == null,
-                "Cannot attach an expression to the root that is already attached.");
-        LinearLayout exprNativeView = exprView.getNativeView();
-        DrawableAreaPoint drawableAreaPoint = pointConverter.toDrawableAreaPoint(canvasPos);
-        rootView.addView(exprNativeView, Views.layoutParamsForRelativePos(drawableAreaPoint));
-        invalidateExecuteButton(drawableAreaPoint);
+        attach(pointConverter.toDrawableAreaPoint(canvasPos));
+    }
+
+    private void attach(DrawableAreaPoint point) {
+        LinearLayout nativeView = exprView.getNativeView();
+        Preconditions.checkState(!isAttached(), "Tried to attach view, but was already attached.");
+        savedLayoutParams = (LinearLayout.LayoutParams) nativeView.getLayoutParams();
+        rootView.addView(nativeView, Views.layoutParamsForRelativePos(point));
+
+        invalidateExecuteButton(point);
+    }
+
+    public void detach() {
+        Preconditions.checkState(isAttached(), "Tried to detach view, but was already detached.");
+        LinearLayout nativeView = exprView.getNativeView();
+        rootView.removeView(nativeView);
+        nativeView.setLayoutParams(savedLayoutParams);
+        savedLayoutParams = null;
+    }
+
+    private boolean isAttached() {
+        boolean result = exprView.getNativeView().getParent() == rootView;
+        Preconditions.checkState(
+                result == (savedLayoutParams != null),
+                "The top-level expression should be attached iff there are saved layout params.");
+        return result;
+
     }
 
     public void setScreenPos(ScreenPoint screenPos) {
@@ -94,18 +122,17 @@ public class TopLevelExpressionView {
         executeButton.setClickable(true);
     }
 
-    public void handleExpressionChange(
+    public void attachNewExpression(
             ExpressionView newExpression, DrawableAreaPoint drawableAreaPoint,
             boolean newIsExecutable) {
-        rootView.removeView(exprView.getNativeView());
-        rootView.addView(newExpression.getNativeView());
+        Preconditions.checkState(!isAttached());
         exprView = newExpression;
         isExecutable = newIsExecutable;
-        setCanvasPos(drawableAreaPoint);
+        attach(drawableAreaPoint);
     }
 
     public void decommission() {
-        rootView.removeView(exprView.getNativeView());
+        detach();
         rootView.removeView(executeButton);
     }
 

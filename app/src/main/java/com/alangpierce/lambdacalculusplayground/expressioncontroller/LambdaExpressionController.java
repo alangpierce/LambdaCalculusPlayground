@@ -78,17 +78,21 @@ public class LambdaExpressionController implements ExpressionController {
                 new ParameterDropTarget());
     }
 
-    public void handleBodyChange(@Nullable ExpressionController newBodyController) {
+    // Note that the returned body might be null.
+    public void handleBodyChange(ExpressionControllerProvider newBodyControllerProvider) {
+        view.detachBody();
+        @Nullable ExpressionController newBodyController =
+                newBodyControllerProvider.produceController();
         userLambda = UserLambda.create(
                 userLambda.varName(),
                 newBodyController != null ? newBodyController.getExpression() : null);
-        view.handleBodyChange(newBodyController != null ? newBodyController.getView() : null);
+        view.attachBody(newBodyController != null ? newBodyController.getView() : null);
         updateDragActionSubscription();
         if (newBodyController != null) {
             newBodyController.setOnChangeCallback(this::handleBodyChange);
         }
         bodyController = newBodyController;
-        onChangeCallback.onChange(this);
+        onChangeCallback.onChange(() -> this);
     }
 
     private void updateDragActionSubscription() {
@@ -115,7 +119,7 @@ public class LambdaExpressionController implements ExpressionController {
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
-            handleBodyChange(null);
+            handleBodyChange(() -> null);
             return topLevelExpressionManager.sendExpressionToTopLevel(controllerToDrag, screenPos);
         }
     }
@@ -158,7 +162,7 @@ public class LambdaExpressionController implements ExpressionController {
         public void handleDrop(TopLevelExpressionController expressionController) {
             view.handleBodyDragExit();
             ExpressionController bodyController = expressionController.decommission();
-            handleBodyChange(bodyController);
+            handleBodyChange(() -> bodyController);
         }
     }
 

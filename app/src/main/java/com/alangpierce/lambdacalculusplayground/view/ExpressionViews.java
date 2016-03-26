@@ -2,7 +2,6 @@ package com.alangpierce.lambdacalculusplayground.view;
 
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
@@ -34,10 +33,5 @@ public class ExpressionViews {
 
     private static int getColor(ExpressionView view, @ColorRes int resId) {
         return ContextCompat.getColor(view.getNativeView().getContext(), resId);
-    }
-
-    public static void detach(ExpressionView view) {
-        LinearLayout nativeView = view.getNativeView();
-        ((ViewGroup)nativeView.getParent()).removeView(nativeView);
     }
 }

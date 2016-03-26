@@ -21,7 +21,7 @@ public interface ExpressionController {
 
     /*
      * TODO: This has questionable value, currently. Either refactor things so we always register
-     * drag souces in a shared way, or just do it in each case.
+     * drag sources in a shared way, or just do it in each case.
      */
     List<DragSource> getDragSources();
     List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory);
@@ -29,8 +29,17 @@ public interface ExpressionController {
     /**
      * Callback for expressions to propagate changes, which include changes to the backing model,
      * the display, and the callback hooks.
+     *
+     * An important nuance is that the argument to this callback is a function returning an
+     * expression controller, rather than an expression controller itself. The existing view should
+     * be detached before this is called; otherwise the creation of the controller might try to give
+     * it a parent when it already has one (e.g. when creating a function call).
      */
     interface OnChangeCallback {
-        void onChange(ExpressionController newController);
+        void onChange(ExpressionControllerProvider controlerProvider);
+    }
+
+    interface ExpressionControllerProvider {
+        ExpressionController produceController();
     }
 }

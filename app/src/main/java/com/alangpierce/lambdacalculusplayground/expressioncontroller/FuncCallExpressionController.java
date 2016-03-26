@@ -81,26 +81,30 @@ public class FuncCallExpressionController implements ExpressionController {
         return ImmutableList.of(new FuncCallDropTarget(this, view, funcCallFactory));
     }
 
-    public void handleFuncChange(ExpressionController newFuncController) {
+    public void handleFuncChange(ExpressionControllerProvider funcControllerProvider) {
         setFuncViewEnabled(true);
         // Start accepting touch events for the arg view.
         funcController.getView().getNativeView().setEnabled(false);
 
+        view.detachFunc();
+        ExpressionController newFuncController = funcControllerProvider.produceController();
         userFuncCall = UserFuncCall.create(newFuncController.getExpression(), userFuncCall.arg());
-        view.handleFuncChange(newFuncController.getView());
+        view.attachFunc(newFuncController.getView());
         newFuncController.setOnChangeCallback(this::handleFuncChange);
         funcController = newFuncController;
-        onChangeCallback.onChange(this);
+        onChangeCallback.onChange(() -> this);
         setFuncViewEnabled(false);
     }
 
-    public void handleArgChange(ExpressionController newArgController) {
+    public void handleArgChange(ExpressionControllerProvider newArgControllerProvider) {
+        view.detachArg();
+        ExpressionController newArgController = newArgControllerProvider.produceController();
         userFuncCall = UserFuncCall.create(userFuncCall.func(), newArgController.getExpression());
-        view.handleArgChange(newArgController.getView());
+        view.attachArg(newArgController.getView());
         updateDragActionSubscription();
         newArgController.setOnChangeCallback(this::handleArgChange);
         argController = newArgController;
-        onChangeCallback.onChange(this);
+        onChangeCallback.onChange(() -> this);
     }
 
     private void updateDragActionSubscription() {
@@ -140,7 +144,7 @@ public class FuncCallExpressionController implements ExpressionController {
         public TopLevelExpressionController handleStartDrag() {
             ScreenPoint screenPos = view.getScreenPos();
             decommission();
-            onChangeCallback.onChange(funcController);
+            onChangeCallback.onChange(() -> funcController);
             return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);
         }
     }

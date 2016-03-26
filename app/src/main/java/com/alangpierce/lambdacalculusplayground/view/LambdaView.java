@@ -10,6 +10,7 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
@@ -29,13 +30,13 @@ public class LambdaView implements ExpressionView {
 
     // If null, then we should present a placeholder view instead.
     private @Nullable ExpressionView bodyView;
-    // Always non-null, and may be a placeholder.
-    private View bodyNativeView;
+    // Non-null as long as we are attached, but may be a placeholder.
+    private @Nullable View bodyNativeView;
 
     public LambdaView(
             DragObservableGenerator dragObservableGenerator, ExpressionViewRenderer renderer,
             LinearLayout view, View parameterView, @Nullable ExpressionView bodyView,
-            View bodyNativeView) {
+            @Nullable View bodyNativeView) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.renderer = renderer;
         this.view = view;
@@ -85,8 +86,15 @@ public class LambdaView implements ExpressionView {
         return Views.getScreenPos(view);
     }
 
-    public void handleBodyChange(@Nullable ExpressionView newBody) {
+    public void detachBody() {
+        Preconditions.checkNotNull(bodyNativeView);
         view.removeView(bodyNativeView);
+        bodyView = null;
+        bodyNativeView = null;
+    }
+
+    public void attachBody(@Nullable ExpressionView newBody) {
+        Preconditions.checkState(bodyNativeView == null);
         bodyView = newBody;
         if (newBody == null) {
             bodyNativeView = renderer.makeMissingBodyView();
