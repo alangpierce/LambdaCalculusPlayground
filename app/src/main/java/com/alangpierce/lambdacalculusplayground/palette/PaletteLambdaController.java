@@ -38,7 +38,8 @@ public class PaletteLambdaController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    UserLambda.create(varName, null), view.getScreenPos());
+                    UserLambda.create(varName, null), view.getScreenPos(),
+                    true /* placeAbovePalette */);
         }
     }
 }

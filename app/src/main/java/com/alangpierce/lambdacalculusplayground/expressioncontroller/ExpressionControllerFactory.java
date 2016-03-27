@@ -10,11 +10,22 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
  * corresponds directly to a view and manages its interactions with the rest of the world.
  */
 public interface ExpressionControllerFactory {
+    /**
+     * @param placeAbovePalette true if the created expression should be above the palette for its
+     *                          initial drag operation.
+     */
     TopLevelExpressionController createTopLevelController(
-            ScreenExpression screenExpression);
+            ScreenExpression screenExpression, boolean placeAbovePalette);
 
+    /**
+     * @param placeAbovePalette true if the expression should be in the special abovePaletteRoot
+     *                          where lambda expressions live when they are first created from the
+     *                          palette. This is a special case to allow expressions to temporarily
+     *                          show up above the palette, and should be false for any other cases.
+     */
     TopLevelExpressionController wrapInTopLevelController(
-            ExpressionController exprController, ScreenExpression screenExpression);
+            ExpressionController exprController, ScreenExpression screenExpression,
+            boolean placeAbovePalette);
 
     /**
      * Create a hierarchy of controllers and corresponding views. The resulting controller does not

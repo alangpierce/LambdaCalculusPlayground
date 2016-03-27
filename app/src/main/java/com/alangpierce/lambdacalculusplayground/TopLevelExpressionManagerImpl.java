@@ -50,7 +50,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         for (Entry<Integer, ScreenExpression> entry : expressionState.expressionsById()) {
             int exprId = entry.getKey();
             ScreenExpression screenExpression = entry.getValue();
-            renderTopLevelExpression(exprId, screenExpression);
+            renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
         renderPalette();
     }
@@ -69,11 +69,11 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
     @Override
     public TopLevelExpressionController createNewExpression(
-            UserExpression expression, ScreenPoint screenPos) {
+            UserExpression expression, ScreenPoint screenPos, boolean placeAbovePalette) {
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
         ScreenExpression screenExpression = ScreenExpression.create(expression, canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
-        return renderTopLevelExpression(exprId, screenExpression);
+        return renderTopLevelExpression(exprId, screenExpression, placeAbovePalette);
     }
 
     @Override
@@ -84,7 +84,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
                 expression.getExpression(), canvasPos);
         int exprId = expressionState.addScreenExpression(screenExpression);
         TopLevelExpressionController controller = controllerFactoryFactory.create(this)
-                .wrapInTopLevelController(expression, screenExpression);
+                .wrapInTopLevelController(
+                        expression, screenExpression, false /* placeAbovePalette */);
         registerTopLevelExpression(exprId, controller, canvasPos);
         return controller;
     }
@@ -93,9 +94,10 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
      * Given a new expression, create a view for it and hook up all necessary callbacks.
      */
     private TopLevelExpressionController renderTopLevelExpression(
-            int exprId, ScreenExpression screenExpression) {
+            int exprId, ScreenExpression screenExpression, boolean placeAbovePalette) {
         TopLevelExpressionController controller =
-                controllerFactoryFactory.create(this).createTopLevelController(screenExpression);
+                controllerFactoryFactory.create(this).createTopLevelController(
+                        screenExpression, placeAbovePalette);
         registerTopLevelExpression(exprId, controller, screenExpression.getCanvasPos());
         return controller;
     }

@@ -12,7 +12,7 @@ public interface TopLevelExpressionManager {
     void renderInitialExpressions();
 
     TopLevelExpressionController createNewExpression(
-            UserExpression userExpression, ScreenPoint screenPos);
+            UserExpression userExpression, ScreenPoint screenPos, boolean placeAbovePalette);
 
     /**
      * Take an existing expression and treat it as a new top-level expression, including adding it

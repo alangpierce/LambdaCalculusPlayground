@@ -109,7 +109,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private void handleExecuteClick() {
         UserExpression newExpr = UserExpressions.evaluate(screenExpression.getExpr());
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
-                newExpr, view.getScreenPos().plus(PointDifference.create(100, 200)));
+                newExpr, view.getScreenPos(), false /* placeAbovePalette */);
 
         ScreenPoint newScreenPos = computeExecuteResultScreenPos(newExpression);
         newExpression.getView().setScreenPos(newScreenPos);

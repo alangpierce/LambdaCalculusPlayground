@@ -29,14 +29,17 @@ import dagger.Provides;
 @Module
 public class PlaygroundModule {
     private final Activity activity;
-    private final RelativeLayout rootView;
+    private final RelativeLayout canvasRoot;
+    private final RelativeLayout abovePaletteRoot;
     private final DrawerLayout drawerRoot;
     private final TopLevelExpressionState expressionState;
 
-    public PlaygroundModule(Activity activity, RelativeLayout rootView, DrawerLayout drawerRoot,
-            TopLevelExpressionState expressionState) {
+    public PlaygroundModule(Activity activity, RelativeLayout canvasRoot,
+                            RelativeLayout abovePaletteRoot, DrawerLayout drawerRoot,
+                            TopLevelExpressionState expressionState) {
         this.activity = activity;
-        this.rootView = rootView;
+        this.canvasRoot = canvasRoot;
+        this.abovePaletteRoot = abovePaletteRoot;
         this.drawerRoot = drawerRoot;
         this.expressionState = expressionState;
     }
@@ -50,9 +53,16 @@ public class PlaygroundModule {
         return activity.getLayoutInflater();
     }
 
-    @Qualifier @interface RootView {}
-    @Provides @RootView RelativeLayout provideRootView() {
-        return rootView;
+    @Qualifier @interface CanvasRoot {}
+    @Provides @CanvasRoot
+    RelativeLayout provideCanvasRoot() {
+        return canvasRoot;
+    }
+
+    @Qualifier @interface AbovePaletteRoot {}
+    @Provides @AbovePaletteRoot
+    RelativeLayout provideAbovePaletteRoot() {
+        return abovePaletteRoot;
     }
 
     @Qualifier @interface DrawerRoot {}
@@ -67,14 +77,14 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    PanManager providePanManager(@RootView RelativeLayout rootView,
+    PanManager providePanManager(@CanvasRoot RelativeLayout canvasRoot,
             DragObservableGenerator dragObservableGenerator) {
-        return new PanManagerImpl(rootView, dragObservableGenerator);
+        return new PanManagerImpl(canvasRoot, dragObservableGenerator);
     }
 
     @Provides @Singleton
-    PointConverter providePointConverter(@RootView RelativeLayout rootView, PanManager panManager) {
-        return new PointConverterImpl(rootView, panManager);
+    PointConverter providePointConverter(@CanvasRoot RelativeLayout canvasRoot, PanManager panManager) {
+        return new PointConverterImpl(canvasRoot, panManager);
     }
 
     @Provides @Singleton
@@ -114,8 +124,9 @@ public class PlaygroundModule {
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
-            @RootView RelativeLayout rootView) {
+            @CanvasRoot RelativeLayout canvasRoot,
+            @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, rootView);
+                pointConverter, dragManager, canvasRoot, abovePaletteRoot);
     }
 }

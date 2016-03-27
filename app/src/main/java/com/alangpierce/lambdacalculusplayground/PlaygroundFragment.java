@@ -55,12 +55,15 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        drawerRoot = (DrawerLayout) inflater.inflate(R.layout.fragment_playground, container, false);
-        RelativeLayout canvasView = (RelativeLayout) drawerRoot.findViewById(R.id.canvas_view);
+        RelativeLayout abovePaletteRoot = (RelativeLayout)
+                inflater.inflate(R.layout.fragment_playground, container, false);
+        drawerRoot = (DrawerLayout) abovePaletteRoot.findViewById(R.id.drawer_root_view);
+        RelativeLayout canvasView = (RelativeLayout) abovePaletteRoot.findViewById(R.id.canvas_view);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(
-                        new PlaygroundModule(getActivity(), canvasView, drawerRoot, expressionState))
+                        new PlaygroundModule(getActivity(), canvasView, abovePaletteRoot,
+                                drawerRoot, expressionState))
                 .build();
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
         expressionManager.renderInitialExpressions();
@@ -76,7 +79,7 @@ public class PlaygroundFragment extends Fragment {
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }
 
-        return drawerRoot;
+        return abovePaletteRoot;
     }
 
     @Override

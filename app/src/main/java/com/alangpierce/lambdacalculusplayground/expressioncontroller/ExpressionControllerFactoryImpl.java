@@ -26,45 +26,50 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final DragObservableGenerator dragObservableGenerator;
     private final PointConverter pointConverter;
     private final DragManager dragManager;
-    private final RelativeLayout rootView;
+    private final RelativeLayout canvasRoot;
+    private final RelativeLayout abovePaletteRoot;
     private final TopLevelExpressionManager topLevelExpressionManager;
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter,
-            DragManager dragManager, RelativeLayout rootView,
+            DragManager dragManager, RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
             TopLevelExpressionManager topLevelExpressionManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
         this.dragManager = dragManager;
-        this.rootView = rootView;
+        this.canvasRoot = canvasRoot;
+        this.abovePaletteRoot = abovePaletteRoot;
         this.topLevelExpressionManager = topLevelExpressionManager;
     }
 
     public static ExpressionControllerFactoryFactory createFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            PointConverter pointConverter, DragManager dragManager, RelativeLayout rootView) {
+            PointConverter pointConverter, DragManager dragManager, RelativeLayout canvasRoot,
+            RelativeLayout abovePaletteRoot) {
         return topLevelExpressionManager -> new ExpressionControllerFactoryImpl(
-                viewRenderer, dragObservableGenerator, pointConverter, dragManager, rootView,
-                topLevelExpressionManager);
+                viewRenderer, dragObservableGenerator, pointConverter, dragManager, canvasRoot,
+                abovePaletteRoot, topLevelExpressionManager);
     }
 
     @Override
     public TopLevelExpressionController createTopLevelController(
-            ScreenExpression screenExpression) {
+            ScreenExpression screenExpression, boolean placeAbovePalette) {
         ExpressionController exprController = createController(screenExpression.getExpr());
-        return wrapInTopLevelController(exprController, screenExpression);
+        return wrapInTopLevelController(
+                exprController, screenExpression, placeAbovePalette);
     }
 
     @Override
     public TopLevelExpressionController wrapInTopLevelController(
-            ExpressionController exprController, ScreenExpression screenExpression) {
+            ExpressionController exprController, ScreenExpression screenExpression,
+            boolean placeAbovePalette) {
         boolean isExecutable = UserExpressions.canStep(screenExpression.getExpr());
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
-                viewRenderer, dragObservableGenerator, pointConverter, rootView,
-                exprController.getView(), isExecutable);
+                viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
+                placeAbovePalette, exprController.getView(), isExecutable);
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(topLevelExpressionManager, topLevelView,
                         pointConverter, screenExpression, exprController);

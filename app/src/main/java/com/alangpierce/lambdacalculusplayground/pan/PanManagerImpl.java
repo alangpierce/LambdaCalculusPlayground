@@ -14,7 +14,7 @@ import java.util.List;
 public class PanManagerImpl implements PanManager {
     private static final String TAG = "PanManagerImpl";
 
-    private final RelativeLayout rootView;
+    private final RelativeLayout canvasRoot;
     private final DragObservableGenerator dragObservableGenerator;
 
     private final List<PanListener> panListeners = Collections.synchronizedList(new ArrayList<>());
@@ -30,19 +30,19 @@ public class PanManagerImpl implements PanManager {
     private ScreenPoint currentDragStartPoint = null;
     private PointDifference currentDragOriginalPanOffset = null;
 
-    public PanManagerImpl(RelativeLayout rootView,
+    public PanManagerImpl(RelativeLayout canvasRoot,
             DragObservableGenerator dragObservableGenerator) {
-        this.rootView = rootView;
+        this.canvasRoot = canvasRoot;
         this.dragObservableGenerator = dragObservableGenerator;
     }
 
     @Override
     public void init(PointDifference initialPanOffset) {
         panOffset = initialPanOffset;
-        // We view the process as dragging the whole rootView, and the coordinates we receive are of
-        // the rootView itself as if the user was dragging it around. So it always starts out at the
-        // top-left of the drawable area (a little bit below (0, 0)).
-        dragObservableGenerator.getDragObservable(rootView).subscribe(panEvents -> {
+        // We view the process as dragging the whole canvasRoot, and the coordinates we receive are
+        // of the canvasRoot itself as if the user was dragging it around. So it always starts out
+        // at the top-left of the drawable area (a little bit below (0, 0)).
+        dragObservableGenerator.getDragObservable(canvasRoot).subscribe(panEvents -> {
             panEvents.subscribe(event -> {
                 switch (event.getAction()) {
                     case DOWN: {
