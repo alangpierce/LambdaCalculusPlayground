@@ -65,8 +65,6 @@ public class PlaygroundFragment extends Fragment {
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
         expressionManager.renderInitialExpressions();
 
-        canvasView.setBackgroundResource(R.drawable.expression);
-
         // If this is the first time opening the app, open the drawer after a short delay. This
         // makes it so the palette animates in, which emphasizes that it's a drawer and makes sure
         // the user starts with it visible.

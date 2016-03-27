@@ -4,8 +4,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".PlaygroundActivity"
-                android:background="@android:color/darker_gray">
+                tools:context=".PlaygroundActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/playground_toolbar"
