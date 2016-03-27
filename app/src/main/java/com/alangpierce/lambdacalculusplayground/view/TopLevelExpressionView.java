@@ -1,9 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.compat.Compat;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
@@ -109,15 +111,17 @@ public class TopLevelExpressionView {
     }
 
     public void startDrag() {
-        exprView.getNativeView().animate()
-                .setDuration(100).translationZBy(10).scaleX(1.05f).scaleY(1.05f);
+        ViewPropertyAnimator animator = exprView.getNativeView().animate()
+                .setDuration(100).scaleX(1.05f).scaleY(1.05f);
+        Compat.translationZBy(animator, 10);
         executeButton.animate().setDuration(150).alpha(0);
         executeButton.setClickable(false);
     }
 
     public void endDrag() {
-        exprView.getNativeView().animate()
-                .setDuration(100).translationZBy(-10).scaleX(1.0f).scaleY(1.0f);
+        ViewPropertyAnimator animator = exprView.getNativeView().animate()
+                .setDuration(100).scaleX(1.0f).scaleY(1.0f);
+        Compat.translationZBy(animator, -10);
         executeButton.animate().setDuration(150).alpha(1);
         executeButton.setClickable(true);
     }

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.compat.Compat;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     public View makeBracketView(String text) {
         ImageView result = (ImageView) inflateExpressionComponent(R.layout.bracket);
         int resId = BRACKET_DRAWABLE_BY_STRING.get(text);
-        result.setImageDrawable(context.getResources().getDrawable(resId, null));
+        result.setImageDrawable(Compat.getDrawable(context, resId));
         return result;
     }
 

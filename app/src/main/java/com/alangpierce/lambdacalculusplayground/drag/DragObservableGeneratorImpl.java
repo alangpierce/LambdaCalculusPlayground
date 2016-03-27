@@ -4,13 +4,11 @@ import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.alangpierce.lambdacalculusplayground.compat.Compat;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent.Action;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import autovalue.shaded.com.google.common.common.base.Throwables;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.observables.GroupedObservable;
@@ -74,7 +71,7 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
             for (int i = 0; i < MotionEventCompat.getPointerCount(event); i++) {
                 Action action = Action.MOVE;
                 int pointerId = MotionEventCompat.getPointerId(event, i);
-                ScreenPoint pos = getRawCoords(event, i);
+                ScreenPoint pos = Compat.getRawCoords(event, i);
 
                 if (i == actionIndex) {
                     switch (event.getAction()) {
@@ -114,33 +111,5 @@ public class DragObservableGeneratorImpl implements DragObservableGenerator {
             }
             return Observable.just(result);
         });
-    }
-
-    /**
-     * Get raw screen coordinates for an event. We need to use raw screen coordinates because the
-     * drag handle (the origin point of our move operation) may or may not move as we drag.
-     *
-     * The API doesn't provide this, so we need to compute it more directly:
-     * http://stackoverflow.com/questions/6517494/get-motionevent-getrawx-getrawy-of-other-pointers
-     */
-    private ScreenPoint getRawCoords(MotionEvent event, int pointerIndex) {
-        try {
-            Method getRawAxisValueMethod = MotionEvent.class.getDeclaredMethod(
-                    "nativeGetRawAxisValue", long.class, int.class, int.class, int.class);
-            Field nativePtrField = MotionEvent.class.getDeclaredField("mNativePtr");
-            Field historyCurrentField = MotionEvent.class.getDeclaredField("HISTORY_CURRENT");
-            getRawAxisValueMethod.setAccessible(true);
-            nativePtrField.setAccessible(true);
-            historyCurrentField.setAccessible(true);
-
-            float x = (float) getRawAxisValueMethod.invoke(null, nativePtrField.get(event),
-                    MotionEvent.AXIS_X, pointerIndex, historyCurrentField.get(null));
-            float y = (float) getRawAxisValueMethod.invoke(null, nativePtrField.get(event),
-                    MotionEvent.AXIS_Y, pointerIndex, historyCurrentField.get(null));
-            return ScreenPoint.create((int)x, (int)y);
-        } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException|
-                NoSuchFieldException e) {
-            throw Throwables.propagate(e);
-        }
     }
 }
