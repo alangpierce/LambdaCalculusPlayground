@@ -28,7 +28,7 @@ public class ExpressionViews {
     }
 
     public static void handleDragExit(ExpressionView view) {
-        view.getNativeView().setBackgroundColor(getColor(view, R.color.expression_background));
+        view.getNativeView().setBackgroundResource(R.drawable.expression_background);
     }
 
     private static int getColor(ExpressionView view, @ColorRes int resId) {

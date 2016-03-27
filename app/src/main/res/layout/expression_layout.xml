@@ -6,7 +6,7 @@
     android:layout_marginLeft="2dp"
     android:layout_marginRight="2dp"
     android:layout_marginTop="1dp"
-    android:background="@color/expression_background"
+    android:background="@drawable/expression_background"
     android:elevation="5dp"
     android:gravity="center_vertical"
     android:paddingBottom="1dp"
