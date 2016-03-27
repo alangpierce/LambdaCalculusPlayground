@@ -111,6 +111,9 @@ public class TopLevelExpressionView {
     }
 
     public void startDrag() {
+        // On older devices that don't support elevation, we need to move the dragged expression
+        // to have the highest z-order.
+        rootView.bringChildToFront(exprView.getNativeView());
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.05f).scaleY(1.05f);
         Compat.translationZBy(animator, 10);
