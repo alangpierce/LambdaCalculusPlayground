@@ -2,6 +2,8 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -67,6 +69,10 @@ public class PlaygroundActivity extends AppCompatActivity {
                     drawerRoot.openDrawer(GravityCompat.END);
                 }
             }
+        } else if (item.getItemId() == R.id.action_view_demo_video) {
+            // TODO: Show the video in the app itself instead of going to YouTube.
+            startActivity(
+                    new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.demo_video_url))));
         }
 
         return super.onOptionsItemSelected(item);

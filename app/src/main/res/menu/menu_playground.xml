@@ -7,5 +7,10 @@
         android:orderInCategory="100"
         android:title="@string/action_palette"
         android:icon="@drawable/ic_action_lambda"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_view_demo_video"
+        android:orderInCategory="101"
+        android:title="@string/action_view_demo_video"
+        app:showAsAction="never"/>
 </menu>
