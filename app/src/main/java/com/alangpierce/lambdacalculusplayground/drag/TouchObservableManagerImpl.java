@@ -4,13 +4,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import autovalue.shaded.com.google.common.common.collect.Maps;
 import rx.Observable;
 import rx.Subscriber;
 

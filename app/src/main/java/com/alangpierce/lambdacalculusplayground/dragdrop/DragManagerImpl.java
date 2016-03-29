@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
+import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 
-import autovalue.shaded.com.google.common.common.collect.Lists;
 import rx.Observable;
 
 public class DragManagerImpl implements DragManager {

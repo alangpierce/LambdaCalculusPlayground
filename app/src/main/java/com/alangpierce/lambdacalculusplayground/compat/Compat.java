@@ -8,11 +8,10 @@ import android.view.MotionEvent;
 import android.view.ViewPropertyAnimator;
 
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.google.common.base.Throwables;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import autovalue.shaded.com.google.common.common.base.Throwables;
 
 /**
  * This is an attempt at being disciplined about backward compatibility and making it easier to
