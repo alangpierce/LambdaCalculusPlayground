@@ -4,8 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:src="@drawable/ic_av_play_arrow"
-    app:backgroundTint="@color/execute_button"
+    android:src="@drawable/ic_play_arrow"
+    android:tint="@color/execute_button_foreground"
+    app:backgroundTint="@color/execute_button_background"
     app:fabSize="mini"
     >
 
