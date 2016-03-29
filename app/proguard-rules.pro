@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Never do obfuscation. I don't want to discourage reverse-engineering (and the code is on GitHub
+# anyway), and the debugging/correctness headaches probably aren't worth the slightly smaller apk
+# size.
+-dontobfuscate

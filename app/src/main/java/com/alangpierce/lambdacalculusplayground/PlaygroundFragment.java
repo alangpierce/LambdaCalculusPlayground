@@ -78,7 +78,6 @@ public class PlaygroundFragment extends Fragment {
                 }
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }
-
         return abovePaletteRoot;
     }
 
