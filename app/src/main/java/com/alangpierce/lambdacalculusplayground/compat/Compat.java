@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.design.widget.FloatingActionButton;
 import android.view.MotionEvent;
 import android.view.ViewPropertyAnimator;
 
@@ -75,6 +76,16 @@ public class Compat {
         // When we don't support elevation, just don't do anything with it.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animator.translationZBy(value);
+        }
+    }
+
+    public static int getFabSizeDimension(FloatingActionButton fab) {
+        try {
+            Method method = FloatingActionButton.class.getDeclaredMethod("getSizeDimension");
+            method.setAccessible(true);
+            return (int) method.invoke(fab);
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
         }
     }
 }

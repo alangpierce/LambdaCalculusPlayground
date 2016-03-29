@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.widget.LinearLayout;
@@ -198,9 +199,19 @@ public class TopLevelExpressionView {
         LinearLayout exprNativeView = exprView.getNativeView();
         exprNativeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         executeButton.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        // Center the execute button at the bottom-right corner, then shift down and to the right by
+        // 8dp.
+        int shiftAmount = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 8f,
+                executeButton.getResources().getDisplayMetrics());
         DrawableAreaPoint executePos = expressionPos.plus(PointDifference.create(
-                exprNativeView.getMeasuredWidth() - (executeButton.getMeasuredWidth() / 4),
-                exprNativeView.getMeasuredHeight() - (executeButton.getMeasuredHeight() / 4)));
+                exprNativeView.getMeasuredWidth() -
+                        (executeButton.getMeasuredWidth() / 2) +
+                        shiftAmount,
+                exprNativeView.getMeasuredHeight() -
+                        (executeButton.getMeasuredHeight() / 2) +
+                        shiftAmount)
+        );
         Views.updateLayoutParamsToRelativePos(executeButton, executePos);
     }
 
