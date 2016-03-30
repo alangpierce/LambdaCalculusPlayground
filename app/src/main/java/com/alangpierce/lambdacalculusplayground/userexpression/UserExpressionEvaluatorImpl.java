@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.userexpression;
 
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.Expressions;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
@@ -9,6 +10,12 @@ import com.alangpierce.lambdacalculusplayground.expression.Variable;
 import javax.annotation.Nullable;
 
 public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
+    private final DefinitionManager definitionManager;
+
+    public UserExpressionEvaluatorImpl(DefinitionManager definitionManager) {
+        this.definitionManager = definitionManager;
+    }
+
     public boolean canStep(UserExpression userExpression) {
         return step(userExpression) != null;
     }
@@ -34,7 +41,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
         return userExpression;
     }
 
-    private static UserExpression step(UserExpression userExpression) {
+    private UserExpression step(UserExpression userExpression) {
         try {
             Expression expression = toExpression(userExpression);
             @Nullable Expression steppedExpression = Expressions.step(expression);
@@ -68,7 +75,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
      * <p>
      * throws InvalidExpressionException if there was a problem.
      */
-    private static Expression toExpression(UserExpression e) throws InvalidExpressionException {
+    private Expression toExpression(UserExpression e) throws InvalidExpressionException {
         return e.visit(
                 lambda -> {
                     if (lambda.body() == null) {
@@ -78,34 +85,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
                 },
                 funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
                 variable -> Variable.create(variable.varName()),
-                reference -> {
-                    // TODO: Actually look up the reference. For now it's just the plus function.
-                    if (reference.defName().equals("+")) {
-                        return Lambda.create("n",
-                                Lambda.create("m",
-                                        Lambda.create("s",
-                                                Lambda.create("z",
-                                                        FuncCall.create(
-                                                                FuncCall.create(
-                                                                        Variable.create("n"),
-                                                                        Variable.create("s")
-                                                                ),
-                                                                FuncCall.create(
-                                                                        FuncCall.create(
-                                                                                Variable.create("m"),
-                                                                                Variable.create("s")
-                                                                        ),
-                                                                        Variable.create("z")
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                )
-                        );
-                    } else {
-                        throw new UnsupportedOperationException("Unexpected reference.");
-                    }
-                }
+                reference -> definitionManager.resolveDefinition(reference.defName())
         );
     }
 }

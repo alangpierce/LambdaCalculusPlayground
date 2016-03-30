@@ -5,6 +5,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
@@ -106,8 +108,13 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    UserExpressionEvaluator provideUserExpressionEvaluator() {
-        return new UserExpressionEvaluatorImpl();
+    DefinitionManager provideDefinitionManager() {
+        return new DefinitionManagerImpl();
+    }
+
+    @Provides @Singleton
+    UserExpressionEvaluator provideUserExpressionEvaluator(DefinitionManager definitionManager) {
+        return new UserExpressionEvaluatorImpl(definitionManager);
     }
 
     @Provides
