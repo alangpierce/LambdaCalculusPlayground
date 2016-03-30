@@ -16,6 +16,7 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
+import com.alangpierce.lambdacalculusplayground.view.ReferenceView;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
 
@@ -116,6 +117,10 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 variable -> {
                     VariableView view = VariableView.render(viewRenderer, variable.varName());
                     return new VariableExpressionController(view, variable);
+                },
+                reference -> {
+                    ReferenceView view = ReferenceView.render(viewRenderer, reference.defName());
+                    return new ReferenceExpressionController(view, reference);
                 }
         );
         for (DragSource dragSource : result.getDragSources()) {

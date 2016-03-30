@@ -47,7 +47,12 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             // TODO: Consider starting with some initial expressions.
-            Fragment fragment = PlaygroundFragment.create(ImmutableList.of());
+            Fragment fragment = PlaygroundFragment.create(ImmutableList.of(
+//                    ScreenExpression.create(
+//                            UserReference.create("+"),
+//                            CanvasPoint.create(100, 100)
+//                    )
+            ));
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
     }

@@ -39,7 +39,35 @@ public class UserExpressions {
                     return Lambda.create(lambda.varName(), toExpression(lambda.body()));
                 },
                 funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
-                variable -> Variable.create(variable.varName())
+                variable -> Variable.create(variable.varName()),
+                reference -> {
+                    // TODO: Actually look up the reference. For now it's just the plus function.
+                    if (reference.defName().equals("+")) {
+                        return Lambda.create("n",
+                                Lambda.create("m",
+                                        Lambda.create("s",
+                                                Lambda.create("z",
+                                                        FuncCall.create(
+                                                                FuncCall.create(
+                                                                        Variable.create("n"),
+                                                                        Variable.create("s")
+                                                                ),
+                                                                FuncCall.create(
+                                                                        FuncCall.create(
+                                                                                Variable.create("m"),
+                                                                                Variable.create("s")
+                                                                        ),
+                                                                        Variable.create("z")
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        );
+                    } else {
+                        throw new UnsupportedOperationException("Unexpected reference.");
+                    }
+                }
         );
     }
 

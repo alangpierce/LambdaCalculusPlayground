@@ -11,7 +11,8 @@ public interface UserExpression extends Serializable {
     <T> T visit(
             Visitor<UserLambda, T> lambdaVisitor,
             Visitor<UserFuncCall, T> funcCallVisitor,
-            Visitor<UserVariable, T> variableVisitor);
+            Visitor<UserVariable, T> variableVisitor,
+            Visitor<UserReference, T> referenceVisitor);
 
     interface Visitor<V, R> {
         R accept(V value);

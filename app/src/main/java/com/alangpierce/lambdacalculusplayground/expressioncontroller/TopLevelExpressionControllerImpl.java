@@ -159,7 +159,8 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         return screenExpression.getExpr().visit(
                 lambda -> lambda.body() == null,
                 funcCall -> false,
-                variable -> true
+                variable -> true,
+                reference -> false
         );
     }
 
