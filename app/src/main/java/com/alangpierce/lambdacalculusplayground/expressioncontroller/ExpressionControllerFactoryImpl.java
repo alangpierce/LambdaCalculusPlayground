@@ -11,7 +11,7 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
@@ -27,6 +27,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final DragObservableGenerator dragObservableGenerator;
     private final PointConverter pointConverter;
     private final DragManager dragManager;
+    private final UserExpressionEvaluator userExpressionEvaluator;
     private final RelativeLayout canvasRoot;
     private final RelativeLayout abovePaletteRoot;
     private final TopLevelExpressionManager topLevelExpressionManager;
@@ -35,12 +36,14 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter,
-            DragManager dragManager, RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
+            DragManager dragManager, UserExpressionEvaluator userExpressionEvaluator,
+            RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
             TopLevelExpressionManager topLevelExpressionManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
         this.dragManager = dragManager;
+        this.userExpressionEvaluator = userExpressionEvaluator;
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
         this.topLevelExpressionManager = topLevelExpressionManager;
@@ -48,11 +51,12 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
     public static ExpressionControllerFactoryFactory createFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            PointConverter pointConverter, DragManager dragManager, RelativeLayout canvasRoot,
+            PointConverter pointConverter, DragManager dragManager,
+            UserExpressionEvaluator userExpressionEvaluator, RelativeLayout canvasRoot,
             RelativeLayout abovePaletteRoot) {
         return topLevelExpressionManager -> new ExpressionControllerFactoryImpl(
-                viewRenderer, dragObservableGenerator, pointConverter, dragManager, canvasRoot,
-                abovePaletteRoot, topLevelExpressionManager);
+                viewRenderer, dragObservableGenerator, pointConverter, dragManager,
+                userExpressionEvaluator, canvasRoot, abovePaletteRoot, topLevelExpressionManager);
     }
 
     @Override
@@ -67,13 +71,13 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     public TopLevelExpressionController wrapInTopLevelController(
             ExpressionController exprController, ScreenExpression screenExpression,
             boolean placeAbovePalette) {
-        boolean isExecutable = UserExpressions.canStep(screenExpression.getExpr());
+        boolean isExecutable = userExpressionEvaluator.canStep(screenExpression.getExpr());
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
                 viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
                 placeAbovePalette, exprController.getView(), isExecutable);
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(topLevelExpressionManager, topLevelView,
-                        pointConverter, screenExpression, exprController);
+                        pointConverter, userExpressionEvaluator, screenExpression, exprController);
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }

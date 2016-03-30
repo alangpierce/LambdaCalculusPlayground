@@ -14,7 +14,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressions;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
@@ -31,6 +31,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private final TopLevelExpressionManager topLevelExpressionManager;
     private final TopLevelExpressionView view;
     private final PointConverter pointConverter;
+    private final UserExpressionEvaluator userExpressionEvaluator;
 
     private ScreenExpression screenExpression;
     private ExpressionController expressionController;
@@ -42,11 +43,12 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     public TopLevelExpressionControllerImpl(
             TopLevelExpressionManager topLevelExpressionManager, TopLevelExpressionView view,
-            PointConverter pointConverter, ScreenExpression screenExpression,
-            ExpressionController expressionController) {
+            PointConverter pointConverter, UserExpressionEvaluator userExpressionEvaluator,
+            ScreenExpression screenExpression, ExpressionController expressionController) {
         this.topLevelExpressionManager = topLevelExpressionManager;
         this.view = view;
         this.pointConverter = pointConverter;
+        this.userExpressionEvaluator = userExpressionEvaluator;
         this.screenExpression = screenExpression;
         this.expressionController = expressionController;
     }
@@ -87,7 +89,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
                 newExpressionControllerProvider.produceController();
         UserExpression newExpression = newExpressionController.getExpression();
         screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
-        boolean isExecutable = UserExpressions.canStep(newExpression);
+        boolean isExecutable = userExpressionEvaluator.canStep(newExpression);
         DrawableAreaPoint drawableAreaPoint =
                 pointConverter.toDrawableAreaPoint(screenExpression.getCanvasPos());
         view.attachNewExpression(
@@ -107,7 +109,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private void handleExecuteClick() {
-        UserExpression newExpr = UserExpressions.evaluate(screenExpression.getExpr());
+        UserExpression newExpr = userExpressionEvaluator.evaluate(screenExpression.getExpr());
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
                 newExpr, view.getScreenPos(), false /* placeAbovePalette */);
 

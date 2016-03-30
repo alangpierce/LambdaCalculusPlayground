@@ -8,11 +8,49 @@ import com.alangpierce.lambdacalculusplayground.expression.Variable;
 
 import javax.annotation.Nullable;
 
-public class UserExpressions {
+public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
+    public boolean canStep(UserExpression userExpression) {
+        return step(userExpression) != null;
+    }
+
+    /**
+     * Run an expression to completion.
+     *
+     * If it takes more than 100 steps to finish, just run it 100 steps.
+     */
+    public UserExpression evaluate(UserExpression userExpression) {
+        for (int i = 0; canStep(userExpression); i++) {
+            if (i == 100) {
+                break;
+            }
+            userExpression = step(userExpression);
+        }
+        // TODO: Move this type of logic to just be in Expressions. I think this null check is
+        // unnecessary, but I'm not 100% sure.
+        if (userExpression != null) {
+            userExpression =
+                    fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
+        }
+        return userExpression;
+    }
+
+    private static UserExpression step(UserExpression userExpression) {
+        try {
+            Expression expression = toExpression(userExpression);
+            @Nullable Expression steppedExpression = Expressions.step(expression);
+            if (steppedExpression == null) {
+                return null;
+            }
+            return fromExpression(steppedExpression);
+        } catch (InvalidExpressionException e) {
+            return null;
+        }
+    }
+
     /**
      * Given an expression, convert to a UserExpression. This will always succeed.
      */
-    public static UserExpression fromExpression(Expression e) {
+    private static UserExpression fromExpression(Expression e) {
         return e.visit(
                 lambda -> UserLambda.create(lambda.varName(), fromExpression(lambda.body())),
                 funcCall -> UserFuncCall.create(
@@ -22,7 +60,7 @@ public class UserExpressions {
         );
     }
 
-    public static class InvalidExpressionException extends RuntimeException {
+    private static class InvalidExpressionException extends RuntimeException {
     }
 
     /**
@@ -30,7 +68,7 @@ public class UserExpressions {
      * <p>
      * throws InvalidExpressionException if there was a problem.
      */
-    public static Expression toExpression(UserExpression e) throws InvalidExpressionException {
+    private static Expression toExpression(UserExpression e) throws InvalidExpressionException {
         return e.visit(
                 lambda -> {
                     if (lambda.body() == null) {
@@ -70,43 +108,4 @@ public class UserExpressions {
                 }
         );
     }
-
-    public static UserExpression step(UserExpression userExpression) {
-        try {
-            Expression expression = toExpression(userExpression);
-            @Nullable Expression steppedExpression = Expressions.step(expression);
-            if (steppedExpression == null) {
-                return null;
-            }
-            return fromExpression(steppedExpression);
-        } catch (InvalidExpressionException e) {
-            return null;
-        }
-    }
-
-    public static boolean canStep(UserExpression userExpression) {
-        return step(userExpression) != null;
-    }
-
-    /**
-     * Run an expression to completion.
-     *
-     * If it takes more than 100 steps to finish, just run it 100 steps.
-     */
-    public static UserExpression evaluate(UserExpression userExpression) {
-        for (int i = 0; canStep(userExpression); i++) {
-            if (i == 100) {
-                break;
-            }
-            userExpression = step(userExpression);
-        }
-        // TODO: Move this type of logic to just be in Expressions. I think this null check is
-        // unnecessary, but I'm not 100% sure.
-        if (userExpression != null) {
-            userExpression =
-                    fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
-        }
-        return userExpression;
-    }
-
 }

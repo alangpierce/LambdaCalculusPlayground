@@ -17,6 +17,8 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluatorImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 
@@ -99,8 +101,13 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    DragManager provideDragSourceRegistry() {
+    DragManager provideDragManager() {
         return new DragManagerImpl();
+    }
+
+    @Provides @Singleton
+    UserExpressionEvaluator provideUserExpressionEvaluator() {
+        return new UserExpressionEvaluatorImpl();
     }
 
     @Provides
@@ -124,9 +131,9 @@ public class PlaygroundModule {
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
-            @CanvasRoot RelativeLayout canvasRoot,
+            UserExpressionEvaluator userExpressionEvaluator, @CanvasRoot RelativeLayout canvasRoot,
             @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, canvasRoot, abovePaletteRoot);
+                pointConverter, dragManager, userExpressionEvaluator, canvasRoot, abovePaletteRoot);
     }
 }
