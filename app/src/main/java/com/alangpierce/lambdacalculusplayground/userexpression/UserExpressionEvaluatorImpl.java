@@ -32,13 +32,8 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
             }
             userExpression = step(userExpression);
         }
-        // TODO: Move this type of logic to just be in Expressions. I think this null check is
-        // unnecessary, but I'm not 100% sure.
-        if (userExpression != null) {
-            userExpression =
-                    fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
-        }
-        return userExpression;
+        userExpression = fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
+        return collapseDefinedTerms(userExpression);
     }
 
     private UserExpression step(UserExpression userExpression) {
@@ -52,6 +47,23 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
         } catch (InvalidExpressionException e) {
             return null;
         }
+    }
+
+    /**
+     * Make a best-effort attempt at cleaning up the expression to use definition references where
+     * possible.
+     */
+    private UserExpression collapseDefinedTerms(UserExpression userExpression) {
+        String defName = definitionManager.tryResolveExpression(toExpression(userExpression));
+        if (defName != null) {
+            return UserReference.create(defName);
+        }
+        return userExpression.visit(
+                lambda -> UserLambda.create(lambda.varName(), collapseDefinedTerms(lambda.body())),
+                funcCall -> UserFuncCall.create(collapseDefinedTerms(funcCall.func()), collapseDefinedTerms(funcCall.arg())),
+                variable -> variable,
+                reference -> reference
+        );
     }
 
     /**
