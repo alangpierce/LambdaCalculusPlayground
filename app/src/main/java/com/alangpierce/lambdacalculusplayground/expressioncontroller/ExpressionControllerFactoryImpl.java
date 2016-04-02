@@ -20,6 +20,7 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
@@ -186,17 +187,29 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
     @Override
     public DefinitionController createDefinitionController(ScreenDefinition screenDefinition) {
+        UserExpression expression = screenDefinition.expr();
+        ExpressionController expressionController = null;
+        if (expression != null) {
+            expressionController = createController(expression);
+        }
         DrawableAreaPoint drawableAreaPoint =
                 pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
+        ExpressionView expressionView =
+                expressionController != null ? expressionController.getView() : null;
         DefinitionView view = DefinitionView.render(
                 dragObservableGenerator, viewRenderer, canvasRoot, screenDefinition.defName(),
-                drawableAreaPoint);
+                expressionView, drawableAreaPoint);
         ProducerController referenceProducerController = new ProducerController(
                 view.getReferenceProducer(),
                 DefinitionControllerImpl.createProducerParent(
                         topLevelExpressionManager, screenDefinition.defName()));
+        SlotController expressionSlotController =
+                new SlotController(topLevelExpressionManager, view.getExpressionSlot(),
+                        expressionController);
         DefinitionController result = new DefinitionControllerImpl(
-                pointConverter, view, referenceProducerController, screenDefinition);
+                pointConverter, view, referenceProducerController, expressionSlotController,
+                screenDefinition);
+        expressionSlotController.setParent(result.createSlotParent());
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }

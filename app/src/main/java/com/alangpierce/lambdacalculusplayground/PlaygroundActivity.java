@@ -48,7 +48,7 @@ public class PlaygroundActivity extends AppCompatActivity {
             TopLevelExpressionState initialState = new TopLevelExpressionStateImpl();
             // TODO: This is just here for testing for now. Create a way to actually create these.
 //            initialState.addScreenDefinition(
-//                    ScreenDefinition.create("TRUE", CanvasPoint.create(200, 200)));
+//                    ScreenDefinition.create("TRUE", null, CanvasPoint.create(200, 200)));
 
             Fragment fragment = PlaygroundFragment.create(initialState);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();

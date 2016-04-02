@@ -4,6 +4,8 @@ import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
+import com.alangpierce.lambdacalculusplayground.component.SlotController;
+import com.alangpierce.lambdacalculusplayground.component.SlotControllerParent;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragData;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -20,6 +22,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
@@ -29,6 +33,7 @@ public class DefinitionControllerImpl implements DefinitionController {
 
     private final DefinitionView view;
     private final ProducerController referenceProducerController;
+    private final SlotController expressionSlotController;
 
     private ScreenDefinition screenDefinition;
     private OnDefinitionChangeCallback onChangeCallback;
@@ -40,10 +45,12 @@ public class DefinitionControllerImpl implements DefinitionController {
             PointConverter pointConverter,
             DefinitionView view,
             ProducerController referenceProducerController,
+            SlotController expressionSlotController,
             ScreenDefinition screenDefinition) {
         this.pointConverter = pointConverter;
         this.view = view;
         this.referenceProducerController = referenceProducerController;
+        this.expressionSlotController = expressionSlotController;
         this.screenDefinition = screenDefinition;
     }
 
@@ -58,6 +65,22 @@ public class DefinitionControllerImpl implements DefinitionController {
             @Override
             public boolean shouldDeleteExpression(UserExpression expression) {
                 return expression instanceof UserReference;
+            }
+        };
+    }
+
+    public SlotControllerParent createSlotParent() {
+        return new SlotControllerParent() {
+            @Override
+            public void updateSlotExpression(@Nullable UserExpression userExpression) {
+                screenDefinition = ScreenDefinition
+                        .create(screenDefinition.defName(), userExpression,
+                                screenDefinition.canvasPos());
+            }
+
+            @Override
+            public void handleChange() {
+                onChangeCallback.onChange(DefinitionControllerImpl.this);
             }
         };
     }
@@ -85,13 +108,15 @@ public class DefinitionControllerImpl implements DefinitionController {
         view.getDragObservable().subscribe(dragActionSubject);
         return ImmutableList.of(
                 new DefinitionDragSource(),
-                referenceProducerController.getDragSource());
+                referenceProducerController.getDragSource(),
+                expressionSlotController.getDragSource());
     }
 
     @Override
     public List<DropTarget<?>> getDropTargets() {
         return ImmutableList.of(
-                referenceProducerController.getDropTarget());
+                referenceProducerController.getDropTarget(),
+                expressionSlotController.getDropTarget());
     }
 
     @Override
@@ -119,7 +144,8 @@ public class DefinitionControllerImpl implements DefinitionController {
     @Override
     public void handlePositionChange(ScreenPoint screenPos) {
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
-        screenDefinition = ScreenDefinition.create(screenDefinition.defName(), canvasPos);
+        screenDefinition = ScreenDefinition.create(
+                screenDefinition.defName(), screenDefinition.expr(), canvasPos);
         onChangeCallback.onChange(this);
     }
 
