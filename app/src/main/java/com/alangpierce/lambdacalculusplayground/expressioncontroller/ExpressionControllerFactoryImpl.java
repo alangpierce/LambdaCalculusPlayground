@@ -114,7 +114,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                             view, producerController, bodySlotController, lambda);
                     bodySlotController.setParent(controller.createSlotParent());
                     if (bodyController != null) {
-                        bodyController.setOnChangeCallback(bodySlotController::handleBodyChange);
+                        bodyController.setOnChangeCallback(bodySlotController::handleChange);
                     }
                     return controller;
                 },

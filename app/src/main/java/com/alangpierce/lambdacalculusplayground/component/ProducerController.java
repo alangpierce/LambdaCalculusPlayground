@@ -19,17 +19,17 @@ public class ProducerController {
     }
 
     public DragSource getDragSource() {
-        return new ParameterDragSource();
+        return new ProducerDragSource();
     }
 
     public DropTarget<?> getDropTarget() {
-        return new ParameterDropTarget();
+        return new ProducerDropTarget();
     }
 
-    private class ParameterDragSource implements DragSource {
+    private class ProducerDragSource implements DragSource {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            // The parameter shouldn't ever change, so no need to use a subject.
+            // The view shouldn't ever change, so no need to use a subject.
             return view.getObservable();
         }
         @Override
@@ -42,7 +42,7 @@ public class ProducerController {
      * Dropping a variable back should make it disappear instead of awkwardly stick around on the
      * canvas.
      */
-    private class ParameterDropTarget implements DropTarget<TopLevelExpressionController> {
+    private class ProducerDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
             if (dragController.getScreenExpression().expr() instanceof UserVariable &&
