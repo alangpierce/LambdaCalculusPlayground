@@ -98,12 +98,12 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
             // The parameter shouldn't ever change, so no need to use a subject.
-            return view.getParameterObservable();
+            return view.getParameterProducer().getObservable();
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    UserVariable.create(userLambda.varName()), view.getParameterPos(),
+                    UserVariable.create(userLambda.varName()), view.getParameterProducer().getPos(),
                     false /* placeAbovePalette */);
         }
     }
@@ -116,7 +116,7 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
             if (dragController.getScreenExpression().expr() instanceof UserVariable &&
-                    view.parameterIntersectsWith(dragController.getView())) {
+                    view.getParameterProducer().intersectsWith(dragController.getView())) {
                 // Always have the lowest possible priority, since the only thing we're avoiding
                 // here is putting
                 return 0;

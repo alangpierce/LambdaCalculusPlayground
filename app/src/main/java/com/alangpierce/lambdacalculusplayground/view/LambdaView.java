@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.component.ComponentParent;
+import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotView;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
@@ -23,14 +24,14 @@ public class LambdaView implements ExpressionView {
     private final DragObservableGenerator dragObservableGenerator;
 
     private final LinearLayout view;
-    private final View parameterView;
+    private final ProducerView parameterProducerView;
     private final SlotView bodySlotView;
 
     public LambdaView(DragObservableGenerator dragObservableGenerator, LinearLayout view,
-            View parameterView, SlotView bodySlotView) {
+            ProducerView parameterProducerView, SlotView bodySlotView) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.view = view;
-        this.parameterView = parameterView;
+        this.parameterProducerView = parameterProducerView;
         this.bodySlotView = bodySlotView;
     }
 
@@ -46,9 +47,12 @@ public class LambdaView implements ExpressionView {
                         renderer.makeBracketView("["),
                         bodyNativeView,
                         renderer.makeBracketView("]")));
+        ProducerView parameterProducerView =
+                new ProducerView(dragObservableGenerator, parameterView);
         SlotView bodySlotView = new SlotView(dragObservableGenerator, renderer,
                 bodyComponentParent(mainView), bodyView, bodyNativeView);
-        return new LambdaView(dragObservableGenerator, mainView, parameterView, bodySlotView);
+        return new LambdaView(
+                dragObservableGenerator, mainView, parameterProducerView, bodySlotView);
     }
 
     public static ComponentParent bodyComponentParent(LinearLayout mainView) {
@@ -69,12 +73,12 @@ public class LambdaView implements ExpressionView {
         return bodySlotView;
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getWholeExpressionObservable() {
-        return dragObservableGenerator.getDragObservable(view);
+    public ProducerView getParameterProducer() {
+        return parameterProducerView;
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getParameterObservable() {
-        return dragObservableGenerator.getDragObservable(parameterView);
+    public Observable<? extends Observable<PointerMotionEvent>> getWholeExpressionObservable() {
+        return dragObservableGenerator.getDragObservable(view);
     }
 
     @Override
@@ -85,13 +89,5 @@ public class LambdaView implements ExpressionView {
     @Override
     public ScreenPoint getScreenPos() {
         return Views.getScreenPos(view);
-    }
-
-    public ScreenPoint getParameterPos() {
-        return Views.getScreenPos(parameterView);
-    }
-
-    public boolean parameterIntersectsWith(TopLevelExpressionView dragView) {
-        return Views.viewsIntersect(parameterView, dragView.getNativeView());
     }
 }
