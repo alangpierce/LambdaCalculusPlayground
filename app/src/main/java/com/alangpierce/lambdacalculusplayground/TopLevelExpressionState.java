@@ -8,13 +8,14 @@ import java.util.Map.Entry;
 
 public interface TopLevelExpressionState {
     Iterable<Entry<Integer, ScreenExpression>> expressionsById();
+    Iterable<Entry<Integer, ScreenDefinition>> definitionsById();
     void modifyExpression(int key, ScreenExpression expression);
+    void modifyDefinition(int key, ScreenDefinition definition);
     void deleteExpression(int exprId);
+    void deleteDefinition(int defId);
 
-    /**
-     * Modify the state to create a new expression. Note that this does not do any rendering.
-     */
     int addScreenExpression(ScreenExpression screenExpression);
+    int addScreenDefinition(ScreenDefinition screenDefinition);
 
     PointDifference getPanOffset();
     void setPanOffset(PointDifference panOffset);

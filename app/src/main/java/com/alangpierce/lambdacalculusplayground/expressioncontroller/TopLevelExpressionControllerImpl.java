@@ -5,6 +5,7 @@ import android.view.View.MeasureSpec;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
@@ -37,7 +38,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private ExpressionController expressionController;
     private OnTopLevelChangeCallback onChangeCallback;
 
-    private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
+    private final Subject<Observable<PointerMotionEvent>, Observable<PointerMotionEvent>>
             dragActionSubject = PublishSubject.create();
     private @Nullable Subscription dragActionSubscription;
 
@@ -178,7 +179,8 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor) {
+    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor,
+            Visitor<DefinitionController, T> definitionVisitor) {
         return expressionVisitor.accept(this);
     }
 

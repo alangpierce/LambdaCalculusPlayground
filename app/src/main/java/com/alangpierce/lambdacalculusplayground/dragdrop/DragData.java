@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
+import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 
@@ -8,7 +9,8 @@ import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
  */
 public interface DragData {
     <T> T visit(
-            Visitor<TopLevelExpressionController, T> expressionVisitor);
+            Visitor<TopLevelExpressionController, T> expressionVisitor,
+            Visitor<DefinitionController, T> definitionVisitor);
 
     interface Visitor<V, R> {
         R accept(V value);

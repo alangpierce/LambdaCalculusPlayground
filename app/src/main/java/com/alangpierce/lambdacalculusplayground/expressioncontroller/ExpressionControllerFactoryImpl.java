@@ -6,6 +6,7 @@ import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
+import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionControllerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -179,7 +180,16 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         DrawableAreaPoint drawableAreaPoint =
                 pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
         DefinitionView view = DefinitionView.render(
-                viewRenderer, canvasRoot, screenDefinition.defName(), drawableAreaPoint);
-        return new DefinitionController(pointConverter, screenDefinition, view);
+                dragObservableGenerator, viewRenderer, canvasRoot, screenDefinition.defName(),
+                drawableAreaPoint);
+        DefinitionController result =
+                new DefinitionControllerImpl(pointConverter, screenDefinition, view);
+        for (DragSource dragSource : result.getDragSources()) {
+            dragManager.registerDragSource(dragSource);
+        }
+        for (DropTarget<?> dropTarget : result.getDropTargets()) {
+            dragManager.registerDropTarget(dropTarget);
+        }
+        return result;
     }
 }

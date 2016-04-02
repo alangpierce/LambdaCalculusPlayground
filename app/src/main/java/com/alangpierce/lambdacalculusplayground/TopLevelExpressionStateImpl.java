@@ -21,9 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     /*
      * We keep expressions with IDs so that we can delete and modify them later as necessary, but
-     * the bundled format is just a list of ScreenExpressions.
+     * the bundled format is just a list of ScreenExpressions. Same for definitions.
+     * TODO: Maybe we could consolidate the redundant code with expressions and definitions.
      */
     private Map<Integer, ScreenExpression> expressions = Maps.newConcurrentMap();
+    private Map<Integer, ScreenDefinition> definitions = Maps.newConcurrentMap();
     private AtomicInteger maxId = new AtomicInteger();
     private AtomicReference<PointDifference> panOffset =
             new AtomicReference<>(PointDifference.create(0, 0));
@@ -34,8 +36,18 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     }
 
     @Override
+    public Iterable<Entry<Integer, ScreenDefinition>> definitionsById() {
+        return definitions.entrySet();
+    }
+
+    @Override
     public void modifyExpression(int exprId, ScreenExpression expression) {
         expressions.put(exprId, expression);
+    }
+
+    @Override
+    public void modifyDefinition(int key, ScreenDefinition definition) {
+        definitions.put(key, definition);
     }
 
     @Override
@@ -44,10 +56,22 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     }
 
     @Override
+    public void deleteDefinition(int defId) {
+        definitions.remove(defId);
+    }
+
+    @Override
     public int addScreenExpression(ScreenExpression screenExpression) {
         int exprId = maxId.incrementAndGet();
         expressions.put(exprId, screenExpression);
         return exprId;
+    }
+
+    @Override
+    public int addScreenDefinition(ScreenDefinition screenDefinition) {
+        int defId = maxId.incrementAndGet();
+        definitions.put(defId, screenDefinition);
+        return defId;
     }
 
     @Override
@@ -70,6 +94,13 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
                 addScreenExpression(expression);
             }
         }
+        List<ScreenDefinition> screenDefinitions =
+                (List<ScreenDefinition>) bundle.getSerializable("definitions");
+        if (screenDefinitions != null) {
+            for (ScreenDefinition definition : screenDefinitions) {
+                addScreenDefinition(definition);
+            }
+        }
         PointDifference panOffset = (PointDifference) bundle.getSerializable("panOffset");
         if (panOffset != null) {
             this.panOffset.set(panOffset);
@@ -79,6 +110,7 @@ public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
     @Override
     public void persistToBundle(Bundle bundle) {
         bundle.putSerializable("expressions", ImmutableList.copyOf(expressions.values()));
+        bundle.putSerializable("definitions", ImmutableList.copyOf(definitions.values()));
         bundle.putSerializable("panOffset", panOffset.get());
     }
 }

@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.common.collect.ImmutableList;
-
 import rx.plugins.RxJavaErrorHandler;
 import rx.plugins.RxJavaPlugins;
 
@@ -47,12 +45,12 @@ public class PlaygroundActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             // TODO: Consider starting with some initial expressions.
-            Fragment fragment = PlaygroundFragment.create(ImmutableList.of(
-//                    ScreenExpression.create(
-//                            UserReference.create("+"),
-//                            CanvasPoint.create(100, 100)
-//                    )
-            ));
+            TopLevelExpressionState initialState = new TopLevelExpressionStateImpl();
+            // TODO: This is just here for testing for now. Create a way to actually create these.
+//            initialState.addScreenDefinition(
+//                    ScreenDefinition.create("TRUE", CanvasPoint.create(200, 200)));
+
+            Fragment fragment = PlaygroundFragment.create(initialState);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }
     }

@@ -41,7 +41,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     @Override
-    public void renderInitialExpressions() {
+    public void renderInitialData() {
         // Note that we need to initialize the pan manager first so that the rest of the code will
         // correctly get the pan offset.
         panManager.init(expressionState.getPanOffset());
@@ -53,10 +53,12 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
+        for (Entry<Integer, ScreenDefinition> entry : expressionState.definitionsById()) {
+            int defId = entry.getKey();
+            ScreenDefinition screenDefinition = entry.getValue();
+            renderDefinition(defId, screenDefinition);
+        }
         renderPalette();
-        // TODO: Add a real way of creating expressions. For now, this line should just get
-        // uncommented to test things out.
-//        createEmptyDefinition("TRUE", CanvasPoint.create(200, 200));
     }
 
     private void renderPalette() {
@@ -109,26 +111,30 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private void registerTopLevelExpression(
             int exprId, TopLevelExpressionController controller, CanvasPoint canvasPos) {
         panManager.registerPanListener(controller);
-        controller.setOnChangeCallback(
-                // onChange
-                (newController) -> {
-                    if (newController != null) {
-                        expressionState.modifyExpression(
-                                exprId, newController.getScreenExpression());
-                    } else {
-                        expressionState.deleteExpression(exprId);
-                        panManager.unregisterPanListener(controller);
-                    }
-                });
+        controller.setOnChangeCallback(newController -> {
+            if (newController != null) {
+                expressionState.modifyExpression(
+                        exprId, newController.getScreenExpression());
+            } else {
+                expressionState.deleteExpression(exprId);
+                panManager.unregisterPanListener(controller);
+            }
+        });
         controller.getView().attachToRoot(canvasPos);
     }
 
-    @Override
-    public DefinitionController createEmptyDefinition(String name, CanvasPoint canvasPos) {
-        ScreenDefinition screenDefinition = ScreenDefinition.create(name, canvasPos);
-        DefinitionController result =
+    private DefinitionController renderDefinition(int defId, ScreenDefinition screenDefinition) {
+        DefinitionController controller =
                 controllerFactoryFactory.create(this).createDefinitionController(screenDefinition);
-        panManager.registerPanListener(result);
-        return result;
+        panManager.registerPanListener(controller);
+        controller.setOnChangeCallback(newController -> {
+            if (newController != null) {
+                expressionState.modifyDefinition(defId, newController.getScreenDefinition());
+            } else {
+                expressionState.deleteDefinition(defId);
+                panManager.unregisterPanListener(controller);
+            }
+        });
+        return controller;
     }
 }

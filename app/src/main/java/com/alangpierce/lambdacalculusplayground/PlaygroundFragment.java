@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import java.io.Serializable;
-import java.util.List;
-
 public class PlaygroundFragment extends Fragment {
     public PlaygroundFragment() {
         // Required empty public constructor.
@@ -22,9 +19,9 @@ public class PlaygroundFragment extends Fragment {
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
     private DrawerLayout drawerRoot;
 
-    public static PlaygroundFragment create(List<ScreenExpression> expressions) {
+    public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
-        args.putSerializable("expressions", (Serializable) expressions);
+        initialState.persistToBundle(args);
         PlaygroundFragment result = new PlaygroundFragment();
         result.setArguments(args);
         return result;
@@ -66,7 +63,7 @@ public class PlaygroundFragment extends Fragment {
                                 drawerRoot, expressionState))
                 .build();
         TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
-        expressionManager.renderInitialExpressions();
+        expressionManager.renderInitialData();
 
         // If this is the first time opening the app, open the drawer after a short delay. This
         // makes it so the palette animates in, which emphasizes that it's a drawer and makes sure

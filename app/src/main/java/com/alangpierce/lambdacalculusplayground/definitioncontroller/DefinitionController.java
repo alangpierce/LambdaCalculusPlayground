@@ -1,30 +1,24 @@
 package com.alangpierce.lambdacalculusplayground.definitioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
-import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragData;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager.PanListener;
-import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
 
-public class DefinitionController implements PanListener {
-    private final PointConverter pointConverter;
+import java.util.List;
 
-    private final ScreenDefinition screenDefinition;
-    private final DefinitionView view;
+import javax.annotation.Nullable;
 
-    public DefinitionController(
-            PointConverter pointConverter,
-            ScreenDefinition screenDefinition,
-            DefinitionView view) {
-        this.pointConverter = pointConverter;
-        this.screenDefinition = screenDefinition;
-        this.view = view;
-    }
+public interface DefinitionController extends PanListener, DragData {
+    List<DragSource> getDragSources();
+    List<DropTarget<?>> getDropTargets();
 
-    @Override
-    public void onPan() {
-        DrawableAreaPoint drawableAreaPoint =
-                pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
-        view.setCanvasPos(drawableAreaPoint);
+    void setOnChangeCallback(OnDefinitionChangeCallback onChangeCallback);
+
+    ScreenDefinition getScreenDefinition();
+
+    interface OnDefinitionChangeCallback {
+        void onChange(@Nullable DefinitionController newDefinitionController);
     }
 }
