@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.component.SlotControllerParent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
@@ -38,10 +39,16 @@ public class LambdaExpressionController implements ExpressionController {
 
     public static ProducerControllerParent createProducerParent(
             TopLevelExpressionManager topLevelExpressionManager, String varName) {
-        return (point) -> {
-            return topLevelExpressionManager.createNewExpression(
-                    UserVariable.create(varName), point,
-                    false /* placeAbovePalette */);
+        return new ProducerControllerParent() {
+            @Override
+            public TopLevelExpressionController produceExpression(ScreenPoint point) {
+                return topLevelExpressionManager.createNewExpression(
+                        UserVariable.create(varName), point, false /* placeAbovePalette */);
+            }
+            @Override
+            public boolean shouldDeleteExpression(UserExpression expression) {
+                return expression instanceof UserVariable;
+            }
         };
     }
 

@@ -4,7 +4,6 @@ import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 
 import rx.Observable;
 
@@ -45,7 +44,7 @@ public class ProducerController {
     private class ProducerDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
-            if (dragController.getScreenExpression().expr() instanceof UserVariable &&
+            if (parent.shouldDeleteExpression(dragController.getScreenExpression().expr()) &&
                     view.intersectsWith(dragController.getView())) {
                 // Always have the lowest possible priority.
                 return 0;

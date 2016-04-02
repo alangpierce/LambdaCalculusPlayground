@@ -4,10 +4,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
 
@@ -16,14 +16,14 @@ import rx.Observable;
 public class DefinitionView {
     private final DragObservableGenerator dragObservableGenerator;
 
-    private final View referenceView;
+    private final ProducerView referenceProducerView;
     private final View nativeView;
 
     public DefinitionView(
-            DragObservableGenerator dragObservableGenerator, View referenceView,
+            DragObservableGenerator dragObservableGenerator, ProducerView referenceProducerView,
             View nativeView) {
         this.dragObservableGenerator = dragObservableGenerator;
-        this.referenceView = referenceView;
+        this.referenceProducerView = referenceProducerView;
         this.nativeView = nativeView;
     }
 
@@ -38,7 +38,9 @@ public class DefinitionView {
         ));
         view.setLayoutParams(Views.layoutParamsForRelativePos(point));
         canvasRoot.addView(view);
-        return new DefinitionView(dragObservableGenerator, referenceView, view);
+        ProducerView referenceProducerView =
+                new ProducerView(dragObservableGenerator, referenceView);
+        return new DefinitionView(dragObservableGenerator, referenceProducerView, view);
     }
 
     public void setCanvasPos(DrawableAreaPoint pos) {
@@ -49,11 +51,7 @@ public class DefinitionView {
         return dragObservableGenerator.getDragObservable(nativeView);
     }
 
-    public Observable<? extends Observable<PointerMotionEvent>> getReferenceObservable() {
-        return dragObservableGenerator.getDragObservable(referenceView);
-    }
-
-    public ScreenPoint getReferencePos() {
-        return Views.getScreenPos(referenceView);
+    public ProducerView getReferenceProducer() {
+        return referenceProducerView;
     }
 }

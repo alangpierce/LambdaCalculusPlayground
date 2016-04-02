@@ -191,8 +191,12 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         DefinitionView view = DefinitionView.render(
                 dragObservableGenerator, viewRenderer, canvasRoot, screenDefinition.defName(),
                 drawableAreaPoint);
+        ProducerController referenceProducerController = new ProducerController(
+                view.getReferenceProducer(),
+                DefinitionControllerImpl.createProducerParent(
+                        topLevelExpressionManager, screenDefinition.defName()));
         DefinitionController result = new DefinitionControllerImpl(
-                topLevelExpressionManager, pointConverter, view, screenDefinition);
+                pointConverter, view, referenceProducerController, screenDefinition);
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }

@@ -2,6 +2,8 @@ package com.alangpierce.lambdacalculusplayground.definitioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.component.ProducerController;
+import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragData;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -11,6 +13,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserReference;
 import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
 import com.google.common.collect.ImmutableList;
@@ -22,10 +25,10 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class DefinitionControllerImpl implements DefinitionController {
-    private final TopLevelExpressionManager topLevelExpressionManager;
     private final PointConverter pointConverter;
 
     private final DefinitionView view;
+    private final ProducerController referenceProducerController;
 
     private ScreenDefinition screenDefinition;
     private OnDefinitionChangeCallback onChangeCallback;
@@ -34,14 +37,29 @@ public class DefinitionControllerImpl implements DefinitionController {
             dragActionSubject = PublishSubject.create();
 
     public DefinitionControllerImpl(
-            TopLevelExpressionManager topLevelExpressionManager,
             PointConverter pointConverter,
             DefinitionView view,
+            ProducerController referenceProducerController,
             ScreenDefinition screenDefinition) {
-        this.topLevelExpressionManager = topLevelExpressionManager;
         this.pointConverter = pointConverter;
         this.view = view;
+        this.referenceProducerController = referenceProducerController;
         this.screenDefinition = screenDefinition;
+    }
+
+    public static ProducerControllerParent createProducerParent(
+            TopLevelExpressionManager topLevelExpressionManager, String defName) {
+        return new ProducerControllerParent() {
+            @Override
+            public TopLevelExpressionController produceExpression(ScreenPoint screenPos) {
+                return topLevelExpressionManager.createNewExpression(
+                        UserReference.create(defName), screenPos, false /* placeAbovePalette */);
+            }
+            @Override
+            public boolean shouldDeleteExpression(UserExpression expression) {
+                return expression instanceof UserReference;
+            }
+        };
     }
 
     @Override
@@ -65,12 +83,15 @@ public class DefinitionControllerImpl implements DefinitionController {
     public List<DragSource> getDragSources() {
         // TODO: It's weird for a function with this name to have a side-effect like this.
         view.getDragObservable().subscribe(dragActionSubject);
-        return ImmutableList.of(new DefinitionDragSource(), new ReferenceDragSource());
+        return ImmutableList.of(
+                new DefinitionDragSource(),
+                referenceProducerController.getDragSource());
     }
 
     @Override
     public List<DropTarget<?>> getDropTargets() {
-        return ImmutableList.of();
+        return ImmutableList.of(
+                referenceProducerController.getDropTarget());
     }
 
     @Override
@@ -112,18 +133,4 @@ public class DefinitionControllerImpl implements DefinitionController {
             return DefinitionControllerImpl.this;
         }
     }
-
-    private class ReferenceDragSource implements DragSource {
-        @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return view.getReferenceObservable();
-        }
-        @Override
-        public TopLevelExpressionController handleStartDrag() {
-            return topLevelExpressionManager.createNewExpression(
-                    UserReference.create(screenDefinition.defName()), view.getReferencePos(),
-                    false /* placeAbovePalette */);
-        }
-    }
-
 }
