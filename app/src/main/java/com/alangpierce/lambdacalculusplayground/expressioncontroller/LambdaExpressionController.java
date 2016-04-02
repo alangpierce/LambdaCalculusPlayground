@@ -1,9 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.component.ProducerController;
+import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
 import com.alangpierce.lambdacalculusplayground.component.SlotControllerParent;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
@@ -18,34 +19,30 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import rx.Observable;
-
 public class LambdaExpressionController implements ExpressionController {
-    private final TopLevelExpressionManager topLevelExpressionManager;
     private final LambdaView view;
+    private final ProducerController parameterProducerController;
     private final SlotController bodySlotController;
 
     private UserLambda userLambda;
     private OnChangeCallback onChangeCallback;
 
     public LambdaExpressionController(
-            TopLevelExpressionManager topLevelExpressionManager, LambdaView view,
+            LambdaView view, ProducerController parameterProducerController,
             SlotController bodySlotController, UserLambda userLambda) {
-        this.topLevelExpressionManager = topLevelExpressionManager;
         this.view = view;
+        this.parameterProducerController = parameterProducerController;
         this.bodySlotController = bodySlotController;
         this.userLambda = userLambda;
     }
 
-    public static LambdaExpressionController create(
-            TopLevelExpressionManager topLevelExpressionManager, LambdaView view,
-            UserLambda userLambda, @Nullable ExpressionController bodyController) {
-        SlotController bodySlotController = new SlotController(
-                topLevelExpressionManager, view.getBodySlot(), bodyController);
-        LambdaExpressionController result = new LambdaExpressionController(
-                topLevelExpressionManager, view, bodySlotController, userLambda);
-        bodySlotController.setParent(result.createSlotParent());
-        return result;
+    public static ProducerControllerParent createProducerParent(
+            TopLevelExpressionManager topLevelExpressionManager, String varName) {
+        return (point) -> {
+            return topLevelExpressionManager.createNewExpression(
+                    UserVariable.create(varName), point,
+                    false /* placeAbovePalette */);
+        };
     }
 
     public SlotControllerParent createSlotParent() {
@@ -83,64 +80,16 @@ public class LambdaExpressionController implements ExpressionController {
 
     @Override
     public List<DragSource> getDragSources() {
-        return ImmutableList.of(bodySlotController.getDragSource(), new ParameterDragSource());
+        return ImmutableList.of(
+                parameterProducerController.getDragSource(),
+                bodySlotController.getDragSource());
     }
 
     @Override
     public List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(
+                parameterProducerController.getDropTarget(),
                 bodySlotController.getDropTarget(),
-                new FuncCallDropTarget(this, view, funcCallFactory),
-                new ParameterDropTarget());
-    }
-
-    private class ParameterDragSource implements DragSource {
-        @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            // The parameter shouldn't ever change, so no need to use a subject.
-            return view.getParameterProducer().getObservable();
-        }
-        @Override
-        public TopLevelExpressionController handleStartDrag() {
-            return topLevelExpressionManager.createNewExpression(
-                    UserVariable.create(userLambda.varName()), view.getParameterProducer().getPos(),
-                    false /* placeAbovePalette */);
-        }
-    }
-
-    /**
-     * Dropping a variable back should make it disappear instead of awkwardly stick around on the
-     * canvas.
-     */
-    private class ParameterDropTarget implements DropTarget<TopLevelExpressionController> {
-        @Override
-        public int hitTest(TopLevelExpressionController dragController) {
-            if (dragController.getScreenExpression().expr() instanceof UserVariable &&
-                    view.getParameterProducer().intersectsWith(dragController.getView())) {
-                // Always have the lowest possible priority, since the only thing we're avoiding
-                // here is putting
-                return 0;
-            } else {
-                return DropTarget.NOT_HIT;
-            }
-        }
-        @Override
-        public void handleEnter(TopLevelExpressionController expressionController) {
-            // Do nothing
-        }
-        @Override
-        public void handleExit() {
-            // Do nothing
-        }
-        @Override
-        public void handleDrop(TopLevelExpressionController expressionController) {
-            // Just throw the variable away.
-            expressionController.decommission();
-        }
-
-        @Override
-        public Class<TopLevelExpressionController> getDataClass() {
-            return TopLevelExpressionController.class;
-        }
+                new FuncCallDropTarget(this, view, funcCallFactory));
     }
 }

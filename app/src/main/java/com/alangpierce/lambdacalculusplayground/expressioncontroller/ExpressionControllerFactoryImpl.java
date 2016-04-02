@@ -5,6 +5,7 @@ import android.widget.RelativeLayout;
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionControllerImpl;
@@ -103,10 +104,14 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                     LambdaView view = LambdaView.render(
                             dragObservableGenerator, viewRenderer, lambda.varName(),
                             bodyController != null ? bodyController.getView() : null);
+                    ProducerController producerController = new ProducerController(
+                            view.getParameterProducer(),
+                            LambdaExpressionController.createProducerParent(
+                                    topLevelExpressionManager, lambda.varName()));
                     SlotController bodySlotController = new SlotController(
                             topLevelExpressionManager, view.getBodySlot(), bodyController);
                     LambdaExpressionController controller = new LambdaExpressionController(
-                            topLevelExpressionManager, view, bodySlotController, lambda);
+                            view, producerController, bodySlotController, lambda);
                     bodySlotController.setParent(controller.createSlotParent());
                     if (bodyController != null) {
                         bodyController.setOnChangeCallback(bodySlotController::handleBodyChange);
