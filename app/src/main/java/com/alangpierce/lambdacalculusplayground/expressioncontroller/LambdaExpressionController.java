@@ -174,7 +174,7 @@ public class LambdaExpressionController implements ExpressionController {
     private class ParameterDropTarget implements DropTarget {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
-            if (dragController.getScreenExpression().getExpr() instanceof UserVariable &&
+            if (dragController.getScreenExpression().expr() instanceof UserVariable &&
                     view.parameterIntersectsWith(dragController.getView())) {
                 // Always have the lowest possible priority, since the only thing we're avoiding
                 // here is putting

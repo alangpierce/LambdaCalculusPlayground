@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.support.v4.widget.DrawerLayout;
 
+import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -53,6 +54,9 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
         renderPalette();
+        // TODO: Add a real way of creating expressions. For now, this line should just get
+        // uncommented to test things out.
+//        createEmptyDefinition("TRUE", CanvasPoint.create(200, 200));
     }
 
     private void renderPalette() {
@@ -98,7 +102,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         TopLevelExpressionController controller =
                 controllerFactoryFactory.create(this).createTopLevelController(
                         screenExpression, placeAbovePalette);
-        registerTopLevelExpression(exprId, controller, screenExpression.getCanvasPos());
+        registerTopLevelExpression(exprId, controller, screenExpression.canvasPos());
         return controller;
     }
 
@@ -117,5 +121,14 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
                     }
                 });
         controller.getView().attachToRoot(canvasPos);
+    }
+
+    @Override
+    public DefinitionController createEmptyDefinition(String name, CanvasPoint canvasPos) {
+        ScreenDefinition screenDefinition = ScreenDefinition.create(name, canvasPos);
+        DefinitionController result =
+                controllerFactoryFactory.create(this).createDefinitionController(screenDefinition);
+        panManager.registerPanListener(result);
+        return result;
     }
 }

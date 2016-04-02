@@ -71,7 +71,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     @Override
     public void handlePositionChange(ScreenPoint screenPos) {
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
-        screenExpression = ScreenExpression.create(screenExpression.getExpr(), canvasPos);
+        screenExpression = ScreenExpression.create(screenExpression.expr(), canvasPos);
         onChangeCallback.onChange(this);
     }
 
@@ -79,7 +79,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     public void onPan() {
         // All DrawableAreaPoint values might be invalid, so recompute them and move if necessary.
         DrawableAreaPoint drawableAreaPoint =
-                pointConverter.toDrawableAreaPoint(screenExpression.getCanvasPos());
+                pointConverter.toDrawableAreaPoint(screenExpression.canvasPos());
         view.setCanvasPos(drawableAreaPoint);
     }
 
@@ -88,10 +88,10 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         ExpressionController newExpressionController =
                 newExpressionControllerProvider.produceController();
         UserExpression newExpression = newExpressionController.getExpression();
-        screenExpression = ScreenExpression.create(newExpression, screenExpression.getCanvasPos());
+        screenExpression = ScreenExpression.create(newExpression, screenExpression.canvasPos());
         boolean isExecutable = userExpressionEvaluator.canStep(newExpression);
         DrawableAreaPoint drawableAreaPoint =
-                pointConverter.toDrawableAreaPoint(screenExpression.getCanvasPos());
+                pointConverter.toDrawableAreaPoint(screenExpression.canvasPos());
         view.attachNewExpression(
                 newExpressionController.getView(), drawableAreaPoint, isExecutable);
         newExpressionController.setOnChangeCallback(this::handleExprChange);
@@ -109,7 +109,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private void handleExecuteClick() {
-        UserExpression newExpr = userExpressionEvaluator.evaluate(screenExpression.getExpr());
+        UserExpression newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
                 newExpr, view.getScreenPos(), false /* placeAbovePalette */);
 
@@ -158,7 +158,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public boolean isTrivialExpression() {
-        return screenExpression.getExpr().visit(
+        return screenExpression.expr().visit(
                 lambda -> lambda.body() == null,
                 funcCall -> false,
                 variable -> true,

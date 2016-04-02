@@ -2,17 +2,21 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
 import com.alangpierce.lambdacalculusplayground.view.LambdaView;
@@ -62,7 +66,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     @Override
     public TopLevelExpressionController createTopLevelController(
             ScreenExpression screenExpression, boolean placeAbovePalette) {
-        ExpressionController exprController = createController(screenExpression.getExpr());
+        ExpressionController exprController = createController(screenExpression.expr());
         return wrapInTopLevelController(
                 exprController, screenExpression, placeAbovePalette);
     }
@@ -71,7 +75,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     public TopLevelExpressionController wrapInTopLevelController(
             ExpressionController exprController, ScreenExpression screenExpression,
             boolean placeAbovePalette) {
-        boolean isExecutable = userExpressionEvaluator.canStep(screenExpression.getExpr());
+        boolean isExecutable = userExpressionEvaluator.canStep(screenExpression.expr());
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
                 viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
                 placeAbovePalette, exprController.getView(), isExecutable);
@@ -168,5 +172,14 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 new PaletteLambdaController(topLevelExpressionManager, view, varName);
         result.registerCallbacks(dragManager);
         return result;
+    }
+
+    @Override
+    public DefinitionController createDefinitionController(ScreenDefinition screenDefinition) {
+        DrawableAreaPoint drawableAreaPoint =
+                pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
+        DefinitionView view = DefinitionView.render(
+                viewRenderer, canvasRoot, screenDefinition.defName(), drawableAreaPoint);
+        return new DefinitionController(pointConverter, screenDefinition, view);
     }
 }

@@ -11,8 +11,8 @@ import java.io.Serializable;
  */
 @AutoValue
 public abstract class ScreenExpression implements Serializable {
-    public abstract UserExpression getExpr();
-    public abstract CanvasPoint getCanvasPos();
+    public abstract UserExpression expr();
+    public abstract CanvasPoint canvasPos();
 
     public static ScreenExpression create(UserExpression expr, CanvasPoint canvasPos) {
         return new AutoValue_ScreenExpression(expr, canvasPos);
