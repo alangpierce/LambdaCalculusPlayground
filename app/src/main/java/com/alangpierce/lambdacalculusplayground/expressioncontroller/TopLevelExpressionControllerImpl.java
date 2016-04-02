@@ -176,4 +176,24 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             return TopLevelExpressionControllerImpl.this;
         }
     }
+
+    @Override
+    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor) {
+        return expressionVisitor.accept(this);
+    }
+
+    @Override
+    public void startDrag() {
+        view.startDrag();
+    }
+
+    @Override
+    public void setScreenPos(ScreenPoint screenPos) {
+        view.setScreenPos(screenPos);
+    }
+
+    @Override
+    public void endDrag() {
+        view.endDrag();
+    }
 }

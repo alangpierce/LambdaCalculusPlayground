@@ -15,7 +15,7 @@ public class PaletteController {
         dragManager.registerDropTarget(new PaletteDeleteDropTarget());
     }
 
-    private class PaletteDeleteDropTarget implements DropTarget {
+    private class PaletteDeleteDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
             if (view.intersectsWithView(dragController.getView().getNativeView())) {
@@ -25,23 +25,24 @@ public class PaletteController {
                 return DropTarget.NOT_HIT;
             }
         }
-
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {
             if (!expressionController.isTrivialExpression()) {
                 view.handleDeleteDragEnter();
             }
         }
-
         @Override
         public void handleExit() {
             view.handleDeleteDragExit();
         }
-
         @Override
         public void handleDrop(TopLevelExpressionController expressionController) {
             view.handleDeleteDragExit();
             expressionController.decommission();
+        }
+        @Override
+        public Class<TopLevelExpressionController> getDataClass() {
+            return TopLevelExpressionController.class;
         }
     }
 }

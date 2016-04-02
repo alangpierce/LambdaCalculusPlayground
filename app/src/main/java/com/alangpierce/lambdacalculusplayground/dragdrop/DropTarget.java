@@ -1,8 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-
-public interface DropTarget {
+/**
+ * An element that can receive drops. The type parameter T should be the subclass of DragData (which
+ * could just be DragData itself) for the type of drops the drop target is willing to accept. The
+ * drag manager will ensure that all other types are ignored for this drop target.
+ */
+public interface DropTarget<T extends DragData> {
     /**
      * Determine if the dragged view is "over" the target.
      *
@@ -13,14 +16,14 @@ public interface DropTarget {
      * Returns NOT_HIT if the view was not hit. Otherwise, returns an integer which is the priority
      * of the drop target. The priority is used to break ties when there are multiple drop targets.
      */
-    int hitTest(TopLevelExpressionController dragController);
+    int hitTest(T dragData);
 
     int NOT_HIT = -1;
 
     /**
      * Change the display of the drop target to indicate that it is accepting drops.
      */
-    void handleEnter(TopLevelExpressionController expressionController);
+    void handleEnter(T dragData);
 
     /**
      * Change the display of the drop target back to normal.
@@ -30,5 +33,7 @@ public interface DropTarget {
     /**
      * Update the display and data to indicate that the expression was dropped.
      */
-    void handleDrop(TopLevelExpressionController expressionController);
+    void handleDrop(T dragData);
+
+    Class<T> getDataClass();
 }

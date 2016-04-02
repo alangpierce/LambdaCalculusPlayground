@@ -138,7 +138,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
     }
 
-    private class BodyDropTarget implements DropTarget {
+    private class BodyDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
             if (userLambda.body() == null && view.bodyIntersectsWith(dragController.getView())) {
@@ -165,13 +165,17 @@ public class LambdaExpressionController implements ExpressionController {
             ExpressionController bodyController = expressionController.decommission();
             handleBodyChange(() -> bodyController);
         }
+        @Override
+        public Class<TopLevelExpressionController> getDataClass() {
+            return TopLevelExpressionController.class;
+        }
     }
 
     /**
      * Dropping a variable back should make it disappear instead of awkwardly stick around on the
      * canvas.
      */
-    private class ParameterDropTarget implements DropTarget {
+    private class ParameterDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
             if (dragController.getScreenExpression().expr() instanceof UserVariable &&
@@ -195,6 +199,11 @@ public class LambdaExpressionController implements ExpressionController {
         public void handleDrop(TopLevelExpressionController expressionController) {
             // Just throw the variable away.
             expressionController.decommission();
+        }
+
+        @Override
+        public Class<TopLevelExpressionController> getDataClass() {
+            return TopLevelExpressionController.class;
         }
     }
 }

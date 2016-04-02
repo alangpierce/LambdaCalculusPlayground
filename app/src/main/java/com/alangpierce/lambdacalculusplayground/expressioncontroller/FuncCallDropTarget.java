@@ -5,7 +5,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViews;
 
-public class FuncCallDropTarget implements DropTarget {
+public class FuncCallDropTarget implements DropTarget<TopLevelExpressionController> {
     private final ExpressionController targetController;
     private final ExpressionView targetView;
     private final FuncCallControllerFactory funcCallFactory;
@@ -49,5 +49,10 @@ public class FuncCallDropTarget implements DropTarget {
         // function view being detached from the view hierarchy.
         changeCallback.onChange(
                 () -> funcCallFactory.createFuncCall(funcController, argController));
+    }
+
+    @Override
+    public Class<TopLevelExpressionController> getDataClass() {
+        return TopLevelExpressionController.class;
     }
 }

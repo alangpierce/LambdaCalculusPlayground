@@ -1,7 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 
 import rx.Observable;
 
@@ -13,9 +12,9 @@ public interface DragSource {
 
     /**
      * Called when a drag event starts. The DragSource should do whatever steps are necessary to
-     * produce and register the top-level expression to be dragged, then return it. The returned
-     * controller should be for an expression that already is attached to the root view and has all
-     * callbacks set up appropriately.
+     * produce and register the data to be dragged (maybe a top-level expression, maybe something
+     * else(, then return it. The returned object should be for an expression that already is
+     * attached to the root view and has all callbacks set up appropriately.
      */
-    TopLevelExpressionController handleStartDrag();
+    DragData handleStartDrag();
 }
