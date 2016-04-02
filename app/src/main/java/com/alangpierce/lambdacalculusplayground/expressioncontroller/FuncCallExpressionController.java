@@ -77,7 +77,7 @@ public class FuncCallExpressionController implements ExpressionController {
     }
 
     @Override
-    public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
+    public List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(new FuncCallDropTarget(this, view, funcCallFactory));
     }
 

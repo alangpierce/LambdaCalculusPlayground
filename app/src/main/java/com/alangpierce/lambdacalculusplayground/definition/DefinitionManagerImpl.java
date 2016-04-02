@@ -36,6 +36,22 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 )
         );
 
+        definitionMap.put("TRUE",
+                Lambda.create("t",
+                        Lambda.create("f",
+                                Variable.create("t")
+                        )
+                )
+        );
+
+        definitionMap.put("FALSE",
+                Lambda.create("t",
+                        Lambda.create("f",
+                                Variable.create("f")
+                        )
+                )
+        );
+
         for (int i = 0; i < 20; i++) {
             Expression body = Variable.create("z");
             for (int j = 0; j < i; j++) {

@@ -135,7 +135,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }
-        for (DropTarget dropTarget : result.getDropTargets(this::createFuncCall)) {
+        for (DropTarget<?> dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
         }
         return result;
@@ -160,7 +160,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }
-        for (DropTarget dropTarget : result.getDropTargets(this::createFuncCall)) {
+        for (DropTarget<?> dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
         }
         return result;
@@ -182,8 +182,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         DefinitionView view = DefinitionView.render(
                 dragObservableGenerator, viewRenderer, canvasRoot, screenDefinition.defName(),
                 drawableAreaPoint);
-        DefinitionController result =
-                new DefinitionControllerImpl(pointConverter, screenDefinition, view);
+        DefinitionController result = new DefinitionControllerImpl(
+                topLevelExpressionManager, pointConverter, view, screenDefinition);
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
         }

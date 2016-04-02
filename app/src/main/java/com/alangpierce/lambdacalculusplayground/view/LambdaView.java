@@ -86,6 +86,10 @@ public class LambdaView implements ExpressionView {
         return Views.getScreenPos(view);
     }
 
+    public ScreenPoint getParameterPos() {
+        return Views.getScreenPos(parameterView);
+    }
+
     public void detachBody() {
         Preconditions.checkNotNull(bodyNativeView);
         view.removeView(bodyNativeView);

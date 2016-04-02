@@ -71,7 +71,7 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
-    public List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory) {
+    public List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(
                 new BodyDropTarget(),
                 new FuncCallDropTarget(this, view, funcCallFactory),
@@ -133,7 +133,7 @@ public class LambdaExpressionController implements ExpressionController {
         @Override
         public TopLevelExpressionController handleStartDrag() {
             return topLevelExpressionManager.createNewExpression(
-                    UserVariable.create(userLambda.varName()), view.getScreenPos(),
+                    UserVariable.create(userLambda.varName()), view.getParameterPos(),
                     false /* placeAbovePalette */);
         }
     }

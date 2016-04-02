@@ -24,7 +24,7 @@ public interface ExpressionController {
      * drag sources in a shared way, or just do it in each case.
      */
     List<DragSource> getDragSources();
-    List<DropTarget> getDropTargets(FuncCallControllerFactory funcCallFactory);
+    List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory);
 
     /**
      * Callback for expressions to propagate changes, which include changes to the backing model,

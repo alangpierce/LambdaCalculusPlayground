@@ -46,7 +46,7 @@ public class VariableExpressionController implements ExpressionController {
     }
 
     @Override
-    public List<DropTarget> getDropTargets(FuncCallDropTarget.FuncCallControllerFactory funcCallFactory) {
+    public List<DropTarget<?>> getDropTargets(FuncCallDropTarget.FuncCallControllerFactory funcCallFactory) {
         return ImmutableList.of(new FuncCallDropTarget(this, view, funcCallFactory));
     }
 }
