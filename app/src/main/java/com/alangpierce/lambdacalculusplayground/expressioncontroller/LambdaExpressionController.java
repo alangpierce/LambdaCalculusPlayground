@@ -80,13 +80,13 @@ public class LambdaExpressionController implements ExpressionController {
 
     // Note that the returned body might be null.
     public void handleBodyChange(ExpressionControllerProvider newBodyControllerProvider) {
-        view.detachBody();
+        view.getBodySlot().detach();
         @Nullable ExpressionController newBodyController =
                 newBodyControllerProvider.produceController();
         userLambda = UserLambda.create(
                 userLambda.varName(),
                 newBodyController != null ? newBodyController.getExpression() : null);
-        view.attachBody(newBodyController != null ? newBodyController.getView() : null);
+        view.getBodySlot().attach(newBodyController != null ? newBodyController.getView() : null);
         updateDragActionSubscription();
         if (newBodyController != null) {
             newBodyController.setOnChangeCallback(this::handleBodyChange);
@@ -101,7 +101,7 @@ public class LambdaExpressionController implements ExpressionController {
             bodyDragActionSubscription = null;
         }
         @Nullable Observable<? extends Observable<PointerMotionEvent>> bodyObservable =
-                view.getBodyObservable();
+                view.getBodySlot().getObservable();
         if (bodyObservable != null) {
             bodyDragActionSubscription = bodyObservable.subscribe(bodyDragActionSubject);
         }
@@ -114,7 +114,7 @@ public class LambdaExpressionController implements ExpressionController {
         }
         @Override
         public TopLevelExpressionController handleStartDrag() {
-            ScreenPoint screenPos = view.getBodyPos();
+            ScreenPoint screenPos = view.getBodySlot().getPos();
             ExpressionController controllerToDrag = bodyController;
             // This detaches the view from the UI, so it's safe to add the root view as a parent. It
             // also changes some class fields, so we need to grab them above.
@@ -141,15 +141,16 @@ public class LambdaExpressionController implements ExpressionController {
     private class BodyDropTarget implements DropTarget<TopLevelExpressionController> {
         @Override
         public int hitTest(TopLevelExpressionController dragController) {
-            if (userLambda.body() == null && view.bodyIntersectsWith(dragController.getView())) {
-                return view.getBodyViewDepth();
+            if (userLambda.body() == null &&
+                    view.getBodySlot().intersectsWith(dragController.getView())) {
+                return view.getBodySlot().getViewDepth();
             } else {
                 return DropTarget.NOT_HIT;
             }
         }
         @Override
         public void handleEnter(TopLevelExpressionController expressionController) {
-            view.handleBodyDragEnter();
+            view.getBodySlot().handleDragEnter();
         }
         @Override
         public void handleExit() {
@@ -157,11 +158,11 @@ public class LambdaExpressionController implements ExpressionController {
             if (userLambda.body() != null) {
                 return;
             }
-            view.handleBodyDragExit();
+            view.getBodySlot().handleDragExit();
         }
         @Override
         public void handleDrop(TopLevelExpressionController expressionController) {
-            view.handleBodyDragExit();
+            view.getBodySlot().handleDragExit();
             ExpressionController bodyController = expressionController.decommission();
             handleBodyChange(() -> bodyController);
         }
