@@ -33,7 +33,8 @@ public class PointConverterImpl implements PointConverter {
         return toCanvasPoint(toDrawableAreaPoint(screenPoint));
     }
 
-    private CanvasPoint toCanvasPoint(DrawableAreaPoint drawableAreaPoint) {
+    @Override
+    public CanvasPoint toCanvasPoint(DrawableAreaPoint drawableAreaPoint) {
         PointDifference panOffset = panManager.getPanOffset();
         return CanvasPoint.create(
                 drawableAreaPoint.getX() - panOffset.getX(),

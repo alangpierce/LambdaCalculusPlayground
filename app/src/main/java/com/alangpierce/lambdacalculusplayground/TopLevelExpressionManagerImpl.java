@@ -8,6 +8,7 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
@@ -121,6 +122,14 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             }
         });
         controller.getView().attachToRoot(canvasPos);
+    }
+
+    @Override
+    public void createEmptyDefinition(String defName, DrawableAreaPoint drawableAreaPoint) {
+        CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
+        ScreenDefinition screenDefinition = ScreenDefinition.create(defName, null, canvasPoint);
+        int defId = expressionState.addScreenDefinition(screenDefinition);
+        renderDefinition(defId, screenDefinition);
     }
 
     private DefinitionController renderDefinition(int defId, ScreenDefinition screenDefinition) {

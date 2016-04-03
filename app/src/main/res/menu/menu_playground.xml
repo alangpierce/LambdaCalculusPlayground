@@ -9,8 +9,13 @@
         android:icon="@drawable/ic_action_lambda"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_view_demo_video"
+        android:id="@+id/action_define"
         android:orderInCategory="101"
+        android:title="@string/action_define"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_view_demo_video"
+        android:orderInCategory="102"
         android:title="@string/action_view_demo_video"
         app:showAsAction="never"/>
 </menu>

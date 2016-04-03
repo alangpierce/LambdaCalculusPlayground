@@ -1,18 +1,25 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 
 public class PlaygroundFragment extends Fragment {
     public PlaygroundFragment() {
@@ -22,6 +29,7 @@ public class PlaygroundFragment extends Fragment {
     private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
 
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
+    TopLevelExpressionManager expressionManager;
     private DrawerLayout drawerRoot;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
@@ -68,7 +76,7 @@ public class PlaygroundFragment extends Fragment {
                         new PlaygroundModule(getActivity(), canvasView, abovePaletteRoot,
                                 drawerRoot, expressionState))
                 .build();
-        TopLevelExpressionManager expressionManager = component.getTopLevelExpressionManager();
+        expressionManager = component.getTopLevelExpressionManager();
         expressionManager.renderInitialData();
 
         // If this is the first time opening the app, open the drawer after a short delay. This
@@ -105,6 +113,8 @@ public class PlaygroundFragment extends Fragment {
                     drawerRoot.openDrawer(GravityCompat.END);
                 }
             }
+        } else if (item.getItemId() == R.id.action_define) {
+            showNewDefinitionDialog();
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(
@@ -112,5 +122,27 @@ public class PlaygroundFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showNewDefinitionDialog() {
+        View inputView =
+                getActivity().getLayoutInflater().inflate(R.layout.definition_name_dialog, null);
+        EditText nameEditText = (EditText) inputView.findViewById(R.id.definition_name);
+        AlertDialog alertDialog = new Builder(getActivity())
+                .setTitle(R.string.create_definition)
+                .setView(inputView)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String defName = nameEditText.getText().toString();
+                    // Create the view at (50dp, 50dp).
+                    int shiftPixels = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
+                    expressionManager.createEmptyDefinition(
+                            defName, DrawableAreaPoint.create(shiftPixels, shiftPixels));
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
     }
 }

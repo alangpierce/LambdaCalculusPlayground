@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground;
 
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
+import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
@@ -20,4 +21,6 @@ public interface TopLevelExpressionManager {
      */
     TopLevelExpressionController sendExpressionToTopLevel(
             ExpressionController expression, ScreenPoint screenPos);
+
+    void createEmptyDefinition(String defName, DrawableAreaPoint screenPos);
 }

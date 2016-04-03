@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Lambda Calculus Playground</string>
     <string name="action_palette">Palette</string>
+    <string name="action_define">Define</string>
     <string name="action_view_demo_video">View Demo Video</string>
     <string name="demo_video_url">https://www.youtube.com/watch?v=0OzpqDDniDs</string>
+
+    <string name="create_definition">Create a definition</string>
 </resources>
