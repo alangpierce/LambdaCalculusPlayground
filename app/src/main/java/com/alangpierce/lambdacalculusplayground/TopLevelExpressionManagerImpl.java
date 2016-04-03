@@ -2,8 +2,10 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.support.v4.widget.DrawerLayout;
 
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
+import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
@@ -16,6 +18,7 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Map.Entry;
@@ -27,18 +30,23 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final PointConverter pointConverter;
     private final DrawerLayout drawerRoot;
     private final PanManager panManager;
+    private final DefinitionManager definitionManager;
+    private final UserExpressionEvaluator userExpressionEvaluator;
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
-            PanManager panManager) {
+            PanManager panManager, DefinitionManager definitionManager,
+            UserExpressionEvaluator userExpressionEvaluator) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
         this.pointConverter = pointConverter;
         this.drawerRoot = drawerRoot;
         this.panManager = panManager;
+        this.definitionManager = definitionManager;
+        this.userExpressionEvaluator = userExpressionEvaluator;
     }
 
     @Override
@@ -138,7 +146,11 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         panManager.registerPanListener(controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
-                expressionState.modifyDefinition(defId, newController.getScreenDefinition());
+                ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
+                expressionState.modifyDefinition(defId, newScreenDefinition);
+                Expression expression =
+                        userExpressionEvaluator.convertToExpression(newScreenDefinition.expr());
+                definitionManager.updateDefinition(newScreenDefinition.defName(), expression);
             } else {
                 expressionState.deleteDefinition(defId);
                 panManager.unregisterPanListener(controller);

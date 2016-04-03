@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.userexpression;
 
+import android.util.Log;
+
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.Expressions;
@@ -10,6 +12,8 @@ import com.alangpierce.lambdacalculusplayground.expression.Variable;
 import javax.annotation.Nullable;
 
 public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
+    private static final String TAG = "UserExpressionEvaluator";
+
     private final DefinitionManager definitionManager;
 
     public UserExpressionEvaluatorImpl(DefinitionManager definitionManager) {
@@ -25,15 +29,22 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
      *
      * If it takes more than 100 steps to finish, just run it 100 steps.
      */
-    public UserExpression evaluate(UserExpression userExpression) {
-        for (int i = 0; canStep(userExpression); i++) {
-            if (i == 100) {
-                break;
+    public @Nullable UserExpression evaluate(UserExpression userExpression) {
+        try {
+            for (int i = 0; canStep(userExpression); i++) {
+                if (i == 100) {
+                    break;
+                }
+                userExpression = step(userExpression);
             }
-            userExpression = step(userExpression);
+            userExpression = fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
+            return collapseDefinedTerms(userExpression);
+        } catch (InvalidExpressionException e) {
+            // If there's a problem, just ignore the operation. This isn't great, but is better than
+            // crashing.
+            Log.e(TAG, "Evaluated an invalid expression.");
+            return null;
         }
-        userExpression = fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
-        return collapseDefinedTerms(userExpression);
     }
 
     private UserExpression step(UserExpression userExpression) {
@@ -82,6 +93,18 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     private static class InvalidExpressionException extends RuntimeException {
     }
 
+    @Override
+    public @Nullable Expression convertToExpression(@Nullable UserExpression userExpression) {
+        if (userExpression == null) {
+            return null;
+        }
+        try {
+            return toExpression(userExpression);
+        } catch (InvalidExpressionException e) {
+            return null;
+        }
+    }
+
     /**
      * Given a UserExpression, convert to an Expression if possible.
      * <p>
@@ -97,7 +120,14 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
                 },
                 funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
                 variable -> Variable.create(variable.varName()),
-                reference -> definitionManager.resolveDefinition(reference.defName())
+                reference -> {
+                    Expression expression =
+                            definitionManager.resolveDefinition(reference.defName());
+                    if (expression == null) {
+                        throw new InvalidExpressionException();
+                    }
+                    return expression;
+                }
         );
     }
 }

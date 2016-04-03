@@ -111,6 +111,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     private void handleExecuteClick() {
         UserExpression newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
+        if (newExpr == null) {
+            // If there was a problem, just ignore the operation. This isn't great, but is better
+            // than crashing.
+            return;
+        }
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
                 newExpr, view.getScreenPos(), false /* placeAbovePalette */);
 

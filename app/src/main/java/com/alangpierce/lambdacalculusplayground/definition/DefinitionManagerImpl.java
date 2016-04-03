@@ -4,15 +4,26 @@ import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 public class DefinitionManagerImpl implements DefinitionManager {
-    private final BiMap<String, Expression> definitionMap = Maps.synchronizedBiMap(HashBiMap.create());
+    private final Map<String, Expression> definitionMap =
+            Collections.synchronizedMap(new HashMap<>());
+    private final SetMultimap<Expression, String> namesByExpression =
+            Multimaps.synchronizedSetMultimap(HashMultimap.create());
+
 
     public DefinitionManagerImpl() {
-        definitionMap.put("+",
+        updateDefinition("+",
                 Lambda.create("n",
                         Lambda.create("m",
                                 Lambda.create("s",
@@ -36,7 +47,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 )
         );
 
-        definitionMap.put("TRUE",
+        updateDefinition("TRUE",
                 Lambda.create("t",
                         Lambda.create("f",
                                 Variable.create("t")
@@ -44,7 +55,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 )
         );
 
-        definitionMap.put("FALSE",
+        updateDefinition("FALSE",
                 Lambda.create("t",
                         Lambda.create("f",
                                 Variable.create("f")
@@ -57,7 +68,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
             for (int j = 0; j < i; j++) {
                 body = FuncCall.create(Variable.create("s"), body);
             }
-            definitionMap.put(
+            updateDefinition(
                     Integer.toString(i),
                     Lambda.create(
                             "s",
@@ -71,18 +82,25 @@ public class DefinitionManagerImpl implements DefinitionManager {
     }
 
     @Override
-    public Expression resolveDefinition(String definitionName) {
-        Expression result = definitionMap.get(definitionName);
-        if (result != null) {
-            return result;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Definition " + definitionName + " not supported.");
-        }
+    public @Nullable Expression resolveDefinition(String definitionName) {
+        return definitionMap.get(definitionName);
     }
 
     @Override
     public String tryResolveExpression(Expression expression) {
-        return definitionMap.inverse().get(expression);
+        Set<String> names = namesByExpression.get(expression);
+        if (names.isEmpty()) {
+            return null;
+        } else {
+            // TODO: Maybe do something smarter here.
+            return names.iterator().next();
+        }
+    }
+
+    @Override
+    public void updateDefinition(String name, @Nullable Expression expression) {
+        Expression oldExpression = definitionMap.put(name, expression);
+        namesByExpression.remove(oldExpression, name);
+        namesByExpression.put(expression, name);
     }
 }
