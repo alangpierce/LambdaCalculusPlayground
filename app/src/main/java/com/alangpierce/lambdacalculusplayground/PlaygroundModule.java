@@ -109,7 +109,7 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     DefinitionManager provideDefinitionManager() {
-        return new DefinitionManagerImpl();
+        return DefinitionManagerImpl.createWithDefaults();
     }
 
     @Provides @Singleton

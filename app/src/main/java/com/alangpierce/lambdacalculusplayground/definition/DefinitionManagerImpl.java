@@ -21,9 +21,12 @@ public class DefinitionManagerImpl implements DefinitionManager {
     private final SetMultimap<Expression, String> namesByExpression =
             Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
-
     public DefinitionManagerImpl() {
-        updateDefinition("+",
+    }
+
+    public static DefinitionManager createWithDefaults() {
+        DefinitionManagerImpl result = new DefinitionManagerImpl();
+        result.updateDefinition("+",
                 Lambda.create("n",
                         Lambda.create("m",
                                 Lambda.create("s",
@@ -47,7 +50,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 )
         );
 
-        updateDefinition("TRUE",
+        result.updateDefinition("TRUE",
                 Lambda.create("t",
                         Lambda.create("f",
                                 Variable.create("t")
@@ -55,7 +58,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 )
         );
 
-        updateDefinition("FALSE",
+        result.updateDefinition("FALSE",
                 Lambda.create("t",
                         Lambda.create("f",
                                 Variable.create("f")
@@ -68,7 +71,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
             for (int j = 0; j < i; j++) {
                 body = FuncCall.create(Variable.create("s"), body);
             }
-            updateDefinition(
+            result.updateDefinition(
                     Integer.toString(i),
                     Lambda.create(
                             "s",
@@ -79,6 +82,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                     )
             );
         }
+        return result;
     }
 
     @Override
