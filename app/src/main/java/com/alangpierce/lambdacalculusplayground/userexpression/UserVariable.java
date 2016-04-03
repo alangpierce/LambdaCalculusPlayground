@@ -17,4 +17,9 @@ public abstract class UserVariable implements UserExpression {
             Visitor<UserReference, T> referenceVisitor) {
         return variableVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return varName();
+    }
 }

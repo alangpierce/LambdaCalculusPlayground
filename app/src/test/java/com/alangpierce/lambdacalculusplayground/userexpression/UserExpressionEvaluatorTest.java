@@ -15,13 +15,6 @@ public class UserExpressionEvaluatorTest extends TestCase {
         definitionManager = new DefinitionManagerImpl();
         userExpressionEvaluator = new UserExpressionEvaluatorImpl(definitionManager);
 
-        defineTerm("+", "L n[L m[L s[L z[n(s)(m(s)(z))]]]]");
-        defineTerm("0", "L s[L z[z]]");
-        defineTerm("1", "L s[L z[s(z)]]");
-        defineTerm("2", "L s[L z[s(s(z))]]");
-        defineTerm("3", "L s[L z[s(s(s(z)))]]");
-        defineTerm("4", "L s[L z[s(s(s(s(z))))]]");
-
         defineTerm("TRUE", "L t[L f[t]]");
         defineTerm("FALSE", "L t[L f[f]]");
 
@@ -29,6 +22,16 @@ public class UserExpressionEvaluatorTest extends TestCase {
         defineTerm("LHS", "L p[p(TRUE)]");
         defineTerm("RHS", "L p[p(FALSE)]");
 
+        defineTerm("0", "L s[L z[z]]");
+        defineTerm("1", "L s[L z[s(z)]]");
+        defineTerm("2", "L s[L z[s(s(z))]]");
+        defineTerm("3", "L s[L z[s(s(s(z)))]]");
+        defineTerm("4", "L s[L z[s(s(s(s(z))))]]");
+        defineTerm("5", "L s[L z[s(s(s(s(s(z)))))]]");
+        defineTerm("6", "L s[L z[s(s(s(s(s(s(z))))))]]");
+        defineTerm("+", "L n[L m[L s[L z[n(s)(m(s)(z))]]]]");
+        defineTerm("*", "L n[L m[L s[L z[n(m(s))(z)]]]]");
+        defineTerm("ISZERO", "L n[n(L x[FALSE])(TRUE)]");
         defineTerm("PRED",
                 "L n[L s[L z[" +
                         "LHS(" +
@@ -41,6 +44,12 @@ public class UserExpressionEvaluatorTest extends TestCase {
                                 "(PAIR(z)(FALSE))" +
                         ")" +
                 "]]]");
+
+        defineTerm("Y", "L f[L x[f(x(x))](L x[f(x(x))])]");
+
+        defineTerm("FACTREC",
+                "L f[L n[ISZERO(n)(1)(*(n)(f(PRED(n))))]]");
+        defineTerm("FACT", "Y(FACTREC)");
 
         super.setUp();
     }
@@ -59,8 +68,11 @@ public class UserExpressionEvaluatorTest extends TestCase {
         definitionManager.updateDefinition(defName, fullExpr);
     }
 
-    public void testAddition() {
+    public void testMath() {
         assertResult("3", "+(1)(2)");
+        assertResult("6", "*(2)(3)");
+        assertResult("FALSE", "ISZERO(2)");
+        assertResult("TRUE", "ISZERO(0)");
     }
 
     public void testPair() {
@@ -74,5 +86,11 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("1", "PRED(2)");
         assertResult("2", "PRED(3)");
         assertResult("3", "PRED(4)");
+    }
+
+    public void testFact() {
+        assertResult("1", "FACTREC(L x[x])(0)");
+        assertResult("1", "FACTREC(L x[1])(1)");
+        assertResult("2", "FACTREC(L x[1])(2)");
     }
 }

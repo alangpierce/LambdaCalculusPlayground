@@ -20,4 +20,9 @@ public abstract class UserLambda implements UserExpression {
             Visitor<UserReference, T> referenceVisitor) {
         return lambdaVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return "L " + varName() + "[" + body() + "]";
+    }
 }

@@ -18,4 +18,9 @@ public abstract class UserFuncCall implements UserExpression {
             Visitor<UserReference, T> referenceVisitor) {
         return funcCallVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return "" + func() + "(" + arg() + ")";
+    }
 }
