@@ -16,4 +16,9 @@ public abstract class FuncCall implements Expression {
             Visitor<Variable, T> variableVisitor) {
         return funcCallVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return "" + func() + "(" + arg() + ")";
+    }
 }

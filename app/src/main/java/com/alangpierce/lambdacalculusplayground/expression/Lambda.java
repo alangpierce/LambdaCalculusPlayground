@@ -16,4 +16,9 @@ public abstract class Lambda implements Expression {
             Visitor<Variable, T> variableVisitor) {
         return lambdaVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return "L " + varName() + "[" + body() + "]";
+    }
 }

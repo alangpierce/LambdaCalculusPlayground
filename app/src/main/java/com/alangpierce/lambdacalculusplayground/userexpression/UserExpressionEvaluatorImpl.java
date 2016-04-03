@@ -32,7 +32,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     public @Nullable UserExpression evaluate(UserExpression userExpression) {
         try {
             for (int i = 0; canStep(userExpression); i++) {
-                if (i == 100) {
+                if (i == 1000) {
                     break;
                 }
                 userExpression = step(userExpression);

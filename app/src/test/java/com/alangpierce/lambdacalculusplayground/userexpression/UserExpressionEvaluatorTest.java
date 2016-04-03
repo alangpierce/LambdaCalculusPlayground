@@ -20,6 +20,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
         defineTerm("1", "L s[L z[s(z)]]");
         defineTerm("2", "L s[L z[s(s(z))]]");
         defineTerm("3", "L s[L z[s(s(s(z)))]]");
+        defineTerm("4", "L s[L z[s(s(s(s(z))))]]");
 
         defineTerm("TRUE", "L t[L f[t]]");
         defineTerm("FALSE", "L t[L f[f]]");
@@ -30,14 +31,14 @@ public class UserExpressionEvaluatorTest extends TestCase {
 
         defineTerm("PRED",
                 "L n[L s[L z[" +
-                        "RHS(" +
+                        "LHS(" +
                             "n" +
                                 "(L x[" +
                                     "PAIR" +
-                                        "(s(RHS(x)))" +
-                                        "(LHS(x))" +
+                                        "(RHS(x)(s(LHS(x)))(LHS(x)))" +
+                                        "(TRUE)" +
                                 "])" +
-                                "(PAIR(z)(z))" +
+                                "(PAIR(z)(FALSE))" +
                         ")" +
                 "]]]");
 
@@ -71,5 +72,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("0", "PRED(0)");
         assertResult("0", "PRED(1)");
         assertResult("1", "PRED(2)");
+        assertResult("2", "PRED(3)");
+        assertResult("3", "PRED(4)");
     }
 }

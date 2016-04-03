@@ -22,13 +22,13 @@ public class Expressions {
                         Lambda func = (Lambda) funcCall.func();
                         return replaceVariable(func.body(), func.varName(), funcCall.arg());
                     }
-                    @Nullable Expression steppedFunc = step(funcCall.func());
-                    if (steppedFunc != null) {
-                        return FuncCall.create(steppedFunc, funcCall.arg());
-                    }
                     @Nullable Expression steppedArg = step(funcCall.arg());
                     if (steppedArg != null) {
                         return FuncCall.create(funcCall.func(), steppedArg);
+                    }
+                    @Nullable Expression steppedFunc = step(funcCall.func());
+                    if (steppedFunc != null) {
+                        return FuncCall.create(steppedFunc, funcCall.arg());
                     }
                     return null;
                 },

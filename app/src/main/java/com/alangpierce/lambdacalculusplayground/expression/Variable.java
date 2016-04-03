@@ -15,4 +15,9 @@ public abstract class Variable implements Expression {
             Visitor<Variable, T> variableVisitor) {
         return variableVisitor.accept(this);
     }
+
+    @Override
+    public String toString() {
+        return varName();
+    }
 }
