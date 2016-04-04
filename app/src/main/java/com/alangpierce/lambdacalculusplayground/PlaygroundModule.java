@@ -13,6 +13,8 @@ import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
+import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
+import com.alangpierce.lambdacalculusplayground.evaluator.SimpleExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -113,8 +115,14 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    UserExpressionEvaluator provideUserExpressionEvaluator(DefinitionManager definitionManager) {
-        return new UserExpressionEvaluatorImpl(definitionManager);
+    ExpressionEvaluator provideExpressionEvaluator() {
+        return new SimpleExpressionEvaluator();
+    }
+
+    @Provides @Singleton
+    UserExpressionEvaluator provideUserExpressionEvaluator(
+            DefinitionManager definitionManager, ExpressionEvaluator expressionEvaluator) {
+        return new UserExpressionEvaluatorImpl(definitionManager, expressionEvaluator);
     }
 
     @Provides

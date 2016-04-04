@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
+import com.alangpierce.lambdacalculusplayground.evaluator.SimpleExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 
 import junit.framework.TestCase;
@@ -13,7 +14,8 @@ public class UserExpressionEvaluatorTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         definitionManager = new DefinitionManagerImpl();
-        userExpressionEvaluator = new UserExpressionEvaluatorImpl(definitionManager);
+        userExpressionEvaluator = new UserExpressionEvaluatorImpl(
+                definitionManager, new SimpleExpressionEvaluator());
 
         defineTerm("TRUE", "L t[L f[t]]");
         defineTerm("FALSE", "L t[L f[f]]");

@@ -36,7 +36,7 @@ public class Expressions {
         );
     }
 
-    public static Expression replaceVariable(Expression e, final String varName,
+    private static Expression replaceVariable(Expression e, final String varName,
                                              final Expression replacement) {
         return e.visit(
                 lambda -> {
@@ -76,7 +76,7 @@ public class Expressions {
         );
     }
 
-    public static boolean containsVariableUsage(Expression e, String varName) {
+    private static boolean containsVariableUsage(Expression e, String varName) {
         return e.visit(
                 lambda -> lambda.varName().equals(varName) ||
                         containsVariableUsage(lambda.body(), varName),

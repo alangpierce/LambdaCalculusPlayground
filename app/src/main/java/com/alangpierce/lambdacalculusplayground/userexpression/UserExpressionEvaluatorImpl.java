@@ -3,6 +3,7 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 import android.util.Log;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.Expressions;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
@@ -15,11 +16,15 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     private static final String TAG = "UserExpressionEvaluator";
 
     private final DefinitionManager definitionManager;
+    private final ExpressionEvaluator expressionEvaluator;
 
-    public UserExpressionEvaluatorImpl(DefinitionManager definitionManager) {
+    public UserExpressionEvaluatorImpl(DefinitionManager definitionManager,
+            ExpressionEvaluator expressionEvaluator) {
         this.definitionManager = definitionManager;
+        this.expressionEvaluator = expressionEvaluator;
     }
 
+    @Override
     public boolean canStep(UserExpression userExpression) {
         return step(userExpression) != null;
     }
@@ -27,18 +32,14 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     /**
      * Run an expression to completion.
      *
-     * If it takes more than 100 steps to finish, just run it 100 steps.
+     * If it takes more than 1000 steps to finish, just run it 1000 steps.
      */
+    @Override
     public @Nullable UserExpression evaluate(UserExpression userExpression) {
         try {
-            for (int i = 0; canStep(userExpression); i++) {
-                if (i == 1000) {
-                    break;
-                }
-                userExpression = step(userExpression);
-            }
-            userExpression = fromExpression(Expressions.normalizeNames(toExpression(userExpression)));
-            return collapseDefinedTerms(userExpression);
+            Expression expression = toExpression(userExpression);
+            expression = expressionEvaluator.evaluate(expression);
+            return collapseDefinedTerms(fromExpression(expression));
         } catch (InvalidExpressionException e) {
             // If there's a problem, just ignore the operation. This isn't great, but is better than
             // crashing.
