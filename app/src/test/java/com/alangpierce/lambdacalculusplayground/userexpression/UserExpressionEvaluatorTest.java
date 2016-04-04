@@ -2,7 +2,7 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
-import com.alangpierce.lambdacalculusplayground.evaluator.SimpleExpressionEvaluator;
+import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 
 import junit.framework.TestCase;
@@ -15,10 +15,11 @@ public class UserExpressionEvaluatorTest extends TestCase {
     protected void setUp() throws Exception {
         definitionManager = new DefinitionManagerImpl();
         userExpressionEvaluator = new UserExpressionEvaluatorImpl(
-                definitionManager, new SimpleExpressionEvaluator());
+                definitionManager, new OptimizedExpressionEvaluator());
 
         defineTerm("TRUE", "L t[L f[t]]");
         defineTerm("FALSE", "L t[L f[f]]");
+        defineTerm("NOT", "L b[L t[L f[b(f)(t)]]]");
 
         defineTerm("PAIR", "L x[L y[L b[b(x)(y)]]]");
         defineTerm("LHS", "L p[p(TRUE)]");
@@ -70,6 +71,10 @@ public class UserExpressionEvaluatorTest extends TestCase {
         definitionManager.updateDefinition(defName, fullExpr);
     }
 
+    public void testBooleans() {
+        assertResult("FALSE", "NOT(TRUE)");
+    }
+
     public void testMath() {
         assertResult("3", "+(1)(2)");
         assertResult("6", "*(2)(3)");
@@ -94,5 +99,6 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("1", "FACTREC(L x[x])(0)");
         assertResult("1", "FACTREC(L x[1])(1)");
         assertResult("2", "FACTREC(L x[1])(2)");
+//        assertResult("2", "FACT(2)");
     }
 }
