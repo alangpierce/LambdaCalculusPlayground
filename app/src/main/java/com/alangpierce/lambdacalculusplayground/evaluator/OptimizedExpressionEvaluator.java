@@ -26,7 +26,8 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
                     if (func instanceof EvalLambda) {
                         EvalLambda lambda = (EvalLambda) func;
                         Slot slot = Slot.create(funcCall.arg());
-                        return evaluateRec(bindVariable(lambda.varMarker(), slot, lambda.body()));
+                        return evaluateRec(bindVariable(
+                                lambda.varMarker(), lambda.originalVarName(), slot, lambda.body()));
                     } else {
                         // We can't do anything more with the left side, so we might as well try
                         // evaluating the right side.
@@ -49,15 +50,23 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
         );
     }
 
-    private EvalExpression bindVariable(Object varMarker, Slot slot, EvalExpression expression) {
+    private EvalExpression bindVariable(Object varMarker, String originalVarName, Slot slot, EvalExpression expression) {
         return expression.visit(
                 lambda -> EvalLambda.create(
                         lambda.varMarker(), lambda.originalVarName(),
-                        bindVariable(varMarker, slot, lambda.body())),
+                        bindVariable(varMarker, originalVarName, slot, lambda.body())),
                 funcCall -> EvalFuncCall.create(
-                        bindVariable(varMarker, slot, funcCall.func()),
-                        bindVariable(varMarker, slot, funcCall.arg())),
-                boundVariable -> boundVariable,
+                        bindVariable(varMarker, originalVarName, slot, funcCall.func()),
+                        bindVariable(varMarker, originalVarName, slot, funcCall.arg())),
+                boundVariable -> {
+                    if (containsUsage(varMarker, boundVariable.slot().expr)) {
+                        return EvalFuncCall.create(
+                                EvalLambda.create(varMarker, originalVarName, boundVariable),
+                                expression);
+                    } else {
+                        return boundVariable;
+                    }
+                },
                 unboundVariable -> {
                     if (unboundVariable.varMarker() != varMarker) {
                         return unboundVariable;
@@ -65,6 +74,17 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
                     return EvalBoundVariable.create(slot);
                 },
                 freeVariable -> freeVariable
+        );
+    }
+
+    private boolean containsUsage(Object varMarker, EvalExpression expression) {
+        return expression.visit(
+                lambda -> containsUsage(varMarker, lambda.body()),
+                funcCall -> containsUsage(varMarker, funcCall.arg()) ||
+                        containsUsage(varMarker, funcCall.func()),
+                boundVariable -> containsUsage(varMarker, boundVariable.slot().expr),
+                unboundVariable -> unboundVariable.varMarker() == varMarker,
+                freeVariable -> false
         );
     }
 
