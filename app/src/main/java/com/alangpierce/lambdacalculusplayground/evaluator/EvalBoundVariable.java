@@ -21,6 +21,6 @@ public abstract class EvalBoundVariable implements EvalExpression {
 
     @Override
     public String toString() {
-        return "{Slot}";
+        return "{" + slot().originalVarName + "}";
     }
 }

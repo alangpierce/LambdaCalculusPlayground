@@ -22,6 +22,6 @@ public abstract class EvalUnboundVariable implements EvalExpression {
 
     @Override
     public String toString() {
-        return originalVarName() + "(unbound)";
+        return "<" + originalVarName() + ">";
     }
 }

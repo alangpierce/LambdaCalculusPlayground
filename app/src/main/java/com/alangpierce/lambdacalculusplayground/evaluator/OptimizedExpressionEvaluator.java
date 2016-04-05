@@ -6,41 +6,58 @@ import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
     @Override
     public Expression evaluate(Expression expression) {
         EvalExpression evalExpr = compile(new HashMap<>(), expression);
-        EvalExpression result = evaluateRec(evalExpr);
+        EvalExpression result = evaluateRec(evalExpr, new HashSet<>(), true);
         return toExpression(result);
     }
 
-    private EvalExpression evaluateRec(EvalExpression evalExpression) {
+    private EvalExpression evaluateRec(EvalExpression evalExpression, Set<Object> freeMarkers, boolean topLevel) {
         return evalExpression.visit(
-                lambda -> EvalLambda.create(
-                        lambda.varMarker(), lambda.originalVarName(), evaluateRec(lambda.body())),
+                lambda -> {
+                    if (topLevel) {
+                        freeMarkers.add(lambda.varMarker());
+                        EvalExpression newBody = evaluateRec(lambda.body(), freeMarkers, true);
+                        freeMarkers.remove(lambda.varMarker());
+                        return EvalLambda.create(
+                                lambda.varMarker(), lambda.originalVarName(), newBody);
+                    } else {
+                        EvalExpression newBody = evaluateRec(lambda.body(), freeMarkers, false);
+                        return EvalLambda.create(
+                                lambda.varMarker(), lambda.originalVarName(), newBody);
+                    }
+                },
                 funcCall -> {
                     // TODO: Maybe we don't want to fully evaluate the func if it's a lambda?
-                    EvalExpression func = evaluateRec(funcCall.func());
+                    EvalExpression func = evaluateRec(funcCall.func(), freeMarkers, false);
                     if (func instanceof EvalLambda) {
                         EvalLambda lambda = (EvalLambda) func;
-                        Slot slot = Slot.create(funcCall.arg());
-                        return evaluateRec(bindVariable(
-                                lambda.varMarker(), lambda.originalVarName(), slot, lambda.body()));
+                        Slot slot = Slot.create(funcCall.arg(), lambda.originalVarName());
+                        EvalExpression boundExpression = bindVariable(
+                                lambda.varMarker(), slot, lambda.body());
+                        return evaluateRec(boundExpression, freeMarkers, topLevel);
                     } else {
                         // We can't do anything more with the left side, so we might as well try
                         // evaluating the right side.
                         // TODO: What if the left side is an unbound variable that will later be
                         // bound? It could also be an expression consisting of unbound variables.
-                        EvalExpression arg = evaluateRec(funcCall.arg());
+                        EvalExpression arg = funcCall.arg();
+                        if (containsOnlyFreeVars(func, freeMarkers)) {
+                            arg = evaluateRec(arg, freeMarkers, topLevel);
+                        }
                         return EvalFuncCall.create(func, arg);
                     }
                 },
                 boundVariable -> {
                     Slot slot = boundVariable.slot();
                     if (!slot.isValue) {
-                        slot.expr = evaluateRec(slot.expr);
+                        slot.expr = evaluateRec(slot.expr, freeMarkers, topLevel);
                         slot.isValue = true;
                     }
                     return slot.expr;
@@ -50,19 +67,27 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
         );
     }
 
-    private EvalExpression bindVariable(Object varMarker, String originalVarName, Slot slot, EvalExpression expression) {
+    private EvalExpression bindVariable(Object varMarker, Slot slot, EvalExpression expression) {
         return expression.visit(
-                lambda -> EvalLambda.create(
-                        lambda.varMarker(), lambda.originalVarName(),
-                        bindVariable(varMarker, originalVarName, slot, lambda.body())),
+                lambda -> {
+                    // TODO: Is it possible to get ambiguous markers? What if a lambda in the
+                    // original code is able to have a copy of itself with both an outer variable
+                    // and normal unbound variable?
+                    if (lambda.varMarker() == varMarker) {
+                        return lambda;
+                    }
+                    return EvalLambda.create(
+                            lambda.varMarker(), lambda.originalVarName(),
+                            bindVariable(varMarker, slot, lambda.body()));
+                },
                 funcCall -> EvalFuncCall.create(
-                        bindVariable(varMarker, originalVarName, slot, funcCall.func()),
-                        bindVariable(varMarker, originalVarName, slot, funcCall.arg())),
+                        bindVariable(varMarker, slot, funcCall.func()),
+                        bindVariable(varMarker, slot, funcCall.arg())),
                 boundVariable -> {
                     if (containsUsage(varMarker, boundVariable.slot().expr)) {
                         return EvalFuncCall.create(
-                                EvalLambda.create(varMarker, originalVarName, boundVariable),
-                                expression);
+                                EvalLambda.create(varMarker, slot.originalVarName, boundVariable),
+                                slot.expr);
                     } else {
                         return boundVariable;
                     }
@@ -85,6 +110,19 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
                 boundVariable -> containsUsage(varMarker, boundVariable.slot().expr),
                 unboundVariable -> unboundVariable.varMarker() == varMarker,
                 freeVariable -> false
+        );
+    }
+
+    private boolean containsOnlyFreeVars(EvalExpression expression, Set<Object> freeMarkers) {
+        return expression.visit(
+                // TODO: Think more about this. The expression has been evaluated, so what we're
+                // really saying here is that the expression isn't going to change anymore.
+                lambda -> true,
+                funcCall -> containsOnlyFreeVars(funcCall.arg(), freeMarkers) &&
+                        containsOnlyFreeVars(funcCall.func(), freeMarkers),
+                boundVariable -> containsOnlyFreeVars(boundVariable.slot().expr, freeMarkers),
+                unboundVariable -> freeMarkers.contains(unboundVariable.varMarker()),
+                freeVariable -> true
         );
     }
 

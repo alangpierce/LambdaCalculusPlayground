@@ -99,6 +99,6 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("1", "FACTREC(L x[x])(0)");
         assertResult("1", "FACTREC(L x[1])(1)");
         assertResult("2", "FACTREC(L x[1])(2)");
-//        assertResult("2", "FACT(2)");
+        assertResult("2", "FACT(2)");
     }
 }
