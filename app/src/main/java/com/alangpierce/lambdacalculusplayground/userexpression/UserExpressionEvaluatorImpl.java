@@ -3,6 +3,7 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 import android.util.Log;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.evaluator.EvaluationFailedException;
 import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.Expressions;
@@ -30,21 +31,19 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     }
 
     /**
-     * Run an expression to completion.
-     *
-     * If it takes more than 1000 steps to finish, just run it 1000 steps.
+     * Run an expression to completion. If there was any kind of problem, instead throw an exception
+     * with a user-facing message with a description of the problem.
      */
     @Override
-    public @Nullable UserExpression evaluate(UserExpression userExpression) {
+    public UserExpression evaluate(UserExpression userExpression) throws EvaluationFailedException {
         try {
             Expression expression = toExpression(userExpression);
             expression = expressionEvaluator.evaluate(expression);
             return collapseDefinedTerms(fromExpression(expression));
         } catch (InvalidExpressionException e) {
-            // If there's a problem, just ignore the operation. This isn't great, but is better than
-            // crashing.
-            Log.e(TAG, "Evaluated an invalid expression.");
-            return null;
+            // This should never happen, so give a generic error message.
+            Log.e(TAG, "Unexpected invalid expression.", e);
+            throw new EvaluationFailedException("Oops, something went wrong!");
         }
     }
 

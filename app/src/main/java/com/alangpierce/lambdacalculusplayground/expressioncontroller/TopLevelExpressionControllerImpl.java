@@ -2,12 +2,14 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.util.TypedValue;
 import android.view.View.MeasureSpec;
+import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
+import com.alangpierce.lambdacalculusplayground.evaluator.EvaluationFailedException;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
@@ -110,10 +112,12 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private void handleExecuteClick() {
-        UserExpression newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
-        if (newExpr == null) {
-            // If there was a problem, just ignore the operation. This isn't great, but is better
-            // than crashing.
+        UserExpression newExpr;
+        try {
+            newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
+        } catch (EvaluationFailedException e) {
+            Toast.makeText(
+                    view.getNativeView().getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
         TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(

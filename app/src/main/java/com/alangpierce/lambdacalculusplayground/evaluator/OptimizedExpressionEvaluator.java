@@ -1,24 +1,76 @@
 package com.alangpierce.lambdacalculusplayground.evaluator;
 
+import android.util.Log;
+
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.google.common.base.Throwables;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
+    private static final String TAG = "ExpressionEvaluator";
+
     @Override
-    public Expression evaluate(Expression expression) {
+    public Expression evaluate(Expression expression) throws EvaluationFailedException {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<Expression> future = executorService.submit(() -> evaluateInterruptible(expression));
+        try {
+            return future.get(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw Throwables.propagate(e);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof StackOverflowError) {
+                throw new EvaluationFailedException("Evaluation took too long.");
+            }
+            Log.e(TAG, "Error evaluating expression.", e.getCause());
+            throw new EvaluationFailedException("Something went wrong. :-(");
+        } catch (TimeoutException e) {
+            throw new EvaluationFailedException("Evaluation took too long.");
+        } finally {
+            future.cancel(true);
+        }
+
+    }
+
+    private Expression evaluateInterruptible(Expression expression) throws InterruptedException {
         EvalExpression evalExpr = compile(new HashMap<>(), expression);
-        EvalExpression result = evaluateRec(evalExpr, new HashSet<>(), true);
+        EvalExpression result;
+        try {
+            result = evaluateRec(evalExpr, new HashSet<>(), true);
+        } catch (EvaluationInterruptedException e) {
+            // Clear the interrupted flag since we're switching to throwing InterruptedException.
+            if (!Thread.interrupted()) {
+                Log.w(TAG, "Caught EvaluationInterruptedException but the thread was not interrupted.");
+            }
+            throw new InterruptedException();
+        }
         return toExpression(result);
     }
 
+    /**
+     * Special exception for dealing with the interrupted flag. We use an unchecked exception
+     * because checked exceptions don't play very well with the visitor pattern.
+     */
+    private static class EvaluationInterruptedException extends RuntimeException {
+    }
+
     private EvalExpression evaluateRec(EvalExpression evalExpression, Set<Object> freeMarkers, boolean topLevel) {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new EvaluationInterruptedException();
+        }
         return evalExpression.visit(
                 lambda -> {
                     if (topLevel) {

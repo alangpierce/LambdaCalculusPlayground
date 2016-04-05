@@ -57,7 +57,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
         super.setUp();
     }
 
-    private void assertResult(String expectedResultStr, String exprStr) {
+    private void assertResult(String expectedResultStr, String exprStr) throws Exception {
         UserExpression expectedResult = UserExpressionParser.parse(expectedResultStr);
         UserExpression actualResult =
                 userExpressionEvaluator.evaluate(UserExpressionParser.parse(exprStr));
@@ -71,23 +71,23 @@ public class UserExpressionEvaluatorTest extends TestCase {
         definitionManager.updateDefinition(defName, fullExpr);
     }
 
-    public void testBooleans() {
+    public void testBooleans() throws Exception {
         assertResult("FALSE", "NOT(TRUE)");
     }
 
-    public void testMath() {
+    public void testMath() throws Exception {
         assertResult("3", "+(1)(2)");
         assertResult("6", "*(2)(3)");
         assertResult("FALSE", "ISZERO(2)");
         assertResult("TRUE", "ISZERO(0)");
     }
 
-    public void testPair() {
+    public void testPair() throws Exception {
         assertResult("2", "LHS(PAIR(2)(3))");
         assertResult("3", "RHS(PAIR(2)(3))");
     }
 
-    public void testPredecessor() {
+    public void testPredecessor() throws Exception {
         assertResult("0", "PRED(0)");
         assertResult("0", "PRED(1)");
         assertResult("1", "PRED(2)");
@@ -95,7 +95,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("3", "PRED(4)");
     }
 
-    public void testFact() {
+    public void testFact() throws Exception {
         assertResult("1", "FACTREC(L x[x])(0)");
         assertResult("1", "FACTREC(L x[1])(1)");
         assertResult("2", "FACTREC(L x[1])(2)");

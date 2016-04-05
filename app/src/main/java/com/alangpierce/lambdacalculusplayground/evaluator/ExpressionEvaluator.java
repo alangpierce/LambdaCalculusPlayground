@@ -6,5 +6,5 @@ public interface ExpressionEvaluator {
     /**
      * Step an expression until it is a value.
      */
-    Expression evaluate(Expression expression);
+    Expression evaluate(Expression expression) throws EvaluationFailedException;
 }
