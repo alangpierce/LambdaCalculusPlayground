@@ -39,12 +39,29 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
         try {
             Expression expression = toExpression(userExpression);
             expression = expressionEvaluator.evaluate(expression);
-            return collapseDefinedTerms(fromExpression(expression));
+            UserExpression result = collapseDefinedTerms(fromExpression(expression));
+            if (expressionSize(result) > 30) {
+                throw new EvaluationFailedException(
+                        "The result is too big to fit. Double-check your work!");
+            }
+            return result;
         } catch (InvalidExpressionException e) {
             // This should never happen, so give a generic error message.
             Log.e(TAG, "Unexpected invalid expression.", e);
             throw new EvaluationFailedException("Oops, something went wrong!");
         }
+    }
+
+    /**
+     * Determine a rough measure of how big an expression is from a user's perspective. An
+     * expression that's too big will be ignored because it's too unwieldy.
+     */
+    private int expressionSize(UserExpression userExpression) {
+        return userExpression.visit(
+                lambda -> 1 + expressionSize(lambda.body()),
+                funcCall -> expressionSize(funcCall.func()) + expressionSize(funcCall.arg()),
+                variable -> 1,
+                reference -> 1);
     }
 
     private UserExpression step(UserExpression userExpression) {

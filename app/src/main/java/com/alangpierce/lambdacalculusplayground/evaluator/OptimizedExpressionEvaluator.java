@@ -32,6 +32,7 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
             Thread.currentThread().interrupt();
             throw Throwables.propagate(e);
         } catch (ExecutionException e) {
+            // Often times infinite loops manifest as stack overflow, so treat them the same.
             if (e.getCause() instanceof StackOverflowError) {
                 throw new EvaluationFailedException("Evaluation took too long.");
             }
@@ -42,7 +43,6 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
         } finally {
             future.cancel(true);
         }
-
     }
 
     private Expression evaluateInterruptible(Expression expression) throws InterruptedException {
