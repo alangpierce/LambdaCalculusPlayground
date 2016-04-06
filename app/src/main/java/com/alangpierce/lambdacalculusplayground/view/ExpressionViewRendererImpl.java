@@ -56,6 +56,11 @@ public class ExpressionViewRendererImpl implements ExpressionViewRenderer {
     }
 
     @Override
+    public View makeDefinitionView() {
+        return inflateExpressionComponent(R.layout.def_symbol);
+    }
+
+    @Override
     public View makeMissingBodyView() {
         return inflateExpressionComponent(R.layout.missing_body);
     }

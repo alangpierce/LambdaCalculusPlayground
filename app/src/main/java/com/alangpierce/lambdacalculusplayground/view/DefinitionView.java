@@ -41,7 +41,7 @@ public class DefinitionView {
                 expressionView.getNativeView() : renderer.makeMissingBodyView();
         LinearLayout view = renderer.makeExpressionViewWithChildren(ImmutableList.of(
                 referenceView,
-                renderer.makeTextView(":="),
+                renderer.makeDefinitionView(),
                 expressionNativeView
         ));
         view.setLayoutParams(Views.layoutParamsForRelativePos(point));
