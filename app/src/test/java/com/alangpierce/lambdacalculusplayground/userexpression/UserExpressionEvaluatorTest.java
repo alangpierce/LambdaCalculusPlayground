@@ -101,4 +101,9 @@ public class UserExpressionEvaluatorTest extends TestCase {
         assertResult("2", "FACTREC(L x[1])(2)");
         assertResult("2", "FACT(2)");
     }
+
+    public void testAvoidNameCollisions() throws Exception {
+        assertResult("L y'[y]", "L x[L y[x]](y)");
+        assertResult("L y'[y(y')]", "L x[L y[x(y)]](y)");
+    }
 }

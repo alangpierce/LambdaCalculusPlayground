@@ -57,7 +57,7 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
             }
             throw new InterruptedException();
         }
-        return toExpression(result);
+        return toExpression(result, new HashMap<>());
     }
 
     /**
@@ -203,19 +203,56 @@ public class OptimizedExpressionEvaluator implements ExpressionEvaluator {
         );
     }
 
-    private Expression toExpression(EvalExpression evalExpression) {
+    private Expression toExpression(EvalExpression evalExpression,
+            Map<Object, String> namesByMarker) {
         return evalExpression.visit(
-                // TODO: Deal with cases where we need to change the var name.
-                lambda -> Lambda.create(lambda.originalVarName(), toExpression(lambda.body())),
+                lambda -> {
+                    String varName = lambda.originalVarName();
+                    // We shouldn't use a variable name that conflicts with a user-specified name,
+                    // so add primes until it doesn't conflict.
+                    // TODO: Prove that this doesn't create conflicts among unbound variable names.
+                    while (containsFreeVarName(lambda.body(), varName)) {
+                        varName = varName + "'";
+                    }
+                    namesByMarker.put(lambda.varMarker(), varName);
+                    Lambda result = Lambda.create(varName,
+                            toExpression(lambda.body(), namesByMarker));
+                    namesByMarker.remove(lambda.varMarker());
+                    return result;
+                },
                 funcCall -> FuncCall.create(
-                        toExpression(funcCall.func()), toExpression(funcCall.arg())),
+                        toExpression(funcCall.func(), namesByMarker), toExpression(funcCall.arg(), namesByMarker)),
                 boundVariable -> {
                     throw new IllegalStateException(
                             "Bound variables shouldn't exist in value expressions.");
                 },
                 // TODO: Deal with cases where the var name needs to change.
-                unboundVariable -> Variable.create(unboundVariable.originalVarName()),
+                unboundVariable -> {
+                    String varName = namesByMarker.get(unboundVariable.varMarker());
+                    if (varName == null) {
+                        throw new IllegalStateException(
+                                "All unbound variables must be assigned names.");
+                    }
+                    return Variable.create(varName);
+                },
                 freeVariable -> Variable.create(freeVariable.varName())
         );
     }
+
+    /**
+     * Determine if the given name is used as a free variable in the given expression. "Free" means
+     * that the variable specified directly by the user, so we're not allowed to change the name.
+     *
+     * If we care about performance, this would be pretty easy to optimize.
+     */
+    private boolean containsFreeVarName(EvalExpression evalExpression, String name) {
+        return evalExpression.visit(
+                lambda -> containsFreeVarName(lambda.body(), name),
+                funcCall -> containsFreeVarName(funcCall.func(), name) ||
+                        containsFreeVarName(funcCall.arg(), name),
+                boundVariable -> false,
+                unboundVariable -> false,
+                freeVariable -> freeVariable.varName().equals(name));
+    }
+
 }

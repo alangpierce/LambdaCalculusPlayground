@@ -7,9 +7,9 @@ public class UserExpressionParser {
         if (str.endsWith("]")) {
             // Expression like "L x[x(x)]"
             Assert.assertEquals("L ", str.substring(0, 2));
-            String varName = str.substring(2, 3);
-            Assert.assertEquals("[", str.substring(3, 4));
-            String bodyStr = str.substring(4, str.length() - 1);
+            int openBracketIndex = str.indexOf('[');
+            String varName = str.substring(2, openBracketIndex);
+            String bodyStr = str.substring(openBracketIndex + 1, str.length() - 1);
             return UserLambda.create(varName, parse(bodyStr));
         } else if (str.endsWith(")")) {
             int level = 1;
