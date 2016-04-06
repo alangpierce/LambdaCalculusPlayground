@@ -1,9 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.compat.Compat;
 import com.alangpierce.lambdacalculusplayground.component.ComponentParent;
 import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotView;
@@ -23,14 +25,16 @@ public class DefinitionView {
     private final ProducerView referenceProducerView;
     private final SlotView expressionSlotView;
     private final View nativeView;
+    private final RelativeLayout canvasRoot;
 
     public DefinitionView(
             DragObservableGenerator dragObservableGenerator, ProducerView referenceProducerView,
-            SlotView expressionSlotView, View nativeView) {
+            SlotView expressionSlotView, View nativeView, RelativeLayout canvasRoot) {
         this.dragObservableGenerator = dragObservableGenerator;
         this.referenceProducerView = referenceProducerView;
         this.expressionSlotView = expressionSlotView;
         this.nativeView = nativeView;
+        this.canvasRoot = canvasRoot;
     }
 
     public static DefinitionView render(DragObservableGenerator dragObservableGenerator,
@@ -52,7 +56,7 @@ public class DefinitionView {
                 new SlotView(dragObservableGenerator, renderer, expressionComponentParent(view),
                         expressionView, expressionNativeView);
         return new DefinitionView(dragObservableGenerator, referenceProducerView,
-                expressionSlotView, view);
+                expressionSlotView, view, canvasRoot);
     }
 
     public static ComponentParent expressionComponentParent(LinearLayout mainView) {
@@ -83,5 +87,18 @@ public class DefinitionView {
 
     public SlotView getExpressionSlot() {
         return expressionSlotView;
+    }
+
+    public void startDrag() {
+        canvasRoot.bringChildToFront(nativeView);
+        ViewPropertyAnimator animator = nativeView.animate()
+                .setDuration(100).scaleX(1.05f).scaleY(1.05f);
+        Compat.translationZBy(animator, 10);
+    }
+
+    public void endDrag() {
+        ViewPropertyAnimator animator = nativeView.animate()
+                .setDuration(100).scaleX(1.0f).scaleY(1.0f);
+        Compat.translationZBy(animator, -10);
     }
 }

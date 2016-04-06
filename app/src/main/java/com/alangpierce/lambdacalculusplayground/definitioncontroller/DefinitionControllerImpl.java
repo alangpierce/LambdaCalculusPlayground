@@ -127,7 +127,7 @@ public class DefinitionControllerImpl implements DefinitionController {
 
     @Override
     public void startDrag() {
-        // TODO: Do something here.
+        view.startDrag();
     }
 
     @Override
@@ -138,7 +138,7 @@ public class DefinitionControllerImpl implements DefinitionController {
 
     @Override
     public void endDrag() {
-        // TODO: Do something here.
+        view.endDrag();
     }
 
     @Override
