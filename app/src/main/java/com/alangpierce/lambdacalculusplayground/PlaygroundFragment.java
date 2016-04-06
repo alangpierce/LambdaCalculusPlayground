@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 
@@ -132,17 +133,24 @@ public class PlaygroundFragment extends Fragment {
                 .setTitle(R.string.create_definition)
                 .setView(inputView)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    String defName = nameEditText.getText().toString();
-                    // Create the view at (50dp, 50dp).
-                    int shiftPixels = (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
-                    expressionManager.createEmptyDefinition(
-                            defName, DrawableAreaPoint.create(shiftPixels, shiftPixels));
+                    addDefinitionWithName(nameEditText.getText().toString());
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
         alertDialog.getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
+    }
+
+    private void addDefinitionWithName(String defName) {
+        // Create the view at (50dp, 50dp).
+        int shiftPixels = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
+        boolean alreadyOnCanvas = expressionManager.placeDefinition(
+                defName, DrawableAreaPoint.create(shiftPixels, shiftPixels));
+        if (alreadyOnCanvas) {
+            Toast.makeText(getActivity(),
+                    "Showing existing definition.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

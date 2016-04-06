@@ -40,4 +40,12 @@ public class PointConverterImpl implements PointConverter {
                 drawableAreaPoint.getX() - panOffset.getX(),
                 drawableAreaPoint.getY() - panOffset.getY());
     }
+
+    @Override
+    public ScreenPoint toScreenPoint(DrawableAreaPoint drawableAreaPoint) {
+        ScreenPoint rootViewPos = Views.getScreenPos(rootView);
+        return ScreenPoint.create(
+                drawableAreaPoint.getX() + rootViewPos.getX(),
+                drawableAreaPoint.getY() + rootViewPos.getY());
+    }
 }

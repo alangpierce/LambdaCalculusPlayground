@@ -144,8 +144,10 @@ public class DefinitionControllerImpl implements DefinitionController {
     @Override
     public void handlePositionChange(ScreenPoint screenPos) {
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
+        DrawableAreaPoint drawableAreaPoint = pointConverter.toDrawableAreaPoint(screenPos);
         screenDefinition = ScreenDefinition.create(
                 screenDefinition.defName(), screenDefinition.expr(), canvasPos);
+        view.setCanvasPos(drawableAreaPoint);
         onChangeCallback.onChange(this);
     }
 

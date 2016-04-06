@@ -22,5 +22,11 @@ public interface TopLevelExpressionManager {
     TopLevelExpressionController sendExpressionToTopLevel(
             ExpressionController expression, ScreenPoint screenPos);
 
-    void createEmptyDefinition(String defName, DrawableAreaPoint screenPos);
+    /**
+     * Take the given name, create a definition for it if necessary, and place the definition on the
+     * canvas at the given point. If it's already on the canvas, just move it.
+     *
+     * Returns true if the definition was already on the canvas and was moved.
+     */
+    boolean placeDefinition(String defName, DrawableAreaPoint screenPos);
 }

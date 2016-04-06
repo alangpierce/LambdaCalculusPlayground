@@ -21,6 +21,8 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.google.common.collect.ImmutableList;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
@@ -32,6 +34,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final PanManager panManager;
     private final DefinitionManager definitionManager;
     private final UserExpressionEvaluator userExpressionEvaluator;
+
+    private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
@@ -62,10 +66,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
-        for (Entry<Integer, ScreenDefinition> entry : expressionState.definitionsById()) {
-            int defId = entry.getKey();
-            ScreenDefinition screenDefinition = entry.getValue();
-            renderDefinition(defId, screenDefinition);
+        for (ScreenDefinition definition : expressionState.definitions()) {
+            renderDefinition(definition);
         }
         renderPalette();
     }
@@ -133,27 +135,37 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     @Override
-    public void createEmptyDefinition(String defName, DrawableAreaPoint drawableAreaPoint) {
-        CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
-        ScreenDefinition screenDefinition = ScreenDefinition.create(defName, null, canvasPoint);
-        int defId = expressionState.addScreenDefinition(screenDefinition);
-        renderDefinition(defId, screenDefinition);
+    public boolean placeDefinition(String defName, DrawableAreaPoint drawableAreaPoint) {
+        DefinitionController existingController = definitionControllers.get(defName);
+        if (existingController != null) {
+            ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);
+            existingController.handlePositionChange(screenPoint);
+            return true;
+        } else {
+            CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
+            ScreenDefinition definition = ScreenDefinition.create(defName, null, canvasPoint);
+            expressionState.setDefinition(definition);
+            renderDefinition(definition);
+            return false;
+        }
     }
 
-    private DefinitionController renderDefinition(int defId, ScreenDefinition screenDefinition) {
+    private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {
         DefinitionController controller =
                 controllerFactoryFactory.create(this).createDefinitionController(screenDefinition);
         panManager.registerPanListener(controller);
+        definitionControllers.put(screenDefinition.defName(), controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
                 ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
-                expressionState.modifyDefinition(defId, newScreenDefinition);
+                expressionState.setDefinition(newScreenDefinition);
                 Expression expression =
                         userExpressionEvaluator.convertToExpression(newScreenDefinition.expr());
                 definitionManager.updateDefinition(newScreenDefinition.defName(), expression);
             } else {
-                expressionState.deleteDefinition(defId);
+                expressionState.deleteDefinition(screenDefinition.defName());
                 panManager.unregisterPanListener(controller);
+                definitionControllers.remove(screenDefinition.defName());
             }
         });
         return controller;
