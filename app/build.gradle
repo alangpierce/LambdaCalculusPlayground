@@ -46,4 +46,5 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.1'
     compile 'com.artemzin.rxjava:proguard-rules:1.1.1.0'
     provided 'com.google.auto.value:auto-value:1.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
@@ -23,6 +22,10 @@ import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class PlaygroundFragment extends Fragment {
     public PlaygroundFragment() {
         // Required empty public constructor.
@@ -30,9 +33,11 @@ public class PlaygroundFragment extends Fragment {
 
     private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
 
+    @Bind(R.id.drawer_root_view) DrawerLayout drawerRoot;
+    @Bind(R.id.canvas_view) RelativeLayout canvasView;
+
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
     TopLevelExpressionManager expressionManager;
-    private DrawerLayout drawerRoot;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
@@ -70,12 +75,7 @@ public class PlaygroundFragment extends Fragment {
                              Bundle savedInstanceState) {
         RelativeLayout abovePaletteRoot = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
-        drawerRoot = (DrawerLayout) abovePaletteRoot.findViewById(R.id.drawer_root_view);
-        RelativeLayout canvasView = (RelativeLayout) abovePaletteRoot.findViewById(R.id.canvas_view);
-
-        FloatingActionButton createDefinitionButton =
-                (FloatingActionButton) abovePaletteRoot.findViewById(R.id.create_definition_button);
-        createDefinitionButton.setOnClickListener((view) -> showNewDefinitionDialog());
+        ButterKnife.bind(this, abovePaletteRoot);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(
@@ -96,6 +96,11 @@ public class PlaygroundFragment extends Fragment {
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }
         return abovePaletteRoot;
+    }
+
+    @OnClick(R.id.create_definition_button)
+    public void createDefinitionClick() {
+        showNewDefinitionDialog();
     }
 
     @Override
