@@ -12,6 +12,7 @@
         android:id="@+id/action_define"
         android:orderInCategory="101"
         android:title="@string/action_define"
+        android:icon="@drawable/def_symbol"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_view_demo_video"

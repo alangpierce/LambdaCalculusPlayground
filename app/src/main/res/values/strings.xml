@@ -6,5 +6,5 @@
     <string name="action_view_demo_video">View Demo Video</string>
     <string name="demo_video_url">https://www.youtube.com/watch?v=0OzpqDDniDs</string>
 
-    <string name="create_definition">Create a definition</string>
+    <string name="create_definition">Create or show definition</string>
 </resources>
