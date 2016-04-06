@@ -5,7 +5,6 @@ import android.support.v4.widget.DrawerLayout;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
@@ -18,12 +17,13 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.google.common.collect.ImmutableList;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Nullable;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
     private final TopLevelExpressionState expressionState;
@@ -33,7 +33,6 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final DrawerLayout drawerRoot;
     private final PanManager panManager;
     private final DefinitionManager definitionManager;
-    private final UserExpressionEvaluator userExpressionEvaluator;
 
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
@@ -41,8 +40,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
-            PanManager panManager, DefinitionManager definitionManager,
-            UserExpressionEvaluator userExpressionEvaluator) {
+            PanManager panManager, DefinitionManager definitionManager) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
@@ -50,7 +48,6 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         this.drawerRoot = drawerRoot;
         this.panManager = panManager;
         this.definitionManager = definitionManager;
-        this.userExpressionEvaluator = userExpressionEvaluator;
     }
 
     @Override
@@ -142,11 +139,15 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             existingController.handlePositionChange(screenPoint);
             return true;
         } else {
+            @Nullable UserExpression existingDefinition =
+                    definitionManager.getUserDefinition(defName);
             CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
-            ScreenDefinition definition = ScreenDefinition.create(defName, null, canvasPoint);
+            // Either make a new blank definition or use the existing one.
+            ScreenDefinition definition = ScreenDefinition.create(
+                    defName, existingDefinition, canvasPoint);
             expressionState.setDefinition(definition);
             renderDefinition(definition);
-            return false;
+            return existingDefinition != null;
         }
     }
 
@@ -159,9 +160,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             if (newController != null) {
                 ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
                 expressionState.setDefinition(newScreenDefinition);
-                Expression expression =
-                        userExpressionEvaluator.convertToExpression(newScreenDefinition.expr());
-                definitionManager.updateDefinition(newScreenDefinition.defName(), expression);
+                definitionManager.updateDefinition(newScreenDefinition.defName(), newScreenDefinition.expr());
             } else {
                 expressionState.deleteDefinition(screenDefinition.defName());
                 panManager.unregisterPanListener(controller);

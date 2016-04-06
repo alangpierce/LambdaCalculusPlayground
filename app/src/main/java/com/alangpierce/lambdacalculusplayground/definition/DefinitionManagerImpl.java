@@ -4,6 +4,11 @@ import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
 import com.alangpierce.lambdacalculusplayground.expression.Variable;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionParser;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
@@ -18,6 +23,8 @@ import javax.annotation.Nullable;
 public class DefinitionManagerImpl implements DefinitionManager {
     private final Map<String, Expression> definitionMap =
             Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, UserExpression> userDefinitionMap =
+            Collections.synchronizedMap(new HashMap<>());
     private final SetMultimap<Expression, String> namesByExpression =
             Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
@@ -26,56 +33,20 @@ public class DefinitionManagerImpl implements DefinitionManager {
 
     public static DefinitionManager createWithDefaults() {
         DefinitionManagerImpl result = new DefinitionManagerImpl();
-        result.updateDefinition("+",
-                Lambda.create("n",
-                        Lambda.create("m",
-                                Lambda.create("s",
-                                        Lambda.create("z",
-                                                FuncCall.create(
-                                                        FuncCall.create(
-                                                                Variable.create("n"),
-                                                                Variable.create("s")
-                                                        ),
-                                                        FuncCall.create(
-                                                                FuncCall.create(
-                                                                        Variable.create("m"),
-                                                                        Variable.create("s")
-                                                                ),
-                                                                Variable.create("z")
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                )
-        );
-
-        result.updateDefinition("TRUE",
-                Lambda.create("t",
-                        Lambda.create("f",
-                                Variable.create("t")
-                        )
-                )
-        );
-
-        result.updateDefinition("FALSE",
-                Lambda.create("t",
-                        Lambda.create("f",
-                                Variable.create("f")
-                        )
-                )
-        );
+        result.updateDefinition("+", UserExpressionParser.parse("L n[L m[L s[L z[n(s)(m(s)(z))]]]]"));
+        result.updateDefinition("TRUE", UserExpressionParser.parse("L t[L f[t]]"));
+        result.updateDefinition("FALSE", UserExpressionParser.parse("L t[L f[f]]"));
 
         for (int i = 0; i < 20; i++) {
-            Expression body = Variable.create("z");
+            UserExpression body = UserVariable.create("z");
             for (int j = 0; j < i; j++) {
-                body = FuncCall.create(Variable.create("s"), body);
+                body = UserFuncCall.create(UserVariable.create("s"), body);
             }
             result.updateDefinition(
                     Integer.toString(i),
-                    Lambda.create(
+                    UserLambda.create(
                             "s",
-                            Lambda.create(
+                            UserLambda.create(
                                     "z",
                                     body
                             )
@@ -86,8 +57,8 @@ public class DefinitionManagerImpl implements DefinitionManager {
     }
 
     @Override
-    public @Nullable Expression resolveDefinition(String definitionName) {
-        return definitionMap.get(definitionName);
+    public @Nullable UserExpression getUserDefinition(String definitionName) {
+        return userDefinitionMap.get(definitionName);
     }
 
     @Override
@@ -102,9 +73,47 @@ public class DefinitionManagerImpl implements DefinitionManager {
     }
 
     @Override
-    public void updateDefinition(String name, @Nullable Expression expression) {
+    public void updateDefinition(String name, @Nullable UserExpression userExpression) {
+        Expression expression;
+        try {
+            expression = toExpression(userExpression);
+        } catch (InvalidExpressionException e) {
+            expression = null;
+        }
+
+        userDefinitionMap.put(name, userExpression);
         Expression oldExpression = definitionMap.put(name, expression);
         namesByExpression.remove(oldExpression, name);
         namesByExpression.put(expression, name);
     }
+
+    /**
+     * Given a UserExpression, convert to an Expression if possible.
+     * <p>
+     * throws InvalidExpressionException if there was a problem.
+     */
+    @Override
+    public Expression toExpression(@Nullable UserExpression e) throws InvalidExpressionException {
+        if (e == null) {
+            throw new InvalidExpressionException();
+        }
+        return e.visit(
+                lambda -> {
+                    if (lambda.body() == null) {
+                        throw new InvalidExpressionException();
+                    }
+                    return Lambda.create(lambda.varName(), toExpression(lambda.body()));
+                },
+                funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
+                variable -> Variable.create(variable.varName()),
+                reference -> {
+                    Expression expression = definitionMap.get(reference.defName());
+                    if (expression == null) {
+                        throw new InvalidExpressionException();
+                    }
+                    return expression;
+                }
+        );
+    }
+
 }

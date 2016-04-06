@@ -1,11 +1,12 @@
 package com.alangpierce.lambdacalculusplayground.definition;
 
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 import javax.annotation.Nullable;
 
 public interface DefinitionManager {
-    @Nullable Expression resolveDefinition(String definitionName);
+    @Nullable UserExpression getUserDefinition(String definitionName);
 
     /**
      * Returns the name of the given expression, or null if the expression doesn't match a
@@ -14,5 +15,13 @@ public interface DefinitionManager {
      */
     @Nullable String tryResolveExpression(Expression expression);
 
-    void updateDefinition(String name, @Nullable Expression expression);
+    void updateDefinition(String name, @Nullable UserExpression userExpression);
+
+    class InvalidExpressionException extends RuntimeException {
+    }
+
+    /**
+     * Resolve the UserExpression to an expression, expanding any definitions if necessary.
+     */
+    Expression toExpression(UserExpression userExpression) throws InvalidExpressionException;
 }

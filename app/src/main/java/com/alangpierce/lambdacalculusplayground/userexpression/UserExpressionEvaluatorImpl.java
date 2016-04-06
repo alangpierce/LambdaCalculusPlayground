@@ -3,13 +3,11 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 import android.util.Log;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager.InvalidExpressionException;
 import com.alangpierce.lambdacalculusplayground.evaluator.EvaluationFailedException;
 import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.Expressions;
-import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
-import com.alangpierce.lambdacalculusplayground.expression.Lambda;
-import com.alangpierce.lambdacalculusplayground.expression.Variable;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +35,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
     @Override
     public UserExpression evaluate(UserExpression userExpression) throws EvaluationFailedException {
         try {
-            Expression expression = toExpression(userExpression);
+            Expression expression = definitionManager.toExpression(userExpression);
             expression = expressionEvaluator.evaluate(expression);
             UserExpression result = collapseDefinedTerms(fromExpression(expression));
             if (expressionSize(result) > 30) {
@@ -66,7 +64,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
 
     private UserExpression step(UserExpression userExpression) {
         try {
-            Expression expression = toExpression(userExpression);
+            Expression expression = definitionManager.toExpression(userExpression);
             @Nullable Expression steppedExpression = Expressions.step(expression);
             if (steppedExpression == null) {
                 return null;
@@ -82,7 +80,9 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
      * possible.
      */
     private UserExpression collapseDefinedTerms(UserExpression userExpression) {
-        String defName = definitionManager.tryResolveExpression(toExpression(userExpression));
+        // TODO: Maybe just resolve the UserExpression?
+        String defName = definitionManager.tryResolveExpression(
+                definitionManager.toExpression(userExpression));
         if (defName != null) {
             return UserReference.create(defName);
         }
@@ -107,44 +107,15 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
         );
     }
 
-    private static class InvalidExpressionException extends RuntimeException {
-    }
-
     @Override
     public @Nullable Expression convertToExpression(@Nullable UserExpression userExpression) {
         if (userExpression == null) {
             return null;
         }
         try {
-            return toExpression(userExpression);
+            return definitionManager.toExpression(userExpression);
         } catch (InvalidExpressionException e) {
             return null;
         }
-    }
-
-    /**
-     * Given a UserExpression, convert to an Expression if possible.
-     * <p>
-     * throws InvalidExpressionException if there was a problem.
-     */
-    private Expression toExpression(UserExpression e) throws InvalidExpressionException {
-        return e.visit(
-                lambda -> {
-                    if (lambda.body() == null) {
-                        throw new InvalidExpressionException();
-                    }
-                    return Lambda.create(lambda.varName(), toExpression(lambda.body()));
-                },
-                funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
-                variable -> Variable.create(variable.varName()),
-                reference -> {
-                    Expression expression =
-                            definitionManager.resolveDefinition(reference.defName());
-                    if (expression == null) {
-                        throw new InvalidExpressionException();
-                    }
-                    return expression;
-                }
-        );
     }
 }

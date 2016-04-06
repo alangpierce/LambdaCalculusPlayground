@@ -3,7 +3,6 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEvaluator;
-import com.alangpierce.lambdacalculusplayground.expression.Expression;
 
 import junit.framework.TestCase;
 
@@ -65,10 +64,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
     }
 
     private void defineTerm(String defName, String exprStr) {
-        UserExpression userExpr = UserExpressionParser.parse(exprStr);
-        Expression fullExpr = userExpressionEvaluator.convertToExpression(userExpr);
-        assertNotNull(fullExpr);
-        definitionManager.updateDefinition(defName, fullExpr);
+        definitionManager.updateDefinition(defName, UserExpressionParser.parse(exprStr));
     }
 
     public void testBooleans() throws Exception {

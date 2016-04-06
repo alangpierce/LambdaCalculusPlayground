@@ -136,11 +136,10 @@ public class PlaygroundModule {
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, PanManager panManager,
-            @DrawerRoot DrawerLayout drawerRoot, DefinitionManager definitionManager,
-            UserExpressionEvaluator userExpressionEvaluator) {
+            @DrawerRoot DrawerLayout drawerRoot, DefinitionManager definitionManager) {
         return new TopLevelExpressionManagerImpl(
                 expressionState, controllerFactoryFactory, dragManager, pointConverter, drawerRoot,
-                panManager, definitionManager, userExpressionEvaluator);
+                panManager, definitionManager);
     }
 
     @Provides
