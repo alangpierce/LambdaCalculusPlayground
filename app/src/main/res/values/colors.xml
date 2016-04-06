@@ -8,4 +8,6 @@
     <color name="palette_delete">#FFAA0000</color>
     <color name="execute_button_background">#FF00AA00</color>
     <color name="execute_button_foreground">#FFFFFFFF</color>
+    <color name="create_definition_foreground">#FFFFFFFF</color>
+    <color name="create_definition_background">#FF00AA00</color>
 </resources>

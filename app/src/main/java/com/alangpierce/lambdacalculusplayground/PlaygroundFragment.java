@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.TypedValue;
@@ -71,6 +72,10 @@ public class PlaygroundFragment extends Fragment {
                 inflater.inflate(R.layout.fragment_playground, container, false);
         drawerRoot = (DrawerLayout) abovePaletteRoot.findViewById(R.id.drawer_root_view);
         RelativeLayout canvasView = (RelativeLayout) abovePaletteRoot.findViewById(R.id.canvas_view);
+
+        FloatingActionButton createDefinitionButton =
+                (FloatingActionButton) abovePaletteRoot.findViewById(R.id.create_definition_button);
+        createDefinitionButton.setOnClickListener((view) -> showNewDefinitionDialog());
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(
