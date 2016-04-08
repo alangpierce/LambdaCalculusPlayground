@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -23,6 +24,7 @@ import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluatorImpl;
+import com.alangpierce.lambdacalculusplayground.view.ExpressionCreatorImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 
@@ -54,6 +56,10 @@ public class PlaygroundModule {
         return activity;
     }
 
+    @Provides Context provideContext(Activity activity) {
+        return activity;
+    }
+
     @Provides
     LayoutInflater provideLayoutInflater(Activity activity) {
         return activity.getLayoutInflater();
@@ -80,6 +86,14 @@ public class PlaygroundModule {
     @Provides @Singleton
     TopLevelExpressionState provideTopLevelExpressionState() {
         return expressionState;
+    }
+
+    @Provides
+    ExpressionCreator provideExpressionCreator(Context context,
+            LayoutInflater layoutInflater, TopLevelExpressionManager expressionManager,
+            PointConverter pointConverter) {
+        return new ExpressionCreatorImpl(context, layoutInflater, expressionManager,
+                pointConverter);
     }
 
     @Provides @Singleton
@@ -127,8 +141,8 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
-            Activity activity, LayoutInflater layoutInflater) {
-        return new ExpressionViewRendererImpl(activity, layoutInflater);
+            Context context, LayoutInflater layoutInflater) {
+        return new ExpressionViewRendererImpl(context, layoutInflater);
     }
 
     @Provides

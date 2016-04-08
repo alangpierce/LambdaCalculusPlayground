@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,15 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
-import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 
 import javax.inject.Inject;
 
@@ -49,7 +38,7 @@ public class PlaygroundFragment extends Fragment {
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
 
     @Inject TopLevelExpressionManager expressionManager;
-    @Inject PointConverter pointConverter;
+    @Inject ExpressionCreator expressionCreator;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
@@ -130,12 +119,12 @@ public class PlaygroundFragment extends Fragment {
 
     @OnClick(R.id.create_lambda_button)
     public void createLambdaClick() {
-        showNewLambdaDialog();
+        expressionCreator.promptCreateLambda();
     }
 
     @OnClick(R.id.create_definition_button)
     public void createDefinitionClick() {
-        showNewDefinitionDialog();
+        expressionCreator.promptCreateDefinition();
     }
 
     @Override
@@ -160,7 +149,7 @@ public class PlaygroundFragment extends Fragment {
                 }
             }
         } else if (item.getItemId() == R.id.action_define) {
-            showNewDefinitionDialog();
+            expressionCreator.promptCreateDefinition();
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(
@@ -168,62 +157,5 @@ public class PlaygroundFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showNewDefinitionDialog() {
-        View inputView =
-                getActivity().getLayoutInflater().inflate(R.layout.definition_name_dialog, null);
-        EditText nameEditText = (EditText) inputView.findViewById(R.id.definition_name);
-        AlertDialog alertDialog = new Builder(getActivity())
-                .setTitle(R.string.create_definition)
-                .setView(inputView)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    addDefinitionWithName(nameEditText.getText().toString());
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        alertDialog.show();
-    }
-
-    private void addDefinitionWithName(String defName) {
-        // Create the view at (50dp, 50dp).
-        int shiftPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
-        boolean alreadyOnCanvas = expressionManager.placeDefinition(
-                defName, DrawableAreaPoint.create(shiftPixels, shiftPixels));
-        if (alreadyOnCanvas) {
-            Toast.makeText(getActivity(),
-                    "Showing existing definition.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showNewLambdaDialog() {
-        View inputView =
-                getActivity().getLayoutInflater().inflate(R.layout.lambda_name_dialog, null);
-        EditText nameEditText = (EditText) inputView.findViewById(R.id.lambda_name);
-        AlertDialog alertDialog = new Builder(getActivity())
-                .setTitle(R.string.create_lambda)
-                .setView(inputView)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    addLambdaWithName(nameEditText.getText().toString());
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        alertDialog.show();
-    }
-
-    private void addLambdaWithName(String varName) {
-        // Create the view at (50dp, 50dp).
-        int shiftPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
-        DrawableAreaPoint drawableAreaPoint = DrawableAreaPoint.create(shiftPixels, shiftPixels);
-        ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);
-        UserLambda expression = UserLambda.create(varName, null);
-        expressionManager.createNewExpression(
-                expression, screenPoint, false /* placeAbovePalette */);
     }
 }
