@@ -25,6 +25,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManagerImpl;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
@@ -106,10 +107,28 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    PaletteDrawerManager providePaletteDrawerManager() {
+    PaletteDrawerManager providePaletteDrawerManager(
+            @Lambda PaletteView lambdaPaletteView, @Definition PaletteView definitionPaletteView) {
         return new PaletteDrawerManagerImpl(
-                lambdaPaletteDrawerRoot, lambdaPaletteDrawer, definitionPaletteDrawerRoot,
-                definitionPaletteDrawer, fabContainer);
+                lambdaPaletteView, definitionPaletteView, lambdaPaletteDrawerRoot,
+                lambdaPaletteDrawer, definitionPaletteDrawerRoot, definitionPaletteDrawer,
+                fabContainer);
+    }
+
+    @Qualifier @interface Lambda {}
+    @Qualifier @interface Definition {}
+    @Provides
+    @Lambda
+    PaletteView provideLambdaPaletteView() {
+        return new PaletteView(lambdaPaletteDrawerRoot, lambdaPaletteDrawer,
+                lambdaPaletteLinearLayout);
+    }
+
+    @Provides
+    @Definition
+    PaletteView provideDefinitionPaletteView() {
+        return new PaletteView(definitionPaletteDrawerRoot, definitionPaletteDrawer,
+                definitionPaletteLinearLayout);
     }
 
     @Provides
@@ -174,10 +193,11 @@ public class PlaygroundModule {
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, PanManager panManager,
-            @DrawerRoot DrawerLayout drawerRoot, DefinitionManager definitionManager) {
+            @DrawerRoot DrawerLayout drawerRoot, DefinitionManager definitionManager,
+            @Lambda PaletteView lambdaPaletteView) {
         return new TopLevelExpressionManagerImpl(
                 expressionState, controllerFactoryFactory, dragManager, pointConverter, drawerRoot,
-                panManager, definitionManager);
+                panManager, definitionManager, lambdaPaletteView);
     }
 
     @Provides

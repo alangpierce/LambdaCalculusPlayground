@@ -33,6 +33,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final DrawerLayout drawerRoot;
     private final PanManager panManager;
     private final DefinitionManager definitionManager;
+    private final PaletteView lambdaPaletteView;
 
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
@@ -40,7 +41,8 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
-            PanManager panManager, DefinitionManager definitionManager) {
+            PanManager panManager, DefinitionManager definitionManager,
+            PaletteView lambdaPaletteView) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
@@ -48,6 +50,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         this.drawerRoot = drawerRoot;
         this.panManager = panManager;
         this.definitionManager = definitionManager;
+        this.lambdaPaletteView = lambdaPaletteView;
     }
 
     @Override
@@ -70,14 +73,13 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     private void renderPalette() {
-        PaletteView view = PaletteView.render(drawerRoot);
-        PaletteController controller = new PaletteController(view);
+        PaletteController controller = new PaletteController(lambdaPaletteView);
         controller.registerCallbacks(dragManager);
 
         for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
             PaletteLambdaController lambdaController =
                     controllerFactoryFactory.create(this).createPaletteLambdaController(varName);
-            view.addChild(lambdaController.getView());
+            lambdaPaletteView.addChild(lambdaController.getView());
         }
     }
 

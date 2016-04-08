@@ -10,6 +10,9 @@ import android.widget.ScrollView;
 public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
     private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
 
+    private final PaletteView lambdaPaletteView;
+    private final PaletteView definitionPaletteView;
+
     private final DrawerLayout lambdaPaletteDrawerRoot;
     private final ScrollView lambdaPaletteDrawer;
 
@@ -20,10 +23,14 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     private boolean isDestroyed = false;
 
-    public PaletteDrawerManagerImpl(DrawerLayout lambdaPaletteDrawerRoot,
-            ScrollView lambdaPaletteDrawer,
+    public PaletteDrawerManagerImpl(
+            PaletteView lambdaPaletteView,
+            PaletteView definitionPaletteView,
+            DrawerLayout lambdaPaletteDrawerRoot, ScrollView lambdaPaletteDrawer,
             DrawerLayout definitionPaletteDrawerRoot, ScrollView definitionPaletteDrawer,
             View fabContainer) {
+        this.lambdaPaletteView = lambdaPaletteView;
+        this.definitionPaletteView = definitionPaletteView;
         this.lambdaPaletteDrawerRoot = lambdaPaletteDrawerRoot;
         this.lambdaPaletteDrawer = lambdaPaletteDrawer;
         this.definitionPaletteDrawerRoot = definitionPaletteDrawerRoot;
@@ -44,11 +51,16 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
         // If this is the first time opening the app, open the drawer after a short delay. This
         // makes it so the palette animates in, which emphasizes that it's a drawer and makes sure
         // the user starts with it visible.
-        lambdaPaletteDrawerRoot.postDelayed(() -> {
-            if (!isDestroyed) {
-                lambdaPaletteDrawerRoot.openDrawer(GravityCompat.END);
-            }
-        }, INITIAL_DRAWER_OPEN_DELAY_MS);
+        if (isFirstTime) {
+            lambdaPaletteDrawerRoot.postDelayed(() -> {
+                if (!isDestroyed) {
+                    lambdaPaletteDrawerRoot.openDrawer(GravityCompat.END);
+                }
+            }, INITIAL_DRAWER_OPEN_DELAY_MS);
+        }
+
+        lambdaPaletteView.onCreateView();
+        definitionPaletteView.onCreateView();
     }
 
     @Override

@@ -17,22 +17,17 @@ import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
     private final DrawerLayout drawerRoot;
-    private final ScrollView scrollView;
+    private final ScrollView drawerView;
     private final LinearLayout linearLayout;
 
-    public PaletteView(DrawerLayout drawerRoot, ScrollView scrollView,
-            LinearLayout linearLayout) {
+    public PaletteView(DrawerLayout drawerRoot, ScrollView drawerView, LinearLayout linearLayout) {
         this.drawerRoot = drawerRoot;
-        this.scrollView = scrollView;
+        this.drawerView = drawerView;
         this.linearLayout = linearLayout;
     }
 
-    public static PaletteView render(DrawerLayout rootView) {
-        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.lambda_palette_scroll_view);
-        LinearLayout linearLayout =
-                (LinearLayout) rootView.findViewById(R.id.lambda_palette_linear_layout);
-        rootView.setScrimColor(Color.TRANSPARENT);
-        return new PaletteView(rootView, scrollView, linearLayout);
+    public void onCreateView() {
+        drawerRoot.setScrimColor(Color.TRANSPARENT);
     }
 
     public void addChild(LambdaView lambdaView) {
@@ -50,19 +45,19 @@ public class PaletteView {
 
     public boolean intersectsWithView(View other) {
         // Only allow intersection if the drawer is actually open.
-        return drawerRoot.isDrawerOpen(GravityCompat.END) && Views.viewsIntersect(scrollView, other);
+        return drawerRoot.isDrawerOpen(GravityCompat.END) && Views.viewsIntersect(drawerView, other);
     }
 
     public View getNativeView() {
-        return scrollView;
+        return drawerView;
     }
 
     public void handleDeleteDragEnter() {
-        scrollView.setBackgroundColor(getColor(R.color.palette_delete));
+        drawerView.setBackgroundColor(getColor(R.color.palette_delete));
     }
 
     public void handleDeleteDragExit() {
-        scrollView.setBackgroundColor(getColor(R.color.palette));
+        drawerView.setBackgroundColor(getColor(R.color.palette));
     }
 
     private int getColor(@ColorRes int resId) {
