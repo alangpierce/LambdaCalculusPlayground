@@ -4,41 +4,35 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
+
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Top-level fragment. Note that generally this class shouldn't have significant logic; any
+ * interesting pieces should move to dagger-injected classes.
+ */
 public class PlaygroundFragment extends Fragment {
     public PlaygroundFragment() {
         // Required empty public constructor.
     }
 
-    private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
-
-    @Bind(R.id.above_palette_root_view) RelativeLayout abovePaletteRoot;
-    @Bind(R.id.drawer_root_view) DrawerLayout drawerRoot;
-    @Bind(R.id.canvas_view) RelativeLayout canvasView;
-    @Bind(R.id.fab_container) View fabContainer;
-    @Bind(R.id.palette_scroll_view) View drawerView;
-
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
 
     @Inject TopLevelExpressionManager expressionManager;
     @Inject ExpressionCreator expressionCreator;
+    @Inject PaletteDrawerManager paletteDrawerManager;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
@@ -77,43 +71,20 @@ public class PlaygroundFragment extends Fragment {
         RelativeLayout root = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
         ButterKnife.bind(this, root);
-
-        drawerRoot.addDrawerListener(new SimpleDrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                float offset = drawerView.getWidth() * slideOffset;
-                fabContainer.setTranslationX(-offset);
-            }
-        });
-
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(
-                        new PlaygroundModule(getActivity(), canvasView, abovePaletteRoot,
-                                drawerRoot, expressionState))
+                .playgroundModule(PlaygroundModule.create(getActivity(), expressionState, root))
                 .build();
         component.injectPlaygroundFragment(this);
-        expressionManager.renderInitialData();
 
-        // If this is the first time opening the app, open the drawer after a short delay. This
-        // makes it so the palette animates in, which emphasizes that it's a drawer and makes sure
-        // the user starts with it visible.
-        if (savedInstanceState == null) {
-            drawerRoot.postDelayed(() -> {
-                if (drawerRoot != null) {
-                    drawerRoot.openDrawer(GravityCompat.END);
-                }
-            }, INITIAL_DRAWER_OPEN_DELAY_MS);
-        }
+        expressionManager.renderInitialData();
+        boolean isFirstTime = savedInstanceState == null;
+        paletteDrawerManager.onCreateView(isFirstTime);
         return root;
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
-        // Any drawer changes set the translation, but
-        if (drawerRoot.isDrawerOpen(drawerView)) {
-            drawerView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-            fabContainer.setTranslationX(-drawerView.getMeasuredWidth());
-        }
+        paletteDrawerManager.onViewStateRestored();
         super.onViewStateRestored(savedInstanceState);
     }
 
@@ -129,7 +100,7 @@ public class PlaygroundFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        drawerRoot = null;
+        paletteDrawerManager.onDestroyView();
         super.onDestroyView();
     }
 
@@ -141,21 +112,14 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_palette) {
-            if (drawerRoot != null) {
-                if (drawerRoot.isDrawerOpen(GravityCompat.END)) {
-                    drawerRoot.closeDrawer(GravityCompat.END);
-                } else {
-                    drawerRoot.openDrawer(GravityCompat.END);
-                }
-            }
+            paletteDrawerManager.toggleLambdaPalette();
         } else if (item.getItemId() == R.id.action_define) {
-            expressionCreator.promptCreateDefinition();
+            paletteDrawerManager.toggleDefinitionPalette();
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(
                     new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.demo_video_url))));
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

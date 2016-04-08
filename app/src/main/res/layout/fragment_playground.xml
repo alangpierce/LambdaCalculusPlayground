@@ -10,20 +10,52 @@
     android:layout_marginTop="?attr/actionBarSize">
 
     <com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout
-        android:id="@+id/drawer_root_view"
+        android:id="@+id/lambda_palette_drawer_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/canvas_view"
+        <com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout
+            android:id="@+id/definition_palette_drawer_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/canvas">
+            >
 
-        </RelativeLayout>
-        <!-- Palette navigation drawer. -->
+            <RelativeLayout
+                android:id="@+id/canvas_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/canvas">
+
+            </RelativeLayout>
+
+            <!-- Definition palette navigation drawer. -->
+            <com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView
+                android:id="@+id/definition_palette_scroll_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@color/palette"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/definition_palette_linear_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TODO"/>
+
+                </LinearLayout>
+            </com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView>
+
+        </com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout>
+
+        <!-- Lambda palette navigation drawer. -->
         <com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView
-            android:id="@+id/palette_scroll_view"
+            android:id="@+id/lambda_palette_scroll_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
@@ -31,7 +63,7 @@
             android:elevation="4dp">
 
             <LinearLayout
-                android:id="@+id/palette_linear_layout"
+                android:id="@+id/lambda_palette_linear_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -41,7 +73,7 @@
     </com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout>
 
     <RelativeLayout
-        android:id="@+id/above_palette_root_view"
+        android:id="@+id/above_palette_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

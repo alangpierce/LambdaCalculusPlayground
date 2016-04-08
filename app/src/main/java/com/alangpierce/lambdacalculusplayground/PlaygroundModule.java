@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
@@ -20,6 +23,8 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManagerImpl;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
@@ -31,25 +36,37 @@ import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class PlaygroundModule {
     private final Activity activity;
-    private final RelativeLayout canvasRoot;
-    private final RelativeLayout abovePaletteRoot;
-    private final DrawerLayout drawerRoot;
     private final TopLevelExpressionState expressionState;
 
-    public PlaygroundModule(Activity activity, RelativeLayout canvasRoot,
-                            RelativeLayout abovePaletteRoot, DrawerLayout drawerRoot,
-                            TopLevelExpressionState expressionState) {
+    // These are all children of the fragment.
+    @Bind(R.id.above_palette_root) RelativeLayout abovePaletteRoot;
+    @Bind(R.id.lambda_palette_drawer_root) DrawerLayout lambdaPaletteDrawerRoot;
+    @Bind(R.id.definition_palette_drawer_root) DrawerLayout definitionPaletteDrawerRoot;
+    @Bind(R.id.lambda_palette_scroll_view) ScrollView lambdaPaletteDrawer;
+    @Bind(R.id.definition_palette_scroll_view) ScrollView definitionPaletteDrawer;
+    @Bind(R.id.lambda_palette_linear_layout) LinearLayout lambdaPaletteLinearLayout;
+    @Bind(R.id.definition_palette_linear_layout) LinearLayout definitionPaletteLinearLayout;
+    @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
+    @Bind(R.id.fab_container) View fabContainer;
+
+    private PlaygroundModule(Activity activity, TopLevelExpressionState expressionState) {
         this.activity = activity;
-        this.canvasRoot = canvasRoot;
-        this.abovePaletteRoot = abovePaletteRoot;
-        this.drawerRoot = drawerRoot;
         this.expressionState = expressionState;
+    }
+
+    public static PlaygroundModule create(
+            Activity activity, TopLevelExpressionState expressionState, View root) {
+        PlaygroundModule module = new PlaygroundModule(activity, expressionState);
+        ButterKnife.bind(module, root);
+        return module;
     }
 
     @Provides Activity provideActivity() {
@@ -80,12 +97,19 @@ public class PlaygroundModule {
     @Qualifier @interface DrawerRoot {}
     @Provides @DrawerRoot
     DrawerLayout provideDrawerRoot() {
-        return drawerRoot;
+        return lambdaPaletteDrawerRoot;
     }
 
     @Provides @Singleton
     TopLevelExpressionState provideTopLevelExpressionState() {
         return expressionState;
+    }
+
+    @Provides @Singleton
+    PaletteDrawerManager providePaletteDrawerManager() {
+        return new PaletteDrawerManagerImpl(
+                lambdaPaletteDrawerRoot, lambdaPaletteDrawer, definitionPaletteDrawerRoot,
+                definitionPaletteDrawer, fabContainer);
     }
 
     @Provides

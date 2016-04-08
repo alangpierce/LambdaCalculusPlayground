@@ -28,16 +28,17 @@ public class PaletteView {
     }
 
     public static PaletteView render(DrawerLayout rootView) {
-        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.palette_scroll_view);
+        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.lambda_palette_scroll_view);
         LinearLayout linearLayout =
-                (LinearLayout) rootView.findViewById(R.id.palette_linear_layout);
+                (LinearLayout) rootView.findViewById(R.id.lambda_palette_linear_layout);
         rootView.setScrimColor(Color.TRANSPARENT);
         return new PaletteView(rootView, scrollView, linearLayout);
     }
 
     public void addChild(LambdaView lambdaView) {
         LinearLayout nativeView = lambdaView.getNativeView();
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(nativeView.getLayoutParams());
+        LinearLayout.LayoutParams layoutParams =
+                new LinearLayout.LayoutParams(nativeView.getLayoutParams());
         // Convert 10dp to pixels.
         int marginPixels = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 10f, drawerRoot.getResources().getDisplayMetrics());
