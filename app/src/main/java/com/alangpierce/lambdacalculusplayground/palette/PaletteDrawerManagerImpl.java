@@ -21,6 +21,11 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     private final View fabContainer;
 
+    // Keep track of the position of both drawers, since the drawer class doesn't expose these
+    // directly. The FABs should be at the min of these two positions on the screen.
+    private float lambdaPaletteOffsetPixels = 0;
+    private float definitionPaletteOffsetPixels = 0;
+
     private boolean isDestroyed = false;
 
     public PaletteDrawerManagerImpl(
@@ -43,8 +48,15 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
         lambdaPaletteDrawerRoot.addDrawerListener(new SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                float offset = drawerView.getWidth() * slideOffset;
-                fabContainer.setTranslationX(-offset);
+                lambdaPaletteOffsetPixels = drawerView.getWidth() * slideOffset;
+                repositionFabs();
+            }
+        });
+        definitionPaletteDrawerRoot.addDrawerListener(new SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                definitionPaletteOffsetPixels = drawerView.getWidth() * slideOffset;
+                repositionFabs();
             }
         });
 
@@ -65,11 +77,17 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     @Override
     public void onViewStateRestored() {
-        // Any drawer changes set the translation, but
+        // Any drawer changes set the translation, but we need to recompute the translation on
+        // rotate (or restore for another reason) since we don't get a change event.
         if (lambdaPaletteDrawerRoot.isDrawerOpen(lambdaPaletteDrawer)) {
             lambdaPaletteDrawer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             fabContainer.setTranslationX(-lambdaPaletteDrawer.getMeasuredWidth());
         }
+    }
+
+    private void repositionFabs() {
+        fabContainer.setTranslationX(
+                Math.min(-lambdaPaletteOffsetPixels, -definitionPaletteOffsetPixels));
     }
 
     @Override
@@ -79,23 +97,30 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     @Override
     public void toggleLambdaPalette() {
-        if (lambdaPaletteDrawerRoot != null) {
-            if (lambdaPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
-                lambdaPaletteDrawerRoot.closeDrawer(GravityCompat.END);
-            } else {
-                lambdaPaletteDrawerRoot.openDrawer(GravityCompat.END);
-            }
-        }
+        toggle(lambdaPaletteDrawerRoot, definitionPaletteDrawerRoot);
     }
 
     @Override
     public void toggleDefinitionPalette() {
-        if (definitionPaletteDrawerRoot != null) {
-            if (definitionPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
-                definitionPaletteDrawerRoot.closeDrawer(GravityCompat.END);
-            } else {
-                definitionPaletteDrawerRoot.openDrawer(GravityCompat.END);
-            }
+        toggle(definitionPaletteDrawerRoot, lambdaPaletteDrawerRoot);
+    }
+
+    private void toggle(DrawerLayout toggleDrawer, DrawerLayout otherDrawer) {
+        if (otherDrawer.isDrawerOpen(GravityCompat.END)) {
+            otherDrawer.closeDrawer(GravityCompat.END);
+            otherDrawer.addDrawerListener(new SimpleDrawerListener() {
+                @Override
+                public void onDrawerSlide(View drawerView, float slideOffset) {
+                    if (slideOffset < 0.5) {
+                        otherDrawer.removeDrawerListener(this);
+                        toggleDrawer.openDrawer(GravityCompat.END);
+                    }
+                }
+            });
+        } else if (toggleDrawer.isDrawerOpen(GravityCompat.END)) {
+            toggleDrawer.closeDrawer(GravityCompat.END);
+        } else {
+            toggleDrawer.openDrawer(GravityCompat.END);
         }
     }
 }

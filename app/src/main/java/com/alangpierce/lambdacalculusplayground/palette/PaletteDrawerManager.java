@@ -10,5 +10,4 @@ public interface PaletteDrawerManager {
     void onDestroyView();
     void toggleLambdaPalette();
     void toggleDefinitionPalette();
-
 }
