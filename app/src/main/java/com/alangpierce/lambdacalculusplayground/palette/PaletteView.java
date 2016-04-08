@@ -13,7 +13,6 @@ import android.widget.ScrollView;
 
 import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
-import com.alangpierce.lambdacalculusplayground.view.LambdaView;
 
 public class PaletteView {
     private final DrawerLayout drawerRoot;
@@ -30,8 +29,7 @@ public class PaletteView {
         drawerRoot.setScrimColor(Color.TRANSPARENT);
     }
 
-    public void addChild(LambdaView lambdaView) {
-        LinearLayout nativeView = lambdaView.getNativeView();
+    public void addChild(View nativeView) {
         LinearLayout.LayoutParams layoutParams =
                 new LinearLayout.LayoutParams(nativeView.getLayoutParams());
         // Convert 10dp to pixels.

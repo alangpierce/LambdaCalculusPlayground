@@ -95,12 +95,6 @@ public class PlaygroundModule {
         return abovePaletteRoot;
     }
 
-    @Qualifier @interface DrawerRoot {}
-    @Provides @DrawerRoot
-    DrawerLayout provideDrawerRoot() {
-        return lambdaPaletteDrawerRoot;
-    }
-
     @Provides @Singleton
     TopLevelExpressionState provideTopLevelExpressionState() {
         return expressionState;
@@ -193,11 +187,11 @@ public class PlaygroundModule {
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             DragManager dragManager, PointConverter pointConverter, PanManager panManager,
-            @DrawerRoot DrawerLayout drawerRoot, DefinitionManager definitionManager,
-            @Lambda PaletteView lambdaPaletteView) {
+            DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
+            @Definition PaletteView definitionPaletteView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, dragManager, pointConverter, drawerRoot,
-                panManager, definitionManager, lambdaPaletteView);
+                expressionState, controllerFactoryFactory, dragManager, pointConverter,
+                panManager, definitionManager, lambdaPaletteView, definitionPaletteView);
     }
 
     @Provides

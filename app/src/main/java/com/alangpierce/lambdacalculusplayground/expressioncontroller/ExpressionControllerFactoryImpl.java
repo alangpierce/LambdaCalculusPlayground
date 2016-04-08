@@ -6,6 +6,8 @@ import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
+import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
+import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionControllerImpl;
@@ -15,6 +17,7 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
@@ -181,6 +184,20 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         LambdaView view = LambdaView.render(dragObservableGenerator, viewRenderer, varName, null);
         PaletteLambdaController result =
                 new PaletteLambdaController(topLevelExpressionManager, view, varName);
+        result.registerCallbacks(dragManager);
+        return result;
+    }
+
+    @Override
+    public PaletteReferenceController createPaletteReferenceController(String defName) {
+        ReferenceView view = ReferenceView.render(viewRenderer, defName);
+        ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
+        ProducerControllerParent producerParent = PaletteReferenceController
+                .createProducerParent(topLevelExpressionManager, defName);
+        ProducerController producerController =
+                new ProducerController(producerView, producerParent);
+        PaletteReferenceController result =
+                new PaletteReferenceController(producerController, view);
         result.registerCallbacks(dragManager);
         return result;
     }

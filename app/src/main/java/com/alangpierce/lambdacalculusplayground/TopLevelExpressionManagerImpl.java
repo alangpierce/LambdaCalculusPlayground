@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.support.v4.widget.DrawerLayout;
-
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
@@ -13,6 +11,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
@@ -30,27 +29,30 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final DragManager dragManager;
     private final PointConverter pointConverter;
-    private final DrawerLayout drawerRoot;
     private final PanManager panManager;
     private final DefinitionManager definitionManager;
     private final PaletteView lambdaPaletteView;
+    private final PaletteView definitionPaletteView;
 
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, PointConverter pointConverter, DrawerLayout drawerRoot,
-            PanManager panManager, DefinitionManager definitionManager,
-            PaletteView lambdaPaletteView) {
+            DragManager dragManager,
+            PointConverter pointConverter,
+            PanManager panManager,
+            DefinitionManager definitionManager,
+            PaletteView lambdaPaletteView,
+            PaletteView definitionPaletteView) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.dragManager = dragManager;
         this.pointConverter = pointConverter;
-        this.drawerRoot = drawerRoot;
         this.panManager = panManager;
         this.definitionManager = definitionManager;
         this.lambdaPaletteView = lambdaPaletteView;
+        this.definitionPaletteView = definitionPaletteView;
     }
 
     @Override
@@ -69,17 +71,23 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         for (ScreenDefinition definition : expressionState.definitions()) {
             renderDefinition(definition);
         }
-        renderPalette();
+        renderPalettes();
     }
 
-    private void renderPalette() {
+    private void renderPalettes() {
         PaletteController controller = new PaletteController(lambdaPaletteView);
         controller.registerCallbacks(dragManager);
 
         for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
             PaletteLambdaController lambdaController =
                     controllerFactoryFactory.create(this).createPaletteLambdaController(varName);
-            lambdaPaletteView.addChild(lambdaController.getView());
+            lambdaPaletteView.addChild(lambdaController.getView().getNativeView());
+        }
+
+        for (String defName : ImmutableList.of("TRUE", "FALSE", "+", "0", "1", "2", "3")) {
+            PaletteReferenceController referenceController =
+                    controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
+            definitionPaletteView.addChild(referenceController.getView().getNativeView());
         }
     }
 

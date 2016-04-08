@@ -4,6 +4,7 @@ import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
@@ -36,8 +37,10 @@ public interface ExpressionControllerFactory {
     ExpressionController createController(UserExpression userExpression);
 
     PaletteLambdaController createPaletteLambdaController(String varName);
+    PaletteReferenceController createPaletteReferenceController(String defName);
 
     DefinitionController createDefinitionController(ScreenDefinition screenDefinition);
+
 
     /**
      * We need to pass the expression manager in dynamically in order to avoid a circular reference.

@@ -73,6 +73,10 @@ public class DefinitionView {
         };
     }
 
+    public View getNativeView() {
+        return nativeView;
+    }
+
     public void setCanvasPos(DrawableAreaPoint pos) {
         nativeView.setLayoutParams(Views.layoutParamsForRelativePos(pos));
     }
