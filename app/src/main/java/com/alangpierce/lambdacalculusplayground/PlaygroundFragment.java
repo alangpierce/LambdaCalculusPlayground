@@ -8,12 +8,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -33,8 +35,11 @@ public class PlaygroundFragment extends Fragment {
 
     private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
 
+    @Bind(R.id.above_palette_root_view) RelativeLayout abovePaletteRoot;
     @Bind(R.id.drawer_root_view) DrawerLayout drawerRoot;
     @Bind(R.id.canvas_view) RelativeLayout canvasView;
+    @Bind(R.id.fab_container) View fabContainer;
+    @Bind(R.id.palette_scroll_view) View drawerView;
 
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
     TopLevelExpressionManager expressionManager;
@@ -73,9 +78,17 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RelativeLayout abovePaletteRoot = (RelativeLayout)
+        RelativeLayout root = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
-        ButterKnife.bind(this, abovePaletteRoot);
+        ButterKnife.bind(this, root);
+
+        drawerRoot.addDrawerListener(new SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                float offset = drawerView.getWidth() * slideOffset;
+                fabContainer.setTranslationX(-offset);
+            }
+        });
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(
@@ -95,7 +108,22 @@ public class PlaygroundFragment extends Fragment {
                 }
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }
-        return abovePaletteRoot;
+        return root;
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        // Any drawer changes set the translation, but
+        if (drawerRoot.isDrawerOpen(drawerView)) {
+            drawerView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+            fabContainer.setTranslationX(-drawerView.getMeasuredWidth());
+        }
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @OnClick(R.id.create_lambda_button)
+    public void createLambdaClick() {
+        Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.create_definition_button)

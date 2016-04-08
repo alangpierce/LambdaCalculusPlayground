@@ -3,7 +3,6 @@
      for when lambda expressions are first dragged from the palette. This allows them to show up as
      above the palette for their very first drag, which looks a lot nicer. -->
 <RelativeLayout
-    android:id="@+id/above_palette_root_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -20,22 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/canvas">
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/create_definition_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginRight="24dp"
-                android:color="@color/execute_button_background"
-                android:src="@drawable/def_symbol"
-                android:tint="@color/execute_button_foreground"
-                app:backgroundTint="@color/execute_button_background"
-                />
 
         </RelativeLayout>
         <!-- Palette navigation drawer. -->
@@ -56,5 +39,50 @@
             </LinearLayout>
         </com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView>
     </com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout>
+
+    <RelativeLayout
+        android:id="@+id/above_palette_root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/fab_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        >
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/create_lambda_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:color="@color/execute_button_background"
+            android:src="@drawable/ic_action_lambda"
+            android:tint="@color/execute_button_foreground"
+            app:backgroundTint="@color/execute_button_background"
+            android:layout_gravity="bottom"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/create_definition_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:color="@color/execute_button_background"
+            android:src="@drawable/def_symbol"
+            android:tint="@color/execute_button_foreground"
+            app:backgroundTint="@color/execute_button_background"
+            android:layout_gravity="bottom"
+            />
+    </LinearLayout>
 
 </RelativeLayout>
