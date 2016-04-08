@@ -2,10 +2,13 @@ package com.alangpierce.lambdacalculusplayground.palette;
 
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.ScrollView;
+
+import javax.annotation.Nullable;
 
 public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
     private static final int INITIAL_DRAWER_OPEN_DELAY_MS = 500;
@@ -27,6 +30,18 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
     private float definitionPaletteOffsetPixels = 0;
 
     private boolean isDestroyed = false;
+
+    // The final state that we should animate toward.
+    private State targetState = State.CLOSED;
+    // Keep track of any listener being used for animation. There will only be at most one, so for
+    // now it can just be a nullable variable.
+    private @Nullable DrawerListener existingAnimationListener = null;
+
+    private enum State {
+        CLOSED,
+        LAMBDA_OPEN,
+        DEFINITION_OPEN
+    }
 
     public PaletteDrawerManagerImpl(
             PaletteView lambdaPaletteView,
@@ -66,7 +81,8 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
         if (isFirstTime) {
             lambdaPaletteDrawerRoot.postDelayed(() -> {
                 if (!isDestroyed) {
-                    lambdaPaletteDrawerRoot.openDrawer(GravityCompat.END);
+                    targetState = State.LAMBDA_OPEN;
+                    animateToTargetState();
                 }
             }, INITIAL_DRAWER_OPEN_DELAY_MS);
         }
@@ -82,10 +98,12 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
         if (lambdaPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
             lambdaPaletteDrawer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             lambdaPaletteOffsetPixels = lambdaPaletteDrawer.getMeasuredWidth();
+            targetState = State.LAMBDA_OPEN;
         }
         if (definitionPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
             definitionPaletteDrawer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             definitionPaletteOffsetPixels = definitionPaletteDrawer.getMeasuredWidth();
+            targetState = State.DEFINITION_OPEN;
         }
         repositionFabs();
     }
@@ -102,30 +120,59 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     @Override
     public void toggleLambdaPalette() {
-        toggle(lambdaPaletteDrawerRoot, definitionPaletteDrawerRoot);
+        if (targetState == State.LAMBDA_OPEN) {
+            targetState = State.CLOSED;
+        } else {
+            targetState = State.LAMBDA_OPEN;
+        }
+        animateToTargetState();
     }
 
     @Override
     public void toggleDefinitionPalette() {
-        toggle(definitionPaletteDrawerRoot, lambdaPaletteDrawerRoot);
+        if (targetState == State.DEFINITION_OPEN) {
+            targetState = State.CLOSED;
+        } else {
+            targetState = State.DEFINITION_OPEN;
+        }
+        animateToTargetState();
     }
 
-    private void toggle(DrawerLayout toggleDrawer, DrawerLayout otherDrawer) {
-        if (otherDrawer.isDrawerOpen(GravityCompat.END)) {
+    private void animateToTargetState() {
+        if (existingAnimationListener != null) {
+            // We don't know or care which drawer has a listener or if the listener already removed
+            // itself; just remove it from both, which will be a no-op in one or both cases.
+            lambdaPaletteDrawerRoot.removeDrawerListener(existingAnimationListener);
+            definitionPaletteDrawerRoot.removeDrawerListener(existingAnimationListener);
+            existingAnimationListener = null;
+        }
+
+        if (targetState == State.CLOSED) {
+            lambdaPaletteDrawerRoot.closeDrawer(GravityCompat.END);
+            definitionPaletteDrawerRoot.closeDrawer(GravityCompat.END);
+        } else if (targetState == State.LAMBDA_OPEN) {
+            openDrawer(lambdaPaletteDrawerRoot, definitionPaletteDrawerRoot);
+        } else if (targetState == State.DEFINITION_OPEN) {
+            openDrawer(definitionPaletteDrawerRoot, lambdaPaletteDrawerRoot);
+        }
+    }
+
+    private void openDrawer(DrawerLayout drawerToOpen, DrawerLayout otherDrawer) {
+        if (otherDrawer.isDrawerVisible(GravityCompat.END)) {
             otherDrawer.closeDrawer(GravityCompat.END);
-            otherDrawer.addDrawerListener(new SimpleDrawerListener() {
+            SimpleDrawerListener listener = new SimpleDrawerListener() {
                 @Override
                 public void onDrawerSlide(View drawerView, float slideOffset) {
                     if (slideOffset < 0.5) {
                         otherDrawer.removeDrawerListener(this);
-                        toggleDrawer.openDrawer(GravityCompat.END);
+                        drawerToOpen.openDrawer(GravityCompat.END);
                     }
                 }
-            });
-        } else if (toggleDrawer.isDrawerOpen(GravityCompat.END)) {
-            toggleDrawer.closeDrawer(GravityCompat.END);
+            };
+            otherDrawer.addDrawerListener(listener);
+            existingAnimationListener = listener;
         } else {
-            toggleDrawer.openDrawer(GravityCompat.END);
+            drawerToOpen.openDrawer(GravityCompat.END);
         }
     }
 }
