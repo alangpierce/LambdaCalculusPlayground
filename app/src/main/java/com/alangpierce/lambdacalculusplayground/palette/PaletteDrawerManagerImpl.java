@@ -79,10 +79,15 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
     public void onViewStateRestored() {
         // Any drawer changes set the translation, but we need to recompute the translation on
         // rotate (or restore for another reason) since we don't get a change event.
-        if (lambdaPaletteDrawerRoot.isDrawerOpen(lambdaPaletteDrawer)) {
+        if (lambdaPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
             lambdaPaletteDrawer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-            fabContainer.setTranslationX(-lambdaPaletteDrawer.getMeasuredWidth());
+            lambdaPaletteOffsetPixels = lambdaPaletteDrawer.getMeasuredWidth();
         }
+        if (definitionPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
+            definitionPaletteDrawer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+            definitionPaletteOffsetPixels = definitionPaletteDrawer.getMeasuredWidth();
+        }
+        repositionFabs();
     }
 
     private void repositionFabs() {
