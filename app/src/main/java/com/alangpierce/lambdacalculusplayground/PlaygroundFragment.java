@@ -23,6 +23,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
+import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,7 +47,9 @@ public class PlaygroundFragment extends Fragment {
     @Bind(R.id.palette_scroll_view) View drawerView;
 
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
-    TopLevelExpressionManager expressionManager;
+
+    @Inject TopLevelExpressionManager expressionManager;
+    @Inject PointConverter pointConverter;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
@@ -95,7 +102,7 @@ public class PlaygroundFragment extends Fragment {
                         new PlaygroundModule(getActivity(), canvasView, abovePaletteRoot,
                                 drawerRoot, expressionState))
                 .build();
-        expressionManager = component.getTopLevelExpressionManager();
+        component.injectPlaygroundFragment(this);
         expressionManager.renderInitialData();
 
         // If this is the first time opening the app, open the drawer after a short delay. This
@@ -123,7 +130,7 @@ public class PlaygroundFragment extends Fragment {
 
     @OnClick(R.id.create_lambda_button)
     public void createLambdaClick() {
-        Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
+        showNewLambdaDialog();
     }
 
     @OnClick(R.id.create_definition_button)
@@ -190,5 +197,33 @@ public class PlaygroundFragment extends Fragment {
             Toast.makeText(getActivity(),
                     "Showing existing definition.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showNewLambdaDialog() {
+        View inputView =
+                getActivity().getLayoutInflater().inflate(R.layout.lambda_name_dialog, null);
+        EditText nameEditText = (EditText) inputView.findViewById(R.id.lambda_name);
+        AlertDialog alertDialog = new Builder(getActivity())
+                .setTitle(R.string.create_lambda)
+                .setView(inputView)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    addLambdaWithName(nameEditText.getText().toString());
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+    }
+
+    private void addLambdaWithName(String varName) {
+        // Create the view at (50dp, 50dp).
+        int shiftPixels = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 50f, getResources().getDisplayMetrics());
+        DrawableAreaPoint drawableAreaPoint = DrawableAreaPoint.create(shiftPixels, shiftPixels);
+        ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);
+        UserLambda expression = UserLambda.create(varName, null);
+        expressionManager.createNewExpression(
+                expression, screenPoint, false /* placeAbovePalette */);
     }
 }

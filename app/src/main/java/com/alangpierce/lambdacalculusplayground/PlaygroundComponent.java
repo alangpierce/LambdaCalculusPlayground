@@ -7,5 +7,5 @@ import dagger.Component;
 @Singleton
 @Component(modules = PlaygroundModule.class)
 public interface PlaygroundComponent {
-    TopLevelExpressionManager getTopLevelExpressionManager();
+    void injectPlaygroundFragment(PlaygroundFragment fragment);
 }
