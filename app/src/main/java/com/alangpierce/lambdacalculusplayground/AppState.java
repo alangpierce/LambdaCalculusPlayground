@@ -6,7 +6,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 
 import java.util.Map.Entry;
 
-public interface TopLevelExpressionState {
+public interface AppState {
     Iterable<Entry<Integer, ScreenExpression>> expressionsById();
     Iterable<ScreenDefinition> definitions();
     void modifyExpression(int key, ScreenExpression expression);

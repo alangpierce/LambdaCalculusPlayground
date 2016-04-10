@@ -32,7 +32,7 @@ public class PlaygroundFragment extends Fragment {
         // Required empty public constructor.
     }
 
-    private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
+    private AppState appState = new AppStateImpl();
 
     @Bind(R.id.playground_toolbar) Toolbar toolbar;
 
@@ -42,7 +42,7 @@ public class PlaygroundFragment extends Fragment {
     @Inject DragManager dragManager;
     @Inject DragActionManager dragActionManager;
 
-    public static PlaygroundFragment create(TopLevelExpressionState initialState) {
+    public static PlaygroundFragment create(AppState initialState) {
         Bundle args = new Bundle();
         initialState.persistToBundle(args);
         PlaygroundFragment result = new PlaygroundFragment();
@@ -65,12 +65,12 @@ public class PlaygroundFragment extends Fragment {
 
     @SuppressWarnings("unchecked")
     private void loadFromBundle(Bundle bundle) {
-        expressionState.hydrateFromBundle(bundle);
+        appState.hydrateFromBundle(bundle);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        expressionState.persistToBundle(outState);
+        appState.persistToBundle(outState);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PlaygroundFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(PlaygroundModule.create(activity, expressionState, root))
+                .playgroundModule(PlaygroundModule.create(activity, appState, root))
                 .build();
         component.injectPlaygroundFragment(this);
 

@@ -33,7 +33,7 @@ public class PlaygroundActivity extends AppCompatActivity {
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
         setContentView(layoutView);
         if (savedInstanceState == null) {
-            TopLevelExpressionState initialState = new TopLevelExpressionStateImpl();
+            AppState initialState = new AppStateImpl();
             Fragment fragment = PlaygroundFragment.create(initialState);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
         }

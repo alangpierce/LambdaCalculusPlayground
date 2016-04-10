@@ -49,7 +49,7 @@ import dagger.Provides;
 @Module
 public class PlaygroundModule {
     private final Activity activity;
-    private final TopLevelExpressionState expressionState;
+    private final AppState appState;
 
     // These are all children of the fragment.
     @Bind(R.id.playground_toolbar) Toolbar toolbar;
@@ -65,14 +65,13 @@ public class PlaygroundModule {
     @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
     @Bind(R.id.fab_container) View fabContainer;
 
-    private PlaygroundModule(Activity activity, TopLevelExpressionState expressionState) {
+    private PlaygroundModule(Activity activity, AppState appState) {
         this.activity = activity;
-        this.expressionState = expressionState;
+        this.appState = appState;
     }
 
-    public static PlaygroundModule create(
-            Activity activity, TopLevelExpressionState expressionState, View root) {
-        PlaygroundModule module = new PlaygroundModule(activity, expressionState);
+    public static PlaygroundModule create(Activity activity, AppState appState, View root) {
+        PlaygroundModule module = new PlaygroundModule(activity, appState);
         ButterKnife.bind(module, root);
         return module;
     }
@@ -103,8 +102,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    TopLevelExpressionState provideTopLevelExpressionState() {
-        return expressionState;
+    AppState provideAppState() {
+        return appState;
     }
 
     @Provides @Singleton
@@ -196,13 +195,12 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     TopLevelExpressionManager provideTopLevelExpressionManager(
-            TopLevelExpressionState expressionState,
-            ExpressionControllerFactoryFactory controllerFactoryFactory,
+            AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
             @Definition PaletteView definitionPaletteView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, pointConverter, panManager,
+                appState, controllerFactoryFactory, pointConverter, panManager,
                 definitionManager, lambdaPaletteView, definitionPaletteView);
     }
 

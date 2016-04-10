@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
-    private final TopLevelExpressionState expressionState;
+    private final AppState appState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final PointConverter pointConverter;
     private final PanManager panManager;
@@ -39,14 +39,14 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
     public TopLevelExpressionManagerImpl(
-            TopLevelExpressionState expressionState,
+            AppState appState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter,
             PanManager panManager,
             DefinitionManager definitionManager,
             PaletteView lambdaPaletteView,
             PaletteView definitionPaletteView) {
-        this.expressionState = expressionState;
+        this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
         this.panManager = panManager;
@@ -59,16 +59,16 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     public void renderInitialData() {
         // Note that we need to initialize the pan manager first so that the rest of the code will
         // correctly get the pan offset.
-        panManager.init(expressionState.getPanOffset());
+        panManager.init(appState.getPanOffset());
         panManager.registerPanListener(
-                () -> expressionState.setPanOffset(panManager.getPanOffset()));
+                () -> appState.setPanOffset(panManager.getPanOffset()));
 
-        for (Entry<Integer, ScreenExpression> entry : expressionState.expressionsById()) {
+        for (Entry<Integer, ScreenExpression> entry : appState.expressionsById()) {
             int exprId = entry.getKey();
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
-        for (ScreenDefinition definition : expressionState.definitions()) {
+        for (ScreenDefinition definition : appState.definitions()) {
             renderDefinition(definition);
         }
         renderPalettes();
@@ -96,7 +96,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             UserExpression expression, ScreenPoint screenPos, boolean placeAbovePalette) {
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
         ScreenExpression screenExpression = ScreenExpression.create(expression, canvasPos);
-        int exprId = expressionState.addScreenExpression(screenExpression);
+        int exprId = appState.addScreenExpression(screenExpression);
         return renderTopLevelExpression(exprId, screenExpression, placeAbovePalette);
     }
 
@@ -106,7 +106,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         CanvasPoint canvasPos = pointConverter.toCanvasPoint(screenPos);
         ScreenExpression screenExpression = ScreenExpression.create(
                 expression.getExpression(), canvasPos);
-        int exprId = expressionState.addScreenExpression(screenExpression);
+        int exprId = appState.addScreenExpression(screenExpression);
         TopLevelExpressionController controller = controllerFactoryFactory.create(this)
                 .wrapInTopLevelController(
                         expression, screenExpression, false /* placeAbovePalette */);
@@ -132,10 +132,10 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         panManager.registerPanListener(controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
-                expressionState.modifyExpression(
+                appState.modifyExpression(
                         exprId, newController.getScreenExpression());
             } else {
-                expressionState.deleteExpression(exprId);
+                appState.deleteExpression(exprId);
                 panManager.unregisterPanListener(controller);
                 expressionControllers.remove(controller);
             }
@@ -157,7 +157,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             // Either make a new blank definition or use the existing one.
             ScreenDefinition definition = ScreenDefinition.create(
                     defName, existingDefinition, canvasPoint);
-            expressionState.setDefinition(definition);
+            appState.setDefinition(definition);
             renderDefinition(definition);
             boolean alreadyExisted = existingDefinition != null;
             if (!alreadyExisted) {
@@ -186,13 +186,13 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
                 ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
-                expressionState.setDefinition(newScreenDefinition);
+                appState.setDefinition(newScreenDefinition);
                 definitionManager.updateDefinition(
                         newScreenDefinition.defName(), newScreenDefinition.expr());
                 invalidateExecuteButtons();
             } else {
                 // Hide the definition (but don't actually delete it from the definition manager).
-                expressionState.deleteDefinition(screenDefinition.defName());
+                appState.deleteDefinition(screenDefinition.defName());
                 panManager.unregisterPanListener(controller);
                 definitionControllers.remove(screenDefinition.defName());
             }

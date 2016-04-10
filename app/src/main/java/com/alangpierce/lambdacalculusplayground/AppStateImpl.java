@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * This class is just a field on the fragment, so its lifetime is that of the fragment, which is
  * slightly longer than the fragment's view.
  */
-public class TopLevelExpressionStateImpl implements TopLevelExpressionState {
+public class AppStateImpl implements AppState {
     /*
      * We keep expressions with IDs so that we can delete and modify them later as necessary, but
      * the bundled format is just a list of ScreenExpressions. Same for definitions.

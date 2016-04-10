@@ -74,7 +74,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
 
     @Override
     public Set<String> getDefinitionNames() {
-        return definitionMap.keySet();
+        return userDefinitionMap.keySet();
     }
 
     @Override
