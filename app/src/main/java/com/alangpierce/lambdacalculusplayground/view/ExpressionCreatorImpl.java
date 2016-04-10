@@ -35,6 +35,13 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         this.pointConverter = pointConverter;
     }
 
+    private static class InvalidNameException extends Exception {
+        public InvalidNameException(String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+
     @Override
     public void promptCreateDefinition() {
         View inputView = layoutInflater.inflate(R.layout.definition_name_dialog, null);
@@ -60,10 +67,11 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     }
 
     private void addDefinitionWithName(String defName) {
-        if (!isValidDefinitionName(defName)) {
-            Toast.makeText(context,
-                    "Definition names can only contain capital letters and symbols.",
-                    Toast.LENGTH_SHORT).show();
+
+        try {
+            validateDefinitionName(defName);
+        } catch (InvalidNameException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -77,13 +85,17 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         }
     }
 
-    private boolean isValidDefinitionName(String string) {
-        for (char c : string.toCharArray()) {
+    private void validateDefinitionName(String defName) throws InvalidNameException {
+        if (defName.length() > 8) {
+            throw new InvalidNameException("Definition names can only be up to 8 letters long.");
+        }
+
+        for (char c : defName.toCharArray()) {
             if (Character.isLowerCase(c)) {
-                return false;
+                throw new InvalidNameException(
+                        "Definition names can only contain capital letters and symbols.");
             }
         }
-        return true;
     }
 
     @Override
@@ -112,9 +124,10 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     }
 
     private void addLambdaWithName(String varName) {
-        if (!isValidVariableName(varName)) {
-            Toast.makeText(context, "Variable names can only contain lower-case letters.",
-                    Toast.LENGTH_SHORT).show();
+        try {
+            validateVariableName(varName);
+        } catch (InvalidNameException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -128,12 +141,16 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
                 expression, screenPoint, false /* placeAbovePalette */);
     }
 
-    private boolean isValidVariableName(String string) {
-        for (char c : string.toCharArray()) {
+    private void validateVariableName(String varName) throws InvalidNameException {
+        if (varName.length() > 8) {
+            throw new InvalidNameException("Variable names can only be up to 8 letters long.");
+        }
+
+        for (char c : varName.toCharArray()) {
             if (!Character.isLowerCase(c)) {
-                return false;
+                throw new InvalidNameException(
+                        "Variable names can only contain lower-case letters.");
             }
         }
-        return true;
     }
 }
