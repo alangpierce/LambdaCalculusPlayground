@@ -74,16 +74,28 @@ public class DefinitionManagerImpl implements DefinitionManager {
 
     @Override
     public void updateDefinition(String name, @Nullable UserExpression userExpression) {
+        // Get rid of the old definition first. This makes it so any circular definitions will be
+        // seen as invalid rather than using the stale definition.
+        removeDefinition(name);
         Expression expression;
         try {
             expression = toExpression(userExpression);
         } catch (InvalidExpressionException e) {
             expression = null;
         }
+        addDefinition(name, userExpression, expression);
+    }
 
-        userDefinitionMap.put(name, userExpression);
-        Expression oldExpression = definitionMap.put(name, expression);
+    private void removeDefinition(String name) {
+        userDefinitionMap.remove(name);
+        Expression oldExpression = definitionMap.remove(name);
         namesByExpression.remove(oldExpression, name);
+    }
+
+    private void addDefinition(String name, @Nullable UserExpression userExpression,
+            @Nullable Expression expression) {
+        userDefinitionMap.put(name, userExpression);
+        definitionMap.put(name, expression);
         namesByExpression.put(expression, name);
     }
 
