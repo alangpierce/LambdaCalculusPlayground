@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="resting_elevation">5dp</dimen>
+    <dimen name="dragging_elevation">15dp</dimen>
+</resources>

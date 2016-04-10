@@ -72,10 +72,10 @@ public class Compat {
         }
     }
 
-    public static void translationZBy(ViewPropertyAnimator animator, float value) {
+    public static void translationZ(ViewPropertyAnimator animator, float value) {
         // When we don't support elevation, just don't do anything with it.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            animator.translationZBy(value);
+            animator.translationZ(value);
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.ViewPropertyAnimator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.compat.Compat;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
@@ -131,7 +132,9 @@ public class TopLevelExpressionView {
         rootView().bringChildToFront(exprView.getNativeView());
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.05f).scaleY(1.05f);
-        Compat.translationZBy(animator, 10);
+        int targetElevationPixels = exprView.getNativeView().getContext().getResources()
+                .getDimensionPixelOffset(R.dimen.dragging_elevation);
+        Compat.translationZ(animator, targetElevationPixels);
         executeButton.animate().setDuration(150).alpha(0);
         executeButton.setClickable(false);
     }
@@ -142,7 +145,9 @@ public class TopLevelExpressionView {
         }
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.0f).scaleY(1.0f);
-        Compat.translationZBy(animator, -10);
+        int targetElevationPixels = exprView.getNativeView().getContext().getResources()
+                .getDimensionPixelOffset(R.dimen.resting_elevation);
+        Compat.translationZ(animator, targetElevationPixels);
         executeButton.animate().setDuration(150).alpha(1);
         executeButton.setClickable(true);
     }
