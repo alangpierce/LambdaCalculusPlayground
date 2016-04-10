@@ -24,6 +24,13 @@ public class PaletteView {
     }
 
     public void addChild(View nativeView) {
+        addChild(nativeView, -1);
+    }
+
+    /**
+     * @param index the index to add the child at, or -1 for the last index.
+     */
+    public void addChild(View nativeView, int index) {
         LinearLayout.LayoutParams layoutParams =
                 new LinearLayout.LayoutParams(nativeView.getLayoutParams());
         // Convert 10dp to pixels.
@@ -32,7 +39,7 @@ public class PaletteView {
         layoutParams.setMargins(marginPixels, marginPixels, marginPixels, marginPixels);
         layoutParams.gravity = Gravity.CENTER;
         nativeView.setLayoutParams(layoutParams);
-        linearLayout.addView(nativeView);
+        linearLayout.addView(nativeView, index);
     }
 
     public View getNativeView() {

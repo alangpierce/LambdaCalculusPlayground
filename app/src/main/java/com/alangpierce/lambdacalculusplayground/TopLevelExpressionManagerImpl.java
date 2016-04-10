@@ -15,9 +15,11 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -79,7 +81,10 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             lambdaPaletteView.addChild(lambdaController.getView().getNativeView());
         }
 
-        for (String defName : ImmutableList.of("TRUE", "FALSE", "+", "0", "1", "2", "3")) {
+        List<String> definitionNames =
+                Ordering.natural().sortedCopy(definitionManager.getDefinitionNames());
+
+        for (String defName : definitionNames) {
             PaletteReferenceController referenceController =
                     controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
             definitionPaletteView.addChild(referenceController.getView().getNativeView());
@@ -154,8 +159,23 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
                     defName, existingDefinition, canvasPoint);
             expressionState.setDefinition(definition);
             renderDefinition(definition);
-            return existingDefinition != null;
+            boolean alreadyExisted = existingDefinition != null;
+            if (!alreadyExisted) {
+                definitionManager.updateDefinition(defName, null);
+                addDefinitionToPalette(defName);
+            }
+            return alreadyExisted;
         }
+    }
+
+    private void addDefinitionToPalette(String defName) {
+        List<String> definitionNames =
+                Ordering.natural().sortedCopy(definitionManager.getDefinitionNames());
+        int defIndex = definitionNames.indexOf(defName);
+
+        PaletteReferenceController referenceController =
+                controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
+        definitionPaletteView.addChild(referenceController.getView().getNativeView(), defIndex);
     }
 
     private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {

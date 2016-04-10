@@ -3,6 +3,8 @@ package com.alangpierce.lambdacalculusplayground.definition;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 public interface DefinitionManager {
@@ -16,6 +18,8 @@ public interface DefinitionManager {
     @Nullable String tryResolveExpression(Expression expression);
 
     void updateDefinition(String name, @Nullable UserExpression userExpression);
+
+    Set<String> getDefinitionNames();
 
     class InvalidExpressionException extends RuntimeException {
     }

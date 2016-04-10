@@ -37,7 +37,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
         result.updateDefinition("TRUE", UserExpressionParser.parse("L t[L f[t]]"));
         result.updateDefinition("FALSE", UserExpressionParser.parse("L t[L f[f]]"));
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 3; i++) {
             UserExpression body = UserVariable.create("z");
             for (int j = 0; j < i; j++) {
                 body = UserFuncCall.create(UserVariable.create("s"), body);
@@ -70,6 +70,11 @@ public class DefinitionManagerImpl implements DefinitionManager {
             // TODO: Maybe do something smarter here.
             return names.iterator().next();
         }
+    }
+
+    @Override
+    public Set<String> getDefinitionNames() {
+        return definitionMap.keySet();
     }
 
     @Override
