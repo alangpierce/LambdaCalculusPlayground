@@ -9,6 +9,7 @@ import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionControllerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
@@ -42,6 +43,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final RelativeLayout canvasRoot;
     private final RelativeLayout abovePaletteRoot;
     private final TopLevelExpressionManager topLevelExpressionManager;
+    private final DefinitionManager definitionManager;
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
@@ -49,7 +51,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             PointConverter pointConverter,
             DragManager dragManager, UserExpressionEvaluator userExpressionEvaluator,
             RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
-            TopLevelExpressionManager topLevelExpressionManager) {
+            TopLevelExpressionManager topLevelExpressionManager,
+            DefinitionManager definitionManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
@@ -58,16 +61,18 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
         this.topLevelExpressionManager = topLevelExpressionManager;
+        this.definitionManager = definitionManager;
     }
 
     public static ExpressionControllerFactoryFactory createFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
             UserExpressionEvaluator userExpressionEvaluator, RelativeLayout canvasRoot,
-            RelativeLayout abovePaletteRoot) {
+            RelativeLayout abovePaletteRoot, DefinitionManager definitionManager) {
         return topLevelExpressionManager -> new ExpressionControllerFactoryImpl(
                 viewRenderer, dragObservableGenerator, pointConverter, dragManager,
-                userExpressionEvaluator, canvasRoot, abovePaletteRoot, topLevelExpressionManager);
+                userExpressionEvaluator, canvasRoot, abovePaletteRoot, topLevelExpressionManager,
+                definitionManager);
     }
 
     @Override
@@ -142,7 +147,10 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 },
                 reference -> {
                     ReferenceView view = ReferenceView.render(viewRenderer, reference.defName());
-                    return new ReferenceExpressionController(view, reference);
+                    ReferenceExpressionController refController =
+                            new ReferenceExpressionController(definitionManager, view, reference);
+                    refController.invalidateDefinitions();
+                    return refController;
                 }
         );
         for (DragSource dragSource : result.getDragSources()) {

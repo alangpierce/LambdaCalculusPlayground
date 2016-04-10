@@ -209,8 +209,10 @@ public class PlaygroundModule {
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
             UserExpressionEvaluator userExpressionEvaluator, @CanvasRoot RelativeLayout canvasRoot,
-            @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
+            @AbovePaletteRoot RelativeLayout abovePaletteRoot,
+            DefinitionManager definitionManager) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, userExpressionEvaluator, canvasRoot, abovePaletteRoot);
+                pointConverter, dragManager, userExpressionEvaluator, canvasRoot, abovePaletteRoot,
+                definitionManager);
     }
 }

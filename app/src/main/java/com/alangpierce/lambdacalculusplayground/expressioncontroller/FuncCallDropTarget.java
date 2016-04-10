@@ -32,11 +32,11 @@ public class FuncCallDropTarget implements DropTarget<TopLevelExpressionControll
     }
     @Override
     public void handleEnter(TopLevelExpressionController expressionController) {
-        ExpressionViews.handleDragEnter(targetView);
+        targetView.handleDragEnter();
     }
     @Override
     public void handleExit() {
-        ExpressionViews.handleDragExit(targetView);
+        targetView.handleDragExit();
     }
     @Override
     public void handleDrop(TopLevelExpressionController expressionController) {

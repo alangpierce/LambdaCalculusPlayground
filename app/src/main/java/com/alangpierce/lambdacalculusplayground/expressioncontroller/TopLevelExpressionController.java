@@ -18,7 +18,7 @@ public interface TopLevelExpressionController extends PanListener, DragData {
     void handlePositionChange(ScreenPoint screenPos);
     void onPan();
     List<DragSource> getDragSources();
-    void invalidateExecuteButton();
+    void invalidateDefinitions();
 
     /**
      * Get rid of this top-level expression and return the underlying expression controller. This is

@@ -15,6 +15,11 @@ public interface DefinitionManager {
 
     void invalidateDefinitions();
 
+    /**
+     * Determines if the definition corresponds to a valid backing expression with no errors.
+     */
+    boolean isDefinitionValid(String defName);
+
     class InvalidExpressionException extends RuntimeException {
     }
 

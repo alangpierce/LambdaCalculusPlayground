@@ -4,7 +4,6 @@ import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.widget.LinearLayout;
 
-import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 public class ExpressionViews {
@@ -21,17 +20,5 @@ public class ExpressionViews {
             // screen anymore.
             return false;
         }
-    }
-
-    public static void handleDragEnter(ExpressionView view) {
-        view.getNativeView().setBackgroundColor(getColor(view, R.color.expression_highlight));
-    }
-
-    public static void handleDragExit(ExpressionView view) {
-        view.getNativeView().setBackgroundResource(R.drawable.expression_background);
-    }
-
-    private static int getColor(ExpressionView view, @ColorRes int resId) {
-        return ContextCompat.getColor(view.getNativeView().getContext(), resId);
     }
 }

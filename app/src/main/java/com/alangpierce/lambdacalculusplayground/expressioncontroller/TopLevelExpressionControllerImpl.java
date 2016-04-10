@@ -159,8 +159,9 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public void invalidateExecuteButton() {
+    public void invalidateDefinitions() {
         view.setIsExecutable(userExpressionEvaluator.canStep(screenExpression.expr()));
+        expressionController.invalidateDefinitions();
     }
 
     @Override

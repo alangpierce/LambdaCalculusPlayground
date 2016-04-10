@@ -21,6 +21,8 @@ public interface DefinitionController extends PanListener, DragData {
 
     ScreenDefinition getScreenDefinition();
 
+    void invalidateDefinitions();
+
     interface OnDefinitionChangeCallback {
         void onChange(@Nullable DefinitionController newDefinitionController);
     }

@@ -123,6 +123,12 @@ public class FuncCallExpressionController implements ExpressionController {
         view.decommission();
     }
 
+    @Override
+    public void invalidateDefinitions() {
+        funcController.invalidateDefinitions();
+        argController.invalidateDefinitions();
+    }
+
     /**
      * Enable or disable touch events for the function view. The behavior of function calls is that
      * the left side should not itself be draggable, and should fall through to the function call

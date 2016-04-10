@@ -194,7 +194,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
                 appState.addDefinitionOnScreen(
                         newScreenDefinition.defName(), newScreenDefinition.canvasPos());
                 definitionManager.invalidateDefinitions();
-                invalidateExecuteButtons();
+                invalidateDefinitions();
             } else {
                 // Hide the definition (but don't actually delete it from the definition manager).
                 appState.removeDefinitionFromScreen(screenDefinition.defName());
@@ -205,9 +205,12 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         return controller;
     }
 
-    private void invalidateExecuteButtons() {
+    private void invalidateDefinitions() {
         for (TopLevelExpressionController controller : expressionControllers) {
-            controller.invalidateExecuteButton();
+            controller.invalidateDefinitions();
+        }
+        for (DefinitionController controller : definitionControllers.values()) {
+            controller.invalidateDefinitions();
         }
     }
 }

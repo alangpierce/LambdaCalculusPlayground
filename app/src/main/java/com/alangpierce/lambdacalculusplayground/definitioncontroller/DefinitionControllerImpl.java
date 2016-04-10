@@ -117,6 +117,11 @@ public class DefinitionControllerImpl implements DefinitionController {
     }
 
     @Override
+    public void invalidateDefinitions() {
+        expressionSlotController.invalidateDefinitions();
+    }
+
+    @Override
     public List<DragSource> getDragSources() {
         // TODO: It's weird for a function with this name to have a side-effect like this.
         view.getDragObservable().subscribe(dragActionSubject);

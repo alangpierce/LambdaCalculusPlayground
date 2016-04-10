@@ -41,6 +41,11 @@ public class VariableExpressionController implements ExpressionController {
     }
 
     @Override
+    public void invalidateDefinitions() {
+        // Do nothing; variables can't contain definitions.
+    }
+
+    @Override
     public List<DragSource> getDragSources() {
         return ImmutableList.of();
     }

@@ -1,7 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.widget.LinearLayout;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
@@ -85,5 +89,19 @@ public class FuncCallView implements ExpressionView {
         // The arg is at position 2, after the arg and the open paren.
         view.addView(newArgView.getNativeView(), 2);
         argView = newArgView;
+    }
+
+    @Override
+    public void handleDragEnter() {
+        view.setBackgroundColor(getColor(R.color.expression_highlight));
+    }
+
+    @Override
+    public void handleDragExit() {
+        view.setBackgroundColor(getColor(R.color.expression_background));
+    }
+
+    private @ColorInt int getColor(@ColorRes int resId) {
+        return ContextCompat.getColor(view.getContext(), resId);
     }
 }

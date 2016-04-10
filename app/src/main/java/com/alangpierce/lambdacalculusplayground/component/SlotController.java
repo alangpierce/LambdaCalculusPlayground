@@ -54,6 +54,12 @@ public class SlotController {
         parent.handleChange();
     }
 
+    public void invalidateDefinitions() {
+        if (exprController != null) {
+            exprController.invalidateDefinitions();
+        }
+    }
+
     private void updateDragActionSubscription() {
         if (dragActionSubscription != null) {
             dragActionSubscription.unsubscribe();

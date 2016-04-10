@@ -19,6 +19,12 @@ public interface ExpressionController {
      */
     OnChangeCallback getOnChangeCallback();
 
+    /**
+     * Called when definitions have changed, which may affect how we display this expression. In
+     * particular invalid references should be marked as errors.
+     */
+    void invalidateDefinitions();
+
     /*
      * TODO: This has questionable value, currently. Either refactor things so we always register
      * drag sources in a shared way, or just do it in each case.

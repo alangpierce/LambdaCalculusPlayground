@@ -61,6 +61,11 @@ public class DefinitionManagerImpl implements DefinitionManager {
         }
     }
 
+    @Override
+    public boolean isDefinitionValid(String defName) {
+        return definitionMap.get(defName) != null;
+    }
+
     /**
      * Compute the Expression for this definition, and populate the definitionMap and
      * namesByExpression tables appropriately. Return null if the expression is invalid.

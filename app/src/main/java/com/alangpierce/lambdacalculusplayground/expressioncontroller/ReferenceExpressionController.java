@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -11,12 +12,17 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 public class ReferenceExpressionController implements ExpressionController {
+    private final DefinitionManager definitionManager;
     private final ReferenceView view;
     private final UserReference userReference;
 
     private OnChangeCallback onChangeCallback;
 
-    public ReferenceExpressionController(ReferenceView view, UserReference userReference) {
+    public ReferenceExpressionController(
+            DefinitionManager definitionManager,
+            ReferenceView view,
+            UserReference userReference) {
+        this.definitionManager = definitionManager;
         this.view = view;
         this.userReference = userReference;
     }
@@ -38,6 +44,11 @@ public class ReferenceExpressionController implements ExpressionController {
 
     public OnChangeCallback getOnChangeCallback() {
         return onChangeCallback;
+    }
+
+    @Override
+    public void invalidateDefinitions() {
+        view.setValid(definitionManager.isDefinitionValid(userReference.defName()));
     }
 
     @Override

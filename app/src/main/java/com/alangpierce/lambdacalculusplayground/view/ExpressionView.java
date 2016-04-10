@@ -8,4 +8,6 @@ public interface ExpressionView {
     // TODO: This violates law of demeter. Try to restructure things to not need this.
     LinearLayout getNativeView();
     ScreenPoint getScreenPos();
+    void handleDragEnter();
+    void handleDragExit();
 }
