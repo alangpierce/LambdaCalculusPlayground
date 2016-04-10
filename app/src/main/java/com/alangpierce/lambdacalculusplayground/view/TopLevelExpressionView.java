@@ -189,10 +189,19 @@ public class TopLevelExpressionView {
 
     private void invalidateExecuteButton(DrawableAreaPoint expressionPos) {
         rootView().removeView(executeButton);
+        recomputeExecuteButtonPosition(expressionPos);
         if (isExecutable) {
-            recomputeExecuteButtonPosition(expressionPos);
             rootView().addView(executeButton);
         }
+    }
+
+    public void setIsExecutable(boolean newIsExecutable) {
+        if (isExecutable && !newIsExecutable) {
+            rootView().removeView(executeButton);
+        } else if (!isExecutable && newIsExecutable) {
+            rootView().addView(executeButton);
+        }
+        isExecutable = newIsExecutable;
     }
 
     private void recomputeExecuteButtonPosition(DrawableAreaPoint expressionPos) {

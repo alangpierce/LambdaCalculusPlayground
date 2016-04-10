@@ -18,12 +18,7 @@ public interface TopLevelExpressionController extends PanListener, DragData {
     void handlePositionChange(ScreenPoint screenPos);
     void onPan();
     List<DragSource> getDragSources();
-
-    /**
-     * An expression so simple that we don't need to warn when deleting it. We do this so the
-     * palette doesn't turn red when creating initial lambda expressions.
-     */
-    boolean isTrivialExpression();
+    void invalidateExecuteButton();
 
     /**
      * Get rid of this top-level expression and return the underlying expression controller. This is

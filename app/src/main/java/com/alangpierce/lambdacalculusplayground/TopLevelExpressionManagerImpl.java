@@ -2,7 +2,6 @@ package com.alangpierce.lambdacalculusplayground;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
@@ -18,27 +17,28 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
     private final TopLevelExpressionState expressionState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
-    private final DragManager dragManager;
     private final PointConverter pointConverter;
     private final PanManager panManager;
     private final DefinitionManager definitionManager;
     private final PaletteView lambdaPaletteView;
     private final PaletteView definitionPaletteView;
 
+    private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
     public TopLevelExpressionManagerImpl(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager,
             PointConverter pointConverter,
             PanManager panManager,
             DefinitionManager definitionManager,
@@ -46,7 +46,6 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             PaletteView definitionPaletteView) {
         this.expressionState = expressionState;
         this.controllerFactoryFactory = controllerFactoryFactory;
-        this.dragManager = dragManager;
         this.pointConverter = pointConverter;
         this.panManager = panManager;
         this.definitionManager = definitionManager;
@@ -124,6 +123,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
     private void registerTopLevelExpression(
             int exprId, TopLevelExpressionController controller, CanvasPoint canvasPos) {
+        expressionControllers.add(controller);
         panManager.registerPanListener(controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
@@ -132,6 +132,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             } else {
                 expressionState.deleteExpression(exprId);
                 panManager.unregisterPanListener(controller);
+                expressionControllers.remove(controller);
             }
         });
         controller.getView().attachToRoot(canvasPos);
@@ -166,13 +167,22 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             if (newController != null) {
                 ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
                 expressionState.setDefinition(newScreenDefinition);
-                definitionManager.updateDefinition(newScreenDefinition.defName(), newScreenDefinition.expr());
+                definitionManager.updateDefinition(
+                        newScreenDefinition.defName(), newScreenDefinition.expr());
+                invalidateExecuteButtons();
             } else {
+                // Hide the definition (but don't actually delete it from the definition manager).
                 expressionState.deleteDefinition(screenDefinition.defName());
                 panManager.unregisterPanListener(controller);
                 definitionControllers.remove(screenDefinition.defName());
             }
         });
         return controller;
+    }
+
+    private void invalidateExecuteButtons() {
+        for (TopLevelExpressionController controller : expressionControllers) {
+            controller.invalidateExecuteButton();
+        }
     }
 }

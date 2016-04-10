@@ -194,16 +194,16 @@ public class PlaygroundModule {
         return new ExpressionViewRendererImpl(context, layoutInflater);
     }
 
-    @Provides
+    @Provides @Singleton
     TopLevelExpressionManager provideTopLevelExpressionManager(
             TopLevelExpressionState expressionState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
-            DragManager dragManager, PointConverter pointConverter, PanManager panManager,
+            PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
             @Definition PaletteView definitionPaletteView) {
         return new TopLevelExpressionManagerImpl(
-                expressionState, controllerFactoryFactory, dragManager, pointConverter,
-                panManager, definitionManager, lambdaPaletteView, definitionPaletteView);
+                expressionState, controllerFactoryFactory, pointConverter, panManager,
+                definitionManager, lambdaPaletteView, definitionPaletteView);
     }
 
     @Provides

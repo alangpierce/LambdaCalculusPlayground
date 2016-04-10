@@ -159,6 +159,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
+    public void invalidateExecuteButton() {
+        view.setIsExecutable(userExpressionEvaluator.canStep(screenExpression.expr()));
+    }
+
+    @Override
     public ExpressionController decommission() {
         onChangeCallback.onChange(null);
         if (dragActionSubscription != null) {
@@ -176,16 +181,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     @Override
     public boolean intersectsWith(View otherView) {
         return Views.viewsIntersect(otherView, this.view.getNativeView());
-    }
-
-    @Override
-    public boolean isTrivialExpression() {
-        return screenExpression.expr().visit(
-                lambda -> lambda.body() == null,
-                funcCall -> false,
-                variable -> true,
-                reference -> false
-        );
     }
 
     private class TopLevelExpressionDragSource implements DragSource {
