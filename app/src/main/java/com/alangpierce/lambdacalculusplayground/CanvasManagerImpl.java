@@ -115,6 +115,10 @@ public class CanvasManagerImpl implements CanvasManager {
                 .wrapInTopLevelController(
                         expression, screenExpression, false /* placeAbovePalette */);
         registerTopLevelExpression(exprId, controller, canvasPos);
+        // In some cases (like when pulling a circular reference out of a definition, thus making
+        // the definition valid), we can attach an expression to the root with a stale definition
+        // state, so just recompute it.
+        expression.invalidateDefinitions();
         return controller;
     }
 
