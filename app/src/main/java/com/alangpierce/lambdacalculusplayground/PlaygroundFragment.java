@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,7 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -29,6 +31,8 @@ public class PlaygroundFragment extends Fragment {
     }
 
     private TopLevelExpressionState expressionState = new TopLevelExpressionStateImpl();
+
+    @Bind(R.id.playground_toolbar) Toolbar toolbar;
 
     @Inject TopLevelExpressionManager expressionManager;
     @Inject ExpressionCreator expressionCreator;
@@ -68,11 +72,16 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        PlaygroundActivity activity = (PlaygroundActivity) getActivity();
+
         RelativeLayout root = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
         ButterKnife.bind(this, root);
+
+        activity.setSupportActionBar(toolbar);
+
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(PlaygroundModule.create(getActivity(), expressionState, root))
+                .playgroundModule(PlaygroundModule.create(activity, expressionState, root))
                 .build();
         component.injectPlaygroundFragment(this);
 

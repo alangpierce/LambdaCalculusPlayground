@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -30,15 +29,10 @@ public class PlaygroundActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         @SuppressLint("InflateParams") final View layoutView =
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
         setContentView(layoutView);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.playground_toolbar);
-        setSupportActionBar(toolbar);
-
         if (savedInstanceState == null) {
-            // TODO: Consider starting with some initial expressions.
             TopLevelExpressionState initialState = new TopLevelExpressionStateImpl();
             Fragment fragment = PlaygroundFragment.create(initialState);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
