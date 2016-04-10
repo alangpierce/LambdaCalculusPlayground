@@ -8,4 +8,7 @@
 
     <string name="create_definition">Create or show definition</string>
     <string name="create_lambda">Choose variable name</string>
+
+    <string name="remove">Remove</string>
+    <string name="hide">Hide</string>
 </resources>

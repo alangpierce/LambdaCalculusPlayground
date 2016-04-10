@@ -56,7 +56,7 @@ public class DragManagerImpl implements DragManager {
     }
 
     private void handleDown(DragData dragData) {
-        dragActionManager.handleDragDown();
+        dragActionManager.handleDragDown(dragData);
         dragData.startDrag();
     }
 

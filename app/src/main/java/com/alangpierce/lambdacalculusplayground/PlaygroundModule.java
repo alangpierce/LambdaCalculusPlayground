@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
@@ -53,6 +54,7 @@ public class PlaygroundModule {
     // These are all children of the fragment.
     @Bind(R.id.playground_toolbar) Toolbar toolbar;
     @Bind(R.id.drag_action_bar) LinearLayout dragActionBar;
+    @Bind(R.id.remove_text) TextView removeTextView;
     @Bind(R.id.above_palette_root) RelativeLayout abovePaletteRoot;
     @Bind(R.id.lambda_palette_drawer_root) DrawerLayout lambdaPaletteDrawerRoot;
     @Bind(R.id.definition_palette_drawer_root) DrawerLayout definitionPaletteDrawerRoot;
@@ -162,7 +164,7 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     DragActionManager provideDragActionManager() {
-        return new DragActionManagerImpl(toolbar, dragActionBar);
+        return new DragActionManagerImpl(toolbar, dragActionBar, removeTextView);
     }
 
     @Provides @Singleton
