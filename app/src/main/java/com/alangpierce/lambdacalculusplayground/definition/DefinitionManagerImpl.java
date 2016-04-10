@@ -74,29 +74,60 @@ public class DefinitionManagerImpl implements DefinitionManager {
 
     @Override
     public void updateDefinition(String name, @Nullable UserExpression userExpression) {
-        // Get rid of the old definition first. This makes it so any circular definitions will be
-        // seen as invalid rather than using the stale definition.
-        removeDefinition(name);
-        Expression expression;
-        try {
-            expression = toExpression(userExpression);
-        } catch (InvalidExpressionException e) {
-            expression = null;
-        }
-        addDefinition(name, userExpression, expression);
-    }
-
-    private void removeDefinition(String name) {
-        userDefinitionMap.remove(name);
-        Expression oldExpression = definitionMap.remove(name);
-        namesByExpression.remove(oldExpression, name);
-    }
-
-    private void addDefinition(String name, @Nullable UserExpression userExpression,
-            @Nullable Expression expression) {
         userDefinitionMap.put(name, userExpression);
-        definitionMap.put(name, expression);
-        namesByExpression.put(expression, name);
+        recomputeAllDefinitions();
+    }
+
+    /**
+     * Given just the user definitions, figure out what expression, if any, should be used for each
+     * definition. We run this whenever any definition changes, since that definition might
+     * potentially be referenced by any other definition.
+     *
+     * Circular definitions case every definition in the cycle to be seen as invalid.
+     */
+    private void recomputeAllDefinitions() {
+        definitionMap.clear();
+        namesByExpression.clear();
+
+        // Note that we need to eagerly compute all definitions now instead of doing it lazily since
+        // we might need to do reverse lookups.
+        for (String defName : userDefinitionMap.keySet()) {
+            resolveDefinition(defName);
+        }
+    }
+
+    /**
+     * Compute the Expression for this definition, and populate the definitionMap and
+     * namesByExpression tables appropriately. Return null if the expression is invalid.
+     *
+     * Note that this is mutually recursive with toExpression, with definitionMap used as a
+     * mechanism for memoization and cycle detection.
+     */
+    private Expression resolveDefinition(String defName) {
+        if (!userDefinitionMap.containsKey(defName)) {
+            return null;
+        }
+
+        // If there's already an entry, use it. Note that the entry might be null, indicating that
+        // the definition is invalid.
+        if (definitionMap.containsKey(defName)) {
+            return definitionMap.get(defName);
+        }
+
+        // Mark this definition as invalid while we're computing it. That ensures that any circular
+        // references are seen as invalid.
+        definitionMap.put(defName, null);
+
+        try {
+            UserExpression userExpression = userDefinitionMap.get(defName);
+            Expression expression = toExpression(userExpression);
+            definitionMap.put(defName, expression);
+            namesByExpression.put(expression, defName);
+            return expression;
+        } catch (InvalidExpressionException e) {
+            // Do nothing; the definition stays null.
+            return null;
+        }
     }
 
     /**
@@ -119,7 +150,7 @@ public class DefinitionManagerImpl implements DefinitionManager {
                 funcCall -> FuncCall.create(toExpression(funcCall.func()), toExpression(funcCall.arg())),
                 variable -> Variable.create(variable.varName()),
                 reference -> {
-                    Expression expression = definitionMap.get(reference.defName());
+                    Expression expression = resolveDefinition(reference.defName());
                     if (expression == null) {
                         throw new InvalidExpressionException();
                     }
