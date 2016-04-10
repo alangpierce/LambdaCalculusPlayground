@@ -67,7 +67,6 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     }
 
     private void addDefinitionWithName(String defName) {
-
         try {
             validateDefinitionName(defName);
         } catch (InvalidNameException e) {
@@ -75,11 +74,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
             return;
         }
 
-        // Create the view at (50dp, 50dp).
-        int shiftPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 50f, context.getResources().getDisplayMetrics());
-        boolean alreadyOnCanvas = expressionManager.placeDefinition(
-                defName, DrawableAreaPoint.create(shiftPixels, shiftPixels));
+        boolean alreadyOnCanvas = expressionManager.placeDefinition(defName, newExpressionPoint());
         if (alreadyOnCanvas) {
             Toast.makeText(context, "Showing existing definition.", Toast.LENGTH_SHORT).show();
         }
@@ -131,11 +126,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
             return;
         }
 
-        // Create the view at (50dp, 50dp).
-        int shiftPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 50f, context.getResources().getDisplayMetrics());
-        DrawableAreaPoint drawableAreaPoint = DrawableAreaPoint.create(shiftPixels, shiftPixels);
-        ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);
+        ScreenPoint screenPoint = pointConverter.toScreenPoint(newExpressionPoint());
         UserLambda expression = UserLambda.create(varName, null);
         expressionManager.createNewExpression(
                 expression, screenPoint, false /* placeAbovePalette */);
@@ -152,5 +143,19 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
                         "Variable names can only contain lower-case letters.");
             }
         }
+    }
+
+    private DrawableAreaPoint newExpressionPoint() {
+        // Create the view at (50dp, 50dp).
+        int shiftPixels = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 50f, context.getResources().getDisplayMetrics());
+
+        // We also need to shift down to account for action bar height.
+        TypedValue actionBarSize = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.actionBarSize, actionBarSize, true);
+        int actionBarHeightPixels =
+                (int) actionBarSize.getDimension(context.getResources().getDisplayMetrics());
+
+        return DrawableAreaPoint.create(shiftPixels, shiftPixels + actionBarHeightPixels);
     }
 }
