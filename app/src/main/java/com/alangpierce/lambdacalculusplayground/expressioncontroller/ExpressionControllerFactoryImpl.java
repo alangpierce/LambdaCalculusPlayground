@@ -182,8 +182,13 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     @Override
     public PaletteLambdaController createPaletteLambdaController(String varName) {
         LambdaView view = LambdaView.render(dragObservableGenerator, viewRenderer, varName, null);
+        ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
+        ProducerControllerParent producerParent = PaletteLambdaController
+                .createProducerParent(topLevelExpressionManager, varName);
+        ProducerController producerController =
+                new ProducerController(producerView, producerParent);
         PaletteLambdaController result =
-                new PaletteLambdaController(topLevelExpressionManager, view, varName);
+                new PaletteLambdaController(producerController, view);
         result.registerCallbacks(dragManager);
         return result;
     }
