@@ -238,6 +238,9 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DropTarget<?> dropTarget : result.getDropTargets()) {
             dragManager.registerDropTarget(dropTarget);
         }
+        if (expressionController != null) {
+            expressionController.setOnChangeCallback(expressionSlotController::handleChange);
+        }
         return result;
     }
 }
