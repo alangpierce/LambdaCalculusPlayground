@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManager;
+import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 
 import javax.inject.Inject;
@@ -37,6 +39,8 @@ public class PlaygroundFragment extends Fragment {
     @Inject TopLevelExpressionManager expressionManager;
     @Inject ExpressionCreator expressionCreator;
     @Inject PaletteDrawerManager paletteDrawerManager;
+    @Inject DragManager dragManager;
+    @Inject DragActionManager dragActionManager;
 
     public static PlaygroundFragment create(TopLevelExpressionState initialState) {
         Bundle args = new Bundle();
@@ -86,6 +90,8 @@ public class PlaygroundFragment extends Fragment {
         component.injectPlaygroundFragment(this);
 
         expressionManager.renderInitialData();
+        dragActionManager.initDropTargets(dragManager);
+
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);
         return root;

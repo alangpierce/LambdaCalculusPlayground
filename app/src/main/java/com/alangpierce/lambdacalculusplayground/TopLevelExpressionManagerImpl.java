@@ -10,9 +10,8 @@ import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteController;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
@@ -75,9 +74,6 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     }
 
     private void renderPalettes() {
-        PaletteController controller = new PaletteController(lambdaPaletteView);
-        controller.registerCallbacks(dragManager);
-
         for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
             PaletteLambdaController lambdaController =
                     controllerFactoryFactory.create(this).createPaletteLambdaController(varName);

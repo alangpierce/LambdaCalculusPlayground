@@ -15,10 +15,17 @@ public abstract class ScreenRect {
     }
 
     public boolean intersectsWith(ScreenRect other) {
-        return getBottomRight().getX() >= other.getTopLeft().getX() &&
+        // If a view is just a single point, we say it doesn't intersect with anything. This avoids
+        // some bugs where views haven't been measured yet.
+        return isNonempty() && other.isNonempty() &&
+                getBottomRight().getX() >= other.getTopLeft().getX() &&
                 getTopLeft().getX() <= other.getBottomRight().getX() &&
                 getBottomRight().getY() >= other.getTopLeft().getY() &&
                 getTopLeft().getY() <= other.getBottomRight().getY();
+    }
+
+    private boolean isNonempty() {
+        return !getBottomRight().equals(getTopLeft());
     }
 
     public ScreenRect rightEdge() {

@@ -34,6 +34,42 @@
                 android:layout_height="match_parent"
                 android:background="@color/canvas">
 
+                <!-- Note that the 6dp elevation is important here. Normal expressions have an
+                     elevation of 5dp, so this puts us over them, but below dragged expressions. -->
+                <LinearLayout
+                    android:id="@+id/drag_action_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/drag_action_background"
+                    android:orientation="horizontal"
+                    android:elevation="6dp"
+                    android:gravity="center"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_remove"
+                            android:tint="@color/remove"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Remove"
+                            android:textSize="18sp"
+                            android:textColor="@color/remove"
+                            />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </RelativeLayout>
 
             <!-- Definition palette navigation drawer. -->

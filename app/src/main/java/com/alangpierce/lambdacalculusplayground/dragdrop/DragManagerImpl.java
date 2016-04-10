@@ -15,6 +15,13 @@ public class DragManagerImpl implements DragManager {
     private final List<DropTarget<?>> dropTargets =
             Collections.synchronizedList(Lists.newArrayList());
 
+    private final DragActionManager dragActionManager;
+
+    public DragManagerImpl(
+            DragActionManager dragActionManager) {
+        this.dragActionManager = dragActionManager;
+    }
+
     @Override
     public void registerDragSource(DragSource dragSource) {
         Observable<? extends Observable<PointerMotionEvent>> dragObservable =
@@ -49,6 +56,7 @@ public class DragManagerImpl implements DragManager {
     }
 
     private void handleDown(DragData dragData) {
+        dragActionManager.handleDragDown();
         dragData.startDrag();
     }
 
@@ -82,6 +90,7 @@ public class DragManagerImpl implements DragManager {
         } else {
             bestDropTarget.handleDrop(dragData);
         }
+        dragActionManager.handleDragUp();
     }
 
     /**
