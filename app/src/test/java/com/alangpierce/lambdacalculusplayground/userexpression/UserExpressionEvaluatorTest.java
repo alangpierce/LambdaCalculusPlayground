@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.userexpression;
 
+import com.alangpierce.lambdacalculusplayground.AppState;
+import com.alangpierce.lambdacalculusplayground.AppStateImpl;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEvaluator;
@@ -7,12 +9,14 @@ import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEva
 import junit.framework.TestCase;
 
 public class UserExpressionEvaluatorTest extends TestCase {
+    AppState appState;
     DefinitionManager definitionManager;
     UserExpressionEvaluatorImpl userExpressionEvaluator;
 
     @Override
     protected void setUp() throws Exception {
-        definitionManager = new DefinitionManagerImpl();
+        appState = new AppStateImpl();
+        definitionManager = new DefinitionManagerImpl(appState);
         userExpressionEvaluator = new UserExpressionEvaluatorImpl(
                 definitionManager, new OptimizedExpressionEvaluator());
 
@@ -64,7 +68,8 @@ public class UserExpressionEvaluatorTest extends TestCase {
     }
 
     private void defineTerm(String defName, String exprStr) {
-        definitionManager.updateDefinition(defName, UserExpressionParser.parse(exprStr));
+        appState.setDefinition(defName, UserExpressionParser.parse(exprStr));
+        definitionManager.invalidateDefinitions();
     }
 
     public void testBooleans() throws Exception {

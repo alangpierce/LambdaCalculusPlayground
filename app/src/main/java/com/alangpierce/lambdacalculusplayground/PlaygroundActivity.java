@@ -7,6 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionParser;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
+
 import rx.plugins.RxJavaErrorHandler;
 import rx.plugins.RxJavaPlugins;
 
@@ -34,8 +40,32 @@ public class PlaygroundActivity extends AppCompatActivity {
         setContentView(layoutView);
         if (savedInstanceState == null) {
             AppState initialState = new AppStateImpl();
+            populateInitialDefinitions(initialState);
             Fragment fragment = PlaygroundFragment.create(initialState);
             getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
+        }
+    }
+
+    private void populateInitialDefinitions(AppState state) {
+        state.setDefinition("+", UserExpressionParser.parse("L n[L m[L s[L z[n(s)(m(s)(z))]]]]"));
+        state.setDefinition("TRUE", UserExpressionParser.parse("L t[L f[t]]"));
+        state.setDefinition("FALSE", UserExpressionParser.parse("L t[L f[f]]"));
+
+        for (int i = 0; i < 3; i++) {
+            UserExpression body = UserVariable.create("z");
+            for (int j = 0; j < i; j++) {
+                body = UserFuncCall.create(UserVariable.create("s"), body);
+            }
+            state.setDefinition(
+                    Integer.toString(i),
+                    UserLambda.create(
+                            "s",
+                            UserLambda.create(
+                                    "z",
+                                    body
+                            )
+                    )
+            );
         }
     }
 }

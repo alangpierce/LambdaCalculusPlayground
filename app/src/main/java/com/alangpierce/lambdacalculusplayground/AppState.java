@@ -2,23 +2,29 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.os.Bundle;
 
+import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 public interface AppState {
     Iterable<Entry<Integer, ScreenExpression>> expressionsById();
-    Iterable<ScreenDefinition> definitions();
+    Map<String, CanvasPoint> getDefinitionsOnScreen();
+    Map<String, UserExpression> getAllDefinitions();
+
+
     void modifyExpression(int key, ScreenExpression expression);
+    void deleteExpression(int exprId);
+    int addScreenExpression(ScreenExpression screenExpression);
 
     /**
      * Create or set the given definition.
      */
-    void setDefinition(ScreenDefinition definition);
-    void deleteExpression(int exprId);
-    void deleteDefinition(String defName);
-
-    int addScreenExpression(ScreenExpression screenExpression);
+    void setDefinition(String defName, UserExpression userExpression);
+    void addDefinitionOnScreen(String defName, CanvasPoint point);
+    void removeDefinitionFromScreen(String defName);
 
     PointDifference getPanOffset();
     void setPanOffset(PointDifference panOffset);

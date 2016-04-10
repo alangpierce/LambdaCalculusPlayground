@@ -172,8 +172,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    DefinitionManager provideDefinitionManager() {
-        return DefinitionManagerImpl.createWithDefaults();
+    DefinitionManager provideDefinitionManager(AppState appState) {
+        return new DefinitionManagerImpl(appState);
     }
 
     @Provides @Singleton

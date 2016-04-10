@@ -68,8 +68,12 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             ScreenExpression screenExpression = entry.getValue();
             renderTopLevelExpression(exprId, screenExpression, false /* placeAbovePalette */);
         }
-        for (ScreenDefinition definition : appState.definitions()) {
-            renderDefinition(definition);
+        for (Entry<String, CanvasPoint> entry : appState.getDefinitionsOnScreen().entrySet()) {
+            String defName = entry.getKey();
+            CanvasPoint point = entry.getValue();
+            UserExpression definition = appState.getAllDefinitions().get(defName);
+            ScreenDefinition screenDefinition = ScreenDefinition.create(defName, definition, point);
+            renderDefinition(screenDefinition);
         }
         renderPalettes();
     }
@@ -82,7 +86,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         }
 
         List<String> definitionNames =
-                Ordering.natural().sortedCopy(definitionManager.getDefinitionNames());
+                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
 
         for (String defName : definitionNames) {
             PaletteReferenceController referenceController =
@@ -151,17 +155,17 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
             existingController.handlePositionChange(screenPoint);
             return true;
         } else {
-            @Nullable UserExpression existingDefinition =
-                    definitionManager.getUserDefinition(defName);
+            @Nullable UserExpression existingDefinition = appState.getAllDefinitions().get(defName);
             CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
             // Either make a new blank definition or use the existing one.
             ScreenDefinition definition = ScreenDefinition.create(
                     defName, existingDefinition, canvasPoint);
-            appState.setDefinition(definition);
+            appState.setDefinition(defName, existingDefinition);
+            appState.addDefinitionOnScreen(defName, canvasPoint);
             renderDefinition(definition);
             boolean alreadyExisted = existingDefinition != null;
             if (!alreadyExisted) {
-                definitionManager.updateDefinition(defName, null);
+                definitionManager.invalidateDefinitions();
                 addDefinitionToPalette(defName);
             }
             return alreadyExisted;
@@ -170,7 +174,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
 
     private void addDefinitionToPalette(String defName) {
         List<String> definitionNames =
-                Ordering.natural().sortedCopy(definitionManager.getDefinitionNames());
+                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
         int defIndex = definitionNames.indexOf(defName);
 
         PaletteReferenceController referenceController =
@@ -186,13 +190,14 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
                 ScreenDefinition newScreenDefinition = newController.getScreenDefinition();
-                appState.setDefinition(newScreenDefinition);
-                definitionManager.updateDefinition(
-                        newScreenDefinition.defName(), newScreenDefinition.expr());
+                appState.setDefinition(newScreenDefinition.defName(), newScreenDefinition.expr());
+                appState.addDefinitionOnScreen(
+                        newScreenDefinition.defName(), newScreenDefinition.canvasPos());
+                definitionManager.invalidateDefinitions();
                 invalidateExecuteButtons();
             } else {
                 // Hide the definition (but don't actually delete it from the definition manager).
-                appState.deleteDefinition(screenDefinition.defName());
+                appState.removeDefinitionFromScreen(screenDefinition.defName());
                 panManager.unregisterPanListener(controller);
                 definitionControllers.remove(screenDefinition.defName());
             }

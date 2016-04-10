@@ -2,10 +2,13 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.os.Bundle;
 
+import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,12 +24,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AppStateImpl implements AppState {
     /*
      * We keep expressions with IDs so that we can delete and modify them later as necessary, but
-     * the bundled format is just a list of ScreenExpressions. Same for definitions.
-     * TODO: Maybe we could consolidate the redundant code with expressions and definitions.
+     * the bundled format is just a list of ScreenExpressions.
      */
-    private Map<Integer, ScreenExpression> expressions = Maps.newConcurrentMap();
-    private Map<String, ScreenDefinition> definitions = Maps.newConcurrentMap();
-    private AtomicInteger maxId = new AtomicInteger();
+    private Map<Integer, ScreenExpression> expressions = new HashMap<>();
+
+    private Map<String, UserExpression> allDefinitions = new HashMap<>();
+    private Map<String, CanvasPoint> definitionsOnScreen = new HashMap<>();
+
+    // TODO: Remove thread safety here; it's not necessary.
+    private AtomicInteger maxExprId = new AtomicInteger();
     private AtomicReference<PointDifference> panOffset =
             new AtomicReference<>(PointDifference.create(0, 0));
 
@@ -36,8 +42,13 @@ public class AppStateImpl implements AppState {
     }
 
     @Override
-    public Iterable<ScreenDefinition> definitions() {
-        return definitions.values();
+    public Map<String, CanvasPoint> getDefinitionsOnScreen() {
+        return definitionsOnScreen;
+    }
+
+    @Override
+    public Map<String, UserExpression> getAllDefinitions() {
+        return allDefinitions;
     }
 
     @Override
@@ -46,8 +57,18 @@ public class AppStateImpl implements AppState {
     }
 
     @Override
-    public void setDefinition(ScreenDefinition definition) {
-        definitions.put(definition.defName(), definition);
+    public void setDefinition(String defName, UserExpression userExpression) {
+        allDefinitions.put(defName, userExpression);
+    }
+
+    @Override
+    public void addDefinitionOnScreen(String defName, CanvasPoint point) {
+        definitionsOnScreen.put(defName, point);
+    }
+
+    @Override
+    public void removeDefinitionFromScreen(String defName) {
+        definitionsOnScreen.remove(defName);
     }
 
     @Override
@@ -56,13 +77,8 @@ public class AppStateImpl implements AppState {
     }
 
     @Override
-    public void deleteDefinition(String defName) {
-        definitions.remove(defName);
-    }
-
-    @Override
     public int addScreenExpression(ScreenExpression screenExpression) {
-        int exprId = maxId.incrementAndGet();
+        int exprId = maxExprId.incrementAndGet();
         expressions.put(exprId, screenExpression);
         return exprId;
     }
@@ -87,13 +103,19 @@ public class AppStateImpl implements AppState {
                 addScreenExpression(expression);
             }
         }
-        List<ScreenDefinition> screenDefinitions =
-                (List<ScreenDefinition>) bundle.getSerializable("definitions");
-        if (screenDefinitions != null) {
-            for (ScreenDefinition definition : screenDefinitions) {
-                setDefinition(definition);
-            }
+
+        Map<String, UserExpression> allDefinitionsInput =
+                (Map<String, UserExpression>) bundle.getSerializable("allDefinitions");
+        if (allDefinitionsInput != null) {
+            allDefinitions.putAll(allDefinitionsInput);
         }
+
+        Map<String, CanvasPoint> definitionsOnScreenInput =
+                (Map<String, CanvasPoint>) bundle.getSerializable("definitionsOnScreen");
+        if (definitionsOnScreenInput != null) {
+            definitionsOnScreen.putAll(definitionsOnScreenInput);
+        }
+
         PointDifference panOffset = (PointDifference) bundle.getSerializable("panOffset");
         if (panOffset != null) {
             this.panOffset.set(panOffset);
@@ -102,8 +124,10 @@ public class AppStateImpl implements AppState {
 
     @Override
     public void persistToBundle(Bundle bundle) {
+        // TODO: Use parcelables instead.
         bundle.putSerializable("expressions", ImmutableList.copyOf(expressions.values()));
-        bundle.putSerializable("definitions", ImmutableList.copyOf(definitions.values()));
+        bundle.putSerializable("allDefinitions", (Serializable) allDefinitions);
+        bundle.putSerializable("definitionsOnScreen", (Serializable) definitionsOnScreen);
         bundle.putSerializable("panOffset", panOffset.get());
     }
 }
