@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.dragdrop;
 
+import android.view.View;
+
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
@@ -27,4 +29,8 @@ public interface DragData {
     // Finish the drag by landing on the canvas at the given screen position, rather than a drop
     // target.
     void handlePositionChange(ScreenPoint screenPos);
+
+    void destroy();
+
+    boolean intersectsWith(View otherView);
 }

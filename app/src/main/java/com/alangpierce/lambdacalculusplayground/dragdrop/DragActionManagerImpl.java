@@ -6,8 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 
 public class DragActionManagerImpl implements DragActionManager {
     private final Toolbar toolbar;
@@ -34,17 +32,17 @@ public class DragActionManagerImpl implements DragActionManager {
         dragActionBar.getParent().bringChildToFront(dragActionBar);
     }
 
-    private class DeleteDropTarget implements DropTarget<TopLevelExpressionController> {
+    private class DeleteDropTarget implements DropTarget<DragData> {
         @Override
-        public int hitTest(TopLevelExpressionController dragData) {
-            if (Views.viewsIntersect(dragActionBar, dragData.getView().getNativeView())) {
+        public int hitTest(DragData dragData) {
+            if (dragData.intersectsWith(dragActionBar)) {
                 return Integer.MAX_VALUE;
             } else {
                 return DropTarget.NOT_HIT;
             }
         }
         @Override
-        public void handleEnter(TopLevelExpressionController dragData) {
+        public void handleEnter(DragData dragData) {
             dragActionBar.setBackgroundColor(getColor(R.color.drag_action_delete));
         }
         @Override
@@ -52,12 +50,12 @@ public class DragActionManagerImpl implements DragActionManager {
             dragActionBar.setBackgroundColor(getColor(R.color.drag_action_background));
         }
         @Override
-        public void handleDrop(TopLevelExpressionController dragData) {
-            dragData.decommission();
+        public void handleDrop(DragData dragData) {
+            dragData.destroy();
         }
         @Override
-        public Class<TopLevelExpressionController> getDataClass() {
-            return TopLevelExpressionController.class;
+        public Class<DragData> getDataClass() {
+            return DragData.class;
         }
     }
 

@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.util.TypedValue;
+import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
@@ -164,6 +166,16 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         }
         view.decommission();
         return expressionController;
+    }
+
+    @Override
+    public void destroy() {
+        decommission();
+    }
+
+    @Override
+    public boolean intersectsWith(View otherView) {
+        return Views.viewsIntersect(otherView, this.view.getNativeView());
     }
 
     @Override

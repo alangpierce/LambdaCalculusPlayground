@@ -105,4 +105,8 @@ public class DefinitionView {
                 .setDuration(100).scaleX(1.0f).scaleY(1.0f);
         Compat.translationZBy(animator, -10);
     }
+
+    public void destroy() {
+        canvasRoot.removeView(nativeView);
+    }
 }

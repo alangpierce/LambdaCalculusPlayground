@@ -1,5 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.definitioncontroller;
 
+import android.view.View;
+
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
@@ -15,6 +17,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserReference;
 import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
@@ -100,6 +103,17 @@ public class DefinitionControllerImpl implements DefinitionController {
         DrawableAreaPoint drawableAreaPoint =
                 pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
         view.setCanvasPos(drawableAreaPoint);
+    }
+
+    @Override
+    public void destroy() {
+        onChangeCallback.onChange(null);
+        view.destroy();
+    }
+
+    @Override
+    public boolean intersectsWith(View otherView) {
+        return Views.viewsIntersect(view.getNativeView(), otherView);
     }
 
     @Override
