@@ -8,6 +8,8 @@
         android:id="@+id/lambda_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:inputType="text"
+        android:imeOptions="actionDone"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         >
