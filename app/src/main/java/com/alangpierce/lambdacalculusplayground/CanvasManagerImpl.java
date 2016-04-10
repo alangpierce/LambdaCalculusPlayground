@@ -26,7 +26,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager {
+public class CanvasManagerImpl implements CanvasManager {
     private final AppState appState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final PointConverter pointConverter;
@@ -38,7 +38,7 @@ public class TopLevelExpressionManagerImpl implements TopLevelExpressionManager 
     private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
 
-    public TopLevelExpressionManagerImpl(
+    public CanvasManagerImpl(
             AppState appState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter,

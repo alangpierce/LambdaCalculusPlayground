@@ -133,7 +133,7 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionCreator provideExpressionCreator(Context context,
-            LayoutInflater layoutInflater, TopLevelExpressionManager expressionManager,
+            LayoutInflater layoutInflater, CanvasManager expressionManager,
             PointConverter pointConverter) {
         return new ExpressionCreatorImpl(context, layoutInflater, expressionManager,
                 pointConverter);
@@ -194,12 +194,12 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    TopLevelExpressionManager provideTopLevelExpressionManager(
+    CanvasManager provideTopLevelExpressionManager(
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
             @Definition PaletteView definitionPaletteView) {
-        return new TopLevelExpressionManagerImpl(
+        return new CanvasManagerImpl(
                 appState, controllerFactoryFactory, pointConverter, panManager,
                 definitionManager, lambdaPaletteView, definitionPaletteView);
     }

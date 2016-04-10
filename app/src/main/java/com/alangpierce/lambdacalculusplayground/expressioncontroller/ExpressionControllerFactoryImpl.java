@@ -4,7 +4,7 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.ProducerView;
@@ -42,7 +42,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final UserExpressionEvaluator userExpressionEvaluator;
     private final RelativeLayout canvasRoot;
     private final RelativeLayout abovePaletteRoot;
-    private final TopLevelExpressionManager topLevelExpressionManager;
+    private final CanvasManager canvasManager;
     private final DefinitionManager definitionManager;
 
     public ExpressionControllerFactoryImpl(
@@ -51,7 +51,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             PointConverter pointConverter,
             DragManager dragManager, UserExpressionEvaluator userExpressionEvaluator,
             RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
-            TopLevelExpressionManager topLevelExpressionManager,
+            CanvasManager canvasManager,
             DefinitionManager definitionManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
@@ -60,7 +60,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         this.userExpressionEvaluator = userExpressionEvaluator;
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
-        this.topLevelExpressionManager = topLevelExpressionManager;
+        this.canvasManager = canvasManager;
         this.definitionManager = definitionManager;
     }
 
@@ -92,7 +92,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
                 placeAbovePalette, exprController.getView(), isExecutable);
         TopLevelExpressionControllerImpl result =
-                new TopLevelExpressionControllerImpl(topLevelExpressionManager, topLevelView,
+                new TopLevelExpressionControllerImpl(canvasManager, topLevelView,
                         pointConverter, userExpressionEvaluator, screenExpression, exprController);
         for (DragSource dragSource : result.getDragSources()) {
             dragManager.registerDragSource(dragSource);
@@ -116,9 +116,9 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                     ProducerController producerController = new ProducerController(
                             view.getParameterProducer(),
                             LambdaExpressionController.createProducerParent(
-                                    topLevelExpressionManager, lambda.varName()));
+                                    canvasManager, lambda.varName()));
                     SlotController bodySlotController = new SlotController(
-                            topLevelExpressionManager, view.getBodySlot(), bodyController);
+                            canvasManager, view.getBodySlot(), bodyController);
                     LambdaExpressionController controller = new LambdaExpressionController(
                             view, producerController, bodySlotController, lambda);
                     bodySlotController.setParent(controller.createSlotParent());
@@ -135,7 +135,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                             funcController.getView(), argController.getView());
 
                     FuncCallExpressionController controller =
-                            new FuncCallExpressionController(topLevelExpressionManager, view,
+                            new FuncCallExpressionController(canvasManager, view,
                                     funcController, argController, funcCall);
                     funcController.setOnChangeCallback(controller::handleFuncChange);
                     argController.setOnChangeCallback(controller::handleArgChange);
@@ -174,7 +174,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
                 funcController.getView(), argController.getView());
         FuncCallExpressionController result =
-                new FuncCallExpressionController(topLevelExpressionManager, view,
+                new FuncCallExpressionController(canvasManager, view,
                         funcController, argController, funcCall);
         funcController.setOnChangeCallback(result::handleFuncChange);
         argController.setOnChangeCallback(result::handleArgChange);
@@ -192,7 +192,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         LambdaView view = LambdaView.render(dragObservableGenerator, viewRenderer, varName, null);
         ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
         ProducerControllerParent producerParent = PaletteLambdaController
-                .createProducerParent(topLevelExpressionManager, varName);
+                .createProducerParent(canvasManager, varName);
         ProducerController producerController =
                 new ProducerController(producerView, producerParent);
         PaletteLambdaController result =
@@ -206,7 +206,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         ReferenceView view = ReferenceView.render(viewRenderer, defName);
         ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
         ProducerControllerParent producerParent = PaletteReferenceController
-                .createProducerParent(topLevelExpressionManager, defName);
+                .createProducerParent(canvasManager, defName);
         ProducerController producerController =
                 new ProducerController(producerView, producerParent);
         PaletteReferenceController result =
@@ -232,9 +232,9 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         ProducerController referenceProducerController = new ProducerController(
                 view.getReferenceProducer(),
                 DefinitionControllerImpl.createProducerParent(
-                        topLevelExpressionManager, screenDefinition.defName()));
+                        canvasManager, screenDefinition.defName()));
         SlotController expressionSlotController =
-                new SlotController(topLevelExpressionManager, view.getExpressionSlot(),
+                new SlotController(canvasManager, view.getExpressionSlot(),
                         expressionController);
         DefinitionController result = new DefinitionControllerImpl(
                 pointConverter, view, referenceProducerController, expressionSlotController,

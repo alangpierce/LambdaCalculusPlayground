@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
@@ -38,11 +38,11 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     public static ProducerControllerParent createProducerParent(
-            TopLevelExpressionManager topLevelExpressionManager, String varName) {
+            CanvasManager canvasManager, String varName) {
         return new ProducerControllerParent() {
             @Override
             public TopLevelExpressionController produceExpression(ScreenPoint point) {
-                return topLevelExpressionManager.createNewExpression(
+                return canvasManager.createNewExpression(
                         UserVariable.create(varName), point, false /* placeAbovePalette */);
             }
             @Override

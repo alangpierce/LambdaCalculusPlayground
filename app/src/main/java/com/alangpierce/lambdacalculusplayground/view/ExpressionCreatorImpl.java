@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.ExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
@@ -23,11 +23,11 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 public class ExpressionCreatorImpl implements ExpressionCreator {
     private final Context context;
     private final LayoutInflater layoutInflater;
-    private final TopLevelExpressionManager expressionManager;
+    private final CanvasManager expressionManager;
     private final PointConverter pointConverter;
 
     public ExpressionCreatorImpl(Context context, LayoutInflater layoutInflater,
-            TopLevelExpressionManager expressionManager,
+            CanvasManager expressionManager,
             PointConverter pointConverter) {
         this.context = context;
         this.layoutInflater = layoutInflater;

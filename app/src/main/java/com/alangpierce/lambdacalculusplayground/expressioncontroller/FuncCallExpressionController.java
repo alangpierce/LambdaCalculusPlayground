@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
@@ -22,7 +22,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class FuncCallExpressionController implements ExpressionController {
-    private final TopLevelExpressionManager topLevelExpressionManager;
+    private final CanvasManager canvasManager;
     private final FuncCallView view;
 
     /*
@@ -39,10 +39,10 @@ public class FuncCallExpressionController implements ExpressionController {
     private @Nullable Subscription argDragActionSubscription;
 
     public FuncCallExpressionController(
-            TopLevelExpressionManager topLevelExpressionManager, FuncCallView view,
+            CanvasManager canvasManager, FuncCallView view,
             ExpressionController funcController, ExpressionController argController,
             UserFuncCall userFuncCall) {
-        this.topLevelExpressionManager = topLevelExpressionManager;
+        this.canvasManager = canvasManager;
         this.view = view;
         this.funcController = funcController;
         this.argController = argController;
@@ -151,7 +151,7 @@ public class FuncCallExpressionController implements ExpressionController {
             ScreenPoint screenPos = view.getScreenPos();
             decommission();
             onChangeCallback.onChange(() -> funcController);
-            return topLevelExpressionManager.sendExpressionToTopLevel(argController, screenPos);
+            return canvasManager.sendExpressionToTopLevel(argController, screenPos);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.component;
 
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
@@ -17,7 +17,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class SlotController {
-    private final TopLevelExpressionManager topLevelExpressionManager;
+    private final CanvasManager canvasManager;
     private final SlotView view;
 
     private final Subject<Observable<PointerMotionEvent>, Observable<PointerMotionEvent>>
@@ -28,10 +28,10 @@ public class SlotController {
     private @Nullable ExpressionController exprController;
 
     public SlotController(
-            TopLevelExpressionManager topLevelExpressionManager,
+            CanvasManager canvasManager,
             SlotView view,
             @Nullable ExpressionController exprController) {
-        this.topLevelExpressionManager = topLevelExpressionManager;
+        this.canvasManager = canvasManager;
         this.view = view;
         this.exprController = exprController;
     }
@@ -95,7 +95,7 @@ public class SlotController {
             // also changes some class fields, so we need to grab them above.
             // TODO: Try to make things immutable to avoid this complexity.
             handleChange(() -> null);
-            return topLevelExpressionManager.sendExpressionToTopLevel(controllerToDrag, screenPos);
+            return canvasManager.sendExpressionToTopLevel(controllerToDrag, screenPos);
         }
     }
 

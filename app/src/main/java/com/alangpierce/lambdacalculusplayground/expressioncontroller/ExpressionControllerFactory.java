@@ -1,8 +1,8 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
@@ -47,6 +47,6 @@ public interface ExpressionControllerFactory {
      * We pass it down to make it easier for individual expressions to construct new instances.
      */
     interface ExpressionControllerFactoryFactory {
-        ExpressionControllerFactory create(TopLevelExpressionManager expressionManager);
+        ExpressionControllerFactory create(CanvasManager expressionManager);
     }
 }

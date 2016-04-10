@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.widget.Toast;
 
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -33,7 +33,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
-    private final TopLevelExpressionManager topLevelExpressionManager;
+    private final CanvasManager canvasManager;
     private final TopLevelExpressionView view;
     private final PointConverter pointConverter;
     private final UserExpressionEvaluator userExpressionEvaluator;
@@ -47,10 +47,10 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private @Nullable Subscription dragActionSubscription;
 
     public TopLevelExpressionControllerImpl(
-            TopLevelExpressionManager topLevelExpressionManager, TopLevelExpressionView view,
+            CanvasManager canvasManager, TopLevelExpressionView view,
             PointConverter pointConverter, UserExpressionEvaluator userExpressionEvaluator,
             ScreenExpression screenExpression, ExpressionController expressionController) {
-        this.topLevelExpressionManager = topLevelExpressionManager;
+        this.canvasManager = canvasManager;
         this.view = view;
         this.pointConverter = pointConverter;
         this.userExpressionEvaluator = userExpressionEvaluator;
@@ -122,7 +122,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
                     view.getNativeView().getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
-        TopLevelExpressionController newExpression = topLevelExpressionManager.createNewExpression(
+        TopLevelExpressionController newExpression = canvasManager.createNewExpression(
                 newExpr, view.getScreenPos(), false /* placeAbovePalette */);
 
         ScreenPoint newScreenPos = computeExecuteResultScreenPos(newExpression);

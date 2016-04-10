@@ -6,7 +6,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
-public interface TopLevelExpressionManager {
+public interface CanvasManager {
     /**
      * This should be called once when setting up the fragment.
      */

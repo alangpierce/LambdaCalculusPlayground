@@ -1,6 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.palette;
 
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
@@ -22,11 +22,11 @@ public class PaletteLambdaController {
     }
 
     public static ProducerControllerParent createProducerParent(
-            TopLevelExpressionManager topLevelExpressionManager, String varName) {
+            CanvasManager canvasManager, String varName) {
         return new ProducerControllerParent() {
             @Override
             public TopLevelExpressionController produceExpression(ScreenPoint point) {
-                return topLevelExpressionManager.createNewExpression(
+                return canvasManager.createNewExpression(
                         UserLambda.create(varName, null), point, true /* placeAbovePalette */);
             }
             @Override

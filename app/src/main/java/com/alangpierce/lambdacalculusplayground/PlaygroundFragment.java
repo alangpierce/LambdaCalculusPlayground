@@ -36,7 +36,7 @@ public class PlaygroundFragment extends Fragment {
 
     @Bind(R.id.playground_toolbar) Toolbar toolbar;
 
-    @Inject TopLevelExpressionManager expressionManager;
+    @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
     @Inject PaletteDrawerManager paletteDrawerManager;
     @Inject DragManager dragManager;
@@ -89,7 +89,7 @@ public class PlaygroundFragment extends Fragment {
                 .build();
         component.injectPlaygroundFragment(this);
 
-        expressionManager.renderInitialData();
+        canvasManager.renderInitialData();
         dragActionManager.initDropTargets(dragManager);
 
         boolean isFirstTime = savedInstanceState == null;

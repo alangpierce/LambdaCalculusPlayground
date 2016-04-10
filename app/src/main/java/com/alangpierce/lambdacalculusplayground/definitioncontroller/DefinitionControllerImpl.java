@@ -2,8 +2,8 @@ package com.alangpierce.lambdacalculusplayground.definitioncontroller;
 
 import android.view.View;
 
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
-import com.alangpierce.lambdacalculusplayground.TopLevelExpressionManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
@@ -58,11 +58,11 @@ public class DefinitionControllerImpl implements DefinitionController {
     }
 
     public static ProducerControllerParent createProducerParent(
-            TopLevelExpressionManager topLevelExpressionManager, String defName) {
+            CanvasManager canvasManager, String defName) {
         return new ProducerControllerParent() {
             @Override
             public TopLevelExpressionController produceExpression(ScreenPoint screenPos) {
-                return topLevelExpressionManager.createNewExpression(
+                return canvasManager.createNewExpression(
                         UserReference.create(defName), screenPos, false /* placeAbovePalette */);
             }
             @Override
