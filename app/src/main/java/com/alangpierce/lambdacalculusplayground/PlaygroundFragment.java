@@ -91,9 +91,11 @@ public class PlaygroundFragment extends Fragment {
                 .build();
         component.injectPlaygroundFragment(this);
 
+        // Note that we need to invalidate the definitions before placing the expressions and
+        // definitions, so that errors will be reported correctly.
+        definitionManager.invalidateDefinitions();
         canvasManager.renderInitialData();
         dragActionManager.initDropTargets(dragManager);
-        definitionManager.invalidateDefinitions();
 
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);
