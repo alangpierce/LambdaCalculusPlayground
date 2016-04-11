@@ -21,6 +21,7 @@
 
     <string name="bad_def_name_too_long">Definition names can only be up to 8 letters long.</string>
     <string name="bad_def_name_bad_chars">Definition names can only contain capital letters and symbols.</string>
+    <string name="bad_def_too_big">That definition is too big to show!</string>
 
     <string name="bad_var_name_too_long">Variable names can only be up to 8 letters long.</string>
     <string name="bad_var_name_bad_chars">Variable names can only contain lower-case letters.</string>

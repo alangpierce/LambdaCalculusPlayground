@@ -76,7 +76,14 @@ public class ExpressionNumbers {
         return result;
     }
 
-    public static @Nullable UserExpression tryUserExpressionForNumber(String number) {
+    public static @Nullable UserExpression tryUserExpressionForNumber(String number)
+            throws ExpressionTooBigException {
+        // Refuse to show the user the expanded form for gigantic numbers, since it'll cause
+        // performance issues.
+        if (isNumber(number) && Integer.parseInt(number) > 30) {
+            throw new ExpressionTooBigException();
+        }
+
         @Nullable Expression expression = tryExpressionForNumber(number);
         if (expression == null) {
             return null;

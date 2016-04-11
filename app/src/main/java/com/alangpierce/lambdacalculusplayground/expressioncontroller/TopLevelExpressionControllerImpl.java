@@ -120,8 +120,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
         } catch (EvaluationFailedException e) {
             Context context = view.getNativeView().getContext();
-            String message = context.getString(e.getStringRes());
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, e.getStringRes(), Toast.LENGTH_SHORT).show();
             return;
         }
         TopLevelExpressionController newExpression = canvasManager.createNewExpression(

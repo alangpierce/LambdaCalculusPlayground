@@ -21,6 +21,10 @@ public interface UserDefinitionManager {
      *
      * In particular, if automatic numbers are enabled, this might create a number expression even
      * if the number wasn't defined in our expression state.
+     *
+     * Throws ExpressionTooBigException if we end up wanting to return an expression that's way too
+     * big.
      */
-    @Nullable UserExpression resolveDefinitionForCreation(String defName);
+    @Nullable UserExpression resolveDefinitionForCreation(String defName)
+            throws ExpressionTooBigException;
 }

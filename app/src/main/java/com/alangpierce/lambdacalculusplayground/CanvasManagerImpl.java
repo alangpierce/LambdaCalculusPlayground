@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.definition.ExpressionTooBigException;
 import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
@@ -156,7 +157,8 @@ public class CanvasManagerImpl implements CanvasManager {
     }
 
     @Override
-    public boolean placeDefinition(String defName, DrawableAreaPoint drawableAreaPoint) {
+    public boolean placeDefinition(String defName, DrawableAreaPoint drawableAreaPoint) throws
+            ExpressionTooBigException {
         DefinitionController existingController = definitionControllers.get(defName);
         if (existingController != null) {
             ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);

@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground;
 
+import com.alangpierce.lambdacalculusplayground.definition.ExpressionTooBigException;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
@@ -28,7 +29,8 @@ public interface CanvasManager {
      *
      * Returns true if the definition was already on the canvas and was moved.
      */
-    boolean placeDefinition(String defName, DrawableAreaPoint screenPos);
+    boolean placeDefinition(String defName, DrawableAreaPoint screenPos) throws
+            ExpressionTooBigException;
 
     void deleteDefinitionIfExists(String defName);
 

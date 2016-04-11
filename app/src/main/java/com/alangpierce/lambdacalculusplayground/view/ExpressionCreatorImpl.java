@@ -21,6 +21,7 @@ import com.alangpierce.lambdacalculusplayground.AppState;
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.R;
+import com.alangpierce.lambdacalculusplayground.definition.ExpressionTooBigException;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
@@ -85,15 +86,17 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         try {
             validateDefinitionName(defName);
         } catch (InvalidNameException e) {
-            String message = context.getString(e.getStringRes());
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, e.getStringRes(), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
-        if (alreadyOnCanvas) {
-            String message = context.getString(R.string.showing_definition);
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        try {
+            boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
+            if (alreadyOnCanvas) {
+                Toast.makeText(context, R.string.showing_definition, Toast.LENGTH_SHORT).show();
+            }
+        } catch (ExpressionTooBigException e) {
+            Toast.makeText(context, R.string.bad_def_too_big, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -138,8 +141,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         try {
             validateVariableName(varName);
         } catch (InvalidNameException e) {
-            String message = context.getString(e.getStringRes());
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, e.getStringRes(), Toast.LENGTH_SHORT).show();
             return;
         }
 
