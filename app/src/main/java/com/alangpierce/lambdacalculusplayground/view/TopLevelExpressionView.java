@@ -136,6 +136,7 @@ public class TopLevelExpressionView {
                 .getDimensionPixelOffset(R.dimen.dragging_elevation);
         Compat.translationZ(animator, targetElevationPixels);
         executeButton.animate().setDuration(150).alpha(0);
+        Compat.translationZ(executeButton.animate().setDuration(100), targetElevationPixels);
         executeButton.setClickable(false);
     }
 
@@ -149,6 +150,7 @@ public class TopLevelExpressionView {
                 .getDimensionPixelOffset(R.dimen.resting_elevation);
         Compat.translationZ(animator, targetElevationPixels);
         executeButton.animate().setDuration(150).alpha(1);
+        Compat.translationZ(executeButton.animate().setDuration(100), targetElevationPixels);
         executeButton.setClickable(true);
     }
 
