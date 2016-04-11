@@ -98,17 +98,15 @@ public class DefinitionView {
         canvasRoot.bringChildToFront(nativeView);
         ViewPropertyAnimator animator = nativeView.animate()
                 .setDuration(100).scaleX(1.05f).scaleY(1.05f);
-        int targetElevationPixels = nativeView.getContext().getResources()
-                .getDimensionPixelOffset(R.dimen.dragging_elevation);
-        Compat.translationZ(animator, targetElevationPixels);
+        int floatElevationPixels = nativeView.getContext().getResources()
+                .getDimensionPixelOffset(R.dimen.float_elevation);
+        Compat.translationZ(animator, floatElevationPixels);
     }
 
     public void endDrag() {
         ViewPropertyAnimator animator = nativeView.animate()
                 .setDuration(100).scaleX(1.0f).scaleY(1.0f);
-        int targetElevationPixels = nativeView.getContext().getResources()
-                .getDimensionPixelOffset(R.dimen.resting_elevation);
-        Compat.translationZ(animator, targetElevationPixels);
+        Compat.translationZ(animator, 0);
     }
 
     public void destroy() {

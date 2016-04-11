@@ -132,11 +132,11 @@ public class TopLevelExpressionView {
         rootView().bringChildToFront(exprView.getNativeView());
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.05f).scaleY(1.05f);
-        int targetElevationPixels = exprView.getNativeView().getContext().getResources()
-                .getDimensionPixelOffset(R.dimen.dragging_elevation);
-        Compat.translationZ(animator, targetElevationPixels);
+        int floatElevationPixels = exprView.getNativeView().getContext().getResources()
+                .getDimensionPixelOffset(R.dimen.float_elevation);
+        Compat.translationZ(animator, floatElevationPixels);
         executeButton.animate().setDuration(150).alpha(0);
-        Compat.translationZ(executeButton.animate().setDuration(100), targetElevationPixels);
+        Compat.translationZ(executeButton.animate().setDuration(100), floatElevationPixels);
         executeButton.setClickable(false);
     }
 
@@ -146,11 +146,9 @@ public class TopLevelExpressionView {
         }
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.0f).scaleY(1.0f);
-        int targetElevationPixels = exprView.getNativeView().getContext().getResources()
-                .getDimensionPixelOffset(R.dimen.resting_elevation);
-        Compat.translationZ(animator, targetElevationPixels);
+        Compat.translationZ(animator, 0);
         executeButton.animate().setDuration(150).alpha(1);
-        Compat.translationZ(executeButton.animate().setDuration(100), targetElevationPixels);
+        Compat.translationZ(executeButton.animate().setDuration(100), 0);
         executeButton.setClickable(true);
     }
 
