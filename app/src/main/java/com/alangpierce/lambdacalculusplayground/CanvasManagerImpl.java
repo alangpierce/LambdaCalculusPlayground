@@ -157,29 +157,34 @@ public class CanvasManagerImpl implements CanvasManager {
     }
 
     @Override
-    public boolean placeDefinition(String defName, DrawableAreaPoint drawableAreaPoint) throws
-            ExpressionTooBigException {
+    public boolean placeDefinition(String defName, DrawableAreaPoint drawableAreaPoint)
+            throws ExpressionTooBigException {
         DefinitionController existingController = definitionControllers.get(defName);
         if (existingController != null) {
             ScreenPoint screenPoint = pointConverter.toScreenPoint(drawableAreaPoint);
             existingController.handlePositionChange(screenPoint);
             return true;
         } else {
+            CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
             @Nullable UserExpression existingDefinition =
                     userDefinitionManager.resolveDefinitionForCreation(defName);
-            CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
+            // If existingDefinition is a new number, we're effectively adding it as a new
+            // definition, so make sure we add it to the palette by setting alreadyExisted to true.
+            boolean alreadyExisted = appState.getAllDefinitions().containsKey(defName);
+            appState.setDefinition(defName, existingDefinition);
+            appState.addDefinitionOnScreen(defName, canvasPoint);
+
             // Either make a new blank definition or use the existing one.
             ScreenDefinition definition = ScreenDefinition.create(
                     defName, existingDefinition, canvasPoint);
-            appState.setDefinition(defName, existingDefinition);
-            appState.addDefinitionOnScreen(defName, canvasPoint);
             renderDefinition(definition);
-            boolean alreadyExisted = existingDefinition != null;
             if (!alreadyExisted) {
                 definitionManager.invalidateDefinitions();
                 addDefinitionToPalette(defName);
             }
-            return alreadyExisted;
+            // From the user's perspective, it makes sense to say "showing existing definition" any
+            // time the definition is nonempty, including when showing the definition for a number.
+            return existingDefinition != null;
         }
     }
 
