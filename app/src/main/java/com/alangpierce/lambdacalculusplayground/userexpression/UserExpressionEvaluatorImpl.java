@@ -37,7 +37,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
         try {
             Expression expression = definitionManager.toExpression(userExpression);
             expression = expressionEvaluator.evaluate(expression);
-            UserExpression result = collapseDefinedTerms(fromExpression(expression));
+            UserExpression result = collapseDefinedTerms(Expressions.toUserExpression(expression));
             if (expressionSize(result) > 30) {
                 throw new EvaluationFailedException(
                         "The result is too big to fit. Double-check your work!");
@@ -69,7 +69,7 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
             if (steppedExpression == null) {
                 return null;
             }
-            return fromExpression(steppedExpression);
+            return Expressions.toUserExpression(steppedExpression);
         } catch (InvalidExpressionException e) {
             return null;
         }
@@ -91,19 +91,6 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
                 funcCall -> UserFuncCall.create(collapseDefinedTerms(funcCall.func()), collapseDefinedTerms(funcCall.arg())),
                 variable -> variable,
                 reference -> reference
-        );
-    }
-
-    /**
-     * Given an expression, convert to a UserExpression. This will always succeed.
-     */
-    private static UserExpression fromExpression(Expression e) {
-        return e.visit(
-                lambda -> UserLambda.create(lambda.varName(), fromExpression(lambda.body())),
-                funcCall -> UserFuncCall.create(
-                        fromExpression(funcCall.func()),
-                        fromExpression(funcCall.arg())),
-                variable -> UserVariable.create(variable.varName())
         );
     }
 

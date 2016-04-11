@@ -245,4 +245,10 @@ public class CanvasManagerImpl implements CanvasManager {
             controller.invalidateDefinitions();
         }
     }
+
+    @Override
+    public void handleAutomaticNumbersChanged() {
+        definitionManager.invalidateDefinitions();
+        invalidateDefinitions();
+    }
 }

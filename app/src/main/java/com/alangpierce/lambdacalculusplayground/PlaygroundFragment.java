@@ -101,6 +101,13 @@ public class PlaygroundFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_enable_numbers);
+        item.setChecked(appState.isAutomaticNumbersEnabled());
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         paletteDrawerManager.onViewStateRestored();
         super.onViewStateRestored(savedInstanceState);
@@ -138,6 +145,8 @@ public class PlaygroundFragment extends Fragment {
         } else if (item.getItemId() == R.id.action_enable_numbers) {
             boolean newIsChecked = !item.isChecked();
             item.setChecked(newIsChecked);
+            appState.setEnableAutomaticNumbers(newIsChecked);
+            canvasManager.handleAutomaticNumbersChanged();
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(

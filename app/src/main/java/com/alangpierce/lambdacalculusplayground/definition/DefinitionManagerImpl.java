@@ -35,7 +35,11 @@ public class DefinitionManagerImpl implements DefinitionManager {
     public String tryResolveExpression(Expression expression) {
         Set<String> names = namesByExpression.get(expression);
         if (names.isEmpty()) {
-            return null;
+            if (appState.isAutomaticNumbersEnabled()) {
+                return ExpressionNumbers.tryResolveToNumber(expression);
+            } else {
+                return null;
+            }
         } else {
             // TODO: Maybe do something smarter here.
             return names.iterator().next();
@@ -63,7 +67,14 @@ public class DefinitionManagerImpl implements DefinitionManager {
 
     @Override
     public boolean isDefinitionValid(String defName) {
-        return definitionMap.get(defName) != null;
+        // If we already have a definition for it defined somewhere, use that. Note that it may be
+        // invalid, in which case, we have null stored and will return false.
+        if (definitionMap.containsKey(defName)) {
+            return definitionMap.get(defName) != null;
+        }
+        // If automatic numbering is on, any number is allowed, even if we don't have a definition
+        // for it.
+        return appState.isAutomaticNumbersEnabled() && ExpressionNumbers.isNumber(defName);
     }
 
     /**
@@ -75,7 +86,13 @@ public class DefinitionManagerImpl implements DefinitionManager {
      */
     private Expression resolveDefinition(String defName) {
         if (!appState.getAllDefinitions().containsKey(defName)) {
-            return null;
+            // If there's no explicit definition, try it as a number, which is sort of an implicit
+            // definition.
+            if (appState.isAutomaticNumbersEnabled()) {
+                return ExpressionNumbers.tryExpressionForNumber(defName);
+            } else {
+                return null;
+            }
         }
 
         // If there's already an entry, use it. Note that the entry might be null, indicating that

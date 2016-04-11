@@ -1,5 +1,10 @@
 package com.alangpierce.lambdacalculusplayground.expression;
 
+import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
+
 import javax.annotation.Nullable;
 
 public class Expressions {
@@ -110,6 +115,19 @@ public class Expressions {
                 funcCall -> FuncCall.create(
                         normalizeNames(funcCall.func()), normalizeNames(funcCall.arg())),
                 variable -> variable
+        );
+    }
+
+    /**
+     * Given an expression, convert to a UserExpression. This will always succeed.
+     */
+    public static UserExpression toUserExpression(Expression e) {
+        return e.visit(
+                lambda -> UserLambda.create(lambda.varName(), toUserExpression(lambda.body())),
+                funcCall -> UserFuncCall.create(
+                        toUserExpression(funcCall.func()),
+                        toUserExpression(funcCall.arg())),
+                variable -> UserVariable.create(variable.varName())
         );
     }
 }

@@ -27,6 +27,9 @@ public interface AppState {
     void removeDefinitionFromScreen(String defName);
     void deleteDefinition(String defName);
 
+    boolean isAutomaticNumbersEnabled();
+    void setEnableAutomaticNumbers(boolean enableAutomaticNumbers);
+
     PointDifference getPanOffset();
     void setPanOffset(PointDifference panOffset);
 

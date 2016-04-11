@@ -32,6 +32,8 @@ public class AppStateImpl implements AppState {
     private int maxExprId = 0;
     private PointDifference panOffset = PointDifference.create(0, 0);
 
+    private boolean enableAutomaticNumbers = false;
+
     @Override
     public Iterable<Entry<Integer, ScreenExpression>> expressionsById() {
         return expressions.entrySet();
@@ -95,6 +97,16 @@ public class AppStateImpl implements AppState {
         this.panOffset = panOffset;
     }
 
+    @Override
+    public boolean isAutomaticNumbersEnabled() {
+        return enableAutomaticNumbers;
+    }
+
+    @Override
+    public void setEnableAutomaticNumbers(boolean enableAutomaticNumbers) {
+        this.enableAutomaticNumbers = enableAutomaticNumbers;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void hydrateFromBundle(Bundle bundle) {
@@ -122,6 +134,8 @@ public class AppStateImpl implements AppState {
         if (panOffset != null) {
             this.panOffset = panOffset;
         }
+
+        this.enableAutomaticNumbers = bundle.getBoolean("enableAutomaticNumbers", false);
     }
 
     @Override
@@ -131,5 +145,6 @@ public class AppStateImpl implements AppState {
         bundle.putSerializable("allDefinitions", (Serializable) allDefinitions);
         bundle.putSerializable("definitionsOnScreen", (Serializable) definitionsOnScreen);
         bundle.putSerializable("panOffset", panOffset);
+        bundle.putBoolean("enableAutomaticNumbers", enableAutomaticNumbers);
     }
 }

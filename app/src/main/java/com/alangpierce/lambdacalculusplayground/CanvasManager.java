@@ -31,4 +31,10 @@ public interface CanvasManager {
     boolean placeDefinition(String defName, DrawableAreaPoint screenPos);
 
     void deleteDefinitionIfExists(String defName);
+
+    /**
+     * Call when the "automatic numbers" setting changes, which means that we may need to recompute
+     * definitions in the definition manager and error markers on the screen.
+     */
+    void handleAutomaticNumbersChanged();
 }

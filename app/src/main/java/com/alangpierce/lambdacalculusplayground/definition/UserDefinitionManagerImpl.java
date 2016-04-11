@@ -22,6 +22,13 @@ public class UserDefinitionManagerImpl implements UserDefinitionManager {
 
     @Override
     public @Nullable UserExpression resolveDefinitionForCreation(String defName) {
-        return appState.getAllDefinitions().get(defName);
+        // If the definition exists (even if it's empty), just return it.
+        if (appState.getAllDefinitions().containsKey(defName)) {
+            return appState.getAllDefinitions().get(defName);
+        }
+        if (appState.isAutomaticNumbersEnabled()) {
+            return ExpressionNumbers.tryUserExpressionForNumber(defName);
+        }
+        return null;
     }
 }
