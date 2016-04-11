@@ -42,6 +42,11 @@ public class PaletteView {
         linearLayout.addView(nativeView, index);
     }
 
+    public void removeChild(int index) {
+        linearLayout.removeViewAt(index);
+    }
+
+
     public View getNativeView() {
         return drawerView;
     }

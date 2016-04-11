@@ -25,6 +25,7 @@ public interface AppState {
     void setDefinition(String defName, UserExpression userExpression);
     void addDefinitionOnScreen(String defName, CanvasPoint point);
     void removeDefinitionFromScreen(String defName);
+    void deleteDefinition(String defName);
 
     PointDifference getPanOffset();
     void setPanOffset(PointDifference panOffset);

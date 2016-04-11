@@ -7,32 +7,41 @@ import android.content.DialogInterface;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alangpierce.lambdacalculusplayground.AppState;
+import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
+import com.google.common.collect.Ordering;
+
+import java.util.List;
 
 public class ExpressionCreatorImpl implements ExpressionCreator {
     private final Context context;
     private final LayoutInflater layoutInflater;
-    private final CanvasManager expressionManager;
+    private final CanvasManager canvasManager;
     private final PointConverter pointConverter;
+    private final AppState appState;
 
     public ExpressionCreatorImpl(Context context, LayoutInflater layoutInflater,
-            CanvasManager expressionManager,
-            PointConverter pointConverter) {
+            CanvasManager canvasManager, PointConverter pointConverter, AppState appState) {
         this.context = context;
         this.layoutInflater = layoutInflater;
-        this.expressionManager = expressionManager;
+        this.canvasManager = canvasManager;
         this.pointConverter = pointConverter;
+        this.appState = appState;
     }
 
     private static class InvalidNameException extends Exception {
@@ -74,7 +83,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
             return;
         }
 
-        boolean alreadyOnCanvas = expressionManager.placeDefinition(defName, newExpressionPoint());
+        boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
         if (alreadyOnCanvas) {
             Toast.makeText(context, "Showing existing definition.", Toast.LENGTH_SHORT).show();
         }
@@ -128,7 +137,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
 
         ScreenPoint screenPoint = pointConverter.toScreenPoint(newExpressionPoint());
         UserLambda expression = UserLambda.create(varName, null);
-        expressionManager.createNewExpression(
+        canvasManager.createNewExpression(
                 expression, screenPoint, false /* placeAbovePalette */);
     }
 
@@ -157,5 +166,47 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
                 (int) actionBarSize.getDimension(context.getResources().getDisplayMetrics());
 
         return DrawableAreaPoint.create(shiftPixels, shiftPixels + actionBarHeightPixels);
+    }
+
+    @Override
+    public void promptDeleteDefinition() {
+        View inputView = layoutInflater.inflate(R.layout.delete_definition_dialog, null);
+        Spinner defNameSpinner = (Spinner) inputView.findViewById(R.id.definition_delete_selection);
+        AlertDialog alertDialog = new Builder(context)
+                .setTitle(R.string.choose_definition_to_delete)
+                .setView(inputView)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String selectedItem = (String) defNameSpinner.getSelectedItem();
+                    canvasManager.deleteDefinitionIfExists(selectedItem);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        DeletePromptAdapter stringArrayAdapter = new DeletePromptAdapter();
+        List<String> defNames = Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
+        stringArrayAdapter.addAll(defNames);
+        defNameSpinner.setAdapter(stringArrayAdapter);
+        alertDialog.show();
+    }
+
+    private class DeletePromptAdapter extends ArrayAdapter<String> {
+        public DeletePromptAdapter() {
+            super(context, R.layout.select_definition_item);
+            add("Select a definition...");
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            if (position == 0) {
+                TextView textView = new TextView(context);
+                textView.setHeight(0);
+                textView.setVisibility(View.GONE);
+                return textView;
+            } else {
+                // Disallow reusing views, since we don't want the special-case text view to be
+                // reused.
+                return super.getDropDownView(position, null, parent);
+            }
+        }
     }
 }

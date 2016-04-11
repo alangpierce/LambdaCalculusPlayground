@@ -29,4 +29,6 @@ public interface CanvasManager {
      * Returns true if the definition was already on the canvas and was moved.
      */
     boolean placeDefinition(String defName, DrawableAreaPoint screenPos);
+
+    void deleteDefinitionIfExists(String defName);
 }

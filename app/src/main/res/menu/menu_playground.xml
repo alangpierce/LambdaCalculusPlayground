@@ -3,20 +3,25 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".PlaygroundActivity">
     <item
-        android:id="@+id/action_palette"
+        android:id="@+id/action_lambda_palette"
         android:orderInCategory="100"
         android:title="@string/action_palette"
         android:icon="@drawable/ic_action_lambda"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_define"
+        android:id="@+id/action_definition_palette"
         android:orderInCategory="101"
         android:title="@string/action_define"
         android:icon="@drawable/def_symbol"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_view_demo_video"
+        android:id="@+id/action_delete_definition"
         android:orderInCategory="102"
+        android:title="@string/action_delete_definition"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_view_demo_video"
+        android:orderInCategory="103"
         android:title="@string/action_view_demo_video"
         app:showAsAction="never"/>
 </menu>

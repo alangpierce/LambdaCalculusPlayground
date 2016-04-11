@@ -132,11 +132,10 @@ public class PlaygroundModule {
     }
 
     @Provides
-    ExpressionCreator provideExpressionCreator(Context context,
-            LayoutInflater layoutInflater, CanvasManager expressionManager,
-            PointConverter pointConverter) {
+    ExpressionCreator provideExpressionCreator(Context context, LayoutInflater layoutInflater,
+            CanvasManager expressionManager, PointConverter pointConverter, AppState appState) {
         return new ExpressionCreatorImpl(context, layoutInflater, expressionManager,
-                pointConverter);
+                pointConverter, appState);
     }
 
     @Provides @Singleton

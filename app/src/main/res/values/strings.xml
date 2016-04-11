@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lambda Calculus Playground</string>
-    <string name="action_palette">Palette</string>
-    <string name="action_define">Define</string>
-    <string name="action_view_demo_video">View Demo Video</string>
+    <string name="action_palette">Lambda Palette</string>
+    <string name="action_define">Definition Palette</string>
+    <string name="action_delete_definition">Delete definition</string>
+    <string name="action_view_demo_video">View demo video</string>
     <string name="demo_video_url">https://www.youtube.com/watch?v=0OzpqDDniDs</string>
 
     <string name="create_definition">Create or show definition</string>
     <string name="create_lambda">Choose variable name</string>
+    <string name="choose_definition_to_delete">Choose a definition to delete</string>
 
     <string name="remove">Remove</string>
     <string name="hide">Hide</string>

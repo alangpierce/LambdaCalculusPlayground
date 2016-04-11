@@ -72,6 +72,11 @@ public class AppStateImpl implements AppState {
     }
 
     @Override
+    public void deleteDefinition(String defName) {
+        allDefinitions.remove(defName);
+    }
+
+    @Override
     public void deleteExpression(int exprId) {
         expressions.remove(exprId);
     }

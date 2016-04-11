@@ -176,6 +176,21 @@ public class CanvasManagerImpl implements CanvasManager {
         }
     }
 
+    @Override
+    public void deleteDefinitionIfExists(String defName) {
+        DefinitionController existingController = definitionControllers.get(defName);
+        if (existingController != null) {
+            // This changes the app state to remove the definition from the screen.
+            existingController.destroy();
+        }
+        // This is a bit scary, but should work: we remove from the palette while the full list of
+        // definitions is still intact. This lets us know which child index we can remove.
+        removeDefinitionFromPalette(defName);
+        appState.deleteDefinition(defName);
+        definitionManager.invalidateDefinitions();
+        invalidateDefinitions();
+    }
+
     private void addDefinitionToPalette(String defName) {
         List<String> definitionNames =
                 Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
@@ -184,6 +199,14 @@ public class CanvasManagerImpl implements CanvasManager {
         PaletteReferenceController referenceController =
                 controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
         definitionPaletteView.addChild(referenceController.getView().getNativeView(), defIndex);
+    }
+
+    private void removeDefinitionFromPalette(String defName) {
+        List<String> definitionNames =
+                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
+        int defIndex = definitionNames.indexOf(defName);
+
+        definitionPaletteView.removeChild(defIndex);
     }
 
     private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {

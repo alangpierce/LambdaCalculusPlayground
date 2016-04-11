@@ -6,4 +6,5 @@ package com.alangpierce.lambdacalculusplayground;
 public interface ExpressionCreator {
     void promptCreateDefinition();
     void promptCreateLambda();
+    void promptDeleteDefinition();
 }

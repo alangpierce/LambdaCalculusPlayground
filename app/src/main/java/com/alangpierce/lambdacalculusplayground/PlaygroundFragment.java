@@ -126,10 +126,12 @@ public class PlaygroundFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_palette) {
+        if (item.getItemId() == R.id.action_lambda_palette) {
             paletteDrawerManager.toggleLambdaPalette();
-        } else if (item.getItemId() == R.id.action_define) {
+        } else if (item.getItemId() == R.id.action_definition_palette) {
             paletteDrawerManager.toggleDefinitionPalette();
+        } else if (item.getItemId() == R.id.action_delete_definition) {
+            expressionCreator.promptDeleteDefinition();
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(
