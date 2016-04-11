@@ -9,6 +9,7 @@ import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
@@ -34,6 +35,7 @@ public class CanvasManagerImpl implements CanvasManager {
     private final DefinitionManager definitionManager;
     private final PaletteView lambdaPaletteView;
     private final PaletteView definitionPaletteView;
+    private final PaletteDrawerManager drawerManager;
 
     private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
@@ -45,7 +47,8 @@ public class CanvasManagerImpl implements CanvasManager {
             PanManager panManager,
             DefinitionManager definitionManager,
             PaletteView lambdaPaletteView,
-            PaletteView definitionPaletteView) {
+            PaletteView definitionPaletteView,
+            PaletteDrawerManager drawerManager) {
         this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
@@ -53,6 +56,7 @@ public class CanvasManagerImpl implements CanvasManager {
         this.definitionManager = definitionManager;
         this.lambdaPaletteView = lambdaPaletteView;
         this.definitionPaletteView = definitionPaletteView;
+        this.drawerManager = drawerManager;
     }
 
     @Override
@@ -199,6 +203,7 @@ public class CanvasManagerImpl implements CanvasManager {
         PaletteReferenceController referenceController =
                 controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
         definitionPaletteView.addChild(referenceController.getView().getNativeView(), defIndex);
+        drawerManager.onPaletteContentsChanged();
     }
 
     private void removeDefinitionFromPalette(String defName) {
@@ -207,6 +212,7 @@ public class CanvasManagerImpl implements CanvasManager {
         int defIndex = definitionNames.indexOf(defName);
 
         definitionPaletteView.removeChild(defIndex);
+        drawerManager.onPaletteContentsChanged();
     }
 
     private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {

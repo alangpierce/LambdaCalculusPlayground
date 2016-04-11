@@ -197,10 +197,10 @@ public class PlaygroundModule {
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
-            @Definition PaletteView definitionPaletteView) {
+            @Definition PaletteView definitionPaletteView, PaletteDrawerManager drawerManager) {
         return new CanvasManagerImpl(
                 appState, controllerFactoryFactory, pointConverter, panManager,
-                definitionManager, lambdaPaletteView, definitionPaletteView);
+                definitionManager, lambdaPaletteView, definitionPaletteView, drawerManager);
     }
 
     @Provides

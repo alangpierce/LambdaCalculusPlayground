@@ -7,6 +7,7 @@ package com.alangpierce.lambdacalculusplayground.palette;
 public interface PaletteDrawerManager {
     void onCreateView(boolean isFirstTime);
     void onViewStateRestored();
+    void onPaletteContentsChanged();
     void onDestroyView();
     void toggleLambdaPalette();
     void toggleDefinitionPalette();

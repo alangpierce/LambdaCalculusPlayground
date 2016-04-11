@@ -93,6 +93,15 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
 
     @Override
     public void onViewStateRestored() {
+        recomputeState();
+    }
+
+    @Override
+    public void onPaletteContentsChanged() {
+        recomputeState();
+    }
+
+    private void recomputeState() {
         // Any drawer changes set the translation, but we need to recompute the translation on
         // rotate (or restore for another reason) since we don't get a change event.
         if (lambdaPaletteDrawerRoot.isDrawerOpen(GravityCompat.END)) {
