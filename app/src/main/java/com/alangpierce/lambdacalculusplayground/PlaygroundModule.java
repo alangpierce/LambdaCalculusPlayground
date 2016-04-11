@@ -24,7 +24,7 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
-import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEvaluator;
+import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluatorImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -184,7 +184,7 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     ExpressionEvaluator provideExpressionEvaluator() {
-        return new OptimizedExpressionEvaluator();
+        return new ExpressionEvaluatorImpl();
     }
 
     @Provides @Singleton

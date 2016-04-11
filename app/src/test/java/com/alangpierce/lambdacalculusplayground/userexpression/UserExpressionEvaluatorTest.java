@@ -4,7 +4,7 @@ import com.alangpierce.lambdacalculusplayground.AppState;
 import com.alangpierce.lambdacalculusplayground.AppStateImpl;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
-import com.alangpierce.lambdacalculusplayground.evaluator.OptimizedExpressionEvaluator;
+import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluatorImpl;
 
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ public class UserExpressionEvaluatorTest extends TestCase {
         appState = new AppStateImpl();
         definitionManager = new DefinitionManagerImpl(appState);
         userExpressionEvaluator = new UserExpressionEvaluatorImpl(
-                definitionManager, new OptimizedExpressionEvaluator());
+                definitionManager, new ExpressionEvaluatorImpl());
 
         defineTerm("TRUE", "L t[L f[t]]");
         defineTerm("FALSE", "L t[L f[f]]");
