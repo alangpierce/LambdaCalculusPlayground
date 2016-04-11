@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Stateful class for keeping track of the full set of expressions.
@@ -31,10 +29,8 @@ public class AppStateImpl implements AppState {
     private Map<String, UserExpression> allDefinitions = new HashMap<>();
     private Map<String, CanvasPoint> definitionsOnScreen = new HashMap<>();
 
-    // TODO: Remove thread safety here; it's not necessary.
-    private AtomicInteger maxExprId = new AtomicInteger();
-    private AtomicReference<PointDifference> panOffset =
-            new AtomicReference<>(PointDifference.create(0, 0));
+    private int maxExprId = 0;
+    private PointDifference panOffset = PointDifference.create(0, 0);
 
     @Override
     public Iterable<Entry<Integer, ScreenExpression>> expressionsById() {
@@ -83,19 +79,20 @@ public class AppStateImpl implements AppState {
 
     @Override
     public int addScreenExpression(ScreenExpression screenExpression) {
-        int exprId = maxExprId.incrementAndGet();
+        int exprId = maxExprId;
+        maxExprId++;
         expressions.put(exprId, screenExpression);
         return exprId;
     }
 
     @Override
     public PointDifference getPanOffset() {
-        return panOffset.get();
+        return panOffset;
     }
 
     @Override
     public void setPanOffset(PointDifference panOffset) {
-        this.panOffset.set(panOffset);
+        this.panOffset = panOffset;
     }
 
     @SuppressWarnings("unchecked")
@@ -123,7 +120,7 @@ public class AppStateImpl implements AppState {
 
         PointDifference panOffset = (PointDifference) bundle.getSerializable("panOffset");
         if (panOffset != null) {
-            this.panOffset.set(panOffset);
+            this.panOffset = panOffset;
         }
     }
 
@@ -133,6 +130,6 @@ public class AppStateImpl implements AppState {
         bundle.putSerializable("expressions", ImmutableList.copyOf(expressions.values()));
         bundle.putSerializable("allDefinitions", (Serializable) allDefinitions);
         bundle.putSerializable("definitionsOnScreen", (Serializable) definitionsOnScreen);
-        bundle.putSerializable("panOffset", panOffset.get());
+        bundle.putSerializable("panOffset", panOffset);
     }
 }
