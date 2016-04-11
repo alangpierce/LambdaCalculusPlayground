@@ -86,6 +86,7 @@
                     android:id="@+id/definition_palette_linear_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="150dp"
                     android:orientation="vertical">
 
                 </LinearLayout>
@@ -107,6 +108,7 @@
                 android:id="@+id/lambda_palette_linear_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="150dp"
                 android:orientation="vertical">
 
             </LinearLayout>
