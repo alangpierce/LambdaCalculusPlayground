@@ -14,4 +14,18 @@
 
     <string name="remove">Remove</string>
     <string name="hide">Hide</string>
+
+    <string name="error_took_too_long">Evaluation took too long.</string>
+    <string name="error_something_went_wrong">Something went wrong. :-(</string>
+    <string name="error_result_too_big">The result is too big to fit. Double-check your work!</string>
+
+    <string name="bad_def_name_too_long">Definition names can only be up to 8 letters long.</string>
+    <string name="bad_def_name_bad_chars">Definition names can only contain capital letters and symbols.</string>
+
+    <string name="bad_var_name_too_long">Variable names can only be up to 8 letters long.</string>
+    <string name="bad_var_name_bad_chars">Variable names can only contain lower-case letters.</string>
+
+    <string name="showing_definition">Showing existing definition.</string>
+
+    <string name="definition_prompt">Select a definition…</string>
 </resources>

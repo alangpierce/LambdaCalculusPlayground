@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.StringRes;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,11 +46,16 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     }
 
     private static class InvalidNameException extends Exception {
-        public InvalidNameException(String detailMessage) {
-            super(detailMessage);
+        private final @StringRes int stringRes;
+
+        public InvalidNameException(@StringRes int stringRes) {
+            this.stringRes = stringRes;
+        }
+
+        public int getStringRes() {
+            return stringRes;
         }
     }
-
 
     @Override
     public void promptCreateDefinition() {
@@ -79,25 +85,26 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         try {
             validateDefinitionName(defName);
         } catch (InvalidNameException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            String message = context.getString(e.getStringRes());
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             return;
         }
 
         boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
         if (alreadyOnCanvas) {
-            Toast.makeText(context, "Showing existing definition.", Toast.LENGTH_SHORT).show();
+            String message = context.getString(R.string.showing_definition);
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void validateDefinitionName(String defName) throws InvalidNameException {
         if (defName.length() > 8) {
-            throw new InvalidNameException("Definition names can only be up to 8 letters long.");
+            throw new InvalidNameException(R.string.bad_def_name_too_long);
         }
 
         for (char c : defName.toCharArray()) {
             if (Character.isLowerCase(c)) {
-                throw new InvalidNameException(
-                        "Definition names can only contain capital letters and symbols.");
+                throw new InvalidNameException(R.string.bad_def_name_bad_chars);
             }
         }
     }
@@ -131,7 +138,8 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         try {
             validateVariableName(varName);
         } catch (InvalidNameException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            String message = context.getString(e.getStringRes());
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -143,13 +151,12 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
 
     private void validateVariableName(String varName) throws InvalidNameException {
         if (varName.length() > 8) {
-            throw new InvalidNameException("Variable names can only be up to 8 letters long.");
+            throw new InvalidNameException(R.string.bad_var_name_too_long);
         }
 
         for (char c : varName.toCharArray()) {
             if (!Character.isLowerCase(c)) {
-                throw new InvalidNameException(
-                        "Variable names can only contain lower-case letters.");
+                throw new InvalidNameException(R.string.bad_var_name_bad_chars);
             }
         }
     }
@@ -192,7 +199,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     private class DeletePromptAdapter extends ArrayAdapter<String> {
         public DeletePromptAdapter() {
             super(context, R.layout.select_definition_item);
-            add("Select a definition...");
+            add(context.getString(R.string.definition_prompt));
         }
 
         @Override

@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.userexpression;
 
 import android.util.Log;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager.InvalidExpressionException;
 import com.alangpierce.lambdacalculusplayground.evaluator.EvaluationFailedException;
@@ -39,14 +40,13 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
             expression = expressionEvaluator.evaluate(expression);
             UserExpression result = collapseDefinedTerms(Expressions.toUserExpression(expression));
             if (expressionSize(result) > 30) {
-                throw new EvaluationFailedException(
-                        "The result is too big to fit. Double-check your work!");
+                throw new EvaluationFailedException(R.string.error_result_too_big);
             }
             return result;
         } catch (InvalidExpressionException e) {
             // This should never happen, so give a generic error message.
             Log.e(TAG, "Unexpected invalid expression.", e);
-            throw new EvaluationFailedException("Oops, something went wrong!");
+            throw new EvaluationFailedException(R.string.error_something_went_wrong);
         }
     }
 

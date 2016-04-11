@@ -2,6 +2,7 @@ package com.alangpierce.lambdacalculusplayground.evaluator;
 
 import android.util.Log;
 
+import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.expression.Expression;
 import com.alangpierce.lambdacalculusplayground.expression.FuncCall;
 import com.alangpierce.lambdacalculusplayground.expression.Lambda;
@@ -34,12 +35,12 @@ public class ExpressionEvaluatorImpl implements ExpressionEvaluator {
         } catch (ExecutionException e) {
             // Often times infinite loops manifest as stack overflow, so treat them the same.
             if (e.getCause() instanceof StackOverflowError) {
-                throw new EvaluationFailedException("Evaluation took too long.");
+                throw new EvaluationFailedException(R.string.error_took_too_long);
             }
             Log.e(TAG, "Error evaluating expression.", e.getCause());
-            throw new EvaluationFailedException("Something went wrong. :-(");
+            throw new EvaluationFailedException(R.string.error_something_went_wrong);
         } catch (TimeoutException e) {
-            throw new EvaluationFailedException("Evaluation took too long.");
+            throw new EvaluationFailedException(R.string.error_took_too_long);
         } finally {
             future.cancel(true);
         }

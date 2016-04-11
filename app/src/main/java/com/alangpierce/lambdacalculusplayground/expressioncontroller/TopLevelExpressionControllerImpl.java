@@ -1,5 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
+import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -118,8 +119,9 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         try {
             newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
         } catch (EvaluationFailedException e) {
-            Toast.makeText(
-                    view.getNativeView().getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            Context context = view.getNativeView().getContext();
+            String message = context.getString(e.getStringRes());
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             return;
         }
         TopLevelExpressionController newExpression = canvasManager.createNewExpression(
