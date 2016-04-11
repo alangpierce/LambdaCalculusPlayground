@@ -8,6 +8,8 @@
     <string name="action_view_demo_video">View demo video</string>
     <string name="demo_video_url">https://www.youtube.com/watch?v=0OzpqDDniDs</string>
 
+    <string name="definition_palette_title"><u>Definitions</u></string>
+
     <string name="create_definition">Create or show definition</string>
     <string name="create_lambda">Choose variable name</string>
     <string name="choose_definition_to_delete">Choose a definition to delete</string>

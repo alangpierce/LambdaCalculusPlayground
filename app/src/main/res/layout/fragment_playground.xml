@@ -83,11 +83,30 @@
                 android:elevation="4dp">
 
                 <LinearLayout
-                    android:id="@+id/definition_palette_linear_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="150dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <!-- For definitions, we use a title, both to help distinguish the two and to
+                         make the purpose more clear when there are no definitions present. -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/definition_palette_title"
+                        android:gravity="center"
+                        android:layout_margin="16dp"
+                        android:text="@string/definition_palette_title"/>
+
+                    <LinearLayout
+                        android:id="@+id/definition_palette_linear_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView>
@@ -108,7 +127,6 @@
                 android:id="@+id/lambda_palette_linear_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="150dp"
                 android:orientation="vertical">
 
             </LinearLayout>

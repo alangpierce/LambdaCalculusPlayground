@@ -13,4 +13,5 @@
     <color name="drag_action_background">#FF888888</color>
     <color name="drag_action_delete">#FFAA0000</color>
     <color name="remove">#FFFFFFFF</color>
+    <color name="definition_palette_title">#FF000000</color>
 </resources>
