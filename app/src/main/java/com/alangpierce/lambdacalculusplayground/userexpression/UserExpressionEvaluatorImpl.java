@@ -26,7 +26,12 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
 
     @Override
     public boolean canStep(UserExpression userExpression) {
-        return step(userExpression) != null;
+        try {
+            Expression expression = definitionManager.toExpression(userExpression);
+            return Expressions.canStep(expression);
+        } catch (InvalidExpressionException e) {
+            return false;
+        }
     }
 
     /**
@@ -60,19 +65,6 @@ public class UserExpressionEvaluatorImpl implements UserExpressionEvaluator {
                 funcCall -> expressionSize(funcCall.func()) + expressionSize(funcCall.arg()),
                 variable -> 1,
                 reference -> 1);
-    }
-
-    private UserExpression step(UserExpression userExpression) {
-        try {
-            Expression expression = definitionManager.toExpression(userExpression);
-            @Nullable Expression steppedExpression = Expressions.step(expression);
-            if (steppedExpression == null) {
-                return null;
-            }
-            return Expressions.toUserExpression(steppedExpression);
-        } catch (InvalidExpressionException e) {
-            return null;
-        }
     }
 
     /**
