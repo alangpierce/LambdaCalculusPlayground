@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
@@ -41,6 +42,7 @@ public class PlaygroundFragment extends Fragment {
     @Inject PaletteDrawerManager paletteDrawerManager;
     @Inject DragManager dragManager;
     @Inject DragActionManager dragActionManager;
+    @Inject DefinitionManager definitionManager;
 
     public static PlaygroundFragment create(AppState initialState) {
         Bundle args = new Bundle();
@@ -91,6 +93,7 @@ public class PlaygroundFragment extends Fragment {
 
         canvasManager.renderInitialData();
         dragActionManager.initDropTargets(dragManager);
+        definitionManager.invalidateDefinitions();
 
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);
@@ -132,6 +135,9 @@ public class PlaygroundFragment extends Fragment {
             paletteDrawerManager.toggleDefinitionPalette();
         } else if (item.getItemId() == R.id.action_delete_definition) {
             expressionCreator.promptDeleteDefinition();
+        } else if (item.getItemId() == R.id.action_enable_numbers) {
+            boolean newIsChecked = !item.isChecked();
+            item.setChecked(newIsChecked);
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(

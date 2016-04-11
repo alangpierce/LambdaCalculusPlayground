@@ -1,6 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
+import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
@@ -16,7 +17,6 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Ordering;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +36,7 @@ public class CanvasManagerImpl implements CanvasManager {
     private final PaletteView lambdaPaletteView;
     private final PaletteView definitionPaletteView;
     private final PaletteDrawerManager drawerManager;
+    private final UserDefinitionManager userDefinitionManager;
 
     private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
@@ -48,7 +49,8 @@ public class CanvasManagerImpl implements CanvasManager {
             DefinitionManager definitionManager,
             PaletteView lambdaPaletteView,
             PaletteView definitionPaletteView,
-            PaletteDrawerManager drawerManager) {
+            PaletteDrawerManager drawerManager,
+            UserDefinitionManager userDefinitionManager) {
         this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
@@ -57,6 +59,7 @@ public class CanvasManagerImpl implements CanvasManager {
         this.lambdaPaletteView = lambdaPaletteView;
         this.definitionPaletteView = definitionPaletteView;
         this.drawerManager = drawerManager;
+        this.userDefinitionManager = userDefinitionManager;
     }
 
     @Override
@@ -89,9 +92,7 @@ public class CanvasManagerImpl implements CanvasManager {
             lambdaPaletteView.addChild(lambdaController.getView().getNativeView());
         }
 
-        List<String> definitionNames =
-                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
-
+        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
         for (String defName : definitionNames) {
             PaletteReferenceController referenceController =
                     controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
@@ -144,8 +145,7 @@ public class CanvasManagerImpl implements CanvasManager {
         panManager.registerPanListener(controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
-                appState.modifyExpression(
-                        exprId, newController.getScreenExpression());
+                appState.modifyExpression(exprId, newController.getScreenExpression());
             } else {
                 appState.deleteExpression(exprId);
                 panManager.unregisterPanListener(controller);
@@ -163,7 +163,8 @@ public class CanvasManagerImpl implements CanvasManager {
             existingController.handlePositionChange(screenPoint);
             return true;
         } else {
-            @Nullable UserExpression existingDefinition = appState.getAllDefinitions().get(defName);
+            @Nullable UserExpression existingDefinition =
+                    userDefinitionManager.resolveDefinitionForCreation(defName);
             CanvasPoint canvasPoint = pointConverter.toCanvasPoint(drawableAreaPoint);
             // Either make a new blank definition or use the existing one.
             ScreenDefinition definition = ScreenDefinition.create(
@@ -196,8 +197,7 @@ public class CanvasManagerImpl implements CanvasManager {
     }
 
     private void addDefinitionToPalette(String defName) {
-        List<String> definitionNames =
-                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
+        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
         int defIndex = definitionNames.indexOf(defName);
 
         PaletteReferenceController referenceController =
@@ -207,8 +207,7 @@ public class CanvasManagerImpl implements CanvasManager {
     }
 
     private void removeDefinitionFromPalette(String defName) {
-        List<String> definitionNames =
-                Ordering.natural().sortedCopy(appState.getAllDefinitions().keySet());
+        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
         int defIndex = definitionNames.indexOf(defName);
 
         definitionPaletteView.removeChild(defIndex);

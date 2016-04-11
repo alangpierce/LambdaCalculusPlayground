@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
+import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManager;
+import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
@@ -171,6 +173,11 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
+    UserDefinitionManager provideUserDefinitionManager(AppState appState) {
+        return new UserDefinitionManagerImpl(appState);
+    }
+
+    @Provides @Singleton
     DefinitionManager provideDefinitionManager(AppState appState) {
         return new DefinitionManagerImpl(appState);
     }
@@ -197,10 +204,12 @@ public class PlaygroundModule {
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
-            @Definition PaletteView definitionPaletteView, PaletteDrawerManager drawerManager) {
+            @Definition PaletteView definitionPaletteView, PaletteDrawerManager drawerManager,
+            UserDefinitionManager userDefinitionManager) {
         return new CanvasManagerImpl(
                 appState, controllerFactoryFactory, pointConverter, panManager,
-                definitionManager, lambdaPaletteView, definitionPaletteView, drawerManager);
+                definitionManager, lambdaPaletteView, definitionPaletteView, drawerManager,
+                userDefinitionManager);
     }
 
     @Provides
