@@ -27,6 +27,7 @@ public class DragActionManagerImpl implements DragActionManager {
 
     @Override
     public void handleDragDown(DragData dragData) {
+        dragActionBar.getParent().bringChildToFront(dragActionBar);
         // Change the phrasing based on what's being dragged.
         dragData.visit(
                 expression -> {
