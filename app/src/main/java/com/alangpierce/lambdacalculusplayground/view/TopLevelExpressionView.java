@@ -130,6 +130,9 @@ public class TopLevelExpressionView {
         // On older devices that don't support elevation, we need to move the dragged expression
         // to have the highest z-order.
         rootView().bringChildToFront(exprView.getNativeView());
+        // The execute button should always go above our expression. Note that this line is a no-op
+        // if the execute button isn't attached to the root at all.
+        rootView().bringChildToFront(executeButton);
         ViewPropertyAnimator animator = exprView.getNativeView().animate()
                 .setDuration(100).scaleX(1.05f).scaleY(1.05f);
         int floatElevationPixels = exprView.getNativeView().getContext().getResources()
