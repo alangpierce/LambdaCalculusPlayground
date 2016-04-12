@@ -39,16 +39,21 @@ public class TouchAwareFab extends FloatingActionButton {
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        int diameter = Compat.getFabSizeDimension(this);
-        int radius = diameter / 2;
-        int centerX = getWidth() / 2;
-        int centerY = getHeight() / 2;
-        float dx = event.getX() - centerX;
-        float dy = event.getY() - centerY;
-        if (dx * dx + dy * dy <= radius * radius) {
-            return super.dispatchTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int diameter = Compat.getFabSizeDimension(this);
+            int radius = diameter / 2;
+            int centerX = getWidth() / 2;
+            int centerY = getHeight() / 2;
+            float dx = event.getX() - centerX;
+            float dy = event.getY() - centerY;
+            if (dx * dx + dy * dy <= radius * radius) {
+                return super.dispatchTouchEvent(event);
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            System.out.println("Action: " + event.getAction());
+            return super.dispatchTouchEvent(event);
         }
     }
 }
