@@ -1,8 +1,8 @@
 package com.alangpierce.lambdacalculusplayground;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,8 +34,14 @@ public class PlaygroundActivity extends AppCompatActivity {
         setContentView(layoutView);
         if (savedInstanceState == null) {
             AppState initialState = new AppStateImpl();
+            // TODO: When we move minSdk to API 17, we can probably switch to full fragments. For
+            // now, we need to use the support library fragment since it handles
+            // onViewStateRestored correctly.
             Fragment fragment = PlaygroundFragment.create(initialState);
-            getFragmentManager().beginTransaction().add(R.id.playground_layout, fragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.playground_layout, fragment)
+                    .commit();
         }
     }
 }
