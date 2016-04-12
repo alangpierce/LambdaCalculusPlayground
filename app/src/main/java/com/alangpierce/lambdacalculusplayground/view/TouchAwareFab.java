@@ -8,21 +8,25 @@ import android.view.MotionEvent;
 import com.alangpierce.lambdacalculusplayground.compat.Compat;
 
 /**
- * Just like with ExpressionLayout, we hack the FloatingActionButton class to ignore the measure
- * spec passed from the parent RelativeLayout. If we didn't do this, the button would get smaller
- * when the button is near the right or bottom of the screen, which looks bad.
+ * Smarter FAB that deals with some additional cases beyond what's provided.
  */
-public class ExecuteButton extends FloatingActionButton {
-    public ExecuteButton(Context context) {
+public class TouchAwareFab extends FloatingActionButton {
+    public TouchAwareFab(Context context) {
         super(context);
     }
-    public ExecuteButton(Context context, AttributeSet attrs) {
+    public TouchAwareFab(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    public ExecuteButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TouchAwareFab(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    @Override
+
+    /**
+     * Just like with ExpressionLayout, we hack the FloatingActionButton class to ignore the measure
+     * spec passed from the parent RelativeLayout. If we didn't do this, the button would get smaller
+     * when the button is near the right or bottom of the screen, which looks bad.
+     */
+     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
     }

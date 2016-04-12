@@ -8,15 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/playground_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
     <com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout
         android:id="@+id/lambda_palette_drawer_root"
         android:layout_width="match_parent"
@@ -140,6 +131,15 @@
 
     </RelativeLayout>
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/playground_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <LinearLayout
         android:id="@+id/fab_container"
         android:layout_width="wrap_content"
@@ -150,7 +150,7 @@
         android:orientation="horizontal"
         >
 
-        <android.support.design.widget.FloatingActionButton
+        <com.alangpierce.lambdacalculusplayground.view.TouchAwareFab
             android:id="@+id/create_lambda_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
             android:layout_gravity="bottom"
             />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.alangpierce.lambdacalculusplayground.view.TouchAwareFab
             android:id="@+id/create_definition_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
