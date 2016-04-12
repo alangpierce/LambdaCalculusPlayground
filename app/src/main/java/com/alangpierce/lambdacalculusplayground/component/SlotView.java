@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.component;
 
-import android.support.annotation.ColorRes;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -84,15 +82,11 @@ public class SlotView {
     // TODO: Get rid of these NPE warnings. Currently it's safe because the functions will only be
     // called when nativeView is non-null.
     public void handleDragEnter() {
-        nativeView.setBackgroundColor(getColor(R.color.expression_highlight));
+        nativeView.setBackgroundResource(R.drawable.expression_highlight);
     }
 
     public void handleDragExit() {
-        nativeView.setBackgroundColor(getColor(R.color.empty_body));
-    }
-
-    private int getColor(@ColorRes int resId) {
-        return ContextCompat.getColor(nativeView.getContext(), resId);
+        nativeView.setBackgroundResource(R.drawable.empty_body);
     }
 
     public int getViewDepth() {

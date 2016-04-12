@@ -1,8 +1,6 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.DrawableRes;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
@@ -13,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 public class ReferenceView implements ExpressionView {
     private final LinearLayout view;
 
-    private @ColorRes int backgroundColor = R.color.expression_background;
+    private @DrawableRes int background = R.drawable.expression_background;
 
     public ReferenceView(LinearLayout view) {
         this.view = view;
@@ -37,24 +35,20 @@ public class ReferenceView implements ExpressionView {
 
     public void setValid(boolean isValid) {
         if (isValid) {
-            backgroundColor = R.color.expression_background;
+            background = R.drawable.expression_background;
         } else {
-            backgroundColor = R.color.invalid_reference;
+            background = R.drawable.invalid_reference;
         }
-        view.setBackgroundColor(getColor(backgroundColor));
+        view.setBackgroundResource(background);
     }
 
     @Override
     public void handleDragEnter() {
-        view.setBackgroundColor(getColor(R.color.expression_highlight));
+        view.setBackgroundResource(R.drawable.expression_highlight);
     }
 
     @Override
     public void handleDragExit() {
-        view.setBackgroundColor(getColor(backgroundColor));
-    }
-
-    private @ColorInt int getColor(@ColorRes int resId) {
-        return ContextCompat.getColor(view.getContext(), resId);
+        view.setBackgroundResource(background);
     }
 }

@@ -1,8 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.view;
 
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -97,16 +94,11 @@ public class LambdaView implements ExpressionView {
 
     @Override
     public void handleDragEnter() {
-        view.setBackgroundColor(getColor(R.color.expression_highlight));
+        view.setBackgroundResource(R.drawable.expression_highlight);
     }
 
     @Override
     public void handleDragExit() {
-        view.setBackgroundColor(getColor(R.color.expression_background));
-    }
-
-    private @ColorInt
-    int getColor(@ColorRes int resId) {
-        return ContextCompat.getColor(view.getContext(), resId);
+        view.setBackgroundResource(R.drawable.expression_background);
     }
 }
