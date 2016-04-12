@@ -32,9 +32,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/drag_action_background"
-                    android:orientation="horizontal"
                     android:elevation="6dp"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     >
 
                     <LinearLayout
@@ -53,8 +53,8 @@
                             android:id="@+id/remove_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="18sp"
                             android:textColor="@color/remove"
+                            android:textSize="18sp"
                             />
 
                     </LinearLayout>
@@ -69,27 +69,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:background="@color/palette"
                 android:layout_marginTop="?attr/actionBarSize"
+                android:background="@color/palette"
                 android:elevation="4dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <!-- For definitions, we use a title, both to help distinguish the two and to
                          make the purpose more clear when there are no definitions present. -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/definition_palette_title"
-                        android:gravity="center"
                         android:layout_margin="16dp"
-                        android:text="@string/definition_palette_title"/>
+                        android:gravity="center"
+                        android:text="@string/definition_palette_title"
+                        android:textColor="@color/definition_palette_title"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
 
                     <LinearLayout
                         android:id="@+id/definition_palette_linear_layout"
@@ -110,8 +110,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="@color/palette"
             android:layout_marginTop="?attr/actionBarSize"
+            android:background="@color/palette"
             android:elevation="4dp">
 
             <LinearLayout
@@ -140,13 +140,17 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+    <!-- The buttons should be 56dp with a margin of 24dp between them. However, old devices put
+         extra padding on FABs, so we do positioning using a fixed-size LinearLayout rather than
+         margins. -->
     <LinearLayout
         android:id="@+id/fab_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="184dp"
+        android:layout_height="104dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:gravity="center"
         android:orientation="horizontal"
         >
 
@@ -154,28 +158,21 @@
             android:id="@+id/create_lambda_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
             android:color="@color/execute_button_background"
             android:src="@drawable/ic_action_lambda"
             android:tint="@color/execute_button_foreground"
             app:backgroundTint="@color/execute_button_background"
-            android:layout_gravity="bottom"
-            />
+            app:useCompatPadding="true"/>
 
         <com.alangpierce.lambdacalculusplayground.view.TouchAwareFab
             android:id="@+id/create_definition_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
             android:color="@color/execute_button_background"
             android:src="@drawable/def_symbol"
             android:tint="@color/execute_button_foreground"
             app:backgroundTint="@color/execute_button_background"
-            android:layout_gravity="bottom"
-            />
+            app:useCompatPadding="true"/>
     </LinearLayout>
 
 </RelativeLayout>
