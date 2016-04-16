@@ -15,6 +15,20 @@ android {
         targetSdkVersion 23
         versionCode 4
         versionName "1.1.0"
+
+        // Exclude 64-bit binaries so that React Native can work.
+        // See https://corbt.com/posts/2015/09/18/mixing-32-and-64bit-dependencies-in-android.html
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+        packagingOptions {
+            exclude "lib/arm64-v8a/libbitmaps.so"
+            exclude "lib/arm64-v8a/libgifimage.so"
+            exclude "lib/arm64-v8a/libimagepipeline.so"
+            exclude "lib/arm64-v8a/libmemchunk.so"
+            exclude "lib/arm64-v8a/libwebp.so"
+            exclude "lib/arm64-v8a/libwebpimage.so"
+        }
     }
     buildTypes {
         debug {

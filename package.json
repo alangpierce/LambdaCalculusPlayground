@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/alangpierce/LambdaCalculusPlayground#readme",
   "dependencies": {
+    "react": "^0.14.8",
     "react-native": "^0.23.1"
   }
 }

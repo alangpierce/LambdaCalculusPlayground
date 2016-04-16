@@ -48,6 +48,8 @@ public class PlaygroundFragment extends Fragment {
     @Inject DragActionManager dragActionManager;
     @Inject DefinitionManager definitionManager;
 
+    private ReactInstanceManager reactInstanceManager;
+
     public static PlaygroundFragment create(AppState initialState) {
         Bundle args = new Bundle();
         initialState.persistToBundle(args);
@@ -112,7 +114,7 @@ public class PlaygroundFragment extends Fragment {
 
     private View initReactNative() {
         ReactRootView reactRootView = new ReactRootView(getActivity());
-        ReactInstanceManager reactInstanceManager = ReactInstanceManager.builder()
+        reactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(getActivity().getApplication())
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
@@ -122,6 +124,18 @@ public class PlaygroundFragment extends Fragment {
                 .build();
         reactRootView.startReactApplication(reactInstanceManager, "MyAwesomeApp", null);
         return reactRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reactInstanceManager.onHostResume(getActivity(), () -> {});
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        reactInstanceManager.onHostPause();
     }
 
     @Override
