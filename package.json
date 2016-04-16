@@ -1,0 +1,23 @@
+{
+  "name": "lambda-calculus-playground",
+  "version": "1.1.0",
+  "description": "App that provides a visual interface for creating and evaluating lambda calculus expressions",
+  "main": "index.js",
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alangpierce/LambdaCalculusPlayground.git"
+  },
+  "author": "Alan Pierce",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alangpierce/LambdaCalculusPlayground/issues"
+  },
+  "homepage": "https://github.com/alangpierce/LambdaCalculusPlayground#readme",
+  "dependencies": {
+    "react-native": "^0.23.1"
+  }
+}

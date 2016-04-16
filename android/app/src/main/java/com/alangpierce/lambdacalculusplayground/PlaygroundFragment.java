@@ -17,6 +17,10 @@ import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
+import com.facebook.react.LifecycleState;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactRootView;
+import com.facebook.react.shell.MainReactPackage;
 
 import javax.inject.Inject;
 
@@ -99,7 +103,25 @@ public class PlaygroundFragment extends Fragment {
 
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);
+
+        View reactNativeView = initReactNative();
+        ViewGroup canvasRoot = (ViewGroup) root.findViewById(R.id.canvas_root);
+        canvasRoot.addView(reactNativeView);
         return root;
+    }
+
+    private View initReactNative() {
+        ReactRootView reactRootView = new ReactRootView(getActivity());
+        ReactInstanceManager reactInstanceManager = ReactInstanceManager.builder()
+                .setApplication(getActivity().getApplication())
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModuleName("index.android")
+                .addPackage(new MainReactPackage())
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .build();
+        reactRootView.startReactApplication(reactInstanceManager, "MyAwesomeApp", null);
+        return reactRootView;
     }
 
     @Override
