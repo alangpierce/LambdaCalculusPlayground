@@ -17,10 +17,7 @@ import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
-import com.facebook.react.LifecycleState;
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.ReactRootView;
-import com.facebook.react.shell.MainReactPackage;
+import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 
 import javax.inject.Inject;
 
@@ -47,8 +44,7 @@ public class PlaygroundFragment extends Fragment {
     @Inject DragManager dragManager;
     @Inject DragActionManager dragActionManager;
     @Inject DefinitionManager definitionManager;
-
-    private ReactInstanceManager reactInstanceManager;
+    @Inject ReactNativeManager reactNativeManager;
 
     public static PlaygroundFragment create(AppState initialState) {
         Bundle args = new Bundle();
@@ -96,6 +92,7 @@ public class PlaygroundFragment extends Fragment {
                 .playgroundModule(PlaygroundModule.create(activity, appState, root))
                 .build();
         component.injectPlaygroundFragment(this);
+        reactNativeManager.init();
 
         // Note that we need to invalidate the definitions before placing the expressions and
         // definitions, so that errors will be reported correctly.
@@ -105,37 +102,19 @@ public class PlaygroundFragment extends Fragment {
 
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);
-
-        View reactNativeView = initReactNative();
-        ViewGroup canvasRoot = (ViewGroup) root.findViewById(R.id.canvas_root);
-        canvasRoot.addView(reactNativeView);
         return root;
-    }
-
-    private View initReactNative() {
-        ReactRootView reactRootView = new ReactRootView(getActivity());
-        reactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getActivity().getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
-        reactRootView.startReactApplication(reactInstanceManager, "PlaygroundCanvas", null);
-        return reactRootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        reactInstanceManager.onHostResume(getActivity(), () -> {});
+        reactNativeManager.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        reactInstanceManager.onHostPause();
+        reactNativeManager.onPause();
     }
 
     @Override
@@ -195,10 +174,10 @@ public class PlaygroundFragment extends Fragment {
                     new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.demo_video_url))));
             return true;
         } else if (item.getItemId() == R.id.action_show_dev_options) {
-            reactInstanceManager.showDevOptionsDialog();
+            reactNativeManager.showDevOptionsDialog();
             return true;
         } else if (item.getItemId() == R.id.action_refresh_js) {
-            reactInstanceManager.getDevSupportManager().handleReloadJS();
+            reactNativeManager.reloadJs();
             return true;
         }
         return super.onOptionsItemSelected(item);

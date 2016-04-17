@@ -34,6 +34,8 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManagerImpl
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
+import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
+import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluatorImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionCreatorImpl;
@@ -106,6 +108,11 @@ public class PlaygroundModule {
     @Provides @Singleton
     AppState provideAppState() {
         return appState;
+    }
+
+    @Provides @Singleton
+    ReactNativeManager provideReactNativeManager() {
+        return new ReactNativeManagerImpl(canvasRoot, activity);
     }
 
     @Provides @Singleton
