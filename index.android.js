@@ -97,8 +97,8 @@ class PlaygroundCanvas extends React.Component {
                         },
                     },
                 }}
-                x={100}
-                y={200}
+                x={50}
+                y={50}
             />
         );
     }

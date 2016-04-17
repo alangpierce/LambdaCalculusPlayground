@@ -1,6 +1,9 @@
 package com.alangpierce.lambdacalculusplayground.reactnative;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.BuildConfig;
@@ -32,6 +35,15 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
         reactRootView.startReactApplication(reactInstanceManager, "PlaygroundCanvas", null);
+
+        Point screenSize = new Point();
+        activity.getWindowManager().getDefaultDisplay().getSize(screenSize);
+
+        RelativeLayout.LayoutParams layoutParams =
+                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, screenSize.y / 2);
+        layoutParams.topMargin = screenSize.y / 2;
+        reactRootView.setLayoutParams(layoutParams);
+        reactRootView.setBackgroundColor(Color.GRAY);
         canvasRoot.addView(reactRootView);
     }
 
