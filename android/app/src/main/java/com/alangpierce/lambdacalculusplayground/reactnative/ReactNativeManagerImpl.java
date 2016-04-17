@@ -6,21 +6,26 @@ import android.graphics.Point;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.alangpierce.lambdacalculusplayground.AppState;
 import com.alangpierce.lambdacalculusplayground.BuildConfig;
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 
 public class ReactNativeManagerImpl implements ReactNativeManager {
     private final RelativeLayout canvasRoot;
     private final Activity activity;
+    private final AppState appState;
 
     private ReactInstanceManager reactInstanceManager;
 
-    public ReactNativeManagerImpl(RelativeLayout canvasRoot, Activity activity) {
+    public ReactNativeManagerImpl(RelativeLayout canvasRoot, Activity activity, AppState appState) {
         this.canvasRoot = canvasRoot;
         this.activity = activity;
+        this.appState = appState;
     }
 
     @Override
@@ -65,5 +70,16 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
     @Override
     public void reloadJs() {
         reactInstanceManager.getDevSupportManager().handleReloadJS();
+    }
+
+    @Override
+    public void invalidateState() {
+        System.out.println("Sending event...");
+        ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+        if (reactContext != null) {
+            RCTDeviceEventEmitter eventEmitter =
+                    reactContext.getJSModule(RCTDeviceEventEmitter.class);
+            eventEmitter.emit("refreshState", "Hello, world");
+        }
     }
 }

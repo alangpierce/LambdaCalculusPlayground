@@ -9,4 +9,5 @@ public interface ReactNativeManager {
     void onResume();
     void showDevOptionsDialog();
     void reloadJs();
+    void invalidateState();
 }

@@ -112,7 +112,7 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     ReactNativeManager provideReactNativeManager() {
-        return new ReactNativeManagerImpl(canvasRoot, activity);
+        return new ReactNativeManagerImpl(canvasRoot, activity, appState);
     }
 
     @Provides @Singleton
@@ -212,11 +212,11 @@ public class PlaygroundModule {
             PointConverter pointConverter, PanManager panManager,
             DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
             @Definition PaletteView definitionPaletteView, PaletteDrawerManager drawerManager,
-            UserDefinitionManager userDefinitionManager) {
+            UserDefinitionManager userDefinitionManager, ReactNativeManager reactNativeManager) {
         return new CanvasManagerImpl(
                 appState, controllerFactoryFactory, pointConverter, panManager,
                 definitionManager, lambdaPaletteView, definitionPaletteView, drawerManager,
-                userDefinitionManager);
+                userDefinitionManager, reactNativeManager);
     }
 
     @Provides

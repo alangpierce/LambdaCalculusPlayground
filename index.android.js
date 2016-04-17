@@ -2,7 +2,8 @@
 
 import React, {
     Text,
-    View
+    View,
+    DeviceEventEmitter,
 } from 'react-native';
 
 const TopLevelExpression = ({expr, x, y}) => {
@@ -79,10 +80,14 @@ const ExprText = ({children}) => {
 };
 
 class PlaygroundCanvas extends React.Component {
-    render() {
-        return (
-            <TopLevelExpression
-                expr={{
+    constructor(props) {
+        super(props);
+        console.log("Called constructor");
+        this.state = {
+            screenExpressions: [{
+                x: 50,
+                y: 50,
+                expr: {
                     type: 'lambda',
                     varName: 'x',
                     body: {
@@ -96,11 +101,32 @@ class PlaygroundCanvas extends React.Component {
                             varName: "x",
                         },
                     },
-                }}
-                x={50}
-                y={50}
+                },
+                id: 1,
+            }]
+        };
+    }
+
+    componentWillMount() {
+        DeviceEventEmitter.addListener('refreshState', (e) => {
+            console.log("Got event " + e);
+        })
+    }
+
+    render() {
+        console.log("State is " + this.state);
+        const {screenExpressions} = this.state;
+        const exprNodes = screenExpressions.map((screenExpression) => {
+            return <TopLevelExpression
+                expr={screenExpression.expr}
+                x={screenExpression.x}
+                y={screenExpression.y}
+                key={screenExpression.id}
             />
-        );
+        });
+        return <View>
+            {exprNodes}
+        </View>;
     }
 }
 var styles = React.StyleSheet.create({
