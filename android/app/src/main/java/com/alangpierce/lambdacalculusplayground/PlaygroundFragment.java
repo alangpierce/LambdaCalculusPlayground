@@ -122,7 +122,7 @@ public class PlaygroundFragment extends Fragment {
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
-        reactRootView.startReactApplication(reactInstanceManager, "MyAwesomeApp", null);
+        reactRootView.startReactApplication(reactInstanceManager, "PlaygroundCanvas", null);
         return reactRootView;
     }
 
@@ -176,19 +176,30 @@ public class PlaygroundFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_lambda_palette) {
             paletteDrawerManager.toggleLambdaPalette();
+            return true;
         } else if (item.getItemId() == R.id.action_definition_palette) {
             paletteDrawerManager.toggleDefinitionPalette();
+            return true;
         } else if (item.getItemId() == R.id.action_delete_definition) {
             expressionCreator.promptDeleteDefinition();
+            return true;
         } else if (item.getItemId() == R.id.action_enable_numbers) {
             boolean newIsChecked = !item.isChecked();
             item.setChecked(newIsChecked);
             appState.setEnableAutomaticNumbers(newIsChecked);
             canvasManager.handleAutomaticNumbersChanged();
+            return true;
         } else if (item.getItemId() == R.id.action_view_demo_video) {
             // TODO: Show the video in the app itself instead of going to YouTube.
             startActivity(
                     new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.demo_video_url))));
+            return true;
+        } else if (item.getItemId() == R.id.action_show_dev_options) {
+            reactInstanceManager.showDevOptionsDialog();
+            return true;
+        } else if (item.getItemId() == R.id.action_refresh_js) {
+            reactInstanceManager.getDevSupportManager().handleReloadJS();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
