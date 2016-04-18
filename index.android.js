@@ -104,6 +104,9 @@ const EmptyBody = () => {
             backgroundColor: "#FFBBBB",
             padding: 2,
             width: 20,
+            height: 40,
+            margin: 1,
+            alignSelf: "center",
         }}>
     </View>
 };
