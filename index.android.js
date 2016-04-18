@@ -72,8 +72,15 @@ const ExprContainer = ({children}) => {
             flexDirection: 'row',
             backgroundColor: "white",
             elevation: 5,
-            padding: 2,
-            justifyContent: "center",
+            paddingTop: 1,
+            alignItems: "center",
+            paddingBottom: 1,
+            paddingLeft: 2,
+            paddingRight: 2,
+            marginTop: 1,
+            marginBottom: 1,
+            marginLeft: 2,
+            marginRight: 2,
         }}>
         {children}
     </View>
@@ -107,7 +114,7 @@ const Bracket = ({source}) => {
     // flexbox and setting flex to 1, then setting the height of the image
     // itself to 0. This causes the flexbox to use the enclosing height, and the
     // image is stretched to 100%.
-    return <View style={{flexDirection: "column"}}>
+    return <View style={{flexDirection: "column", alignSelf: "stretch"}}>
         <Image source={source} style={{
             width: 6,
             height: 0,
@@ -165,16 +172,5 @@ class PlaygroundCanvas extends React.Component {
         </View>;
     }
 }
-var styles = React.StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    hello: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-});
 
 React.AppRegistry.registerComponent('PlaygroundCanvas', () => PlaygroundCanvas);
