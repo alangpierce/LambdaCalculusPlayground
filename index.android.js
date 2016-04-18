@@ -1,6 +1,7 @@
 'use strict';
 
 import React, {
+    Image,
     Text,
     View,
     DeviceEventEmitter,
@@ -10,9 +11,7 @@ const TopLevelExpression = ({expr, x, y}) => {
     return <View style={{
             left: x,
             top: y,
-            // TODO: This looks correct visually, but the actual view bounds are
-            // 100% wide. Maybe that could cause problems later?
-            alignSelf: "flex-start",
+            position: "absolute",
         }}>
         <Expression expr={expr}/>
     </View>;
@@ -26,15 +25,23 @@ const Expression = ({expr}) => {
             return <FuncCall expr={expr}/>;
         case 'variable':
             return <Variable expr={expr}/>;
+        case 'reference':
+            return <Reference expr={expr}/>;
     }
 };
 
 const Lambda = ({expr}) => {
+    var body;
+    if (expr.body != null) {
+        body = <Expression expr={expr.body}/>;
+    } else {
+        body = <EmptyBody/>;
+    }
     return <ExprContainer>
         <ExprText>λ</ExprText>
         <ExprText>{expr.varName}</ExprText>
         <ExprText>[</ExprText>
-        <Expression expr={expr.body}/>
+        {body}
         <ExprText>]</ExprText>
     </ExprContainer>;
 };
@@ -42,15 +49,23 @@ const Lambda = ({expr}) => {
 const FuncCall = ({expr}) => {
     return <ExprContainer>
         <Expression expr={expr.func}/>
-        <ExprText>(</ExprText>
+        <Image source={require('image!drawable_left_paren')}
+               style={{backgroundColor: "white", tintColor: "black", overlayColor: "green"}}/>
         <Expression expr={expr.arg}/>
-        <ExprText>)</ExprText>
-    </ExprContainer>
+        <Image source={require('image!drawable_right_paren')}
+               style={{backgroundColor: "black"}}/>
+    </ExprContainer>;
 };
 
 const Variable = ({expr}) => {
     return <ExprContainer>
         <ExprText>{expr.varName}</ExprText>
+    </ExprContainer>
+};
+
+const Reference = ({expr}) => {
+    return <ExprContainer>
+        <ExprText>{expr.defName}</ExprText>
     </ExprContainer>
 };
 
@@ -79,10 +94,18 @@ const ExprText = ({children}) => {
     </Text>;
 };
 
+const EmptyBody = () => {
+    return <View style={{
+            backgroundColor: "#FFBBBB",
+            padding: 2,
+            width: 20,
+        }}>
+    </View>
+};
+
 class PlaygroundCanvas extends React.Component {
     constructor(props) {
         super(props);
-        console.log("Called constructor");
         this.state = {
             screenExpressions: [{
                 x: 50,
@@ -102,26 +125,25 @@ class PlaygroundCanvas extends React.Component {
                         },
                     },
                 },
-                id: 1,
+                exprId: 1,
             }]
         };
     }
 
     componentWillMount() {
-        DeviceEventEmitter.addListener('refreshState', (e) => {
-            console.log("Got event " + e);
+        DeviceEventEmitter.addListener('refreshState', (state) => {
+            this.setState(state);
         })
     }
 
     render() {
-        console.log("State is " + this.state);
         const {screenExpressions} = this.state;
         const exprNodes = screenExpressions.map((screenExpression) => {
             return <TopLevelExpression
                 expr={screenExpression.expr}
                 x={screenExpression.x}
                 y={screenExpression.y}
-                key={screenExpression.id}
+                key={screenExpression.exprId}
             />
         });
         return <View>

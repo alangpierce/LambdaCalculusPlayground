@@ -18,7 +18,11 @@ import rx.plugins.RxJavaErrorHandler;
 import rx.plugins.RxJavaPlugins;
 
 
-public class PlaygroundActivity extends AppCompatActivity {
+/**
+ * React native hard-codes the name MainActivity for the run-android command, so just call it that.
+ * TODO: Consider fixing this or just changing it back.
+ */
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PlaygroundActivity";
 
     private static final String REDBOX_PERMISSION_MESSAGE =

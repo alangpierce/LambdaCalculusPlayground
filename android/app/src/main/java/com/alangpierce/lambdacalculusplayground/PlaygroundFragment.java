@@ -80,7 +80,7 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        PlaygroundActivity activity = (PlaygroundActivity) getActivity();
+        MainActivity activity = (MainActivity) getActivity();
 
         RelativeLayout root = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
