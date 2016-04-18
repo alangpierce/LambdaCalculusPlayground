@@ -123,6 +123,8 @@ const Bracket = ({source}) => {
             height: 0,
             resizeMode: "stretch",
             flex: 1,
+            marginTop: 0.5,
+            marginBottom: 0.5,
         }}/>
     </View>;
 };
