@@ -40,20 +40,18 @@ const Lambda = ({expr}) => {
     return <ExprContainer>
         <ExprText>λ</ExprText>
         <ExprText>{expr.varName}</ExprText>
-        <ExprText>[</ExprText>
+        <Bracket source={require('./img/left_bracket.png')}/>
         {body}
-        <ExprText>]</ExprText>
+        <Bracket source={require('./img/right_bracket.png')}/>
     </ExprContainer>;
 };
 
 const FuncCall = ({expr}) => {
     return <ExprContainer>
         <Expression expr={expr.func}/>
-        <Image source={require('image!drawable_left_paren')}
-               style={{backgroundColor: "white", tintColor: "black", overlayColor: "green"}}/>
+        <Bracket source={require('./img/left_paren.png')}/>
         <Expression expr={expr.arg}/>
-        <Image source={require('image!drawable_right_paren')}
-               style={{backgroundColor: "black"}}/>
+        <Bracket source={require('./img/right_paren.png')}/>
     </ExprContainer>;
 };
 
@@ -101,6 +99,22 @@ const EmptyBody = () => {
             width: 20,
         }}>
     </View>
+};
+
+const Bracket = ({source}) => {
+    // We want the width of the bracket to be fixed, but for the height to match
+    // the available space. We can accomplish this by wrapping it in a vertical
+    // flexbox and setting flex to 1, then setting the height of the image
+    // itself to 0. This causes the flexbox to use the enclosing height, and the
+    // image is stretched to 100%.
+    return <View style={{flexDirection: "column"}}>
+        <Image source={source} style={{
+            width: 6,
+            height: 0,
+            resizeMode: "stretch",
+            flex: 1,
+        }}/>
+    </View>;
 };
 
 class PlaygroundCanvas extends React.Component {
