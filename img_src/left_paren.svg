@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="18"
+   height="72"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="left_paren.svg">
+  <metadata
+     id="metadata3401">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3399" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1398"
+     inkscape:window-height="1000"
+     id="namedview3397"
+     showgrid="false"
+     inkscape:zoom="4"
+     inkscape:cx="60.978968"
+     inkscape:cy="77.994733"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <path
+     d="M 13.404255,72 C 9.957447,66.638298 5.744681,60.893617 3.446809,54.765957 1.148936,48.255319 0,42.12766 0,36 0,29.87234 1.148936,23.744681 3.446809,17.234043 5.744681,11.106383 9.957447,5.361702 13.404255,0 L 18,0 C 10.723404,11.87234 6.893617,24.12766 6.893617,36 6.893617,47.87234 10.723404,60.12766 18,72 l -4.595745,0 z"
+     id="path3395"
+     inkscape:connector-curvature="0" />
+</svg>

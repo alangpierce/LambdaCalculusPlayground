@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="25"
+   height="12"
+   viewBox="0 0 25.000001 12.000001"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="definition.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.87681241"
+     inkscape:cx="110.57517"
+     inkscape:cy="65.095099"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     width="600mm"
+     inkscape:window-width="1680"
+     inkscape:window-height="1001"
+     inkscape:window-x="54"
+     inkscape:window-y="93"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1040.3622)">
+    <ellipse
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04989588px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3336"
+       cx="2.0249517"
+       cy="1050.3456"
+       rx="2.0000038"
+       ry="1.9916751" />
+    <rect
+       style="fill:#000000;fill-opacity:1"
+       id="rect4164"
+       width="18.000036"
+       height="2.9875128"
+       x="6.9999733"
+       y="1048.3788" />
+    <ellipse
+       cy="1042.3788"
+       cx="2.0249517"
+       id="circle4247"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04989588px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       rx="2.0000038"
+       ry="1.9916751" />
+    <rect
+       y="1041.4078"
+       x="6.9999733"
+       height="2.9875128"
+       width="18.000036"
+       id="rect4249"
+       style="fill:#000000;fill-opacity:1" />
+  </g>
+</svg>
