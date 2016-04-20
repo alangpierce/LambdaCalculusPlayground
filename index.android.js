@@ -133,26 +133,7 @@ class PlaygroundCanvas extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            screenExpressions: [{
-                x: 50,
-                y: 50,
-                expr: {
-                    type: 'lambda',
-                    varName: 'x',
-                    body: {
-                        type: "funcCall",
-                        func: {
-                            type: "variable",
-                            varName: "x",
-                        },
-                        arg: {
-                            type: "variable",
-                            varName: "x",
-                        },
-                    },
-                },
-                exprId: 1,
-            }]
+            screenExpressions: [],
         };
     }
 
