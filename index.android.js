@@ -13,6 +13,7 @@ import React, {
 } from 'react-native';
 
 import StatelessComponent from './StatelessComponent'
+import SimpleComponent from './SimpleComponent'
 
 import type {
     ExpressionType,
@@ -212,16 +213,14 @@ type ScreenExpression = {
     exprId: number,
 };
 
-type Props = {};
-type State = {
+type PlaygroundCanvasProps = {};
+type PlaygroundCanvasState = {
     screenExpressions: Array<ScreenExpression>;
 };
 
-class PlaygroundCanvas extends React.Component<Props, Props, State> {
-    state: State;
-    static defaultProps: Props;
-
-    constructor(props: Props) {
+class PlaygroundCanvas extends SimpleComponent<
+        PlaygroundCanvasProps, PlaygroundCanvasState> {
+    constructor(props: PlaygroundCanvasProps) {
         super(props);
         this.state = {
             screenExpressions: [],
