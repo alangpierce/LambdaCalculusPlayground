@@ -16,7 +16,8 @@ def main():
             base = file[:-4]
 
             for size in ['1x', '2x', '3x']:
-                png_path = os.path.join('img', base + '@' + size + '.png')
+                suffix = '' if size == '1x' else '@' + size
+                png_path = os.path.join('img', base + suffix + '.png')
                 print 'Generating %s' % png_path
                 subprocess.call(['svgexport', svg_path, png_path, size])
     print 'Done!'

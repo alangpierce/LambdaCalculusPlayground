@@ -1,3 +1,4 @@
+// @flow
 'use strict';
 
 import React, {
@@ -129,8 +130,16 @@ const Bracket = ({source}) => {
     </View>;
 };
 
-class PlaygroundCanvas extends React.Component {
-    constructor(props) {
+type Props = {};
+type State = {
+    screenExpressions: any;
+};
+
+class PlaygroundCanvas extends React.Component<Props, Props, State> {
+    state: State;
+    static defaultProps: Props;
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             screenExpressions: [],
