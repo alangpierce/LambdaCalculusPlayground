@@ -48,28 +48,21 @@ type PlaygroundCanvasProps = {
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
         DeviceEventEmitter.addListener('refreshState', (state) => {
-            store.dispatch(addExpression({
-                expr: {
-                    type: 'variable',
-                    varName: 'x',
-                },
-                x: 100,
-                y: 100,
-            }));
-        })
+            console.log("Ignoring refreshState command. Consider removing.");
+        });
     }
 
     render() {
         const {screenExpressions} = this.props;
-        const exprNodes = Array.from(screenExpressions).map(
-                ([exprId, screenExpression]) => {
-            return <TopLevelExpression
-                expr={screenExpression.expr}
-                x={screenExpression.x}
-                y={screenExpression.y}
-                key={exprId}
-            />
-        });
+        const exprNodes = Array.from(screenExpressions)
+            .map(([exprId, screenExpression]) => {
+                return <TopLevelExpression
+                    expr={screenExpression.expr}
+                    x={screenExpression.x}
+                    y={screenExpression.y}
+                    key={exprId}
+                />
+            });
         return <View>
             {exprNodes}
         </View>;

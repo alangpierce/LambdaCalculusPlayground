@@ -54,6 +54,31 @@ describe('parseExpression', () => {
         })
     });
 
+    it('treats symbols as references', () => {
+        expect(parseExpression('L x[+(x)(y)]')).toEqual({
+            type: 'lambda',
+            varName: 'x',
+            body: {
+                type: 'funcCall',
+                func: {
+                    type: 'funcCall',
+                    func: {
+                        type: 'reference',
+                        defName: '+',
+                    },
+                    arg: {
+                        type: 'variable',
+                        varName: 'x',
+                    },
+                },
+                arg: {
+                    type: 'variable',
+                    varName: 'y',
+                },
+            },
+        })
+    });
+
     it('fails on invalid inputs', () => {
         expect(() => parseExpression('[[')).toThrow();
     })

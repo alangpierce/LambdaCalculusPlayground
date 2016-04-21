@@ -1,4 +1,9 @@
 /**
+ * Parse string expressions like "L x[L y[x(y)]]" into a UserExpression.
+ *
+ * This isn't used in the app itself, but is useful for testing and development
+ * purposes.
+ *
  * @flow
  */
 
