@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node_modules/react-native/packager/packager.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,10 @@
     "react-native": "^0.23.1",
     "react-redux": "^4.4.5",
     "redux": "^3.5.1"
+  },
+  "devDependencies": {
+    "babel-jest": "^11.0.2",
+    "babel-polyfill": "^6.7.4",
+    "jest-cli": "^11.0.2"
   }
 }
