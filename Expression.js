@@ -15,18 +15,18 @@ import React, {
 import StatelessComponent from './StatelessComponent'
 
 import type {
-    ExpressionType,
-    LambdaType,
-    FuncCallType,
-    VariableType,
-    ReferenceType
+    UserExpression,
+    UserLambda,
+    UserFuncCall,
+    UserVariable,
+    UserReference
 } from './ExpressionType'
 
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
 type ExpressionPropTypes = {
-    expr: ExpressionType,
+    expr: UserExpression,
 }
 class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
@@ -45,7 +45,7 @@ class Expression extends StatelessComponent<ExpressionPropTypes> {
 }
 
 type LambdaPropTypes = {
-    expr: LambdaType,
+    expr: UserLambda,
 }
 class Lambda extends StatelessComponent<LambdaPropTypes> {
     render() {
@@ -67,7 +67,7 @@ class Lambda extends StatelessComponent<LambdaPropTypes> {
 }
 
 type FuncCallPropTypes = {
-    expr: FuncCallType,
+    expr: UserFuncCall,
 }
 class FuncCall extends StatelessComponent<FuncCallPropTypes> {
     render() {
@@ -82,7 +82,7 @@ class FuncCall extends StatelessComponent<FuncCallPropTypes> {
 }
 
 type VariablePropTypes = {
-    expr: VariableType,
+    expr: UserVariable,
 }
 class Variable extends StatelessComponent<VariablePropTypes> {
     render() {
@@ -94,7 +94,7 @@ class Variable extends StatelessComponent<VariablePropTypes> {
 }
 
 type ReferencePropTypes = {
-    expr: ReferenceType,
+    expr: UserReference,
 }
 class Reference extends StatelessComponent<ReferencePropTypes> {
     render() {

@@ -4,33 +4,33 @@
  * @flow
  */
 
-export type LambdaType = {
+export type UserLambda = {
     type: "lambda",
     varName: string,
-    body: ExpressionType,
+    body: UserExpression,
 };
 
-export type FuncCallType = {
+export type UserFuncCall = {
     type: "funcCall",
-    func: ExpressionType,
-    arg: ExpressionType,
+    func: UserExpression,
+    arg: UserExpression,
 };
 
-export type VariableType = {
+export type UserVariable = {
     type: "variable",
     varName: string,
 };
 
-export type ReferenceType = {
+export type UserReference = {
     type: "reference",
     defName: string,
 };
 
-export type ExpressionType =
-    LambdaType | FuncCallType | VariableType | ReferenceType;
+export type UserExpression =
+    UserLambda | UserFuncCall | UserVariable | UserReference;
 
 export type ScreenExpression = {
-    expr: ExpressionType,
+    expr: UserExpression,
     x: number,
     y: number,
 };

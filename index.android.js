@@ -20,12 +20,12 @@ import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
 
-import type {ExpressionType, ScreenExpression} from './ExpressionType'
+import type {UserExpression, ScreenExpression} from './ExpressionType'
 
 type TopLevelExpressionPropTypes = {
     x: number,
     y: number,
-    expr: ExpressionType,
+    expr: UserExpression,
 }
 class TopLevelExpression
         extends StatelessComponent<TopLevelExpressionPropTypes> {
