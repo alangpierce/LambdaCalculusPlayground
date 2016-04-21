@@ -28,3 +28,9 @@ export type ReferenceType = {
 
 export type ExpressionType =
     LambdaType | FuncCallType | VariableType | ReferenceType;
+
+export type ScreenExpression = {
+    expr: ExpressionType,
+    x: number,
+    y: number,
+};

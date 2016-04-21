@@ -11,19 +11,24 @@ import React, {
     View,
     DeviceEventEmitter,
 } from 'react-native';
+import {connect, Provider} from 'react-redux';
 
+import {addExpression} from './actions'
+import './DebugGlobals'
 import Expression from './Expression'
-import StatelessComponent from './StatelessComponent'
 import SimpleComponent from './SimpleComponent'
+import StatelessComponent from './StatelessComponent'
+import store from './store'
 
-import type {ExpressionType} from './ExpressionType'
+import type {ExpressionType, ScreenExpression} from './ExpressionType'
 
 type TopLevelExpressionPropTypes = {
     x: number,
     y: number,
     expr: ExpressionType,
 }
-class TopLevelExpression extends StatelessComponent<TopLevelExpressionPropTypes> {
+class TopLevelExpression
+        extends StatelessComponent<TopLevelExpressionPropTypes> {
     render() {
         const {x, y, expr} = this.props;
         return <View style={{
@@ -36,46 +41,49 @@ class TopLevelExpression extends StatelessComponent<TopLevelExpressionPropTypes>
     }
 }
 
-type ScreenExpression = {
-    expr: ExpressionType,
-    x: number,
-    y: number,
-    exprId: number,
+type PlaygroundCanvasProps = {
+    screenExpressions: Map<number, ScreenExpression>;
 };
 
-type PlaygroundCanvasProps = {};
-type PlaygroundCanvasState = {
-    screenExpressions: Array<ScreenExpression>;
-};
-
-class PlaygroundCanvas extends SimpleComponent<
-        PlaygroundCanvasProps, PlaygroundCanvasState> {
-    constructor(props: PlaygroundCanvasProps) {
-        super(props);
-        this.state = {
-            screenExpressions: [],
-        };
-    }
-
+class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
         DeviceEventEmitter.addListener('refreshState', (state) => {
-            this.setState(state);
+            store.dispatch(addExpression({
+                expr: {
+                    type: 'variable',
+                    varName: 'x',
+                },
+                x: 100,
+                y: 100,
+            }));
         })
     }
 
     render() {
-        const {screenExpressions} = this.state;
-        const exprNodes = screenExpressions.map((screenExpression) => {
+        const {screenExpressions} = this.props;
+        const exprNodes = Array.from(screenExpressions).map(
+                ([exprId, screenExpression]) => {
             return <TopLevelExpression
                 expr={screenExpression.expr}
                 x={screenExpression.x}
                 y={screenExpression.y}
-                key={screenExpression.exprId}
+                key={exprId}
             />
         });
         return <View>
             {exprNodes}
         </View>;
+    }
+}
+
+const ConnectedPlaygroundCanvasView =
+    connect(state => state)(PlaygroundCanvasView);
+
+class PlaygroundCanvas extends SimpleComponent<{}, {}> {
+    render() {
+        return <Provider store={store}>
+            <ConnectedPlaygroundCanvasView />
+        </Provider>
     }
 }
 
