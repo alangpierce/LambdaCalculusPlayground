@@ -25,6 +25,7 @@ import com.alangpierce.lambdacalculusplayground.definition.ExpressionTooBigExcep
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
+import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
 import com.google.common.collect.Ordering;
 
@@ -34,14 +35,17 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
     private final Context context;
     private final LayoutInflater layoutInflater;
     private final CanvasManager canvasManager;
+    private final ReactNativeManager reactNativeManager;
     private final PointConverter pointConverter;
     private final AppState appState;
 
     public ExpressionCreatorImpl(Context context, LayoutInflater layoutInflater,
-            CanvasManager canvasManager, PointConverter pointConverter, AppState appState) {
+            CanvasManager canvasManager, ReactNativeManager reactNativeManager,
+            PointConverter pointConverter, AppState appState) {
         this.context = context;
         this.layoutInflater = layoutInflater;
         this.canvasManager = canvasManager;
+        this.reactNativeManager = reactNativeManager;
         this.pointConverter = pointConverter;
         this.appState = appState;
     }
@@ -145,6 +149,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
             return;
         }
 
+        reactNativeManager.createLambda(varName);
         ScreenPoint screenPoint = pointConverter.toScreenPoint(newExpressionPoint());
         UserLambda expression = UserLambda.create(varName, null);
         canvasManager.createNewExpression(

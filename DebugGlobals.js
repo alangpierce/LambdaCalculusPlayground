@@ -22,7 +22,6 @@ const makeExpression = (exprString: string) => {
         y: 100,
     };
     store.dispatch(actions.addExpression(screenExpr));
-    refreshNative();
 };
 
 // Only run when we're running in Chrome. We detect this by checking if we're in

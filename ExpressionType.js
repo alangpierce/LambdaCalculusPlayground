@@ -7,7 +7,7 @@
 export type UserLambda = {
     type: "lambda",
     varName: string,
-    body: UserExpression,
+    body: ?UserExpression,
 };
 
 export type UserFuncCall = {

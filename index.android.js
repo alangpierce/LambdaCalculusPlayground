@@ -50,6 +50,17 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         DeviceEventEmitter.addListener('refreshState', (state) => {
             console.log("Ignoring refreshState command. Consider removing.");
         });
+        DeviceEventEmitter.addListener('createLambda', (varName) => {
+            store.dispatch(addExpression({
+                expr: {
+                    type: 'lambda',
+                    varName,
+                    body: null,
+                },
+                x: 100,
+                y: 100,
+            }));
+        });
     }
 
     render() {

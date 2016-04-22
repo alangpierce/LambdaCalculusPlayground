@@ -142,8 +142,9 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionCreator provideExpressionCreator(Context context, LayoutInflater layoutInflater,
-            CanvasManager expressionManager, PointConverter pointConverter, AppState appState) {
-        return new ExpressionCreatorImpl(context, layoutInflater, expressionManager,
+            CanvasManager canvasManager, ReactNativeManager reactNativeManager,
+            PointConverter pointConverter, AppState appState) {
+        return new ExpressionCreatorImpl(context, layoutInflater, canvasManager, reactNativeManager,
                 pointConverter, appState);
     }
 

@@ -150,4 +150,14 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
                 }
         );
     }
+
+    @Override
+    public void createLambda(String varName) {
+        ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+        if (reactContext != null) {
+            RCTDeviceEventEmitter eventEmitter =
+                    reactContext.getJSModule(RCTDeviceEventEmitter.class);
+            eventEmitter.emit("createLambda", varName);
+        }
+    }
 }
