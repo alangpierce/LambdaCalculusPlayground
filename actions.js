@@ -2,7 +2,10 @@
  * @flow
  */
 
-import type {ScreenExpression} from './types'
+import type {
+    ScreenExpression,
+    CanvasPoint
+} from './types'
 
 export const addExpression = (screenExpr: ScreenExpression): Action => {
     return {
@@ -11,5 +14,14 @@ export const addExpression = (screenExpr: ScreenExpression): Action => {
     };
 };
 
+export const moveExpression = (exprId: number, pos: CanvasPoint): Action => {
+    return {
+        type: 'MOVE_EXPRESSION',
+        exprId,
+        pos,
+    };
+};
+
 export type Action =
-    { type: 'ADD_EXPRESSION', screenExpr: ScreenExpression };
+    { type: 'ADD_EXPRESSION', screenExpr: ScreenExpression } |
+    { type: 'MOVE_EXPRESSION', exprId: number, pos: CanvasPoint};
