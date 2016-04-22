@@ -57,12 +57,24 @@ const formatExpr = (expr: UserExpression): string => {
 // Only run when we're running in Chrome. We detect this by checking if we're in
 // the debuggerWorker.js web worker, which defines a messageHandlers global.
 if (__DEV__ && window.messageHandlers !== undefined) {
-    window.DebugGlobals = {
+    const newGlobals = {
         store,
         actions,
         makeExpression,
         listExpressions,
     };
+
+    Object.keys(newGlobals).forEach((name) => {
+        if (window[name] === undefined) {
+            window[name] = newGlobals[name];
+        } else {
+            console.error(`The debug global ${name} was already defined!`);
+        }
+    });
+
+    // Also tack them on DebugGlobals, which makes them a little easier to
+    // discover.
+    window.DebugGlobals = newGlobals;
 
     // Set a callback to be run regularly. This ensures that pending calls to
     // native code are flushed in a relatively timely manner, so we can run
@@ -70,6 +82,5 @@ if (__DEV__ && window.messageHandlers !== undefined) {
     // effect immediately.
     setInterval(() => {}, 100);
 
-    console.log(
-        'Created debug globals. Access them on the DebugGlobals object.');
+    console.log('Created debug globals.');
 }
