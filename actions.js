@@ -4,8 +4,7 @@
 
 import type {ScreenExpression} from './ExpressionType'
 
-export const addExpression =
-    (screenExpr: ScreenExpression): Action => {
+export const addExpression = (screenExpr: ScreenExpression): Action => {
     return {
         type: 'ADD_EXPRESSION',
         screenExpr,

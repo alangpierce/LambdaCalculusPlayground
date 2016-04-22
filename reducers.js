@@ -5,7 +5,7 @@
 import type {Action} from './actions'
 import type {ScreenExpression} from './ExpressionType'
 
-type State = {
+export type State = {
     screenExpressions: Map<number, ScreenExpression>,
     nextExprId: number,
 };
