@@ -12,7 +12,7 @@ import store from './store'
 import parseExpression from './parseExpression'
 
 import type {State} from './reducers'
-import type {UserExpression} from './ExpressionType'
+import type {UserExpression} from './types'
 
 /**
  * Parse the given expression text and place the expression on the screen.
@@ -21,8 +21,10 @@ const makeExpression = (exprString: string) => {
     const userExpr = parseExpression(exprString);
     const screenExpr = {
         expr: userExpr,
-        x: 100,
-        y: 100,
+        pos: {
+            canvasX: 100,
+            canvasY: 100,
+        },
     };
     store.dispatch(actions.addExpression(screenExpr));
 };
@@ -30,8 +32,9 @@ const makeExpression = (exprString: string) => {
 const listExpressions = () => {
     const state: State = store.getState();
     state.screenExpressions.forEach((screenExpression, exprId) => {
-        const {x, y, expr} = screenExpression;
-        console.log(`Expr ${exprId} at (${x}, ${y}): ${formatExpr(expr)}`);
+        const {expr, pos: {canvasX, canvasY}} = screenExpression;
+        console.log(
+            `Expr ${exprId} at (${canvasX}, ${canvasY}): ${formatExpr(expr)}`);
     });
 };
 

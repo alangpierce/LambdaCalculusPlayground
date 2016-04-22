@@ -3,7 +3,7 @@
  */
 
 import type {Action} from './actions'
-import type {ScreenExpression} from './ExpressionType'
+import type {ScreenExpression} from './types'
 
 export type State = {
     screenExpressions: Map<number, ScreenExpression>,

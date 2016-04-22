@@ -2,7 +2,7 @@
  * @flow
  */
 
-import type {ScreenExpression} from './ExpressionType'
+import type {ScreenExpression} from './types'
 
 export const addExpression = (screenExpr: ScreenExpression): Action => {
     return {

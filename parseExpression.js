@@ -7,7 +7,7 @@
  * @flow
  */
 
-import type {UserExpression} from './ExpressionType'
+import type {UserExpression} from './types'
 
 const parseExpression = (str: string): UserExpression => {
     if (str.endsWith(']')) {

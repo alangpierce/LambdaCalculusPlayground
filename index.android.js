@@ -20,20 +20,23 @@ import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
 
-import type {UserExpression, ScreenExpression} from './ExpressionType'
+import type {
+    CanvasPoint,
+    UserExpression,
+    ScreenExpression
+} from './types'
 
 type TopLevelExpressionPropTypes = {
-    x: number,
-    y: number,
     expr: UserExpression,
+    pos: CanvasPoint,
 }
 class TopLevelExpression
         extends StatelessComponent<TopLevelExpressionPropTypes> {
     render() {
-        const {x, y, expr} = this.props;
+        const {expr, pos: {canvasX, canvasY}} = this.props;
         return <View style={{
-            left: x,
-            top: y,
+            left: canvasX,
+            top: canvasY,
             position: "absolute",
         }}>
             <Expression expr={expr}/>
@@ -57,8 +60,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                     varName,
                     body: null,
                 },
-                x: 100,
-                y: 100,
+                pos: {
+                    canvasX: 100,
+                    canvasY: 100,
+                },
             }));
         });
     }
@@ -69,8 +74,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             .map(([exprId, screenExpression]) => {
                 return <TopLevelExpression
                     expr={screenExpression.expr}
-                    x={screenExpression.x}
-                    y={screenExpression.y}
+                    pos={screenExpression.pos}
                     key={exprId}
                 />
             });

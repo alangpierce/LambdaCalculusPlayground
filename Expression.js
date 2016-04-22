@@ -20,7 +20,7 @@ import type {
     UserFuncCall,
     UserVariable,
     UserReference
-} from './ExpressionType'
+} from './types'
 
 // This is the type returned by RelativeImageStub.
 type AssetId = number;

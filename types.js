@@ -1,6 +1,4 @@
 /**
- * Type definitions for basic expressions.
- * 
  * @flow
  */
 
@@ -31,6 +29,10 @@ export type UserExpression =
 
 export type ScreenExpression = {
     expr: UserExpression,
-    x: number,
-    y: number,
+    pos: CanvasPoint,
 };
+
+export type CanvasPoint = {
+    canvasX: number,
+    canvasY: number,
+}
