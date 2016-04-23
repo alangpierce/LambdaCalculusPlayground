@@ -37,9 +37,20 @@ export type CanvasPoint = {
     canvasY: number,
 }
 
-export type PathComponent = 'func' | 'arg' | 'body'
+export const canvasPoint = (canvasX: number, canvasY: number): CanvasPoint => ({
+    canvasX,
+    canvasY,
+});
+
+export type PathComponent = 'func' | 'arg' | 'body';
 
 export type ExprPath = {
     exprId: number,
     pathSteps: Array<PathComponent>,
-}
+};
+
+export const exprPath =
+        (exprId: number, pathSteps: Array<PathComponent>): ExprPath => ({
+    exprId,
+    pathSteps,
+});

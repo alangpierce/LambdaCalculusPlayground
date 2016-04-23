@@ -19,6 +19,7 @@ import Expression from './Expression'
 import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
+import {canvasPoint} from './types'
 
 import type {
     CanvasPoint,
@@ -57,10 +58,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                     varName,
                     body: null,
                 },
-                pos: {
-                    canvasX: 100,
-                    canvasY: 100,
-                },
+                pos: canvasPoint(100, 100),
             }));
         });
     }

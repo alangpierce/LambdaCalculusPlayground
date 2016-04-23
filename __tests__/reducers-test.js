@@ -7,6 +7,7 @@ jest.disableAutomock();
 import * as actions from '../actions'
 import parseExpression from '../parseExpression'
 import store from '../store'
+import {canvasPoint, exprPath} from '../types'
 
 describe('reducers', () => {
     it('handles new expressions', () => {
@@ -20,10 +21,7 @@ describe('reducers', () => {
     it('handles moving expressions', () => {
         store.dispatch(actions.reset());
         store.dispatch(actions.addExpression(makeScreenExpr('L x[x]')));
-        store.dispatch(actions.moveExpression(0, {
-            canvasX: 100,
-            canvasY: 100,
-        }));
+        store.dispatch(actions.moveExpression(0, canvasPoint(100, 100)));
         const screenExpr = store.getState().screenExpressions.get(0);
         expect((screenExpr: any).pos.canvasX).toEqual(100);
     });
@@ -32,38 +30,23 @@ describe('reducers', () => {
         store.dispatch(actions.reset());
         store.dispatch(
             actions.addExpression(makeScreenExpr('L x[L y[L z[x]]]')));
-        store.dispatch(
-            actions.extractBody({
-                exprId: 0,
-                pathSteps: ['body']
-            }, {
-                canvasX: 25,
-                canvasY: 25,
-            })
-        );
+        store.dispatch(actions.extractBody(
+            exprPath(0, ['body']), canvasPoint(25, 25)
+        ));
         expect(store.getState().screenExpressions.get(0)).toEqual({
             expr: parseExpression('L x[L y[_]]'),
-            pos: {
-                canvasX: 50,
-                canvasY: 50,
-            }
+            pos: canvasPoint(50, 50),
         });
         expect(store.getState().screenExpressions.get(1)).toEqual({
             expr: parseExpression('L z[x]'),
-            pos: {
-                canvasX: 25,
-                canvasY: 25,
-            }
+            pos: canvasPoint(25, 25),
         });
     });
 
     const makeScreenExpr = (exprString) => {
         return {
             expr: parseExpression(exprString),
-            pos: {
-                canvasX: 50,
-                canvasY: 50,
-            }
-        }
-    }
+            pos: canvasPoint(50, 50),
+        };
+    };
 });
