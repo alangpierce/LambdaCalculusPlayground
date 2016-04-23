@@ -36,3 +36,10 @@ export type CanvasPoint = {
     canvasX: number,
     canvasY: number,
 }
+
+export type PathComponent = 'func' | 'arg' | 'body'
+
+export type ExprPath = {
+    exprId: number,
+    pathSteps: Array<PathComponent>,
+}

@@ -1,6 +1,7 @@
 /**
  * @flow
  */
+
 jest.disableAutomock();
 
 import * as actions from '../actions'
@@ -25,6 +26,35 @@ describe('reducers', () => {
         }));
         const screenExpr = store.getState().screenExpressions.get(0);
         expect((screenExpr: any).pos.canvasX).toEqual(100);
+    });
+
+    it('handles extract body', () => {
+        store.dispatch(actions.reset());
+        store.dispatch(
+            actions.addExpression(makeScreenExpr('L x[L y[L z[x]]]')));
+        store.dispatch(
+            actions.extractBody({
+                exprId: 0,
+                pathSteps: ['body']
+            }, {
+                canvasX: 25,
+                canvasY: 25,
+            })
+        );
+        expect(store.getState().screenExpressions.get(0)).toEqual({
+            expr: parseExpression('L x[L y[_]]'),
+            pos: {
+                canvasX: 50,
+                canvasY: 50,
+            }
+        });
+        expect(store.getState().screenExpressions.get(1)).toEqual({
+            expr: parseExpression('L z[x]'),
+            pos: {
+                canvasX: 25,
+                canvasY: 25,
+            }
+        });
     });
 
     const makeScreenExpr = (exprString) => {

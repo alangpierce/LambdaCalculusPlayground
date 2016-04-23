@@ -16,10 +16,16 @@ const parseExpression = (str: string): UserExpression => {
         const openBracketIndex = str.indexOf('[');
         const varName = str.substring(2, openBracketIndex);
         const bodyStr = str.substring(openBracketIndex + 1, str.length - 1);
+        let body;
+        if (bodyStr == '_') {
+            body = null;
+        } else {
+            body = parseExpression(bodyStr);
+        }
         return {
             type: 'lambda',
             varName,
-            body: parseExpression(bodyStr)
+            body,
         };
     } else if (str.endsWith(")")) {
         let level = 1;
