@@ -2,7 +2,7 @@
  * @flow
  */
 
-jest.unmock('../parseExpression');
+jest.disableAutomock();
 
 import parseExpression from '../parseExpression'
 

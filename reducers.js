@@ -16,7 +16,9 @@ const initialState = {
 };
 
 const playgroundApp = (state: State = initialState, action: Action) => {
-    if (action.type === 'ADD_EXPRESSION') {
+    if (action.type === 'RESET') {
+        return initialState;
+    } else if (action.type === 'ADD_EXPRESSION') {
         const nextExprId = state.nextExprId;
         const newScreenExpressions = new Map(state.screenExpressions);
         newScreenExpressions.set(nextExprId, action.screenExpr);
