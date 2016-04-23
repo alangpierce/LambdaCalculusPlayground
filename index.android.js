@@ -50,9 +50,6 @@ type PlaygroundCanvasProps = {
 
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
-        DeviceEventEmitter.addListener('refreshState', (state) => {
-            console.log("Ignoring refreshState command. Consider removing.");
-        });
         DeviceEventEmitter.addListener('createLambda', (varName) => {
             store.dispatch(addExpression({
                 expr: {

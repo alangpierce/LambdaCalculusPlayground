@@ -16,7 +16,6 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.pan.PanManager;
-import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
@@ -39,7 +38,6 @@ public class CanvasManagerImpl implements CanvasManager {
     private final PaletteView definitionPaletteView;
     private final PaletteDrawerManager drawerManager;
     private final UserDefinitionManager userDefinitionManager;
-    private final ReactNativeManager reactNativeManager;
 
     private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
     private final Map<String, DefinitionController> definitionControllers = new HashMap<>();
@@ -53,8 +51,7 @@ public class CanvasManagerImpl implements CanvasManager {
             PaletteView lambdaPaletteView,
             PaletteView definitionPaletteView,
             PaletteDrawerManager drawerManager,
-            UserDefinitionManager userDefinitionManager,
-            ReactNativeManager reactNativeManager) {
+            UserDefinitionManager userDefinitionManager) {
         this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
@@ -64,7 +61,6 @@ public class CanvasManagerImpl implements CanvasManager {
         this.definitionPaletteView = definitionPaletteView;
         this.drawerManager = drawerManager;
         this.userDefinitionManager = userDefinitionManager;
-        this.reactNativeManager = reactNativeManager;
     }
 
     @Override
@@ -151,12 +147,10 @@ public class CanvasManagerImpl implements CanvasManager {
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
                 appState.modifyExpression(exprId, newController.getScreenExpression());
-                reactNativeManager.invalidateState();
             } else {
                 appState.deleteExpression(exprId);
                 panManager.unregisterPanListener(controller);
                 expressionControllers.remove(controller);
-                reactNativeManager.invalidateState();
             }
         });
         controller.getView().attachToRoot(canvasPos);

@@ -9,7 +9,6 @@ public interface ReactNativeManager {
     void onResume();
     void showDevOptionsDialog();
     void reloadJs();
-    void invalidateState();
 
     /**
      * Place a lambda with the given name in a nice place on the React Native canvas.
