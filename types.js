@@ -59,25 +59,25 @@ export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpress
     pos,
 });
 
-export type ExtractBody = {
-    type: 'extractBody',
+export type DecomposeExpression = {
+    type: 'decomposeExpression',
     path: ExprPath,
     targetPos: CanvasPoint,
 };
 
-export const newExtractBody = (path: ExprPath, targetPos: CanvasPoint): ExtractBody => ({
-    type: 'extractBody',
+export const newDecomposeExpression = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpression => ({
+    type: 'decomposeExpression',
     path,
     targetPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | ExtractBody;
+export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
     addExpression: (addExpression: AddExpression) => T,
     moveExpression: (moveExpression: MoveExpression) => T,
-    extractBody: (extractBody: ExtractBody) => T,
+    decomposeExpression: (decomposeExpression: DecomposeExpression) => T,
 }
 
 export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>): T {
@@ -88,8 +88,8 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.addExpression(action);
         case 'moveExpression':
             return visitor.moveExpression(action);
-        case 'extractBody':
-            return visitor.extractBody(action);
+        case 'decomposeExpression':
+            return visitor.decomposeExpression(action);
         default:
             throw new Error('Unexpected type: ' + action.type);
     }

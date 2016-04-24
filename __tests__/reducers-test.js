@@ -42,7 +42,7 @@ describe('reducers', () => {
     it('handles extract body', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[L z[x]]]')));
-        store.dispatch(t.newExtractBody(
+        store.dispatch(t.newDecomposeExpression(
             newExprPath(0, ['body']), newCanvasPoint(25, 25)
         ));
         expect(store.getState().screenExpressions.get(0).toJS()).toEqual(
@@ -51,6 +51,20 @@ describe('reducers', () => {
         expect(store.getState().screenExpressions.get(1).toJS()).toEqual(
             newScreenExpression(
                 parseExpression('L z[x]'), newCanvasPoint(25, 25)).toJS());
+    });
+
+    it('handles extract arg', () => {
+        store.dispatch(t.newReset());
+        store.dispatch(t.newAddExpression(makeScreenExpr('L x[+(2)(x)]')));
+        store.dispatch(t.newDecomposeExpression(
+            newExprPath(0, ['body', 'func']), newCanvasPoint(25, 25)
+        ));
+        expect(store.getState().screenExpressions.get(0).toJS()).toEqual(
+            newScreenExpression(
+                parseExpression('L x[+(x)]'), newCanvasPoint(50, 50)).toJS());
+        expect(store.getState().screenExpressions.get(1).toJS()).toEqual(
+            newScreenExpression(
+                parseExpression('2'), newCanvasPoint(25, 25)).toJS());
     });
 
     const makeScreenExpr = (exprString) => {

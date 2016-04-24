@@ -36,11 +36,12 @@ const types = {
                 pos: 'CanvasPoint',
             },
             /**
-             * Given an expression path, which must reference a lambda
-             * expression with a body, remove that body and create a new
-             * expression from it at the given coordinates.
+             * Given an expression path, which must reference either a lambda
+             * with a body or a function call, remove the body or the call
+             * argument, and create a new expression from it at the given
+             * coordinates.
              */
-            ExtractBody: {
+            DecomposeExpression: {
                 path: 'ExprPath',
                 targetPos: 'CanvasPoint',
             },

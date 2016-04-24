@@ -23,12 +23,12 @@ const playgroundApp = (state: t.State = initialState, action: t.Action): t.State
             return modifyExpression(state, exprId,
                 (screenExpr) => screenExpr.withPos(pos));
         },
-        extractBody: ({path: {exprId, pathSteps}, targetPos}) => {
+        decomposeExpression: ({path: {exprId, pathSteps}, targetPos}) => {
             const existingScreenExpr = state.screenExpressions.get(exprId);
             if (!existingScreenExpr) {
                 return state;
             }
-            const extractResult = extractBody(
+            const extractResult = decomposeExpression(
                 existingScreenExpr.expr, pathSteps);
             if (!extractResult) {
                 return state;
@@ -62,32 +62,46 @@ const modifyExpression = (state: t.State, exprId: number,
     return state.withScreenExpressions(screenExpressions);
 };
 
-type ExtractResult = {
+type DecomposeResult = {
     original: UserExpression,
     extracted: UserExpression,
 }
 
 /**
- * Assuming that the given expression
- *
- * TODO: Also extract func args.
+ * Assuming that the given expression is either a lambda with a body or a
+ * function call, extract the body or argument. The "original" result is the
+ * original expression with the child removed, and the "extracted" result is the
+ * removed child.
  */
-const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?ExtractResult => {
+const decomposeExpression =
+        (expr: UserExpression, path: Array<PathComponent>): ?DecomposeResult => {
     if (path.length === 0) {
-        if (expr.type === 'userLambda' && expr.body) {
-            const body = expr.body;
-            return {
-                original: expr.withBody(null),
-                extracted: body,
-            }
-        }
+        return t.matchUserExpression(expr, {
+            userLambda: (lambda) => {
+                if (lambda.body != null) {
+                    const body = lambda.body;
+                    return {
+                        original: lambda.withBody(null),
+                        extracted: body,
+                    }
+                } else {
+                    return null;
+                }
+            },
+            userFuncCall: ({func, arg}) => ({
+                original: func,
+                extracted: arg,
+            }),
+            userVariable: () => null,
+            userReference: () => null,
+        });
     }
 
     if (path[0] === 'func') {
         if (expr.type !== 'userFuncCall') {
             return null;
         }
-        const subResult = extractBody(expr.func, path.slice(1));
+        const subResult = decomposeExpression(expr.func, path.slice(1));
         if (!subResult) {
             return null;
         }
@@ -99,7 +113,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
         if (expr.type !== 'userFuncCall') {
             return null;
         }
-        const subResult = extractBody(expr.arg, path.slice(1));
+        const subResult = decomposeExpression(expr.arg, path.slice(1));
         if (!subResult) {
             return null;
         }
@@ -111,7 +125,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
         if (expr.type !== 'userLambda' || !expr.body) {
             return null;
         }
-        const subResult = extractBody(expr.body, path.slice(1));
+        const subResult = decomposeExpression(expr.body, path.slice(1));
         if (!subResult) {
             return null;
         }
