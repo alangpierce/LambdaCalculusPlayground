@@ -14,7 +14,6 @@ import React, {
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
 
-import {addExpression} from './actions'
 import './DebugGlobals'
 import Expression from './Expression'
 import SimpleComponent from './SimpleComponent'
@@ -25,6 +24,7 @@ import {
     newUserLambda,
     newScreenExpression,
 } from './types'
+import * as t from './types'
 
 import type {
     CanvasPoint,
@@ -57,7 +57,7 @@ type PlaygroundCanvasProps = {
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
         DeviceEventEmitter.addListener('createLambda', (varName) => {
-            store.dispatch(addExpression(
+            store.dispatch(t.newAddExpression(
                 newScreenExpression(
                     newUserLambda(varName, null),
                     newCanvasPoint(100, 100))

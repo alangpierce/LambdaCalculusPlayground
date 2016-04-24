@@ -7,7 +7,6 @@
 
 import {NativeModules} from 'react-native'
 
-import * as actions from './actions'
 import store from './store'
 import parseExpression from './parseExpression'
 
@@ -22,7 +21,7 @@ const makeExpression = (exprString: string) => {
     const userExpr = parseExpression(exprString);
     const screenExpr =
         t.newScreenExpression(userExpr, t.newCanvasPoint(100, 100));
-    store.dispatch(actions.addExpression(screenExpr));
+    store.dispatch(t.newAddExpression(screenExpr));
 };
 
 const listExpressions = () => {
@@ -50,7 +49,7 @@ const formatExpr = (expr: UserExpression): string => {
 if (__DEV__ && window.messageHandlers !== undefined) {
     const newGlobals = {
         store,
-        actions,
+        t,
         makeExpression,
         listExpressions,
     };
@@ -69,7 +68,7 @@ if (__DEV__ && window.messageHandlers !== undefined) {
 
     // Set a callback to be run regularly. This ensures that pending calls to
     // native code are flushed in a relatively timely manner, so we can run
-    // things like redux actions from the Chrome console and have them take
+    // things like redux  from the Chrome console and have them take
     // effect immediately.
     setInterval(() => {}, 100);
 

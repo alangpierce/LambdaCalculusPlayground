@@ -4,8 +4,8 @@
 
 import * as Immutable from 'immutable'
 
-import type {Action} from './actions'
 import type {ScreenExpression, UserExpression, PathComponent} from './types'
+import * as t from './types'
 
 export type State = {
     screenExpressions: Immutable.Map<number, ScreenExpression>,
@@ -17,43 +17,48 @@ const initialState = {
     nextExprId: 0,
 };
 
-const playgroundApp = (state: State = initialState, action: Action): State => {
-    if (action.type === 'RESET') {
-        return initialState;
-    } else if (action.type === 'ADD_EXPRESSION') {
-        return addExpression(state, action.screenExpr);
-    } else if (action.type === 'MOVE_EXPRESSION') {
-        const pos = action.pos;
-        return modifyExpression(state, action.exprId, (screenExpr) => {
-            return {
-                expr: screenExpr.expr,
-                pos: pos,
-            };
-        });
-    } else if (action.type === 'EXTRACT_BODY') {
-        const {path: {exprId, pathSteps}, targetPos} = action;
-        const existingScreenExpr = state.screenExpressions.get(exprId);
-        if (!existingScreenExpr) {
-            return state;
-        }
-        const extractResult = extractBody(existingScreenExpr.expr, pathSteps);
-        if (!extractResult) {
-            return state;
-        }
-        const {original, extracted} = extractResult;
-        state = addExpression(state, {
-            expr: extracted,
-            pos: targetPos,
-        });
-        state = modifyExpression(state, exprId, () => {
-            return {
-                expr: original,
-                pos: existingScreenExpr.pos,
-            };
-        });
+const playgroundApp = (state: State = initialState, action: t.Action): State => {
+    // Despite our action union, there are some internal redux actions that
+    // start with @@, which we want to just ignore.
+    if (action.type.startsWith('@@')) {
         return state;
     }
-    return state;
+
+    return t.matchAction(action, {
+        reset: () => initialState,
+        addExpression: ({screenExpr}) => addExpression(state, screenExpr),
+        moveExpression: ({exprId, pos}) => {
+            return modifyExpression(state, exprId, (screenExpr) => {
+                return {
+                    expr: screenExpr.expr,
+                    pos: pos,
+                };
+            });
+        },
+        extractBody: ({path: {exprId, pathSteps}, targetPos}) => {
+            const existingScreenExpr = state.screenExpressions.get(exprId);
+            if (!existingScreenExpr) {
+                return state;
+            }
+            const extractResult = extractBody(
+                existingScreenExpr.expr, pathSteps);
+            if (!extractResult) {
+                return state;
+            }
+            const {original, extracted} = extractResult;
+            state = addExpression(state, {
+                expr: extracted,
+                pos: targetPos,
+            });
+            state = modifyExpression(state, exprId, () => {
+                return {
+                    expr: original,
+                    pos: existingScreenExpr.pos,
+                };
+            });
+            return state;
+        }
+    });
 };
 
 const addExpression = (state: State, screenExpr: ScreenExpression): State => {

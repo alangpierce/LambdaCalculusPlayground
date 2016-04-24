@@ -5,11 +5,11 @@
 import playgroundApp from './reducers'
 import {createStore} from 'redux'
 
-import type {Action} from './actions'
 import type {State} from './reducers'
+import * as t from './types'
 
 export type Store = {
-    dispatch: (action: Action) => void,
+    dispatch: (action: t.Action) => void,
     getState: () => State,
 }
 

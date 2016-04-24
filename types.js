@@ -3,13 +3,79 @@
  *
  * @flow
  */
+export type Reset = {
+    type: 'reset',
+};
+
+export const newReset = (): Reset => ({
+    type: 'reset',
+});
+
+export type AddExpression = {
+    type: 'addExpression',
+    screenExpr: ScreenExpression,
+};
+
+export const newAddExpression = (screenExpr: ScreenExpression): AddExpression => ({
+    type: 'addExpression',
+    screenExpr,
+});
+
+export type MoveExpression = {
+    type: 'moveExpression',
+    exprId: number,
+    pos: CanvasPoint,
+};
+
+export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => ({
+    type: 'moveExpression',
+    exprId,
+    pos,
+});
+
+export type ExtractBody = {
+    type: 'extractBody',
+    path: ExprPath,
+    targetPos: CanvasPoint,
+};
+
+export const newExtractBody = (path: ExprPath, targetPos: CanvasPoint): ExtractBody => ({
+    type: 'extractBody',
+    path,
+    targetPos,
+});
+
+export type Action = Reset | AddExpression | MoveExpression | ExtractBody;
+
+export type ActionVisitor<T> = {
+    reset: (reset: Reset) => T,
+    addExpression: (addExpression: AddExpression) => T,
+    moveExpression: (moveExpression: MoveExpression) => T,
+    extractBody: (extractBody: ExtractBody) => T,
+}
+
+export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>): T {
+    switch (action.type) {
+        case 'reset':
+            return visitor.reset(action);
+        case 'addExpression':
+            return visitor.addExpression(action);
+        case 'moveExpression':
+            return visitor.moveExpression(action);
+        case 'extractBody':
+            return visitor.extractBody(action);
+        default:
+            throw new Error('Unexpected type: ' + action.type);
+    }
+};
+
 export type UserLambda = {
     type: 'userLambda',
     varName: string,
     body: ?UserExpression,
 };
 
-export const newUserLambda = (varName: string, body: ?UserExpression) => ({
+export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => ({
     type: 'userLambda',
     varName,
     body,
@@ -21,7 +87,7 @@ export type UserFuncCall = {
     arg: UserExpression,
 };
 
-export const newUserFuncCall = (func: UserExpression, arg: UserExpression) => ({
+export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => ({
     type: 'userFuncCall',
     func,
     arg,
@@ -32,7 +98,7 @@ export type UserVariable = {
     varName: string,
 };
 
-export const newUserVariable = (varName: string) => ({
+export const newUserVariable = (varName: string): UserVariable => ({
     type: 'userVariable',
     varName,
 });
@@ -42,7 +108,7 @@ export type UserReference = {
     defName: string,
 };
 
-export const newUserReference = (defName: string) => ({
+export const newUserReference = (defName: string): UserReference => ({
     type: 'userReference',
     defName,
 });
@@ -76,7 +142,7 @@ export type ScreenExpression = {
     pos: CanvasPoint,
 };
 
-export const newScreenExpression = (expr: UserExpression, pos: CanvasPoint) => ({
+export const newScreenExpression = (expr: UserExpression, pos: CanvasPoint): ScreenExpression => ({
     expr,
     pos,
 });
@@ -86,7 +152,7 @@ export type CanvasPoint = {
     canvasY: number,
 };
 
-export const newCanvasPoint = (canvasX: number, canvasY: number) => ({
+export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => ({
     canvasX,
     canvasY,
 });
@@ -98,7 +164,7 @@ export type ExprPath = {
     pathSteps: Array<PathComponent>,
 };
 
-export const newExprPath = (exprId: number, pathSteps: Array<PathComponent>) => ({
+export const newExprPath = (exprId: number, pathSteps: Array<PathComponent>): ExprPath => ({
     exprId,
     pathSteps,
 });

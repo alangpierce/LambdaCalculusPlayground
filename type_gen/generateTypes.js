@@ -46,11 +46,11 @@ const genStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
 export type ${typeName} = {
-${genLines((f, t) => `${f}: ${t},`)}
+${genLines((f, t) => `${f}: ${t},`)}\
 };
 
-export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}) => ({
-${genLines((f, t) => `${f},`)}
+export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => ({
+${genLines((f, t) => `${f},`)}\
 });
 `;
 };
@@ -96,19 +96,19 @@ const genUnionCase = (caseName, fields) => {
     return `\
 export type ${caseName} = {
     type: '${tagName}',
-${genLines((f, t) => `${f}: ${t},`)}
+${genLines((f, t) => `${f}: ${t},`)}\
 };
 
-export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}) => ({
+export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => ({
     type: '${tagName}',
-${genLines((f, t) => `${f},`)}
+${genLines((f, t) => `${f},`)}\
 });
 `;
 };
 
 const fieldOperators = (fields) => ({
     genLines: (transform) => {
-        return joinMap(fields, '\n', (k, v) => '    ' + transform(k, v));
+        return joinMap(fields, '', (k, v) => '    ' + transform(k, v) + '\n');
     },
     genComma: (transform) => {
         return joinMap(fields, ', ', transform);

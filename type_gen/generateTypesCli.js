@@ -7,6 +7,37 @@ import generateTypes from './generateTypes'
 // To make the syntax much cleaner, we abuse the fact that key order is pretty
 // much preserved in JS.
 const types = {
+    Action: {
+        type: 'union',
+        cases: {
+            /**
+             * Clear the state. Useful for testing.
+             */
+            Reset: {},
+            /**
+             * Create a new expression at the given position.
+             */
+            AddExpression: {
+                screenExpr: 'ScreenExpression',
+            },
+            /**
+             * Move the existing expression on the canvas to a new point.
+             */
+            MoveExpression: {
+                exprId: 'number',
+                pos: 'CanvasPoint',
+            },
+            /**
+             * Given an expression path, which must reference a lambda
+             * expression with a body, remove that body and create a new
+             * expression from it at the given coordinates.
+             */
+            ExtractBody: {
+                path: 'ExprPath',
+                targetPos: 'CanvasPoint',
+            },
+        },
+    },
     UserExpression: {
         type: 'union',
         cases: {
