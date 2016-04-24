@@ -13,6 +13,7 @@ import parseExpression from './parseExpression'
 
 import type {State} from './reducers'
 import type {UserExpression} from './types'
+import * as t from './types'
 
 /**
  * Parse the given expression text and place the expression on the screen.
@@ -39,19 +40,14 @@ const listExpressions = () => {
 };
 
 const formatExpr = (expr: UserExpression): string => {
-    switch (expr.type) {
-        case 'userLambda':
-            const bodyStr = expr.body ? formatExpr(expr.body) : '_';
-            return `L ${expr.varName}[${bodyStr}]`;
-        case 'userFuncCall':
-            return `${formatExpr(expr.func)}(${formatExpr(expr.arg)})`;
-        case 'userVariable':
-            return expr.varName;
-        case 'userReference':
-            return expr.defName;
-        default:
-            throw new Error(`Unrecognized type: ${expr.type}`);
-    }
+    return t.matchUserExpression(expr, {
+        userLambda: ({body, varName}) =>
+            `L ${varName}[${body ? formatExpr(body) : '_'}]`,
+        userFuncCall: ({func, arg}) =>
+            `${formatExpr(func)}(${formatExpr(arg)})`,
+        userVariable: ({varName}) => varName,
+        userReference: ({defName}) => defName,
+    });
 };
 
 // Only run when we're running in Chrome. We detect this by checking if we're in

@@ -58,8 +58,30 @@ ${genLines((f, t) => `${f},`)}
 const genUnion = (typeName, cases) => {
     let result = '';
     result += joinMap(cases, '\n', genUnionCase);
+
+    const varName = lowerName(typeName);
+
+    // For the match function, we use normal functions instead of arrow
+    // functions because WebStorm doesn't yet like type parameters on arrow
+    // functions.
+    // TODO: Move to arrow functions when WebStorm gets smarter.
     result += `
-export type ${typeName} = ${joinMap(cases, ' | ', (k, v) => k)};
+export type ${typeName} = ${joinMap(cases, ' | ', (caseName) => caseName)};
+
+export type ${typeName}Visitor<T> = {
+${joinMap(cases, '\n', (caseName) => `\
+    ${lowerName(caseName)}: (${lowerName(caseName)}: ${caseName}) => T,`)}
+}
+
+export const match${typeName} = function<T>(${varName}: ${typeName}, visitor: ${typeName}Visitor<T>): T {
+    switch (${varName}.type) {
+${joinMap(cases, '\n', (caseName) => `\
+        case '${lowerName(caseName)}':
+            return visitor.${lowerName(caseName)}(${varName});`)}
+        default:
+            throw new Error('Unexpected type: ' + ${varName}.type);
+    }
+};
 `;
     return result;
 };

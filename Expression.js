@@ -22,6 +22,8 @@ import type {
     UserReference
 } from './types'
 
+import * as t from './types'
+
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
@@ -31,16 +33,12 @@ type ExpressionPropTypes = {
 class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
         const {expr} = this.props;
-        switch (expr.type) {
-            case 'userLambda':
-                return <Lambda expr={expr}/>;
-            case 'userFuncCall':
-                return <FuncCall expr={expr}/>;
-            case 'userVariable':
-                return <Variable expr={expr}/>;
-            case 'userReference':
-                return <Reference expr={expr}/>;
-        }
+        return t.matchUserExpression(expr, {
+            userLambda: (expr) => <Lambda expr={expr}/>,
+            userFuncCall: (expr) => <FuncCall expr={expr}/>,
+            userVariable: (expr) => <Variable expr={expr}/>,
+            userReference: (expr) => <Reference expr={expr}/>,
+        });
     }
 }
 
