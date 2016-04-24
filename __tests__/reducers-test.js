@@ -45,12 +45,8 @@ describe('reducers', () => {
         store.dispatch(t.newDecomposeExpression(
             newExprPath(0, ['body']), newCanvasPoint(25, 25)
         ));
-        expect(store.getState().screenExpressions.get(0).toJS()).toEqual(
-            newScreenExpression(
-                parseExpression('L x[L y[_]]'), newCanvasPoint(50, 50)).toJS());
-        expect(store.getState().screenExpressions.get(1).toJS()).toEqual(
-            newScreenExpression(
-                parseExpression('L z[x]'), newCanvasPoint(25, 25)).toJS());
+        assertExpression(0, 'L x[L y[_]]', 50, 50);
+        assertExpression(1, 'L z[x]', 25, 25);
     });
 
     it('handles extract arg', () => {
@@ -59,13 +55,24 @@ describe('reducers', () => {
         store.dispatch(t.newDecomposeExpression(
             newExprPath(0, ['body', 'func']), newCanvasPoint(25, 25)
         ));
-        expect(store.getState().screenExpressions.get(0).toJS()).toEqual(
-            newScreenExpression(
-                parseExpression('L x[+(x)]'), newCanvasPoint(50, 50)).toJS());
-        expect(store.getState().screenExpressions.get(1).toJS()).toEqual(
-            newScreenExpression(
-                parseExpression('2'), newCanvasPoint(25, 25)).toJS());
+        assertExpression(0, 'L x[+(x)]', 50, 50);
+        assertExpression(1, '2', 25, 25);
     });
+
+    it('evaluates expressions', () => {
+        store.dispatch(t.newReset());
+        store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[x]](y)')));
+        store.dispatch(t.newEvaluateExpression(0, newCanvasPoint(25, 25)));
+        // TODO: Switch to the right value when evaluation is implemented.
+        assertExpression(1, 'L x[L y[x]](y)', 25, 25);
+        // assertExpression(1, "L y'[y]", 25, 25);
+    });
+
+    const assertExpression = (exprId, exprString, canvasX, canvasY) => {
+        expect(store.getState().screenExpressions.get(exprId).toJS()).toEqual(
+            newScreenExpression(parseExpression(exprString),
+                newCanvasPoint(canvasX, canvasY)).toJS());
+    };
 
     const makeScreenExpr = (exprString) => {
         return newScreenExpression(

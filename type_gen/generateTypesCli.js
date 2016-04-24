@@ -45,6 +45,14 @@ const types = {
                 path: 'ExprPath',
                 targetPos: 'CanvasPoint',
             },
+            /**
+             * If the given expression can be evaluated, evaluate it and place
+             * the result as a new expression in the given position.
+             */
+            EvaluateExpression: {
+                exprId: 'number',
+                targetPos: 'CanvasPoint',
+            }
         },
     },
     UserExpression: {

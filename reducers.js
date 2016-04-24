@@ -4,12 +4,19 @@
 
 import * as Immutable from 'immutable'
 
-import type {ScreenExpression, UserExpression, PathComponent} from './types'
+import evaluateExpression from './evaluateExpression'
+import type {
+    Action,
+    ScreenExpression,
+    UserExpression,
+    PathComponent,
+    State
+} from './types'
 import * as t from './types'
 
 const initialState = t.newState(new Immutable.Map(), 0);
 
-const playgroundApp = (state: t.State = initialState, action: t.Action): t.State => {
+const playgroundApp = (state: State = initialState, action: Action): State => {
     // Despite our action union, there are some internal redux actions that
     // start with @@, which we want to just ignore.
     if (action.type.startsWith('@@')) {
@@ -39,7 +46,17 @@ const playgroundApp = (state: t.State = initialState, action: t.Action): t.State
             state = modifyExpression(state, exprId,
                 () => existingScreenExpr.withExpr(original));
             return state;
-        }
+        },
+        evaluateExpression: ({exprId, targetPos}) => {
+            const existingScreenExpr = state.screenExpressions.get(exprId);
+            if (!existingScreenExpr) {
+                return state;
+            }
+            // TODO: Do nothing if the expression can't be stepped.
+            const evaluatedExpr = evaluateExpression(existingScreenExpr.expr);
+            return addExpression(
+                state, t.newScreenExpression(evaluatedExpr, targetPos));
+        },
     });
 };
 
