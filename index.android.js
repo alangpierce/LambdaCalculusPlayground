@@ -5,6 +5,7 @@
  */
 'use strict';
 
+import * as Immutable from 'immutable'
 import React, {
     Image,
     Text,
@@ -50,7 +51,7 @@ class TopLevelExpression
 }
 
 type PlaygroundCanvasProps = {
-    screenExpressions: Map<number, ScreenExpression>;
+    screenExpressions: Immutable.Map<number, ScreenExpression>;
 };
 
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {

@@ -2,16 +2,18 @@
  * @flow
  */
 
+import * as Immutable from 'immutable'
+
 import type {Action} from './actions'
 import type {ScreenExpression, UserExpression, PathComponent} from './types'
 
 export type State = {
-    screenExpressions: Map<number, ScreenExpression>,
+    screenExpressions: Immutable.Map<number, ScreenExpression>,
     nextExprId: number,
 };
 
 const initialState = {
-    screenExpressions: new Map(),
+    screenExpressions: new Immutable.Map(),
     nextExprId: 0,
 };
 
@@ -56,10 +58,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
 
 const addExpression = (state: State, screenExpr: ScreenExpression): State => {
     const nextExprId = state.nextExprId;
-    const newScreenExpressions = new Map(state.screenExpressions);
-    newScreenExpressions.set(nextExprId, screenExpr);
     return {
-        screenExpressions: newScreenExpressions,
+        screenExpressions: state.screenExpressions.set(nextExprId, screenExpr),
         nextExprId: nextExprId + 1,
     };
 };
@@ -68,13 +68,13 @@ type Transform<T> = (t: T) => T;
 
 const modifyExpression = (state: State, exprId: number,
                           transform: Transform<ScreenExpression>): State => {
-    const newScreenExpressions = new Map(state.screenExpressions);
-    const screenExpr = newScreenExpressions.get(exprId);
+    let {screenExpressions} = state;
+    const screenExpr = screenExpressions.get(exprId);
     if (screenExpr) {
-        newScreenExpressions.set(exprId, transform(screenExpr));
+        screenExpressions = screenExpressions.set(exprId, transform(screenExpr));
     }
     return {
-        screenExpressions: newScreenExpressions,
+        screenExpressions: screenExpressions,
         nextExprId: state.nextExprId,
     };
 };
