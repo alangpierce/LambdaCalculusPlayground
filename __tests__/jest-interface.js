@@ -6,7 +6,9 @@
  */
 
 declare var jest: any;
+declare var jasmine: any;
 declare var describe: any;
+declare var beforeEach: any;
 declare var it: any;
 declare var expect: any;
 declare var fail: any;

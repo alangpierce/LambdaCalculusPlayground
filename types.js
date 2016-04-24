@@ -4,17 +4,30 @@
  * @flow
  */
  
- import * as Immutable from 'immutable'
+import * as Immutable from 'immutable'
  
+class StateImpl extends Immutable.Record({
+        screenExpressions: undefined, nextExprId: undefined}) {
+    withScreenExpressions(screenExpressions) {
+        return this.set('screenExpressions', screenExpressions)
+    }
+    withNextExprId(nextExprId) {
+        return this.set('nextExprId', nextExprId)
+    }
+}
+
 export type State = {
     screenExpressions: Immutable.Map<number, ScreenExpression>,
     nextExprId: number,
+    withScreenExpressions: (screenExpressions: Immutable.Map<number, ScreenExpression>) => State,
+    withNextExprId: (nextExprId: number) => State,
+    toJS: () => any,
 };
 
-export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number): State => ({
+export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number): State => (new StateImpl({
     screenExpressions,
     nextExprId,
-});
+}));
 
 export type Reset = {
     type: 'reset',
@@ -82,49 +95,93 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
     }
 };
 
+class UserLambdaImpl extends Immutable.Record({
+        type: undefined, varName: undefined, body: undefined}) {
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+    withBody(body) {
+        return this.set('body', body)
+    }
+}
+
 export type UserLambda = {
     type: 'userLambda',
     varName: string,
     body: ?UserExpression,
+    withVarName: (varName: string) => UserLambda,
+    withBody: (body: ?UserExpression) => UserLambda,
+    toJS: () => any,
 };
 
-export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => ({
+export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambdaImpl({
     type: 'userLambda',
     varName,
     body,
-});
+}));
+
+class UserFuncCallImpl extends Immutable.Record({
+        type: undefined, func: undefined, arg: undefined}) {
+    withFunc(func) {
+        return this.set('func', func)
+    }
+    withArg(arg) {
+        return this.set('arg', arg)
+    }
+}
 
 export type UserFuncCall = {
     type: 'userFuncCall',
     func: UserExpression,
     arg: UserExpression,
+    withFunc: (func: UserExpression) => UserFuncCall,
+    withArg: (arg: UserExpression) => UserFuncCall,
+    toJS: () => any,
 };
 
-export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => ({
+export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCallImpl({
     type: 'userFuncCall',
     func,
     arg,
-});
+}));
+
+class UserVariableImpl extends Immutable.Record({
+        type: undefined, varName: undefined}) {
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+}
 
 export type UserVariable = {
     type: 'userVariable',
     varName: string,
+    withVarName: (varName: string) => UserVariable,
+    toJS: () => any,
 };
 
-export const newUserVariable = (varName: string): UserVariable => ({
+export const newUserVariable = (varName: string): UserVariable => (new UserVariableImpl({
     type: 'userVariable',
     varName,
-});
+}));
+
+class UserReferenceImpl extends Immutable.Record({
+        type: undefined, defName: undefined}) {
+    withDefName(defName) {
+        return this.set('defName', defName)
+    }
+}
 
 export type UserReference = {
     type: 'userReference',
     defName: string,
+    withDefName: (defName: string) => UserReference,
+    toJS: () => any,
 };
 
-export const newUserReference = (defName: string): UserReference => ({
+export const newUserReference = (defName: string): UserReference => (new UserReferenceImpl({
     type: 'userReference',
     defName,
-});
+}));
 
 export type UserExpression = UserLambda | UserFuncCall | UserVariable | UserReference;
 
@@ -150,35 +207,74 @@ export const matchUserExpression = function<T>(userExpression: UserExpression, v
     }
 };
 
+class ScreenExpressionImpl extends Immutable.Record({
+        expr: undefined, pos: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withPos(pos) {
+        return this.set('pos', pos)
+    }
+}
+
 export type ScreenExpression = {
     expr: UserExpression,
     pos: CanvasPoint,
+    withExpr: (expr: UserExpression) => ScreenExpression,
+    withPos: (pos: CanvasPoint) => ScreenExpression,
+    toJS: () => any,
 };
 
-export const newScreenExpression = (expr: UserExpression, pos: CanvasPoint): ScreenExpression => ({
+export const newScreenExpression = (expr: UserExpression, pos: CanvasPoint): ScreenExpression => (new ScreenExpressionImpl({
     expr,
     pos,
-});
+}));
+
+class CanvasPointImpl extends Immutable.Record({
+        canvasX: undefined, canvasY: undefined}) {
+    withCanvasX(canvasX) {
+        return this.set('canvasX', canvasX)
+    }
+    withCanvasY(canvasY) {
+        return this.set('canvasY', canvasY)
+    }
+}
 
 export type CanvasPoint = {
     canvasX: number,
     canvasY: number,
+    withCanvasX: (canvasX: number) => CanvasPoint,
+    withCanvasY: (canvasY: number) => CanvasPoint,
+    toJS: () => any,
 };
 
-export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => ({
+export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPointImpl({
     canvasX,
     canvasY,
-});
+}));
 
 export type PathComponent = 'func' | 'arg' | 'body';
+
+class ExprPathImpl extends Immutable.Record({
+        exprId: undefined, pathSteps: undefined}) {
+    withExprId(exprId) {
+        return this.set('exprId', exprId)
+    }
+    withPathSteps(pathSteps) {
+        return this.set('pathSteps', pathSteps)
+    }
+}
 
 export type ExprPath = {
     exprId: number,
     pathSteps: Array<PathComponent>,
+    withExprId: (exprId: number) => ExprPath,
+    withPathSteps: (pathSteps: Array<PathComponent>) => ExprPath,
+    toJS: () => any,
 };
 
-export const newExprPath = (exprId: number, pathSteps: Array<PathComponent>): ExprPath => ({
+export const newExprPath = (exprId: number, pathSteps: Array<PathComponent>): ExprPath => (new ExprPathImpl({
     exprId,
     pathSteps,
-});
+}));
 

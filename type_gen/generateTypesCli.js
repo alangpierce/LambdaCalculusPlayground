@@ -15,7 +15,8 @@ const types = {
         },
     },
     Action: {
-        type: 'union',
+        // Redux complains if the don't use plain objects for actions.
+        type: 'objectUnion',
         cases: {
             /**
              * Clear the state. Useful for testing.

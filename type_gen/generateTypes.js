@@ -18,7 +18,7 @@ const generateTypes = (types) => {
  * @flow
  */
  
- import * as Immutable from 'immutable'
+import * as Immutable from 'immutable'
  
 ${joinMap(types, '\n', genType)}
 `;
@@ -35,7 +35,9 @@ const genType = (typeName, typeData) => {
     } else if (typeData.type === 'struct') {
         return genStruct(typeName, typeData.fields);
     } else if (typeData.type === 'union') {
-        return genUnion(typeName, typeData.cases);
+        return genUnion(typeName, typeData.cases, false);
+    } else if (typeData.type === 'objectUnion') {
+        return genUnion(typeName, typeData.cases, true);
     }
 };
 
@@ -48,19 +50,31 @@ export type ${typeName} = ${value};
 const genStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
+class ${typeName}Impl extends Immutable.Record({
+        ${genComma((f) => `${f}: undefined`)}}) {
+${joinMap(fields, '', (f, t) => `\
+    with${upperName(f)}(${f}) {
+        return this.set('${f}', ${f})
+    }
+`)}\
+}
+
 export type ${typeName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
+${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${typeName},`)}\
+    toJS: () => any,
 };
 
-export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => ({
+export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}Impl({
 ${genLines((f, t) => `${f},`)}\
-});
+}));
 `;
 };
 
-const genUnion = (typeName, cases) => {
+const genUnion = (typeName, cases, isObject) => {
     let result = '';
-    result += joinMap(cases, '\n', genUnionCase);
+    result += joinMap(cases, '\n',
+        (caseName, fields) => genUnionCase(caseName, fields, isObject));
 
     const varName = lowerName(typeName);
 
@@ -92,20 +106,38 @@ ${joinMap(cases, '\n', (caseName) => `\
 /**
  * Union cases are almost like structs, but they have a tag that isn't a
  * parameter, so we generate them independently.
+ *
+ * Also, we need to handle a special case where Redux actions need to be plain
+ * objects.
  */
-const genUnionCase = (caseName, fields) => {
+const genUnionCase = (caseName, fields, isObject) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
+${isObject ? '' : `\
+class ${caseName}Impl extends Immutable.Record({
+        type: undefined, ${genComma((f) => `${f}: undefined`)}}) {
+${joinMap(fields, '', (f, t) => `\
+    with${upperName(f)}(${f}) {
+        return this.set('${f}', ${f})
+    }
+`)}\
+}
+
+`}\
 export type ${caseName} = {
     type: '${tagName}',
 ${genLines((f, t) => `${f}: ${t},`)}\
+${isObject ? '' : `\
+${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${caseName},`)}\
+    toJS: () => any,
+`}\
 };
 
-export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => ({
+export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (${isObject ? '' : `new ${caseName}Impl(`}{
     type: '${tagName}',
 ${genLines((f, t) => `${f},`)}\
-});
+}${isObject ? '' : `)`});
 `;
 };
 
@@ -120,6 +152,10 @@ const fieldOperators = (fields) => ({
 
 const lowerName = (name) => {
     return name[0].toLowerCase() + name.slice(1);
+};
+
+const upperName = (name) => {
+    return name[0].toUpperCase() + name.slice(1);
 };
 
 const joinMap = (obj, sep, transform) => {

@@ -20,12 +20,8 @@ const playgroundApp = (state: t.State = initialState, action: t.Action): t.State
         reset: () => initialState,
         addExpression: ({screenExpr}) => addExpression(state, screenExpr),
         moveExpression: ({exprId, pos}) => {
-            return modifyExpression(state, exprId, (screenExpr) => {
-                return {
-                    expr: screenExpr.expr,
-                    pos: pos,
-                };
-            });
+            return modifyExpression(state, exprId,
+                (screenExpr) => screenExpr.withPos(pos));
         },
         extractBody: ({path: {exprId, pathSteps}, targetPos}) => {
             const existingScreenExpr = state.screenExpressions.get(exprId);
@@ -38,16 +34,10 @@ const playgroundApp = (state: t.State = initialState, action: t.Action): t.State
                 return state;
             }
             const {original, extracted} = extractResult;
-            state = addExpression(state, {
-                expr: extracted,
-                pos: targetPos,
-            });
-            state = modifyExpression(state, exprId, () => {
-                return {
-                    expr: original,
-                    pos: existingScreenExpr.pos,
-                };
-            });
+            state = addExpression(
+                state, t.newScreenExpression(extracted, targetPos));
+            state = modifyExpression(state, exprId,
+                () => existingScreenExpr.withExpr(original));
             return state;
         }
     });
@@ -55,10 +45,9 @@ const playgroundApp = (state: t.State = initialState, action: t.Action): t.State
 
 const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State => {
     const nextExprId = state.nextExprId;
-    return {
-        screenExpressions: state.screenExpressions.set(nextExprId, screenExpr),
-        nextExprId: nextExprId + 1,
-    };
+    return t.newState(
+        state.screenExpressions.set(nextExprId, screenExpr), nextExprId + 1
+    );
 };
 
 type Transform<T> = (t: T) => T;
@@ -70,10 +59,7 @@ const modifyExpression = (state: t.State, exprId: number,
     if (screenExpr) {
         screenExpressions = screenExpressions.set(exprId, transform(screenExpr));
     }
-    return {
-        screenExpressions: screenExpressions,
-        nextExprId: state.nextExprId,
-    };
+    return state.withScreenExpressions(screenExpressions);
 };
 
 type ExtractResult = {
@@ -89,12 +75,10 @@ type ExtractResult = {
 const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?ExtractResult => {
     if (path.length === 0) {
         if (expr.type === 'userLambda' && expr.body) {
+            const body = expr.body;
             return {
-                original: {
-                    ...expr,
-                    body: null,
-                },
-                extracted: expr.body,
+                original: expr.withBody(null),
+                extracted: body,
             }
         }
     }
@@ -108,10 +92,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             return null;
         }
         return {
-            original: {
-                ...expr,
-                func: subResult.original,
-            },
+            original: expr.withFunc(subResult.original),
             extracted: subResult.extracted,
         };
     } else if (path[0] === 'arg') {
@@ -123,10 +104,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             return null;
         }
         return {
-            original: {
-                ...expr,
-                arg: subResult.original,
-            },
+            original: expr.withArg(subResult.original),
             extracted: subResult.extracted,
         };
     } else if (path[0] === 'body') {
@@ -138,10 +116,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             return null;
         }
         return {
-            original: {
-                ...expr,
-                body: subResult.original,
-            },
+            original: expr.withBody(subResult.original),
             extracted: subResult.extracted,
         };
     }

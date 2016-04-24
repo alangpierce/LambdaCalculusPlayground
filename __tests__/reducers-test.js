@@ -4,12 +4,25 @@
 
 jest.disableAutomock();
 
+import * as Immutable from 'immutable'
+
 import parseExpression from '../parseExpression'
 import store from '../store'
 import {newCanvasPoint, newExprPath, newScreenExpression} from '../types'
 import * as t from '../types'
 
 describe('reducers', () => {
+    beforeEach(function () {
+        jest.addMatchers({
+            is: () => ({
+                compare: (actual, expected) => {
+                    return actual.toJSON() === expected.toJSON();
+                    // return Immutable.is(actual, expected);
+                }
+            })
+        })
+    });
+
     it('handles new expressions', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[x]')));
@@ -32,12 +45,12 @@ describe('reducers', () => {
         store.dispatch(t.newExtractBody(
             newExprPath(0, ['body']), newCanvasPoint(25, 25)
         ));
-        expect(store.getState().screenExpressions.get(0)).toEqual(
+        expect(store.getState().screenExpressions.get(0).toJS()).toEqual(
             newScreenExpression(
-                parseExpression('L x[L y[_]]'), newCanvasPoint(50, 50)));
-        expect(store.getState().screenExpressions.get(1)).toEqual(
+                parseExpression('L x[L y[_]]'), newCanvasPoint(50, 50)).toJS());
+        expect(store.getState().screenExpressions.get(1).toJS()).toEqual(
             newScreenExpression(
-                parseExpression('L z[x]'), newCanvasPoint(25, 25)));
+                parseExpression('L z[x]'), newCanvasPoint(25, 25)).toJS());
     });
 
     const makeScreenExpr = (exprString) => {
