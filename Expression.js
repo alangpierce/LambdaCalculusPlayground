@@ -32,13 +32,13 @@ class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
         const {expr} = this.props;
         switch (expr.type) {
-            case 'lambda':
+            case 'userLambda':
                 return <Lambda expr={expr}/>;
-            case 'funcCall':
+            case 'userFuncCall':
                 return <FuncCall expr={expr}/>;
-            case 'variable':
+            case 'userVariable':
                 return <Variable expr={expr}/>;
-            case 'reference':
+            case 'userReference':
                 return <Reference expr={expr}/>;
         }
     }

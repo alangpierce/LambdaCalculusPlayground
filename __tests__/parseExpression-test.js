@@ -5,78 +5,50 @@
 jest.disableAutomock();
 
 import parseExpression from '../parseExpression'
+import * as t from '../types'
 
 describe('parseExpression', () => {
     it('parses basic lambdas', () => {
-        expect(parseExpression('L x[x]')).toEqual({
-            type: 'lambda',
-            varName: 'x',
-            body: {
-                'type': 'variable',
-                'varName': 'x',
-            }
-        });
+        expect(parseExpression('L x[x]')).toEqual(
+            t.newUserLambda('x', t.newUserVariable('x'))
+        );
     });
 
     it('handles ref capitalization', () => {
-        expect(parseExpression('FOO')).toEqual({
-            type: 'reference',
-            defName: 'FOO',
-        });
+        expect(parseExpression('FOO')).toEqual(t.newUserReference('FOO'));
     });
 
     it('parses function calls', () => {
-        expect(parseExpression('L x[L y[x(y(y))]]')).toEqual({
-            type: 'lambda',
-            varName: 'x',
-            body: {
-                type: 'lambda',
-                varName: 'y',
-                body: {
-                    type: 'funcCall',
-                    func: {
-                        type: 'variable',
-                        varName: 'x',
-                    },
-                    arg: {
-                        type: 'funcCall',
-                        func: {
-                            type: 'variable',
-                            varName: 'y',
-                        },
-                        arg: {
-                            type: 'variable',
-                            varName: 'y',
-                        },
-                    }
-                }
-            }
-        })
+        expect(parseExpression('L x[L y[x(y(y))]]')).toEqual(
+            t.newUserLambda(
+                'x',
+                t.newUserLambda(
+                    'y',
+                    t.newUserFuncCall(
+                        t.newUserVariable('x'),
+                        t.newUserFuncCall(
+                            t.newUserVariable('y'),
+                            t.newUserVariable('y')
+                        )
+                    )
+                )
+            )
+        );
     });
 
     it('treats symbols as references', () => {
-        expect(parseExpression('L x[+(x)(y)]')).toEqual({
-            type: 'lambda',
-            varName: 'x',
-            body: {
-                type: 'funcCall',
-                func: {
-                    type: 'funcCall',
-                    func: {
-                        type: 'reference',
-                        defName: '+',
-                    },
-                    arg: {
-                        type: 'variable',
-                        varName: 'x',
-                    },
-                },
-                arg: {
-                    type: 'variable',
-                    varName: 'y',
-                },
-            },
-        })
+        expect(parseExpression('L x[+(x)(y)]')).toEqual(
+            t.newUserLambda(
+                'x',
+                t.newUserFuncCall(
+                    t.newUserFuncCall(
+                        t.newUserReference('+'),
+                        t.newUserVariable('x')
+                    ),
+                    t.newUserVariable('y')
+                )
+            )
+        );
     });
 
     it('fails on invalid inputs', () => {

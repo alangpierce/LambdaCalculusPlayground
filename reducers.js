@@ -91,7 +91,7 @@ type ExtractResult = {
  */
 const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?ExtractResult => {
     if (path.length === 0) {
-        if (expr.type === 'lambda' && expr.body) {
+        if (expr.type === 'userLambda' && expr.body) {
             return {
                 original: {
                     ...expr,
@@ -103,7 +103,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
     }
 
     if (path[0] === 'func') {
-        if (expr.type !== 'funcCall') {
+        if (expr.type !== 'userFuncCall') {
             return null;
         }
         const subResult = extractBody(expr.func, path.slice(1));
@@ -118,7 +118,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             extracted: subResult.extracted,
         };
     } else if (path[0] === 'arg') {
-        if (expr.type !== 'funcCall') {
+        if (expr.type !== 'userFuncCall') {
             return null;
         }
         const subResult = extractBody(expr.arg, path.slice(1));
@@ -133,7 +133,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             extracted: subResult.extracted,
         };
     } else if (path[0] === 'body') {
-        if (expr.type !== 'lambda' || expr.body == null) {
+        if (expr.type !== 'userLambda' || expr.body == null) {
             return null;
         }
         const subResult = extractBody(expr.body, path.slice(1));

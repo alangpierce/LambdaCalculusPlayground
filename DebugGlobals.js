@@ -40,14 +40,14 @@ const listExpressions = () => {
 
 const formatExpr = (expr: UserExpression): string => {
     switch (expr.type) {
-        case 'lambda':
+        case 'userLambda':
             const bodyStr = expr.body ? formatExpr(expr.body) : '_';
             return `L ${expr.varName}[${bodyStr}]`;
-        case 'funcCall':
+        case 'userFuncCall':
             return `${formatExpr(expr.func)}(${formatExpr(expr.arg)})`;
-        case 'variable':
+        case 'userVariable':
             return expr.varName;
-        case 'reference':
+        case 'userReference':
             return expr.defName;
         default:
             throw new Error(`Unrecognized type: ${expr.type}`);

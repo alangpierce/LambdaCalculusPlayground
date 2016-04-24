@@ -19,12 +19,16 @@ import Expression from './Expression'
 import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
-import {canvasPoint} from './types'
+import {
+    newCanvasPoint,
+    newUserLambda,
+    newScreenExpression,
+} from './types'
 
 import type {
     CanvasPoint,
     UserExpression,
-    ScreenExpression
+    ScreenExpression,
 } from './types'
 
 type TopLevelExpressionPropTypes = {
@@ -52,14 +56,11 @@ type PlaygroundCanvasProps = {
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
         DeviceEventEmitter.addListener('createLambda', (varName) => {
-            store.dispatch(addExpression({
-                expr: {
-                    type: 'lambda',
-                    varName,
-                    body: null,
-                },
-                pos: canvasPoint(100, 100),
-            }));
+            store.dispatch(addExpression(
+                newScreenExpression(
+                    newUserLambda(varName, null),
+                    newCanvasPoint(100, 100))
+            ));
         });
     }
 

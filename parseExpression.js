@@ -7,6 +7,12 @@
  * @flow
  */
 
+import {
+    newUserLambda,
+    newUserFuncCall,
+    newUserVariable,
+    newUserReference
+} from './types'
 import type {UserExpression} from './types'
 
 const parseExpression = (str: string): UserExpression => {
@@ -22,11 +28,7 @@ const parseExpression = (str: string): UserExpression => {
         } else {
             body = parseExpression(bodyStr);
         }
-        return {
-            type: 'lambda',
-            varName,
-            body,
-        };
+        return newUserLambda(varName, body);
     } else if (str.endsWith(")")) {
         let level = 1;
         let index = str.length - 1;
@@ -41,23 +43,14 @@ const parseExpression = (str: string): UserExpression => {
         // Now index is the index of the open-paren character.
         const funcStr = str.substring(0, index);
         const argStr = str.substring(index + 1, str.length - 1);
-        return {
-            type: 'funcCall',
-            func: parseExpression(funcStr),
-            arg: parseExpression(argStr),
-        };
+        return newUserFuncCall(
+            parseExpression(funcStr), parseExpression(argStr));
     } else if (str === str.toUpperCase()) {
         assertNoBrackets(str);
-        return {
-            type: 'reference',
-            defName: str,
-        };
+        return newUserReference(str);
     } else {
         assertNoBrackets(str);
-        return {
-            type: 'variable',
-            varName: str,
-        };
+        return newUserVariable(str);
     }
 };
 
