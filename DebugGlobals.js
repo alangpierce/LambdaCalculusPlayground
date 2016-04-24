@@ -10,7 +10,6 @@ import {NativeModules} from 'react-native'
 import store from './store'
 import parseExpression from './parseExpression'
 
-import type {State} from './reducers'
 import type {UserExpression} from './types'
 import * as t from './types'
 
@@ -25,7 +24,7 @@ const makeExpression = (exprString: string) => {
 };
 
 const listExpressions = () => {
-    const state: State = store.getState();
+    const state = store.getState();
     state.screenExpressions.forEach((screenExpression, exprId) => {
         const {expr, pos: {canvasX, canvasY}} = screenExpression;
         console.log(

@@ -3,6 +3,19 @@
  *
  * @flow
  */
+ 
+ import * as Immutable from 'immutable'
+ 
+export type State = {
+    screenExpressions: Immutable.Map<number, ScreenExpression>,
+    nextExprId: number,
+};
+
+export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number): State => ({
+    screenExpressions,
+    nextExprId,
+});
+
 export type Reset = {
     type: 'reset',
 };

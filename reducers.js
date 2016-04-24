@@ -7,17 +7,9 @@ import * as Immutable from 'immutable'
 import type {ScreenExpression, UserExpression, PathComponent} from './types'
 import * as t from './types'
 
-export type State = {
-    screenExpressions: Immutable.Map<number, ScreenExpression>,
-    nextExprId: number,
-};
+const initialState = t.newState(new Immutable.Map(), 0);
 
-const initialState = {
-    screenExpressions: new Immutable.Map(),
-    nextExprId: 0,
-};
-
-const playgroundApp = (state: State = initialState, action: t.Action): State => {
+const playgroundApp = (state: t.State = initialState, action: t.Action): t.State => {
     // Despite our action union, there are some internal redux actions that
     // start with @@, which we want to just ignore.
     if (action.type.startsWith('@@')) {
@@ -61,7 +53,7 @@ const playgroundApp = (state: State = initialState, action: t.Action): State => 
     });
 };
 
-const addExpression = (state: State, screenExpr: ScreenExpression): State => {
+const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State => {
     const nextExprId = state.nextExprId;
     return {
         screenExpressions: state.screenExpressions.set(nextExprId, screenExpr),
@@ -71,8 +63,8 @@ const addExpression = (state: State, screenExpr: ScreenExpression): State => {
 
 type Transform<T> = (t: T) => T;
 
-const modifyExpression = (state: State, exprId: number,
-                          transform: Transform<ScreenExpression>): State => {
+const modifyExpression = (state: t.State, exprId: number,
+                          transform: Transform<ScreenExpression>): t.State => {
     let {screenExpressions} = state;
     const screenExpr = screenExpressions.get(exprId);
     if (screenExpr) {

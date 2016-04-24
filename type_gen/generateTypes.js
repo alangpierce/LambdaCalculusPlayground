@@ -17,6 +17,9 @@ const generateTypes = (types) => {
  *
  * @flow
  */
+ 
+ import * as Immutable from 'immutable'
+ 
 ${joinMap(types, '\n', genType)}
 `;
 };

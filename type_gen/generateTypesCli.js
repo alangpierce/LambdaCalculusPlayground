@@ -7,6 +7,13 @@ import generateTypes from './generateTypes'
 // To make the syntax much cleaner, we abuse the fact that key order is pretty
 // much preserved in JS.
 const types = {
+    State: {
+        type: 'struct',
+        fields: {
+            screenExpressions: 'Immutable.Map<number, ScreenExpression>',
+            nextExprId: 'number',
+        },
+    },
     Action: {
         type: 'union',
         cases: {
