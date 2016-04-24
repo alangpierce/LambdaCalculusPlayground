@@ -133,7 +133,7 @@ const extractBody = (expr: UserExpression, path: Array<PathComponent>): ?Extract
             extracted: subResult.extracted,
         };
     } else if (path[0] === 'body') {
-        if (expr.type !== 'userLambda' || expr.body == null) {
+        if (expr.type !== 'userLambda' || !expr.body) {
             return null;
         }
         const subResult = extractBody(expr.body, path.slice(1));

@@ -20,13 +20,8 @@ import * as t from './types'
  */
 const makeExpression = (exprString: string) => {
     const userExpr = parseExpression(exprString);
-    const screenExpr = {
-        expr: userExpr,
-        pos: {
-            canvasX: 100,
-            canvasY: 100,
-        },
-    };
+    const screenExpr =
+        t.newScreenExpression(userExpr, t.newCanvasPoint(100, 100));
     store.dispatch(actions.addExpression(screenExpr));
 };
 

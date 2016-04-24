@@ -7,7 +7,7 @@ jest.disableAutomock();
 import * as actions from '../actions'
 import parseExpression from '../parseExpression'
 import store from '../store'
-import {newCanvasPoint, newExprPath} from '../types'
+import {newCanvasPoint, newExprPath, newScreenExpression} from '../types'
 
 describe('reducers', () => {
     it('handles new expressions', () => {
@@ -33,20 +33,16 @@ describe('reducers', () => {
         store.dispatch(actions.extractBody(
             newExprPath(0, ['body']), newCanvasPoint(25, 25)
         ));
-        expect(store.getState().screenExpressions.get(0)).toEqual({
-            expr: parseExpression('L x[L y[_]]'),
-            pos: newCanvasPoint(50, 50),
-        });
-        expect(store.getState().screenExpressions.get(1)).toEqual({
-            expr: parseExpression('L z[x]'),
-            pos: newCanvasPoint(25, 25),
-        });
+        expect(store.getState().screenExpressions.get(0)).toEqual(
+            newScreenExpression(
+                parseExpression('L x[L y[_]]'), newCanvasPoint(50, 50)));
+        expect(store.getState().screenExpressions.get(1)).toEqual(
+            newScreenExpression(
+                parseExpression('L z[x]'), newCanvasPoint(25, 25)));
     });
 
     const makeScreenExpr = (exprString) => {
-        return {
-            expr: parseExpression(exprString),
-            pos: newCanvasPoint(50, 50),
-        };
+        return newScreenExpression(
+            parseExpression(exprString), newCanvasPoint(50, 50));
     };
 });
