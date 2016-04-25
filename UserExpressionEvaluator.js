@@ -2,6 +2,7 @@
  * @flow
  */
 
+import {evaluate, canStep} from './ExpressionEvaluator'
 import * as t from './types'
 import type {Expression, UserExpression} from './types'
 
@@ -64,18 +65,4 @@ const exprToUserExpr = (expr: Expression): UserExpression => {
             t.newUserFuncCall(exprToUserExpr(func), exprToUserExpr(arg)),
         variable: ({varName}) => t.newUserVariable(varName),
     })
-};
-
-const canStep = (expr: Expression): boolean => {
-    return t.matchExpression(expr, {
-        lambda: ({body}) => canStep(body),
-        funcCall: ({func, arg}) =>
-            func.type === 'lambda' || canStep(func) || canStep(arg),
-        variable: () => false,
-    });
-};
-
-const evaluate = (expr: Expression): Expression => {
-    // TODO.
-    return expr;
 };
