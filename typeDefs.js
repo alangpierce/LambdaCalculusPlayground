@@ -1,12 +1,7 @@
-#!/usr/local/bin/babel-node
-
-import fs from 'fs'
-
-import generateTypes from './generateTypes'
-
-// To make the syntax much cleaner, we abuse the fact that key order is pretty
-// much preserved in JS.
-const types = {
+/**
+ * Types to include as types.js.
+ */
+export default typeDefs = {
     State: {
         type: 'struct',
         fields: {
@@ -116,16 +111,3 @@ const types = {
         }
     }
 };
-
-const main = () => {
-    const typesFileStr = generateTypes(types);
-    fs.writeFile('../types.js', typesFileStr, (err) => {
-        if (err) {
-            console.log('Error: ' + err);
-        } else {
-            console.log('Done!');
-        }
-    });
-};
-
-main();
