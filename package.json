@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node_modules/react-native/packager/packager.sh",
     "test": "jest",
-    "check": "flow && jest;:",
+    "check": "flow; jest;:",
     "gen-types": "babel-node --presets react-native type_gen/generateTypesCli.js"
   },
   "repository": {

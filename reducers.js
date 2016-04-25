@@ -4,7 +4,7 @@
 
 import * as Immutable from 'immutable'
 
-import evaluateExpression from './evaluateExpression'
+import {evaluateUserExpr, canStepUserExpr} from './Evaluator'
 import type {
     Action,
     ScreenExpression,
@@ -14,7 +14,7 @@ import type {
 } from './types'
 import * as t from './types'
 
-const initialState = t.newState(new Immutable.Map(), 0);
+const initialState: State = t.newState(new Immutable.Map(), 0);
 
 const playgroundApp = (state: State = initialState, action: Action): State => {
     // Despite our action union, there are some internal redux actions that
@@ -52,8 +52,13 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             if (!existingScreenExpr) {
                 return state;
             }
-            // TODO: Do nothing if the expression can't be stepped.
-            const evaluatedExpr = evaluateExpression(existingScreenExpr.expr);
+            if (!canStepUserExpr(existingScreenExpr.expr)) {
+                return state;
+            }
+            const evaluatedExpr = evaluateUserExpr(existingScreenExpr.expr);
+            if (!evaluatedExpr) {
+                return state;
+            }
             return addExpression(
                 state, t.newScreenExpression(evaluatedExpr, targetPos));
         },

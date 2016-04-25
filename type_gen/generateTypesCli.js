@@ -55,6 +55,22 @@ const types = {
             }
         },
     },
+    Expression: {
+        type: 'union',
+        cases: {
+            Lambda: {
+                varName: 'string',
+                body: 'Expression',
+            },
+            FuncCall: {
+                func: 'Expression',
+                arg: 'Expression',
+            },
+            Variable: {
+                varName: 'string',
+            }
+        }
+    },
     UserExpression: {
         type: 'union',
         cases: {

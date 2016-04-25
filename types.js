@@ -110,6 +110,96 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
     }
 };
 
+class LambdaImpl extends Immutable.Record({
+        type: undefined, varName: undefined, body: undefined}) {
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+    withBody(body) {
+        return this.set('body', body)
+    }
+}
+
+export type Lambda = {
+    type: 'lambda',
+    varName: string,
+    body: Expression,
+    withVarName: (varName: string) => Lambda,
+    withBody: (body: Expression) => Lambda,
+    toJS: () => any,
+};
+
+export const newLambda = (varName: string, body: Expression): Lambda => (new LambdaImpl({
+    type: 'lambda',
+    varName,
+    body,
+}));
+
+class FuncCallImpl extends Immutable.Record({
+        type: undefined, func: undefined, arg: undefined}) {
+    withFunc(func) {
+        return this.set('func', func)
+    }
+    withArg(arg) {
+        return this.set('arg', arg)
+    }
+}
+
+export type FuncCall = {
+    type: 'funcCall',
+    func: Expression,
+    arg: Expression,
+    withFunc: (func: Expression) => FuncCall,
+    withArg: (arg: Expression) => FuncCall,
+    toJS: () => any,
+};
+
+export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCallImpl({
+    type: 'funcCall',
+    func,
+    arg,
+}));
+
+class VariableImpl extends Immutable.Record({
+        type: undefined, varName: undefined}) {
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+}
+
+export type Variable = {
+    type: 'variable',
+    varName: string,
+    withVarName: (varName: string) => Variable,
+    toJS: () => any,
+};
+
+export const newVariable = (varName: string): Variable => (new VariableImpl({
+    type: 'variable',
+    varName,
+}));
+
+export type Expression = Lambda | FuncCall | Variable;
+
+export type ExpressionVisitor<T> = {
+    lambda: (lambda: Lambda) => T,
+    funcCall: (funcCall: FuncCall) => T,
+    variable: (variable: Variable) => T,
+}
+
+export const matchExpression = function<T>(expression: Expression, visitor: ExpressionVisitor<T>): T {
+    switch (expression.type) {
+        case 'lambda':
+            return visitor.lambda(expression);
+        case 'funcCall':
+            return visitor.funcCall(expression);
+        case 'variable':
+            return visitor.variable(expression);
+        default:
+            throw new Error('Unexpected type: ' + expression.type);
+    }
+};
+
 class UserLambdaImpl extends Immutable.Record({
         type: undefined, varName: undefined, body: undefined}) {
     withVarName(varName) {

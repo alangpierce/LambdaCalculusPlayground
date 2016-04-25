@@ -8,4 +8,7 @@ exec('flow --json', (error, stdout, stderr) => {
         console.log(
             `${message.path}:${message.line}:${message.start} ${messageStr}`);
     });
+    if (!results.passed) {
+        process.exit(1);
+    }
 });
