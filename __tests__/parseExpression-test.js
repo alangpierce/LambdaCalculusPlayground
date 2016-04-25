@@ -9,17 +9,20 @@ import * as t from '../types'
 
 describe('parseExpression', () => {
     it('parses basic lambdas', () => {
-        expect(parseExpression('L x[x]')).toEqual(
-            t.newUserLambda('x', t.newUserVariable('x'))
-        );
+        expectExprsEqual(
+            parseExpression('L x[x]'),
+            t.newUserLambda('x', t.newUserVariable('x')));
     });
 
     it('handles ref capitalization', () => {
-        expect(parseExpression('FOO')).toEqual(t.newUserReference('FOO'));
+        expectExprsEqual(
+            parseExpression('FOO'),
+            t.newUserReference('FOO'));
     });
 
     it('parses function calls', () => {
-        expect(parseExpression('L x[L y[x(y(y))]]')).toEqual(
+        expectExprsEqual(
+            parseExpression('L x[L y[x(y(y))]]'),
             t.newUserLambda(
                 'x',
                 t.newUserLambda(
@@ -32,12 +35,12 @@ describe('parseExpression', () => {
                         )
                     )
                 )
-            )
-        );
+            ));
     });
 
     it('treats symbols as references', () => {
-        expect(parseExpression('L x[+(x)(y)]')).toEqual(
+        expectExprsEqual(
+            parseExpression('L x[+(x)(y)]'),
             t.newUserLambda(
                 'x',
                 t.newUserFuncCall(
@@ -47,11 +50,26 @@ describe('parseExpression', () => {
                     ),
                     t.newUserVariable('y')
                 )
-            )
-        );
+            ));
     });
 
     it('fails on invalid inputs', () => {
         expect(() => parseExpression('[[')).toThrow();
-    })
+    });
+
+    it('allows internal whitespace', () => {
+        expectExprsEqual(
+            parseExpression(' L   x[   x(y  )]  '),
+            t.newUserLambda(
+                'x',
+                t.newUserFuncCall(
+                    t.newUserVariable('x'),
+                    t.newUserVariable('y'),
+                )
+            ));
+    });
+
+    const expectExprsEqual = (expr1, expr2) => {
+        expect(expr1.toJS()).toEqual(expr2.toJS());
+    }
 });

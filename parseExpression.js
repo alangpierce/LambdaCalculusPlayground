@@ -7,6 +7,8 @@
  * @flow
  */
 
+import * as Immutable from 'immutable'
+
 import {
     newUserLambda,
     newUserFuncCall,
@@ -16,12 +18,15 @@ import {
 import type {UserExpression} from './types'
 
 const parseExpression = (str: string): UserExpression => {
+    // Allow redundant whitespace.
+    str = str.trim();
     if (str.endsWith(']')) {
         // Expression like "L x[x(x)]"
         assertSame('L ', str.substring(0, 2));
         const openBracketIndex = str.indexOf('[');
-        const varName = str.substring(2, openBracketIndex);
-        const bodyStr = str.substring(openBracketIndex + 1, str.length - 1);
+        const varName = str.substring(2, openBracketIndex).trim();
+        const bodyStr =
+            str.substring(openBracketIndex + 1, str.length - 1).trim();
         let body;
         if (bodyStr == '_') {
             body = null;
