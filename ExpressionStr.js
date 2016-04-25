@@ -16,8 +16,9 @@ import {
     newUserReference
 } from './types'
 import type {UserExpression} from './types'
+import * as t from './types'
 
-const parseExpression = (str: string): UserExpression => {
+export const parseExpr = (str: string): UserExpression => {
     // Allow redundant whitespace.
     str = str.trim();
     if (str.endsWith(']')) {
@@ -31,7 +32,7 @@ const parseExpression = (str: string): UserExpression => {
         if (bodyStr == '_') {
             body = null;
         } else {
-            body = parseExpression(bodyStr);
+            body = parseExpr(bodyStr);
         }
         return newUserLambda(varName, body);
     } else if (str.endsWith(")")) {
@@ -49,7 +50,7 @@ const parseExpression = (str: string): UserExpression => {
         const funcStr = str.substring(0, index);
         const argStr = str.substring(index + 1, str.length - 1);
         return newUserFuncCall(
-            parseExpression(funcStr), parseExpression(argStr));
+            parseExpr(funcStr), parseExpr(argStr));
     } else if (str === str.toUpperCase()) {
         assertNoBrackets(str);
         return newUserReference(str);
@@ -77,4 +78,13 @@ const assert = (condition: bool, message: string) => {
     }
 };
 
-export default parseExpression;
+export const formatExpr = (expr: UserExpression): string => {
+    return t.matchUserExpression(expr, {
+        userLambda: ({body, varName}) =>
+            `L ${varName}[${body ? formatExpr(body) : '_'}]`,
+        userFuncCall: ({func, arg}) =>
+            `${formatExpr(func)}(${formatExpr(arg)})`,
+        userVariable: ({varName}) => varName,
+        userReference: ({defName}) => defName,
+    });
+};

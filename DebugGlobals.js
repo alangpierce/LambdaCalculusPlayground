@@ -8,7 +8,7 @@
 import {NativeModules} from 'react-native'
 
 import store from './store'
-import parseExpression from './parseExpression'
+import {parseExpr, formatExpr} from './ExpressionStr'
 
 import type {UserExpression} from './types'
 import * as t from './types'
@@ -17,7 +17,7 @@ import * as t from './types'
  * Parse the given expression text and place the expression on the screen.
  */
 const makeExpression = (exprString: string) => {
-    const userExpr = parseExpression(exprString);
+    const userExpr = parseExpr(exprString);
     const screenExpr =
         t.newScreenExpression(userExpr, t.newCanvasPoint(100, 100));
     store.dispatch(t.newAddExpression(screenExpr));
@@ -29,17 +29,6 @@ const listExpressions = () => {
         const {expr, pos: {canvasX, canvasY}} = screenExpression;
         console.log(
             `Expr ${exprId} at (${canvasX}, ${canvasY}): ${formatExpr(expr)}`);
-    });
-};
-
-const formatExpr = (expr: UserExpression): string => {
-    return t.matchUserExpression(expr, {
-        userLambda: ({body, varName}) =>
-            `L ${varName}[${body ? formatExpr(body) : '_'}]`,
-        userFuncCall: ({func, arg}) =>
-            `${formatExpr(func)}(${formatExpr(arg)})`,
-        userVariable: ({varName}) => varName,
-        userReference: ({defName}) => defName,
     });
 };
 

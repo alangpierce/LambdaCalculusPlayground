@@ -206,6 +206,8 @@ export type Slot = {
     originalVarName: string
 };
 
+export type VarMarker = number;
+
 class EvalLambdaImpl extends Immutable.Record({
         type: undefined, varMarker: undefined, originalVarName: undefined, body: undefined}) {
     withVarMarker(varMarker) {
@@ -221,16 +223,16 @@ class EvalLambdaImpl extends Immutable.Record({
 
 export type EvalLambda = {
     type: 'evalLambda',
-    varMarker: number,
+    varMarker: VarMarker,
     originalVarName: string,
     body: EvalExpression,
-    withVarMarker: (varMarker: number) => EvalLambda,
+    withVarMarker: (varMarker: VarMarker) => EvalLambda,
     withOriginalVarName: (originalVarName: string) => EvalLambda,
     withBody: (body: EvalExpression) => EvalLambda,
     toJS: () => any,
 };
 
-export const newEvalLambda = (varMarker: number, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
+export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
     type: 'evalLambda',
     varMarker,
     originalVarName,
@@ -293,14 +295,14 @@ class EvalUnboundVariableImpl extends Immutable.Record({
 
 export type EvalUnboundVariable = {
     type: 'evalUnboundVariable',
-    varMarker: number,
+    varMarker: VarMarker,
     originalVarName: string,
-    withVarMarker: (varMarker: number) => EvalUnboundVariable,
+    withVarMarker: (varMarker: VarMarker) => EvalUnboundVariable,
     withOriginalVarName: (originalVarName: string) => EvalUnboundVariable,
     toJS: () => any,
 };
 
-export const newEvalUnboundVariable = (varMarker: number, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
+export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
     type: 'evalUnboundVariable',
     varMarker,
     originalVarName,

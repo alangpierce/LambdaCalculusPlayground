@@ -6,7 +6,7 @@ jest.disableAutomock();
 
 import * as Immutable from 'immutable'
 
-import parseExpression from '../parseExpression'
+import {parseExpr} from '../ExpressionStr'
 import store from '../store'
 import {newCanvasPoint, newExprPath, newScreenExpression} from '../types'
 import * as t from '../types'
@@ -63,19 +63,18 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[x]](y)')));
         store.dispatch(t.newEvaluateExpression(0, newCanvasPoint(25, 25)));
-        // TODO: Switch to the right value when evaluation is implemented.
-        assertExpression(1, 'L x[L y[x]](y)', 25, 25);
-        // assertExpression(1, "L y'[y]", 25, 25);
+        assertExpression(0, 'L x[L y[x]](y)', 50, 50);
+        assertExpression(1, "L y'[y]", 25, 25);
     });
 
     const assertExpression = (exprId, exprString, canvasX, canvasY) => {
         expect(store.getState().screenExpressions.get(exprId).toJS()).toEqual(
-            newScreenExpression(parseExpression(exprString),
+            newScreenExpression(parseExpr(exprString),
                 newCanvasPoint(canvasX, canvasY)).toJS());
     };
 
     const makeScreenExpr = (exprString) => {
         return newScreenExpression(
-            parseExpression(exprString), newCanvasPoint(50, 50));
+            parseExpr(exprString), newCanvasPoint(50, 50));
     };
 });

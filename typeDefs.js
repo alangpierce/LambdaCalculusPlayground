@@ -75,11 +75,15 @@ export default typeDefs = {
     originalVarName: string
 }`,
     },
+    VarMarker: {
+        type: 'literal',
+        value: 'number',
+    },
     EvalExpression: {
         type: 'union',
         cases: {
             EvalLambda: {
-                varMarker: 'number',
+                varMarker: 'VarMarker',
                 originalVarName: 'string',
                 body: 'EvalExpression',
             },
@@ -91,7 +95,7 @@ export default typeDefs = {
                 slot: 'Slot',
             },
             EvalUnboundVariable: {
-                varMarker: 'number',
+                varMarker: 'VarMarker',
                 originalVarName: 'string',
             },
             EvalFreeVariable: {

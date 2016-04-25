@@ -4,25 +4,25 @@
 
 jest.disableAutomock();
 
-import parseExpression from '../parseExpression'
+import {parseExpr} from '../ExpressionStr'
 import * as t from '../types'
 
-describe('parseExpression', () => {
+describe('parseExpr', () => {
     it('parses basic lambdas', () => {
         expectExprsEqual(
-            parseExpression('L x[x]'),
+            parseExpr('L x[x]'),
             t.newUserLambda('x', t.newUserVariable('x')));
     });
 
     it('handles ref capitalization', () => {
         expectExprsEqual(
-            parseExpression('FOO'),
+            parseExpr('FOO'),
             t.newUserReference('FOO'));
     });
 
     it('parses function calls', () => {
         expectExprsEqual(
-            parseExpression('L x[L y[x(y(y))]]'),
+            parseExpr('L x[L y[x(y(y))]]'),
             t.newUserLambda(
                 'x',
                 t.newUserLambda(
@@ -40,7 +40,7 @@ describe('parseExpression', () => {
 
     it('treats symbols as references', () => {
         expectExprsEqual(
-            parseExpression('L x[+(x)(y)]'),
+            parseExpr('L x[+(x)(y)]'),
             t.newUserLambda(
                 'x',
                 t.newUserFuncCall(
@@ -54,12 +54,12 @@ describe('parseExpression', () => {
     });
 
     it('fails on invalid inputs', () => {
-        expect(() => parseExpression('[[')).toThrow();
+        expect(() => parseExpr('[[')).toThrow();
     });
 
     it('allows internal whitespace', () => {
         expectExprsEqual(
-            parseExpression(' L   x[   x(y  )]  '),
+            parseExpr(' L   x[   x(y  )]  '),
             t.newUserLambda(
                 'x',
                 t.newUserFuncCall(
