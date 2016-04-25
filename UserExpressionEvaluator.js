@@ -2,21 +2,22 @@
  * @flow
  */
 
+import {expandUserExpr, tryResolveExpression} from './DefinitionManager'
 import {evaluate, canStep} from './ExpressionEvaluator'
 import * as t from './types'
 import type {Expression, UserExpression} from './types'
 
 export const evaluateUserExpr = (userExpr: UserExpression): ?UserExpression => {
-    const expr = userExprToExpr(userExpr);
+    const expr = expandUserExpr(userExpr);
     if (!expr) {
         return null;
     }
     const evaluatedExpr = evaluate(expr);
-    return exprToUserExpr(evaluatedExpr);
+    return collapseDefinitions(evaluatedExpr);
 };
 
 export const canStepUserExpr = (userExpr: UserExpression): boolean => {
-    const expr = userExprToExpr(userExpr);
+    const expr = expandUserExpr(userExpr);
     if (!expr) {
         return false;
     }
@@ -24,45 +25,19 @@ export const canStepUserExpr = (userExpr: UserExpression): boolean => {
 };
 
 /**
- * Return the equivalent expression for the given user expression, or null if
- * the user expression is invalid in any way.
+ * Given an expression, convert it to a UserExpression, attempting to account
+ * for expressions already defined.
  */
-const userExprToExpr = (userExpr: UserExpression): ?Expression => {
-    return t.matchUserExpression(userExpr, {
-        userLambda: ({varName, body}) => {
-            if (!body) {
-                return null;
-            }
-            const bodyExpr = userExprToExpr(body);
-            if (!bodyExpr) {
-                return null;
-            }
-            return t.newLambda(varName, bodyExpr);
-        },
-        userFuncCall: ({func, arg}) => {
-            const funcExpr = userExprToExpr(func);
-            if (!funcExpr) {
-                return null;
-            }
-            const argExpr = userExprToExpr(arg);
-            if (!argExpr) {
-                return null;
-            }
-            return t.newFuncCall(funcExpr, argExpr);
-        },
-        userVariable: ({varName}) => t.newVariable(varName),
-        userReference: () => {
-            throw new Error('Evaluation of references not supported yet.');
-        }
-    })
-};
-
-const exprToUserExpr = (expr: Expression): UserExpression => {
+const collapseDefinitions = (expr: Expression): UserExpression => {
+    const defName = tryResolveExpression(expr);
+    if (defName) {
+        return t.newUserReference(defName);
+    }
     return t.matchExpression(expr, {
         lambda: ({varName, body}) =>
-            t.newUserLambda(varName, exprToUserExpr(body)),
+            t.newUserLambda(varName, collapseDefinitions(body)),
         funcCall: ({func, arg}) =>
-            t.newUserFuncCall(exprToUserExpr(func), exprToUserExpr(arg)),
+            t.newUserFuncCall(collapseDefinitions(func), collapseDefinitions(arg)),
         variable: ({varName}) => t.newUserVariable(varName),
     })
 };

@@ -7,7 +7,7 @@ import typeDefs from '../typeDefs'
 
 const main = () => {
     const typesFileStr = generateTypes(typeDefs);
-    fs.writeFile('../types.js', typesFileStr, (err) => {
+    fs.writeFile(__dirname + '/../types.js', typesFileStr, (err) => {
         if (err) {
             console.log('Error: ' + err);
         } else {

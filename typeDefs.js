@@ -66,6 +66,39 @@ export default typeDefs = {
             }
         }
     },
+    // Slots are mutable, so we just use a plain object definition.
+    Slot: {
+        type: 'literal',
+        value: `{
+    isValue: boolean,
+    expr: EvalExpression,
+    originalVarName: string
+}`,
+    },
+    EvalExpression: {
+        type: 'union',
+        cases: {
+            EvalLambda: {
+                varMarker: 'number',
+                originalVarName: 'string',
+                body: 'EvalExpression',
+            },
+            EvalFuncCall: {
+                func: 'EvalExpression',
+                arg: 'EvalExpression',
+            },
+            EvalBoundVariable: {
+                slot: 'Slot',
+            },
+            EvalUnboundVariable: {
+                varMarker: 'number',
+                originalVarName: 'string',
+            },
+            EvalFreeVariable: {
+                varName: 'string',
+            },
+        },
+    },
     UserExpression: {
         type: 'union',
         cases: {

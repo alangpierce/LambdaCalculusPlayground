@@ -200,6 +200,158 @@ export const matchExpression = function<T>(expression: Expression, visitor: Expr
     }
 };
 
+export type Slot = {
+    isValue: boolean,
+    expr: EvalExpression,
+    originalVarName: string
+};
+
+class EvalLambdaImpl extends Immutable.Record({
+        type: undefined, varMarker: undefined, originalVarName: undefined, body: undefined}) {
+    withVarMarker(varMarker) {
+        return this.set('varMarker', varMarker)
+    }
+    withOriginalVarName(originalVarName) {
+        return this.set('originalVarName', originalVarName)
+    }
+    withBody(body) {
+        return this.set('body', body)
+    }
+}
+
+export type EvalLambda = {
+    type: 'evalLambda',
+    varMarker: number,
+    originalVarName: string,
+    body: EvalExpression,
+    withVarMarker: (varMarker: number) => EvalLambda,
+    withOriginalVarName: (originalVarName: string) => EvalLambda,
+    withBody: (body: EvalExpression) => EvalLambda,
+    toJS: () => any,
+};
+
+export const newEvalLambda = (varMarker: number, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
+    type: 'evalLambda',
+    varMarker,
+    originalVarName,
+    body,
+}));
+
+class EvalFuncCallImpl extends Immutable.Record({
+        type: undefined, func: undefined, arg: undefined}) {
+    withFunc(func) {
+        return this.set('func', func)
+    }
+    withArg(arg) {
+        return this.set('arg', arg)
+    }
+}
+
+export type EvalFuncCall = {
+    type: 'evalFuncCall',
+    func: EvalExpression,
+    arg: EvalExpression,
+    withFunc: (func: EvalExpression) => EvalFuncCall,
+    withArg: (arg: EvalExpression) => EvalFuncCall,
+    toJS: () => any,
+};
+
+export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCallImpl({
+    type: 'evalFuncCall',
+    func,
+    arg,
+}));
+
+class EvalBoundVariableImpl extends Immutable.Record({
+        type: undefined, slot: undefined}) {
+    withSlot(slot) {
+        return this.set('slot', slot)
+    }
+}
+
+export type EvalBoundVariable = {
+    type: 'evalBoundVariable',
+    slot: Slot,
+    withSlot: (slot: Slot) => EvalBoundVariable,
+    toJS: () => any,
+};
+
+export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariableImpl({
+    type: 'evalBoundVariable',
+    slot,
+}));
+
+class EvalUnboundVariableImpl extends Immutable.Record({
+        type: undefined, varMarker: undefined, originalVarName: undefined}) {
+    withVarMarker(varMarker) {
+        return this.set('varMarker', varMarker)
+    }
+    withOriginalVarName(originalVarName) {
+        return this.set('originalVarName', originalVarName)
+    }
+}
+
+export type EvalUnboundVariable = {
+    type: 'evalUnboundVariable',
+    varMarker: number,
+    originalVarName: string,
+    withVarMarker: (varMarker: number) => EvalUnboundVariable,
+    withOriginalVarName: (originalVarName: string) => EvalUnboundVariable,
+    toJS: () => any,
+};
+
+export const newEvalUnboundVariable = (varMarker: number, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
+    type: 'evalUnboundVariable',
+    varMarker,
+    originalVarName,
+}));
+
+class EvalFreeVariableImpl extends Immutable.Record({
+        type: undefined, varName: undefined}) {
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+}
+
+export type EvalFreeVariable = {
+    type: 'evalFreeVariable',
+    varName: string,
+    withVarName: (varName: string) => EvalFreeVariable,
+    toJS: () => any,
+};
+
+export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariableImpl({
+    type: 'evalFreeVariable',
+    varName,
+}));
+
+export type EvalExpression = EvalLambda | EvalFuncCall | EvalBoundVariable | EvalUnboundVariable | EvalFreeVariable;
+
+export type EvalExpressionVisitor<T> = {
+    evalLambda: (evalLambda: EvalLambda) => T,
+    evalFuncCall: (evalFuncCall: EvalFuncCall) => T,
+    evalBoundVariable: (evalBoundVariable: EvalBoundVariable) => T,
+    evalUnboundVariable: (evalUnboundVariable: EvalUnboundVariable) => T,
+    evalFreeVariable: (evalFreeVariable: EvalFreeVariable) => T,
+}
+
+export const matchEvalExpression = function<T>(evalExpression: EvalExpression, visitor: EvalExpressionVisitor<T>): T {
+    switch (evalExpression.type) {
+        case 'evalLambda':
+            return visitor.evalLambda(evalExpression);
+        case 'evalFuncCall':
+            return visitor.evalFuncCall(evalExpression);
+        case 'evalBoundVariable':
+            return visitor.evalBoundVariable(evalExpression);
+        case 'evalUnboundVariable':
+            return visitor.evalUnboundVariable(evalExpression);
+        case 'evalFreeVariable':
+            return visitor.evalFreeVariable(evalExpression);
+        default:
+            throw new Error('Unexpected type: ' + evalExpression.type);
+    }
+};
+
 class UserLambdaImpl extends Immutable.Record({
         type: undefined, varName: undefined, body: undefined}) {
     withVarName(varName) {
