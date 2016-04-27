@@ -16,12 +16,21 @@ import * as t from './types'
 
 const initialState: State = t.newState(new Immutable.Map(), 0);
 
+// TODO: Consider adding a top-level try/catch.
 const playgroundApp = (state: State = initialState, action: Action): State => {
     // Despite our action union, there are some internal redux actions that
     // start with @@, which we want to just ignore.
     if (action.type.startsWith('@@')) {
         return state;
     }
+
+    const exprWithId = (exprId: number): ScreenExpression => {
+        const result = state.screenExpressions.get(exprId);
+        if (!result) {
+            throw new Error('Expected expression with ID ' + exprId);
+        }
+        return result;
+    };
 
     return t.matchAction(action, {
         reset: () => initialState,
@@ -31,16 +40,9 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 (screenExpr) => screenExpr.withPos(pos));
         },
         decomposeExpression: ({path: {exprId, pathSteps}, targetPos}) => {
-            const existingScreenExpr = state.screenExpressions.get(exprId);
-            if (!existingScreenExpr) {
-                return state;
-            }
-            const extractResult = decomposeExpression(
+            const existingScreenExpr = exprWithId(exprId);
+            const {original, extracted} = decomposeExpression(
                 existingScreenExpr.expr, pathSteps);
-            if (!extractResult) {
-                return state;
-            }
-            const {original, extracted} = extractResult;
             state = addExpression(
                 state, t.newScreenExpression(extracted, targetPos));
             state = modifyExpression(state, exprId,
@@ -48,42 +50,27 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             return state;
         },
         insertAsArg: ({argExprId, path: {exprId, pathSteps}}) => {
-            const argScreenExpr = state.screenExpressions.get(argExprId);
-            const targetScreenExpr = state.screenExpressions.get(exprId);
-            if (!argScreenExpr || !targetScreenExpr) {
-                return state;
-            }
+            const argScreenExpr = exprWithId(argExprId);
+            const targetScreenExpr = exprWithId(exprId);
             const resultExpr = insertAsArg(
                 targetScreenExpr.expr, argScreenExpr.expr, pathSteps);
-            if (!resultExpr) {
-                return state;
-            }
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
             const newScreenExpressions = state.screenExpressions
                 .remove(argExprId).set(exprId, newScreenExpr);
             return state.withScreenExpressions(newScreenExpressions);
         },
         insertAsBody: ({bodyExprId, path: {exprId, pathSteps}}) => {
-            const bodyScreenExpr = state.screenExpressions.get(bodyExprId);
-            const targetScreenExpr = state.screenExpressions.get(exprId);
-            if (!bodyScreenExpr || !targetScreenExpr) {
-                return state;
-            }
+            const bodyScreenExpr = exprWithId(bodyExprId);
+            const targetScreenExpr = exprWithId(exprId);
             const resultExpr = insertAsBody(
                 targetScreenExpr.expr, bodyScreenExpr.expr, pathSteps);
-            if (!resultExpr) {
-                return state;
-            }
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
             const newScreenExpressions = state.screenExpressions
                 .remove(bodyExprId).set(exprId, newScreenExpr);
             return state.withScreenExpressions(newScreenExpressions);
         },
         evaluateExpression: ({exprId, targetPos}) => {
-            const existingScreenExpr = state.screenExpressions.get(exprId);
-            if (!existingScreenExpr) {
-                return state;
-            }
+            const existingScreenExpr = exprWithId(exprId);
             if (!canStepUserExpr(existingScreenExpr.expr)) {
                 return state;
             }
@@ -128,76 +115,59 @@ type DecomposeResult = {
  * removed child.
  */
 const decomposeExpression = (expr: UserExpression, path: Array<PathComponent>):
-        ?DecomposeResult => {
-    if (path.length === 0) {
-        return t.matchUserExpression(expr, {
-            userLambda: (lambda) => {
-                if (lambda.body != null) {
-                    const body = lambda.body;
-                    return {
-                        original: lambda.withBody(null),
-                        extracted: body,
-                    }
-                } else {
-                    return null;
-                }
-            },
-            userFuncCall: ({func, arg}) => ({
-                original: func,
-                extracted: arg,
-            }),
-            userVariable: () => null,
-            userReference: () => null,
-        });
-    }
-
-    const childRef = getChildRef(expr, path[0]);
-    if (!childRef) {
-        return null;
-    }
-    const subResult = decomposeExpression(childRef.expr, path.slice(1));
-    if (!subResult) {
-        return null;
+        DecomposeResult => {
+    let extracted = null;
+    const original = transformAtPath(expr, path, (expr) => {
+        if (expr.type === 'userLambda' && expr.body) {
+            extracted = expr.body;
+            return expr.withBody(null);
+        } else if (expr.type === 'userFuncCall') {
+            extracted = expr.arg;
+            return expr.func;
+        }
+        throw new Error('Unexpected expression to decompose.');
+    });
+    if (!extracted) {
+        throw new Error('Expected transform to be called exactly once.');
     }
     return {
-        original: childRef.replaceWith(subResult.original),
-        extracted: subResult.extracted,
+        original,
+        extracted,
     }
 };
 
 const insertAsArg = (targetExpr: UserExpression, newArgExpr: UserExpression,
-                     path: Array<PathComponent>): ?UserExpression => {
-    if (path.length === 0) {
-        return t.newUserFuncCall(targetExpr, newArgExpr);
-    }
-    const childRef = getChildRef(targetExpr, path[0]);
-    if (!childRef) {
-        return null;
-    }
-    const newChild = insertAsArg(childRef.expr, newArgExpr, path.slice(1));
-    if (!newChild) {
-        return null;
-    }
-    return childRef.replaceWith(newChild);
+                     path: Array<PathComponent>): UserExpression => {
+    return transformAtPath(targetExpr, path, (expr) =>
+        t.newUserFuncCall(expr, newArgExpr)
+    );
 };
 
 const insertAsBody = (targetExpr: UserExpression, newBodyExpr: UserExpression,
-                        path: Array<PathComponent>): ?UserExpression => {
-    if (path.length === 0) {
-        if (targetExpr.type === 'userLambda' && targetExpr.body === null) {
-            return targetExpr.withBody(newBodyExpr);
-        } else {
-            return null;
+                      path: Array<PathComponent>): UserExpression => {
+    return transformAtPath(targetExpr, path, (expr) => {
+        if (expr.type !== 'userLambda' || expr.body) {
+            throw new Error('Invalid expression to insert body into.');
         }
+        return expr.withBody(newBodyExpr);
+    });
+};
+
+
+/**
+ * Given a path to a part of an expression, run a transformation at that
+ * position and return the resulting top-level expression.
+ *
+ * Throws an exception if the path was invalid.
+ */
+const transformAtPath = (
+        expr: UserExpression, path: Array<PathComponent>,
+        transform: Transform<UserExpression>): UserExpression => {
+    if (path.length === 0) {
+        return transform(expr);
     }
-    const childRef = getChildRef(targetExpr, path[0]);
-    if (!childRef) {
-        return null;
-    }
-    const newChild = insertAsBody(childRef.expr, newBodyExpr, path.slice(1));
-    if (!newChild) {
-        return null;
-    }
+    const childRef = getChildRef(expr, path[0]);
+    const newChild = transformAtPath(childRef.expr, path.slice(1), transform);
     return childRef.replaceWith(newChild);
 };
 
@@ -206,7 +176,7 @@ type ChildRef = {
     replaceWith: (newChild: UserExpression) => UserExpression
 };
 
-const getChildRef = (expr: UserExpression, step: PathComponent): ?ChildRef => {
+const getChildRef = (expr: UserExpression, step: PathComponent): ChildRef => {
     if (step === 'func' && expr.type === 'userFuncCall') {
         return {expr: expr.func, replaceWith: expr.withFunc.bind(expr)};
     } else if (step === 'arg' && expr.type === 'userFuncCall') {
@@ -214,7 +184,7 @@ const getChildRef = (expr: UserExpression, step: PathComponent): ?ChildRef => {
     } else if (step === 'body' && expr.type === 'userLambda' && expr.body) {
         return {expr: expr.body, replaceWith: expr.withBody.bind(expr)};
     }
-    return null;
+    throw new Error('Unexpected step: ' + step);
 };
 
 export default playgroundApp;
