@@ -71,6 +71,30 @@ export const newDecomposeExpression = (path: ExprPath, targetPos: CanvasPoint): 
     targetPos,
 });
 
+export type InsertAsArg = {
+    type: 'insertAsArg',
+    argExprId: number,
+    path: ExprPath,
+};
+
+export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => ({
+    type: 'insertAsArg',
+    argExprId,
+    path,
+});
+
+export type InsertAsBody = {
+    type: 'insertAsBody',
+    bodyExprId: number,
+    path: ExprPath,
+};
+
+export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => ({
+    type: 'insertAsBody',
+    bodyExprId,
+    path,
+});
+
 export type EvaluateExpression = {
     type: 'evaluateExpression',
     exprId: number,
@@ -83,13 +107,15 @@ export const newEvaluateExpression = (exprId: number, targetPos: CanvasPoint): E
     targetPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | EvaluateExpression;
+export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | InsertAsArg | InsertAsBody | EvaluateExpression;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
     addExpression: (addExpression: AddExpression) => T,
     moveExpression: (moveExpression: MoveExpression) => T,
     decomposeExpression: (decomposeExpression: DecomposeExpression) => T,
+    insertAsArg: (insertAsArg: InsertAsArg) => T,
+    insertAsBody: (insertAsBody: InsertAsBody) => T,
     evaluateExpression: (evaluateExpression: EvaluateExpression) => T,
 }
 
@@ -103,6 +129,10 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.moveExpression(action);
         case 'decomposeExpression':
             return visitor.decomposeExpression(action);
+        case 'insertAsArg':
+            return visitor.insertAsArg(action);
+        case 'insertAsBody':
+            return visitor.insertAsBody(action);
         case 'evaluateExpression':
             return visitor.evaluateExpression(action);
         default:

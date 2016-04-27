@@ -4,9 +4,7 @@
 
 jest.disableAutomock();
 
-import * as Immutable from 'immutable'
-
-import {parseExpr} from '../ExpressionStr'
+import {formatExpr, parseExpr} from '../ExpressionStr'
 import store from '../store'
 import {newCanvasPoint, newExprPath, newScreenExpression} from '../types'
 import * as t from '../types'
@@ -57,6 +55,26 @@ describe('reducers', () => {
         ));
         assertExpression(0, 'L x[+(x)]', 50, 50);
         assertExpression(1, '2', 25, 25);
+    });
+
+    it('handles insert body', () => {
+        store.dispatch(t.newReset());
+        store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[_]]')));
+        store.dispatch(t.newAddExpression(makeScreenExpr('x(y)')));
+        store.dispatch(t.newInsertAsBody(1, newExprPath(0, ['body'])));
+        assertExpression(0, 'L x[L y[x(y)]]', 50, 50);
+        // The other expression should have been removed.
+        expect(store.getState().screenExpressions.size).toEqual(1);
+    });
+
+    it('handles insert arg', () => {
+        store.dispatch(t.newReset());
+        store.dispatch(t.newAddExpression(makeScreenExpr('L x[x(y)]')));
+        store.dispatch(t.newAddExpression(makeScreenExpr('FOO')));
+        store.dispatch(t.newInsertAsArg(1, newExprPath(0, ['body', 'arg'])));
+        assertExpression(0, 'L x[x(y(FOO))]', 50, 50);
+        // The other expression should have been removed.
+        expect(store.getState().screenExpressions.size).toEqual(1);
     });
 
     it('evaluates expressions', () => {

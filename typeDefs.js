@@ -40,6 +40,14 @@ export default typeDefs = {
                 path: 'ExprPath',
                 targetPos: 'CanvasPoint',
             },
+            InsertAsArg: {
+                argExprId: 'number',
+                path: 'ExprPath',
+            },
+            InsertAsBody: {
+                bodyExprId: 'number',
+                path: 'ExprPath',
+            },
             /**
              * If the given expression can be evaluated, evaluate it and place
              * the result as a new expression in the given position.
