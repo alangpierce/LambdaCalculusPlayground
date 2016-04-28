@@ -8,7 +8,8 @@
     "test": "jest",
     "flow": "flow",
     "check": "flow; jest;:",
-    "gen-types": "babel-node tools/generateTypesCli.js"
+    "gen-types": "babel-node tools/generateTypesCli.js",
+    "android": "react-native run-android"
   },
   "repository": {
     "type": "git",
