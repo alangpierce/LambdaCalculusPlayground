@@ -82,7 +82,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 }
 
 const ConnectedPlaygroundCanvasView =
-    connect(state => state)(PlaygroundCanvasView);
+    connect(({screenExpressions}) => ({screenExpressions}))(PlaygroundCanvasView);
 
 class PlaygroundCanvas extends SimpleComponent<{}, {}> {
     render() {
