@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Wrapper application that opens a terminal to run the React Native server.
+# This needs to be an application because that's what's expected by
+# react-native run-android.
+THIS_DIR=`dirname $0`
+open "${THIS_DIR}/../../../runServer.command"
