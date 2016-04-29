@@ -33,6 +33,9 @@
     @butterknife.* <methods>;
 }
 
+# Needed for retrolambda
+-dontwarn java.lang.invoke.*
+
 # React Native
 
 # Keep dev classes
