@@ -7,11 +7,12 @@
 
 import * as Immutable from 'immutable'
 import React, {
+    DeviceEventEmitter,
     Image,
+    NativeModules,
+    PanResponder,
     Text,
     View,
-    DeviceEventEmitter,
-    NativeModules,
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
 
@@ -68,6 +69,16 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         });
     }
 
+    getResponderMethods() {
+        return {
+            onStartShouldSetResponder: (event) => true,
+            onResponderMove: ({nativeEvent: {pageX, pageY}}) => {
+                store.dispatch(t.newMoveExpression(
+                    0, t.newCanvasPoint(pageX, pageY)));
+            }
+        }
+    }
+
     render() {
         const {screenExpressions} = this.props;
         const exprNodes = Array.from(screenExpressions)
@@ -79,7 +90,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                     key={exprId}
                 />
             });
-        return <View>
+        return <View {...this.getResponderMethods()} style={{
+            backgroundColor: 'gray',
+            flex: 1,
+        }}>
             {exprNodes}
         </View>;
     }

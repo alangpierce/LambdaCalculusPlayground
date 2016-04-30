@@ -35,7 +35,8 @@ const listExpressions = () => {
 
 // Only run when we're running in Chrome. We detect this by checking if we're in
 // the debuggerWorker.js web worker, which defines a messageHandlers global.
-if (__DEV__ && window.messageHandlers !== undefined) {
+// TODO: Maybe disable this in release builds.
+if (window.messageHandlers !== undefined) {
     const newGlobals = {
         store,
         t,
