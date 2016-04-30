@@ -2,7 +2,7 @@
  * @flow
  */
 
-import * as Immutable from 'immutable'
+import * as Immutable from 'immutable';
 
 import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator'
 import type {
@@ -114,7 +114,8 @@ type DecomposeResult = {
  * original expression with the child removed, and the "extracted" result is the
  * removed child.
  */
-const decomposeExpression = (expr: UserExpression, path: Array<PathComponent>):
+const decomposeExpression = (expr: UserExpression,
+                             path: Immutable.List<PathComponent>):
         DecomposeResult => {
     let extracted = null;
     const original = transformAtPath(expr, path, (expr) => {
@@ -137,14 +138,14 @@ const decomposeExpression = (expr: UserExpression, path: Array<PathComponent>):
 };
 
 const insertAsArg = (targetExpr: UserExpression, newArgExpr: UserExpression,
-                     path: Array<PathComponent>): UserExpression => {
+                     path: Immutable.List<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) =>
         t.newUserFuncCall(expr, newArgExpr)
     );
 };
 
 const insertAsBody = (targetExpr: UserExpression, newBodyExpr: UserExpression,
-                      path: Array<PathComponent>): UserExpression => {
+                      path: Immutable.List<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) => {
         if (expr.type !== 'userLambda' || expr.body) {
             throw new Error('Invalid expression to insert body into.');
@@ -161,12 +162,12 @@ const insertAsBody = (targetExpr: UserExpression, newBodyExpr: UserExpression,
  * Throws an exception if the path was invalid.
  */
 const transformAtPath = (
-        expr: UserExpression, path: Array<PathComponent>,
+        expr: UserExpression, path: Immutable.List<PathComponent>,
         transform: Transform<UserExpression>): UserExpression => {
-    if (path.length === 0) {
+    if (path.size === 0) {
         return transform(expr);
     }
-    const childRef = getChildRef(expr, path[0]);
+    const childRef = getChildRef(expr, path.get(0));
     const newChild = transformAtPath(childRef.expr, path.slice(1), transform);
     return childRef.replaceWith(newChild);
 };
@@ -184,7 +185,7 @@ const getChildRef = (expr: UserExpression, step: PathComponent): ChildRef => {
     } else if (step === 'body' && expr.type === 'userLambda' && expr.body) {
         return {expr: expr.body, replaceWith: expr.withBody.bind(expr)};
     }
-    throw new Error('Unexpected step: ' + step);
+    throw new Error('Unexpected step: ' + JSON.stringify(step));
 };
 
 export default playgroundApp;

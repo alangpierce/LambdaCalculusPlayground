@@ -144,6 +144,20 @@ export default typeDefs = {
             canvasY: 'number',
         },
     },
+    ScreenPoint: {
+        type: 'struct',
+        fields: {
+            screenX: 'number',
+            screenY: 'number',
+        },
+    },
+    ScreenRect: {
+        type: 'struct',
+        fields: {
+            topLeft: 'ScreenPoint',
+            bottomRight: 'ScreenPoint',
+        },
+    },
     PathComponent: {
         type: 'literal',
         value: "'func' | 'arg' | 'body'",
@@ -152,7 +166,7 @@ export default typeDefs = {
         type: 'struct',
         fields: {
             exprId: 'number',
-            pathSteps: 'Array<PathComponent>',
+            pathSteps: 'Immutable.List<PathComponent>',
         }
     }
 };

@@ -542,6 +542,52 @@ export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint =>
     canvasY,
 }));
 
+class ScreenPointImpl extends Immutable.Record({
+        screenX: undefined, screenY: undefined}) {
+    withScreenX(screenX) {
+        return this.set('screenX', screenX)
+    }
+    withScreenY(screenY) {
+        return this.set('screenY', screenY)
+    }
+}
+
+export type ScreenPoint = {
+    screenX: number,
+    screenY: number,
+    withScreenX: (screenX: number) => ScreenPoint,
+    withScreenY: (screenY: number) => ScreenPoint,
+    toJS: () => any,
+};
+
+export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPointImpl({
+    screenX,
+    screenY,
+}));
+
+class ScreenRectImpl extends Immutable.Record({
+        topLeft: undefined, bottomRight: undefined}) {
+    withTopLeft(topLeft) {
+        return this.set('topLeft', topLeft)
+    }
+    withBottomRight(bottomRight) {
+        return this.set('bottomRight', bottomRight)
+    }
+}
+
+export type ScreenRect = {
+    topLeft: ScreenPoint,
+    bottomRight: ScreenPoint,
+    withTopLeft: (topLeft: ScreenPoint) => ScreenRect,
+    withBottomRight: (bottomRight: ScreenPoint) => ScreenRect,
+    toJS: () => any,
+};
+
+export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRectImpl({
+    topLeft,
+    bottomRight,
+}));
+
 export type PathComponent = 'func' | 'arg' | 'body';
 
 class ExprPathImpl extends Immutable.Record({
@@ -556,13 +602,13 @@ class ExprPathImpl extends Immutable.Record({
 
 export type ExprPath = {
     exprId: number,
-    pathSteps: Array<PathComponent>,
+    pathSteps: Immutable.List<PathComponent>,
     withExprId: (exprId: number) => ExprPath,
-    withPathSteps: (pathSteps: Array<PathComponent>) => ExprPath,
+    withPathSteps: (pathSteps: Immutable.List<PathComponent>) => ExprPath,
     toJS: () => any,
 };
 
-export const newExprPath = (exprId: number, pathSteps: Array<PathComponent>): ExprPath => (new ExprPathImpl({
+export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
     exprId,
     pathSteps,
 }));

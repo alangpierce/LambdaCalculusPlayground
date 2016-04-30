@@ -4,10 +4,18 @@
 
 jest.disableAutomock();
 
+import * as Immutable from 'immutable'
+
 import {formatExpr, parseExpr} from '../ExpressionStr'
 import store from '../store'
+import type {PathComponent} from '../types'
 import {newCanvasPoint, newExprPath, newScreenExpression} from '../types'
 import * as t from '../types'
+
+// Just use a normal function lambda for now so that arguments works.
+const list = function(): Immutable.List<PathComponent> {
+    return new Immutable.List(arguments);
+};
 
 describe('reducers', () => {
     beforeEach(function () {
@@ -15,7 +23,6 @@ describe('reducers', () => {
             is: () => ({
                 compare: (actual, expected) => {
                     return actual.toJSON() === expected.toJSON();
-                    // return Immutable.is(actual, expected);
                 }
             })
         })
@@ -41,7 +48,7 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[L z[x]]]')));
         store.dispatch(t.newDecomposeExpression(
-            newExprPath(0, ['body']), newCanvasPoint(25, 25)
+            newExprPath(0, list('body')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[L y[_]]', 50, 50);
         assertExpression(1, 'L z[x]', 25, 25);
@@ -51,7 +58,7 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[+(2)(x)]')));
         store.dispatch(t.newDecomposeExpression(
-            newExprPath(0, ['body', 'func']), newCanvasPoint(25, 25)
+            newExprPath(0, list('body', 'func')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[+(x)]', 50, 50);
         assertExpression(1, '2', 25, 25);
@@ -61,7 +68,8 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[_]]')));
         store.dispatch(t.newAddExpression(makeScreenExpr('x(y)')));
-        store.dispatch(t.newInsertAsBody(1, newExprPath(0, ['body'])));
+        store.dispatch(
+            t.newInsertAsBody(1, newExprPath(0, list('body'))));
         assertExpression(0, 'L x[L y[x(y)]]', 50, 50);
         // The other expression should have been removed.
         expect(store.getState().screenExpressions.size).toEqual(1);
@@ -71,7 +79,8 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[x(y)]')));
         store.dispatch(t.newAddExpression(makeScreenExpr('FOO')));
-        store.dispatch(t.newInsertAsArg(1, newExprPath(0, ['body', 'arg'])));
+        store.dispatch(
+            t.newInsertAsArg(1, newExprPath(0, list('body', 'arg'))));
         assertExpression(0, 'L x[x(y(FOO))]', 50, 50);
         // The other expression should have been removed.
         expect(store.getState().screenExpressions.size).toEqual(1);
