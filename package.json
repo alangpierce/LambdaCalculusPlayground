@@ -9,7 +9,7 @@
     "flow": "flow",
     "check": "flow; jest;:",
     "gen-types": "babel-node tools/generateTypesCli.js",
-    "android": "react-native run-android --open=\"`pwd`/tools/RunServer.app\"",
+    "android": "adb reverse tcp:8081 tcp:8081; react-native run-android --open=\"`pwd`/tools/RunServer.app\"",
     "pwd": "echo `pwd`"
   },
   "repository": {
