@@ -174,8 +174,7 @@ class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
     }
 
     render() {
-        const {path} = this.props;
-        return <View style={{
+        return <View ref="viewRef" style={{
             backgroundColor: "#FFBBBB",
             padding: 2,
             width: 20,
