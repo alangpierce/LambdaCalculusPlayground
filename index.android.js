@@ -11,6 +11,7 @@ import React, {
     Text,
     View,
     DeviceEventEmitter,
+    NativeModules,
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
 
@@ -33,19 +34,21 @@ import type {
 } from './types'
 
 type TopLevelExpressionPropTypes = {
+    exprId: number,
     expr: UserExpression,
     pos: CanvasPoint,
 }
 class TopLevelExpression
         extends StatelessComponent<TopLevelExpressionPropTypes> {
     render() {
-        const {expr, pos: {canvasX, canvasY}} = this.props;
+        const {exprId, expr, pos: {canvasX, canvasY}} = this.props;
         return <View style={{
             left: canvasX,
             top: canvasY,
-            position: "absolute",
+            position: 'absolute',
         }}>
-            <Expression expr={expr}/>
+            <Expression expr={expr}
+                        path={t.newExprPath(exprId, new Immutable.List())}/>
         </View>;
     }
 }
@@ -70,6 +73,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         const exprNodes = Array.from(screenExpressions)
             .map(([exprId, screenExpression]) => {
                 return <TopLevelExpression
+                    exprId={exprId}
                     expr={screenExpression.expr}
                     pos={screenExpression.pos}
                     key={exprId}

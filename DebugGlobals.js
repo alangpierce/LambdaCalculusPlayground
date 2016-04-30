@@ -6,11 +6,12 @@
  */
 
 import {NativeModules} from 'react-native'
+import * as Immutable from 'immutable'
 
 import store from './store'
 import {parseExpr, formatExpr} from './ExpressionStr'
+import * as ViewTracker from './ViewTracker'
 
-import type {UserExpression} from './types'
 import * as t from './types'
 
 /**
@@ -40,6 +41,8 @@ if (__DEV__ && window.messageHandlers !== undefined) {
         t,
         makeExpression,
         listExpressions,
+        Immutable,
+        ViewTracker,
     };
 
     Object.keys(newGlobals).forEach((name) => {

@@ -13,8 +13,11 @@ import React, {
 } from 'react-native';
 
 import StatelessComponent from './StatelessComponent'
+import {registerView} from './ViewTracker'
 
 import type {
+    ExprPath,
+    PathComponent,
     UserExpression,
     UserLambda,
     UserFuncCall,
@@ -27,34 +30,41 @@ import * as t from './types'
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
+const stepPath = (exprPath: ExprPath, component: PathComponent): ExprPath => {
+    return exprPath.withPathSteps(exprPath.pathSteps.push(component));
+};
+
 type ExpressionPropTypes = {
     expr: UserExpression,
+    path: ExprPath,
 }
 class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
-        const {expr} = this.props;
+        const {expr, path} = this.props;
         return t.matchUserExpression(expr, {
-            userLambda: (expr) => <Lambda expr={expr}/>,
-            userFuncCall: (expr) => <FuncCall expr={expr}/>,
-            userVariable: (expr) => <Variable expr={expr}/>,
-            userReference: (expr) => <Reference expr={expr}/>,
+            userLambda: (expr) => <Lambda expr={expr} path={path} />,
+            userFuncCall: (expr) => <FuncCall expr={expr} path={path} />,
+            userVariable: (expr) => <Variable expr={expr} path={path} />,
+            userReference: (expr) => <Reference expr={expr} path={path} />,
         });
     }
 }
 
 type LambdaPropTypes = {
     expr: UserLambda,
+    path: ExprPath,
 }
 class Lambda extends StatelessComponent<LambdaPropTypes> {
     render() {
-        const {expr} = this.props;
+        const {expr, path} = this.props;
         var body;
         if (expr.body != null) {
-            body = <Expression expr={expr.body}/>;
+            body = <Expression expr={expr.body}
+                               path={stepPath(path, 'body')} />;
         } else {
-            body = <EmptyBody/>;
+            body = <EmptyBody path={stepPath(path, 'body')} />;
         }
-        return <ExprContainer>
+        return <ExprContainer path={path}>
             <ExprText>λ</ExprText>
             <ExprText>{expr.varName}</ExprText>
             <Bracket source={require('./img/left_bracket.png')}/>
@@ -66,14 +76,15 @@ class Lambda extends StatelessComponent<LambdaPropTypes> {
 
 type FuncCallPropTypes = {
     expr: UserFuncCall,
+    path: ExprPath,
 }
 class FuncCall extends StatelessComponent<FuncCallPropTypes> {
     render() {
-        const {expr} = this.props;
-        return <ExprContainer>
-            <Expression expr={expr.func}/>
+        const {expr, path} = this.props;
+        return <ExprContainer path={path}>
+            <Expression expr={expr.func} path={stepPath(path, 'func')} />
             <Bracket source={require('./img/left_paren.png')}/>
-            <Expression expr={expr.arg}/>
+            <Expression expr={expr.arg} path={stepPath(path, 'arg')} />
             <Bracket source={require('./img/right_paren.png')}/>
         </ExprContainer>;
     }
@@ -81,11 +92,12 @@ class FuncCall extends StatelessComponent<FuncCallPropTypes> {
 
 type VariablePropTypes = {
     expr: UserVariable,
+    path: ExprPath,
 }
 class Variable extends StatelessComponent<VariablePropTypes> {
     render() {
-        const {expr} = this.props;
-        return <ExprContainer>
+        const {expr, path} = this.props;
+        return <ExprContainer path={path}>
             <ExprText>{expr.varName}</ExprText>
         </ExprContainer>
     }
@@ -93,11 +105,12 @@ class Variable extends StatelessComponent<VariablePropTypes> {
 
 type ReferencePropTypes = {
     expr: UserReference,
+    path: ExprPath,
 }
 class Reference extends StatelessComponent<ReferencePropTypes> {
     render() {
-        const {expr} = this.props;
-        return <ExprContainer>
+        const {expr, path} = this.props;
+        return <ExprContainer path={path}>
             <ExprText>{expr.defName}</ExprText>
         </ExprContainer>
     }
@@ -105,11 +118,16 @@ class Reference extends StatelessComponent<ReferencePropTypes> {
 
 type ExprContainerPropTypes = {
     children: any,
+    path: ExprPath,
 }
 class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
+    componentDidMount() {
+        registerView(this.props.path, this.refs.viewRef);
+    }
+
     render() {
         const {children} = this.props;
-        return <View style={{
+        return <View ref="viewRef" style={{
             flexDirection: 'row',
             backgroundColor: "white",
             elevation: 5,
@@ -147,8 +165,16 @@ class ExprText extends StatelessComponent<ExprTextPropTypes> {
     }
 }
 
-class EmptyBody extends StatelessComponent<{}> {
+type EmptyBodyPropTypes = {
+    path: ExprPath,
+}
+class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
+    componentDidMount() {
+        registerView(this.props.path, this.refs.viewRef);
+    }
+
     render() {
+        const {path} = this.props;
         return <View style={{
             backgroundColor: "#FFBBBB",
             padding: 2,
