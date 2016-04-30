@@ -1,6 +1,6 @@
 const exec = require('child_process').exec;
 
-exec('flow --json', (error, stdout, stderr) => {
+exec('node_modules/.bin/flow --json', (error, stdout, stderr) => {
     const results = JSON.parse(stdout);
     results.errors.forEach((error) => {
         const messageStr = error.message.map((m) => m.descr).join('  ');
