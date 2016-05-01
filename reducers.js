@@ -7,6 +7,7 @@ import * as Immutable from 'immutable';
 import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator'
 import type {
     Action,
+    DragData,
     ScreenExpression,
     UserExpression,
     PathComponent,
@@ -83,27 +84,36 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 state, t.newScreenExpression(evaluatedExpr, targetPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
-            const exprId = resolveTouch(state, screenPos);
-            if (exprId === null || exprId === undefined) {
+            const touchResult = resolveTouch(state, screenPos);
+            if (touchResult === null || touchResult === undefined) {
                 console.log("Touch didn't match anything.");
                 return state;
             }
-            return state.updateActiveDrags((drags) => drags.set(fingerId, exprId));
+            const {exprId, offset} = touchResult;
+            const screenExpr = state.screenExpressions.get(exprId);
+            return state
+                .updateScreenExpressions(exprs => exprs.remove(exprId))
+                .updateActiveDrags((drags) =>
+                    drags.set(fingerId, t.newDragData(offset, screenExpr)));
         },
-        fingerMove: ({fingerId, screenPos}) => {
-            const dragData = state.activeDrags.get(fingerId);
+        fingerMove: ({fingerId, screenPos: {screenX, screenY}}) => {
+            const dragData: ?DragData = state.activeDrags.get(fingerId);
             if (!dragData) {
                 return state;
             }
-            const {exprId, offsetX, offsetY} = dragData;
-            const {screenX, screenY} = screenPos;
-            return modifyExpression(
-                state, exprId, (expr) =>
-                    expr.withPos(t.newCanvasPoint(
-                        screenX - offsetX, screenY - offsetY)));
+            const {offset: {dx, dy}} = dragData;
+            const newPos = t.newCanvasPoint(screenX - dx, screenY - dy);
+            return state.updateActiveDrags((drags) =>
+                drags.update(fingerId, (dragData) =>
+                    dragData.updateScreenExpr((screenExpr) =>
+                        screenExpr.withPos(newPos))));
         },
-        fingerUp: ({fingerId, screenPos}) => {
-            const exprId = resolveTouch(state, screenPos);
+        fingerUp: ({fingerId}) => {
+            const dragData: ?DragData = state.activeDrags.get(fingerId);
+            if (!dragData) {
+                return state;
+            }
+            state = addExpression(state, dragData.screenExpr);
             return state.withActiveDrags(
                 state.activeDrags.remove(fingerId)
             );

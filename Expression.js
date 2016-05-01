@@ -13,7 +13,7 @@ import React, {
 } from 'react-native';
 
 import StatelessComponent from './StatelessComponent'
-import {registerView} from './ViewTracker'
+import {registerView, unregisterView} from './ViewTracker'
 
 import type {
     ExprPath,
@@ -30,13 +30,17 @@ import * as t from './types'
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
-const stepPath = (exprPath: ExprPath, component: PathComponent): ExprPath => {
+const stepPath = (exprPath: ?ExprPath, component: PathComponent): ?ExprPath => {
+    if (!exprPath) {
+        return null;
+    }
     return exprPath.withPathSteps(exprPath.pathSteps.push(component));
 };
 
 type ExpressionPropTypes = {
     expr: UserExpression,
-    path: ExprPath,
+    // If null, don't register any paths.
+    path: ?ExprPath,
 }
 class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
@@ -52,7 +56,7 @@ class Expression extends StatelessComponent<ExpressionPropTypes> {
 
 type LambdaPropTypes = {
     expr: UserLambda,
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class Lambda extends StatelessComponent<LambdaPropTypes> {
     render() {
@@ -76,7 +80,7 @@ class Lambda extends StatelessComponent<LambdaPropTypes> {
 
 type FuncCallPropTypes = {
     expr: UserFuncCall,
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class FuncCall extends StatelessComponent<FuncCallPropTypes> {
     render() {
@@ -92,7 +96,7 @@ class FuncCall extends StatelessComponent<FuncCallPropTypes> {
 
 type VariablePropTypes = {
     expr: UserVariable,
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class Variable extends StatelessComponent<VariablePropTypes> {
     render() {
@@ -105,7 +109,7 @@ class Variable extends StatelessComponent<VariablePropTypes> {
 
 type ReferencePropTypes = {
     expr: UserReference,
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class Reference extends StatelessComponent<ReferencePropTypes> {
     render() {
@@ -118,11 +122,19 @@ class Reference extends StatelessComponent<ReferencePropTypes> {
 
 type ExprContainerPropTypes = {
     children: any,
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
     componentDidMount() {
-        registerView(this.props.path, this.refs.viewRef);
+        if (this.props.path) {
+            registerView(this.props.path, this.refs.viewRef);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.path) {
+            unregisterView(this.props.path, this.refs.viewRef);
+        }
     }
 
     render() {
@@ -166,11 +178,19 @@ class ExprText extends StatelessComponent<ExprTextPropTypes> {
 }
 
 type EmptyBodyPropTypes = {
-    path: ExprPath,
+    path: ?ExprPath,
 }
 class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
     componentDidMount() {
-        registerView(this.props.path, this.refs.viewRef);
+        if (this.props.path) {
+            registerView(this.props.path, this.refs.viewRef);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.path) {
+            unregisterView(this.props.path, this.refs.viewRef);
+        }
     }
 
     render() {

@@ -30,6 +30,7 @@ import * as t from './types'
 
 import type {
     CanvasPoint,
+    DragData,
     UserExpression,
     ScreenExpression,
     ScreenPoint,
@@ -46,8 +47,10 @@ class TopLevelExpression
         const {exprId, expr, pos: {canvasX, canvasY}} = this.props;
         return <View style={{
             position: 'absolute',
-            translateX: canvasX,
-            translateY: canvasY,
+            transform: [
+                {translateX: canvasX},
+                {translateY: canvasY},
+            ],
         }}>
             <Expression expr={expr}
                         path={t.newExprPath(exprId, new Immutable.List())}/>
@@ -55,8 +58,32 @@ class TopLevelExpression
     }
 }
 
+type DraggedExpressionPropTypes = {
+    expr: UserExpression,
+    pos: CanvasPoint,
+}
+class DraggedExpression
+extends StatelessComponent<DraggedExpressionPropTypes> {
+    render() {
+        const {expr, pos: {canvasX, canvasY}} = this.props;
+        return <View style={{
+            position: 'absolute',
+            transform: [
+                {translateX: canvasX},
+                {translateY: canvasY},
+                {scaleX: 1.1},
+                {scaleY: 1.1},
+            ],
+
+        }}>
+            <Expression expr={expr}/>
+        </View>;
+    }
+}
+
 type PlaygroundCanvasProps = {
-    screenExpressions: Immutable.Map<number, ScreenExpression>;
+    screenExpressions: Immutable.Map<number, ScreenExpression>,
+    activeDrags: Immutable.Map<number, DragData>
 };
 
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
@@ -110,27 +137,41 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     render() {
-        const {screenExpressions} = this.props;
+        const {screenExpressions, activeDrags} = this.props;
         const exprNodes = Array.from(screenExpressions)
             .map(([exprId, screenExpression]) => {
                 return <TopLevelExpression
                     exprId={exprId}
                     expr={screenExpression.expr}
                     pos={screenExpression.pos}
-                    key={exprId}
+                    key={"expr" + exprId}
                 />
+            });
+        const dragNodes = Array.from(activeDrags)
+            .map(([fingerId, dragData]) => {
+                return <DraggedExpression
+                    expr={dragData.screenExpr.expr}
+                    pos={dragData.screenExpr.pos}
+                    key={"drag" + fingerId}
+                />;
             });
         return <View {...this._responderMethods} style={{
             backgroundColor: 'gray',
             flex: 1,
         }}>
             {exprNodes}
+            {dragNodes}
         </View>;
     }
 }
 
 const ConnectedPlaygroundCanvasView =
-    connect(({screenExpressions}) => ({screenExpressions}))(PlaygroundCanvasView);
+    connect(
+        ({screenExpressions, activeDrags}) => ({
+            screenExpressions,
+            activeDrags
+        })
+    )(PlaygroundCanvasView);
 
 class PlaygroundCanvas extends SimpleComponent<{}, {}> {
     render() {

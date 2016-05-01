@@ -701,6 +701,37 @@ export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint =>
     canvasY,
 }));
 
+class PointDifferenceImpl extends Immutable.Record({
+        dx: undefined, dy: undefined}) {
+    withDx(dx) {
+        return this.set('dx', dx)
+    }
+    withDy(dy) {
+        return this.set('dy', dy)
+    }
+    updateDx(updater) {
+        return this.set('dx', updater(this.dx))
+    }
+    updateDy(updater) {
+        return this.set('dy', updater(this.dy))
+    }
+}
+
+export type PointDifference = {
+    dx: number,
+    dy: number,
+    withDx: (dx: number) => PointDifference,
+    withDy: (dy: number) => PointDifference,
+    updateDx: (updater: (dx: number) => number) => PointDifference,
+    updateDy: (updater: (dy: number) => number) => PointDifference,
+    toJS: () => any,
+};
+
+export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifferenceImpl({
+    dx,
+    dy,
+}));
+
 class ScreenPointImpl extends Immutable.Record({
         screenX: undefined, screenY: undefined}) {
     withScreenX(screenX) {
@@ -797,43 +828,33 @@ export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathCompon
 }));
 
 class DragDataImpl extends Immutable.Record({
-        exprId: undefined, offsetX: undefined, offsetY: undefined}) {
-    withExprId(exprId) {
-        return this.set('exprId', exprId)
+        offset: undefined, screenExpr: undefined}) {
+    withOffset(offset) {
+        return this.set('offset', offset)
     }
-    withOffsetX(offsetX) {
-        return this.set('offsetX', offsetX)
+    withScreenExpr(screenExpr) {
+        return this.set('screenExpr', screenExpr)
     }
-    withOffsetY(offsetY) {
-        return this.set('offsetY', offsetY)
+    updateOffset(updater) {
+        return this.set('offset', updater(this.offset))
     }
-    updateExprId(updater) {
-        return this.set('exprId', updater(this.exprId))
-    }
-    updateOffsetX(updater) {
-        return this.set('offsetX', updater(this.offsetX))
-    }
-    updateOffsetY(updater) {
-        return this.set('offsetY', updater(this.offsetY))
+    updateScreenExpr(updater) {
+        return this.set('screenExpr', updater(this.screenExpr))
     }
 }
 
 export type DragData = {
-    exprId: number,
-    offsetX: number,
-    offsetY: number,
-    withExprId: (exprId: number) => DragData,
-    withOffsetX: (offsetX: number) => DragData,
-    withOffsetY: (offsetY: number) => DragData,
-    updateExprId: (updater: (exprId: number) => number) => DragData,
-    updateOffsetX: (updater: (offsetX: number) => number) => DragData,
-    updateOffsetY: (updater: (offsetY: number) => number) => DragData,
+    offset: PointDifference,
+    screenExpr: ScreenExpression,
+    withOffset: (offset: PointDifference) => DragData,
+    withScreenExpr: (screenExpr: ScreenExpression) => DragData,
+    updateOffset: (updater: (offset: PointDifference) => PointDifference) => DragData,
+    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => DragData,
     toJS: () => any,
 };
 
-export const newDragData = (exprId: number, offsetX: number, offsetY: number): DragData => (new DragDataImpl({
-    exprId,
-    offsetX,
-    offsetY,
+export const newDragData = (offset: PointDifference, screenExpr: ScreenExpression): DragData => (new DragDataImpl({
+    offset,
+    screenExpr,
 }));
 

@@ -158,6 +158,13 @@ export default typeDefs = {
             canvasY: 'number',
         },
     },
+    PointDifference: {
+        type: 'struct',
+        fields: {
+            dx: 'number',
+            dy: 'number',
+        },
+    },
     ScreenPoint: {
         type: 'struct',
         fields: {
@@ -186,9 +193,8 @@ export default typeDefs = {
     DragData: {
         type: 'struct',
         fields: {
-            exprId: 'number',
-            offsetX: 'number',
-            offsetY: 'number',
+            offset: 'PointDifference',
+            screenExpr: 'ScreenExpression',
         },
     },
 };
