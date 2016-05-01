@@ -38,8 +38,9 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
         reset: () => initialState,
         addExpression: ({screenExpr}) => addExpression(state, screenExpr),
         moveExpression: ({exprId, pos}) => {
-            return modifyExpression(state, exprId,
-                (screenExpr) => screenExpr.withPos(pos));
+            return state.mapScreenExpressions((exprs) =>
+                transformAtKey(exprs, exprId, (screenExpr) =>
+                    screenExpr.withPos(pos)))
         },
         decomposeExpression: ({path: {exprId, pathSteps}, targetPos}) => {
             const existingScreenExpr = exprWithId(exprId);
@@ -57,9 +58,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const resultExpr = insertAsArg(
                 targetScreenExpr.expr, argScreenExpr.expr, pathSteps);
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            const newScreenExpressions = state.screenExpressions
-                .remove(argExprId).set(exprId, newScreenExpr);
-            return state.withScreenExpressions(newScreenExpressions);
+            return state.mapScreenExpressions((exprs) =>
+                exprs.remove(argExprId).set(exprId, newScreenExpr));
         },
         insertAsBody: ({bodyExprId, path: {exprId, pathSteps}}) => {
             const bodyScreenExpr = exprWithId(bodyExprId);
@@ -89,8 +89,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 console.log("Touch didn't match anything.");
                 return state;
             }
-            return state.withActiveDrags(state.activeDrags.set(fingerId, exprId)
-            );
+            return state.withActiveDrags(state.activeDrags.set(fingerId, exprId));
         },
         fingerMove: ({fingerId, screenPos}) => {
             const dragData = state.activeDrags.get(fingerId);
@@ -124,14 +123,21 @@ const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State =>
 
 type Transform<T> = (t: T) => T;
 
-const modifyExpression = (state: t.State, exprId: number,
-                          transform: Transform<ScreenExpression>): t.State => {
-    let {screenExpressions} = state;
-    const screenExpr = screenExpressions.get(exprId);
-    if (screenExpr) {
-        screenExpressions = screenExpressions.set(exprId, transform(screenExpr));
+const modifyExpression = (state: State, exprId: number,
+                          transform: Transform<ScreenExpression>): State => {
+    return state.mapScreenExpressions((exprs) =>
+        transformAtKey(exprs, exprId, transform)
+    );
+};
+
+const transformAtKey = function<K, V>(
+        map: Immutable.Map<K, V>, key: K, transform: Transform<V>):
+        Immutable.Map<K, V> {
+    const value = map.get(key);
+    if (value) {
+        return map.set(key, transform(value));
     }
-    return state.withScreenExpressions(screenExpressions);
+    return map;
 };
 
 type DecomposeResult = {
@@ -198,23 +204,19 @@ const transformAtPath = (
     if (path.size === 0) {
         return transform(expr);
     }
-    const childRef = getChildRef(expr, path.get(0));
-    const newChild = transformAtPath(childRef.expr, path.slice(1), transform);
-    return childRef.replaceWith(newChild);
+    return mapChild(expr, path.get(0), (child) => {
+        return transformAtPath(child, path.slice(1), transform);
+    });
 };
 
-type ChildRef = {
-    expr: UserExpression,
-    replaceWith: (newChild: UserExpression) => UserExpression
-};
-
-const getChildRef = (expr: UserExpression, step: PathComponent): ChildRef => {
+const mapChild = (expr: UserExpression, step: PathComponent,
+                  mapper: Transform<UserExpression>): UserExpression => {
     if (step === 'func' && expr.type === 'userFuncCall') {
-        return {expr: expr.func, replaceWith: expr.withFunc.bind(expr)};
+        return expr.mapFunc(mapper);
     } else if (step === 'arg' && expr.type === 'userFuncCall') {
-        return {expr: expr.arg, replaceWith: expr.withArg.bind(expr)};
+        return expr.mapArg(mapper);
     } else if (step === 'body' && expr.type === 'userLambda' && expr.body) {
-        return {expr: expr.body, replaceWith: expr.withBody.bind(expr)};
+        return expr.withBody(mapper(expr.body));
     }
     throw new Error('Unexpected step: ' + JSON.stringify(step));
 };

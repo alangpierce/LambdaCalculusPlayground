@@ -17,6 +17,15 @@ class StateImpl extends Immutable.Record({
     withActiveDrags(activeDrags) {
         return this.set('activeDrags', activeDrags)
     }
+    mapScreenExpressions(mapper) {
+        return this.set('screenExpressions', mapper(this.screenExpressions))
+    }
+    mapNextExprId(mapper) {
+        return this.set('nextExprId', mapper(this.nextExprId))
+    }
+    mapActiveDrags(mapper) {
+        return this.set('activeDrags', mapper(this.activeDrags))
+    }
 }
 
 export type State = {
@@ -26,6 +35,9 @@ export type State = {
     withScreenExpressions: (screenExpressions: Immutable.Map<number, ScreenExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
     withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
+    mapScreenExpressions: (mapper: (screenExpressions: Immutable.Map<number, ScreenExpression>) => Immutable.Map<number, ScreenExpression>) => State,
+    mapNextExprId: (mapper: (nextExprId: number) => number) => State,
+    mapActiveDrags: (mapper: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
     toJS: () => any,
 };
 
@@ -199,6 +211,12 @@ class LambdaImpl extends Immutable.Record({
     withBody(body) {
         return this.set('body', body)
     }
+    mapVarName(mapper) {
+        return this.set('varName', mapper(this.varName))
+    }
+    mapBody(mapper) {
+        return this.set('body', mapper(this.body))
+    }
 }
 
 export type Lambda = {
@@ -207,6 +225,8 @@ export type Lambda = {
     body: Expression,
     withVarName: (varName: string) => Lambda,
     withBody: (body: Expression) => Lambda,
+    mapVarName: (mapper: (varName: string) => string) => Lambda,
+    mapBody: (mapper: (body: Expression) => Expression) => Lambda,
     toJS: () => any,
 };
 
@@ -224,6 +244,12 @@ class FuncCallImpl extends Immutable.Record({
     withArg(arg) {
         return this.set('arg', arg)
     }
+    mapFunc(mapper) {
+        return this.set('func', mapper(this.func))
+    }
+    mapArg(mapper) {
+        return this.set('arg', mapper(this.arg))
+    }
 }
 
 export type FuncCall = {
@@ -232,6 +258,8 @@ export type FuncCall = {
     arg: Expression,
     withFunc: (func: Expression) => FuncCall,
     withArg: (arg: Expression) => FuncCall,
+    mapFunc: (mapper: (func: Expression) => Expression) => FuncCall,
+    mapArg: (mapper: (arg: Expression) => Expression) => FuncCall,
     toJS: () => any,
 };
 
@@ -246,12 +274,16 @@ class VariableImpl extends Immutable.Record({
     withVarName(varName) {
         return this.set('varName', varName)
     }
+    mapVarName(mapper) {
+        return this.set('varName', mapper(this.varName))
+    }
 }
 
 export type Variable = {
     type: 'variable',
     varName: string,
     withVarName: (varName: string) => Variable,
+    mapVarName: (mapper: (varName: string) => string) => Variable,
     toJS: () => any,
 };
 
@@ -300,6 +332,15 @@ class EvalLambdaImpl extends Immutable.Record({
     withBody(body) {
         return this.set('body', body)
     }
+    mapVarMarker(mapper) {
+        return this.set('varMarker', mapper(this.varMarker))
+    }
+    mapOriginalVarName(mapper) {
+        return this.set('originalVarName', mapper(this.originalVarName))
+    }
+    mapBody(mapper) {
+        return this.set('body', mapper(this.body))
+    }
 }
 
 export type EvalLambda = {
@@ -310,6 +351,9 @@ export type EvalLambda = {
     withVarMarker: (varMarker: VarMarker) => EvalLambda,
     withOriginalVarName: (originalVarName: string) => EvalLambda,
     withBody: (body: EvalExpression) => EvalLambda,
+    mapVarMarker: (mapper: (varMarker: VarMarker) => VarMarker) => EvalLambda,
+    mapOriginalVarName: (mapper: (originalVarName: string) => string) => EvalLambda,
+    mapBody: (mapper: (body: EvalExpression) => EvalExpression) => EvalLambda,
     toJS: () => any,
 };
 
@@ -328,6 +372,12 @@ class EvalFuncCallImpl extends Immutable.Record({
     withArg(arg) {
         return this.set('arg', arg)
     }
+    mapFunc(mapper) {
+        return this.set('func', mapper(this.func))
+    }
+    mapArg(mapper) {
+        return this.set('arg', mapper(this.arg))
+    }
 }
 
 export type EvalFuncCall = {
@@ -336,6 +386,8 @@ export type EvalFuncCall = {
     arg: EvalExpression,
     withFunc: (func: EvalExpression) => EvalFuncCall,
     withArg: (arg: EvalExpression) => EvalFuncCall,
+    mapFunc: (mapper: (func: EvalExpression) => EvalExpression) => EvalFuncCall,
+    mapArg: (mapper: (arg: EvalExpression) => EvalExpression) => EvalFuncCall,
     toJS: () => any,
 };
 
@@ -350,12 +402,16 @@ class EvalBoundVariableImpl extends Immutable.Record({
     withSlot(slot) {
         return this.set('slot', slot)
     }
+    mapSlot(mapper) {
+        return this.set('slot', mapper(this.slot))
+    }
 }
 
 export type EvalBoundVariable = {
     type: 'evalBoundVariable',
     slot: Slot,
     withSlot: (slot: Slot) => EvalBoundVariable,
+    mapSlot: (mapper: (slot: Slot) => Slot) => EvalBoundVariable,
     toJS: () => any,
 };
 
@@ -372,6 +428,12 @@ class EvalUnboundVariableImpl extends Immutable.Record({
     withOriginalVarName(originalVarName) {
         return this.set('originalVarName', originalVarName)
     }
+    mapVarMarker(mapper) {
+        return this.set('varMarker', mapper(this.varMarker))
+    }
+    mapOriginalVarName(mapper) {
+        return this.set('originalVarName', mapper(this.originalVarName))
+    }
 }
 
 export type EvalUnboundVariable = {
@@ -380,6 +442,8 @@ export type EvalUnboundVariable = {
     originalVarName: string,
     withVarMarker: (varMarker: VarMarker) => EvalUnboundVariable,
     withOriginalVarName: (originalVarName: string) => EvalUnboundVariable,
+    mapVarMarker: (mapper: (varMarker: VarMarker) => VarMarker) => EvalUnboundVariable,
+    mapOriginalVarName: (mapper: (originalVarName: string) => string) => EvalUnboundVariable,
     toJS: () => any,
 };
 
@@ -394,12 +458,16 @@ class EvalFreeVariableImpl extends Immutable.Record({
     withVarName(varName) {
         return this.set('varName', varName)
     }
+    mapVarName(mapper) {
+        return this.set('varName', mapper(this.varName))
+    }
 }
 
 export type EvalFreeVariable = {
     type: 'evalFreeVariable',
     varName: string,
     withVarName: (varName: string) => EvalFreeVariable,
+    mapVarName: (mapper: (varName: string) => string) => EvalFreeVariable,
     toJS: () => any,
 };
 
@@ -443,6 +511,12 @@ class UserLambdaImpl extends Immutable.Record({
     withBody(body) {
         return this.set('body', body)
     }
+    mapVarName(mapper) {
+        return this.set('varName', mapper(this.varName))
+    }
+    mapBody(mapper) {
+        return this.set('body', mapper(this.body))
+    }
 }
 
 export type UserLambda = {
@@ -451,6 +525,8 @@ export type UserLambda = {
     body: ?UserExpression,
     withVarName: (varName: string) => UserLambda,
     withBody: (body: ?UserExpression) => UserLambda,
+    mapVarName: (mapper: (varName: string) => string) => UserLambda,
+    mapBody: (mapper: (body: ?UserExpression) => ?UserExpression) => UserLambda,
     toJS: () => any,
 };
 
@@ -468,6 +544,12 @@ class UserFuncCallImpl extends Immutable.Record({
     withArg(arg) {
         return this.set('arg', arg)
     }
+    mapFunc(mapper) {
+        return this.set('func', mapper(this.func))
+    }
+    mapArg(mapper) {
+        return this.set('arg', mapper(this.arg))
+    }
 }
 
 export type UserFuncCall = {
@@ -476,6 +558,8 @@ export type UserFuncCall = {
     arg: UserExpression,
     withFunc: (func: UserExpression) => UserFuncCall,
     withArg: (arg: UserExpression) => UserFuncCall,
+    mapFunc: (mapper: (func: UserExpression) => UserExpression) => UserFuncCall,
+    mapArg: (mapper: (arg: UserExpression) => UserExpression) => UserFuncCall,
     toJS: () => any,
 };
 
@@ -490,12 +574,16 @@ class UserVariableImpl extends Immutable.Record({
     withVarName(varName) {
         return this.set('varName', varName)
     }
+    mapVarName(mapper) {
+        return this.set('varName', mapper(this.varName))
+    }
 }
 
 export type UserVariable = {
     type: 'userVariable',
     varName: string,
     withVarName: (varName: string) => UserVariable,
+    mapVarName: (mapper: (varName: string) => string) => UserVariable,
     toJS: () => any,
 };
 
@@ -509,12 +597,16 @@ class UserReferenceImpl extends Immutable.Record({
     withDefName(defName) {
         return this.set('defName', defName)
     }
+    mapDefName(mapper) {
+        return this.set('defName', mapper(this.defName))
+    }
 }
 
 export type UserReference = {
     type: 'userReference',
     defName: string,
     withDefName: (defName: string) => UserReference,
+    mapDefName: (mapper: (defName: string) => string) => UserReference,
     toJS: () => any,
 };
 
@@ -555,6 +647,12 @@ class ScreenExpressionImpl extends Immutable.Record({
     withPos(pos) {
         return this.set('pos', pos)
     }
+    mapExpr(mapper) {
+        return this.set('expr', mapper(this.expr))
+    }
+    mapPos(mapper) {
+        return this.set('pos', mapper(this.pos))
+    }
 }
 
 export type ScreenExpression = {
@@ -562,6 +660,8 @@ export type ScreenExpression = {
     pos: CanvasPoint,
     withExpr: (expr: UserExpression) => ScreenExpression,
     withPos: (pos: CanvasPoint) => ScreenExpression,
+    mapExpr: (mapper: (expr: UserExpression) => UserExpression) => ScreenExpression,
+    mapPos: (mapper: (pos: CanvasPoint) => CanvasPoint) => ScreenExpression,
     toJS: () => any,
 };
 
@@ -578,6 +678,12 @@ class CanvasPointImpl extends Immutable.Record({
     withCanvasY(canvasY) {
         return this.set('canvasY', canvasY)
     }
+    mapCanvasX(mapper) {
+        return this.set('canvasX', mapper(this.canvasX))
+    }
+    mapCanvasY(mapper) {
+        return this.set('canvasY', mapper(this.canvasY))
+    }
 }
 
 export type CanvasPoint = {
@@ -585,6 +691,8 @@ export type CanvasPoint = {
     canvasY: number,
     withCanvasX: (canvasX: number) => CanvasPoint,
     withCanvasY: (canvasY: number) => CanvasPoint,
+    mapCanvasX: (mapper: (canvasX: number) => number) => CanvasPoint,
+    mapCanvasY: (mapper: (canvasY: number) => number) => CanvasPoint,
     toJS: () => any,
 };
 
@@ -601,6 +709,12 @@ class ScreenPointImpl extends Immutable.Record({
     withScreenY(screenY) {
         return this.set('screenY', screenY)
     }
+    mapScreenX(mapper) {
+        return this.set('screenX', mapper(this.screenX))
+    }
+    mapScreenY(mapper) {
+        return this.set('screenY', mapper(this.screenY))
+    }
 }
 
 export type ScreenPoint = {
@@ -608,6 +722,8 @@ export type ScreenPoint = {
     screenY: number,
     withScreenX: (screenX: number) => ScreenPoint,
     withScreenY: (screenY: number) => ScreenPoint,
+    mapScreenX: (mapper: (screenX: number) => number) => ScreenPoint,
+    mapScreenY: (mapper: (screenY: number) => number) => ScreenPoint,
     toJS: () => any,
 };
 
@@ -624,6 +740,12 @@ class ScreenRectImpl extends Immutable.Record({
     withBottomRight(bottomRight) {
         return this.set('bottomRight', bottomRight)
     }
+    mapTopLeft(mapper) {
+        return this.set('topLeft', mapper(this.topLeft))
+    }
+    mapBottomRight(mapper) {
+        return this.set('bottomRight', mapper(this.bottomRight))
+    }
 }
 
 export type ScreenRect = {
@@ -631,6 +753,8 @@ export type ScreenRect = {
     bottomRight: ScreenPoint,
     withTopLeft: (topLeft: ScreenPoint) => ScreenRect,
     withBottomRight: (bottomRight: ScreenPoint) => ScreenRect,
+    mapTopLeft: (mapper: (topLeft: ScreenPoint) => ScreenPoint) => ScreenRect,
+    mapBottomRight: (mapper: (bottomRight: ScreenPoint) => ScreenPoint) => ScreenRect,
     toJS: () => any,
 };
 
@@ -649,6 +773,12 @@ class ExprPathImpl extends Immutable.Record({
     withPathSteps(pathSteps) {
         return this.set('pathSteps', pathSteps)
     }
+    mapExprId(mapper) {
+        return this.set('exprId', mapper(this.exprId))
+    }
+    mapPathSteps(mapper) {
+        return this.set('pathSteps', mapper(this.pathSteps))
+    }
 }
 
 export type ExprPath = {
@@ -656,6 +786,8 @@ export type ExprPath = {
     pathSteps: Immutable.List<PathComponent>,
     withExprId: (exprId: number) => ExprPath,
     withPathSteps: (pathSteps: Immutable.List<PathComponent>) => ExprPath,
+    mapExprId: (mapper: (exprId: number) => number) => ExprPath,
+    mapPathSteps: (mapper: (pathSteps: Immutable.List<PathComponent>) => Immutable.List<PathComponent>) => ExprPath,
     toJS: () => any,
 };
 
@@ -675,6 +807,15 @@ class DragDataImpl extends Immutable.Record({
     withOffsetY(offsetY) {
         return this.set('offsetY', offsetY)
     }
+    mapExprId(mapper) {
+        return this.set('exprId', mapper(this.exprId))
+    }
+    mapOffsetX(mapper) {
+        return this.set('offsetX', mapper(this.offsetX))
+    }
+    mapOffsetY(mapper) {
+        return this.set('offsetY', mapper(this.offsetY))
+    }
 }
 
 export type DragData = {
@@ -684,6 +825,9 @@ export type DragData = {
     withExprId: (exprId: number) => DragData,
     withOffsetX: (offsetX: number) => DragData,
     withOffsetY: (offsetY: number) => DragData,
+    mapExprId: (mapper: (exprId: number) => number) => DragData,
+    mapOffsetX: (mapper: (offsetX: number) => number) => DragData,
+    mapOffsetY: (mapper: (offsetY: number) => number) => DragData,
     toJS: () => any,
 };
 

@@ -57,11 +57,17 @@ ${joinMap(fields, '', (f, t) => `\
         return this.set('${f}', ${f})
     }
 `)}\
+${joinMap(fields, '', (f, t) => `\
+    map${upperName(f)}(mapper) {
+        return this.set('${f}', mapper(this.${f}))
+    }
+`)}\
 }
 
 export type ${typeName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
 ${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${typeName},`)}\
+${genLines((f, t) => `map${upperName(f)}: (mapper: (${f}: ${t}) => ${t}) => ${typeName},`)}\
     toJS: () => any,
 };
 
@@ -122,6 +128,11 @@ ${joinMap(fields, '', (f, t) => `\
         return this.set('${f}', ${f})
     }
 `)}\
+${joinMap(fields, '', (f, t) => `\
+    map${upperName(f)}(mapper) {
+        return this.set('${f}', mapper(this.${f}))
+    }
+`)}\
 }
 
 `}\
@@ -130,6 +141,7 @@ export type ${caseName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
 ${isObject ? '' : `\
 ${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${caseName},`)}\
+${genLines((f, t) => `map${upperName(f)}: (mapper: (${f}: ${t}) => ${t}) => ${caseName},`)}\
     toJS: () => any,
 `}\
 };
