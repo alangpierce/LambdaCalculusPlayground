@@ -38,7 +38,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
         reset: () => initialState,
         addExpression: ({screenExpr}) => addExpression(state, screenExpr),
         moveExpression: ({exprId, pos}) => {
-            return state.mapScreenExpressions((exprs) =>
+            return state.updateScreenExpressions((exprs) =>
                 exprs.update(exprId, (screenExpr) =>
                     screenExpr.withPos(pos)));
         },
@@ -58,7 +58,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const resultExpr = insertAsArg(
                 targetScreenExpr.expr, argScreenExpr.expr, pathSteps);
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            return state.mapScreenExpressions((exprs) =>
+            return state.updateScreenExpressions((exprs) =>
                 exprs.remove(argExprId).set(exprId, newScreenExpr));
         },
         insertAsBody: ({bodyExprId, path: {exprId, pathSteps}}) => {
@@ -67,7 +67,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const resultExpr = insertAsBody(
                 targetScreenExpr.expr, bodyScreenExpr.expr, pathSteps);
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            return state.mapScreenExpressions((exprs) =>
+            return state.updateScreenExpressions((exprs) =>
                 exprs.remove(bodyExprId).set(exprId, newScreenExpr));
         },
         evaluateExpression: ({exprId, targetPos}) => {
@@ -88,7 +88,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 console.log("Touch didn't match anything.");
                 return state;
             }
-            return state.mapActiveDrags((drags) => drags.set(fingerId, exprId));
+            return state.updateActiveDrags((drags) => drags.set(fingerId, exprId));
         },
         fingerMove: ({fingerId, screenPos}) => {
             const dragData = state.activeDrags.get(fingerId);
@@ -114,7 +114,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
 const addExpression = (state: State, screenExpr: ScreenExpression): State => {
     const nextExprId = state.nextExprId;
     return state
-        .mapScreenExpressions((exprs) => exprs.set(nextExprId, screenExpr))
+        .updateScreenExpressions((exprs) => exprs.set(nextExprId, screenExpr))
         .withNextExprId(nextExprId + 1);
 };
 
@@ -122,7 +122,7 @@ type Transform<T> = (t: T) => T;
 
 const modifyExpression = (state: State, exprId: number,
                           transform: Transform<ScreenExpression>): State => {
-    return state.mapScreenExpressions((exprs) =>
+    return state.updateScreenExpressions((exprs) =>
         exprs.update(exprId, transform)
     );
 };
@@ -191,19 +191,19 @@ const transformAtPath = (
     if (path.size === 0) {
         return transform(expr);
     }
-    return mapChild(expr, path.get(0), (child) => {
+    return updateChild(expr, path.get(0), (child) => {
         return transformAtPath(child, path.slice(1), transform);
     });
 };
 
-const mapChild = (expr: UserExpression, step: PathComponent,
-                  mapper: Transform<UserExpression>): UserExpression => {
+const updateChild = (expr: UserExpression, step: PathComponent,
+                     updater: Transform<UserExpression>): UserExpression => {
     if (step === 'func' && expr.type === 'userFuncCall') {
-        return expr.mapFunc(mapper);
+        return expr.updateFunc(updater);
     } else if (step === 'arg' && expr.type === 'userFuncCall') {
-        return expr.mapArg(mapper);
+        return expr.updateArg(updater);
     } else if (step === 'body' && expr.type === 'userLambda' && expr.body) {
-        return expr.withBody(mapper(expr.body));
+        return expr.withBody(updater(expr.body));
     }
     throw new Error('Unexpected step: ' + JSON.stringify(step));
 };
