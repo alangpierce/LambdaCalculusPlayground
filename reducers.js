@@ -39,8 +39,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
         addExpression: ({screenExpr}) => addExpression(state, screenExpr),
         moveExpression: ({exprId, pos}) => {
             return state.mapScreenExpressions((exprs) =>
-                transformAtKey(exprs, exprId, (screenExpr) =>
-                    screenExpr.withPos(pos)))
+                exprs.update(exprId, (screenExpr) =>
+                    screenExpr.withPos(pos)));
         },
         decomposeExpression: ({path: {exprId, pathSteps}, targetPos}) => {
             const existingScreenExpr = exprWithId(exprId);
@@ -67,9 +67,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const resultExpr = insertAsBody(
                 targetScreenExpr.expr, bodyScreenExpr.expr, pathSteps);
             const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            const newScreenExpressions = state.screenExpressions
-                .remove(bodyExprId).set(exprId, newScreenExpr);
-            return state.withScreenExpressions(newScreenExpressions);
+            return state.mapScreenExpressions((exprs) =>
+                exprs.remove(bodyExprId).set(exprId, newScreenExpr));
         },
         evaluateExpression: ({exprId, targetPos}) => {
             const existingScreenExpr = exprWithId(exprId);
@@ -89,7 +88,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 console.log("Touch didn't match anything.");
                 return state;
             }
-            return state.withActiveDrags(state.activeDrags.set(fingerId, exprId));
+            return state.mapActiveDrags((drags) => drags.set(fingerId, exprId));
         },
         fingerMove: ({fingerId, screenPos}) => {
             const dragData = state.activeDrags.get(fingerId);
@@ -112,13 +111,11 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
     });
 };
 
-const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State => {
+const addExpression = (state: State, screenExpr: ScreenExpression): State => {
     const nextExprId = state.nextExprId;
-    return t.newState(
-        state.screenExpressions.set(nextExprId, screenExpr),
-        nextExprId + 1,
-        state.activeDrags,
-    );
+    return state
+        .mapScreenExpressions((exprs) => exprs.set(nextExprId, screenExpr))
+        .withNextExprId(nextExprId + 1);
 };
 
 type Transform<T> = (t: T) => T;
@@ -126,18 +123,8 @@ type Transform<T> = (t: T) => T;
 const modifyExpression = (state: State, exprId: number,
                           transform: Transform<ScreenExpression>): State => {
     return state.mapScreenExpressions((exprs) =>
-        transformAtKey(exprs, exprId, transform)
+        exprs.update(exprId, transform)
     );
-};
-
-const transformAtKey = function<K, V>(
-        map: Immutable.Map<K, V>, key: K, transform: Transform<V>):
-        Immutable.Map<K, V> {
-    const value = map.get(key);
-    if (value) {
-        return map.set(key, transform(value));
-    }
-    return map;
 };
 
 type DecomposeResult = {
