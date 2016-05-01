@@ -45,9 +45,9 @@ class TopLevelExpression
     render() {
         const {exprId, expr, pos: {canvasX, canvasY}} = this.props;
         return <View style={{
-            left: canvasX,
-            top: canvasY,
             position: 'absolute',
+            translateX: canvasX,
+            translateY: canvasY,
         }}>
             <Expression expr={expr}
                         path={t.newExprPath(exprId, new Immutable.List())}/>
