@@ -89,22 +89,25 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 console.log("Touch didn't match anything.");
                 return state;
             }
-            return state.withTouchActions(
-                state.touchActions.set(fingerId, exprId)
+            return state.withActiveDrags(state.activeDrags.set(fingerId, exprId)
             );
         },
         fingerMove: ({fingerId, screenPos}) => {
-            const exprId = state.touchActions.get(fingerId);
-            const screenExpr = state.screenExpressions.get(exprId);
+            const dragData = state.activeDrags.get(fingerId);
+            if (!dragData) {
+                return state;
+            }
+            const {exprId, offsetX, offsetY} = dragData;
             const {screenX, screenY} = screenPos;
             return modifyExpression(
                 state, exprId, (expr) =>
-                    expr.withPos(t.newCanvasPoint(screenX, screenY)));
+                    expr.withPos(t.newCanvasPoint(
+                        screenX - offsetX, screenY - offsetY)));
         },
         fingerUp: ({fingerId, screenPos}) => {
             const exprId = resolveTouch(state, screenPos);
-            return state.withTouchActions(
-                state.touchActions.remove(fingerId)
+            return state.withActiveDrags(
+                state.activeDrags.remove(fingerId)
             );
         },
     });
@@ -115,7 +118,7 @@ const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State =>
     return t.newState(
         state.screenExpressions.set(nextExprId, screenExpr),
         nextExprId + 1,
-        state.touchActions,
+        state.activeDrags,
     );
 };
 

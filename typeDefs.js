@@ -8,7 +8,7 @@ export default typeDefs = {
             screenExpressions: 'Immutable.Map<number, ScreenExpression>',
             nextExprId: 'number',
             // Map from finger ID to expression ID.
-            touchActions: 'Immutable.Map<number, number>',
+            activeDrags: 'Immutable.Map<number, DragData>',
         },
     },
     Action: {
@@ -182,5 +182,13 @@ export default typeDefs = {
             exprId: 'number',
             pathSteps: 'Immutable.List<PathComponent>',
         }
-    }
+    },
+    DragData: {
+        type: 'struct',
+        fields: {
+            exprId: 'number',
+            offsetX: 'number',
+            offsetY: 'number',
+        },
+    },
 };

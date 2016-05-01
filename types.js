@@ -7,32 +7,32 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        screenExpressions: undefined, nextExprId: undefined, touchActions: undefined}) {
+        screenExpressions: undefined, nextExprId: undefined, activeDrags: undefined}) {
     withScreenExpressions(screenExpressions) {
         return this.set('screenExpressions', screenExpressions)
     }
     withNextExprId(nextExprId) {
         return this.set('nextExprId', nextExprId)
     }
-    withTouchActions(touchActions) {
-        return this.set('touchActions', touchActions)
+    withActiveDrags(activeDrags) {
+        return this.set('activeDrags', activeDrags)
     }
 }
 
 export type State = {
     screenExpressions: Immutable.Map<number, ScreenExpression>,
     nextExprId: number,
-    touchActions: Immutable.Map<number, number>,
+    activeDrags: Immutable.Map<number, DragData>,
     withScreenExpressions: (screenExpressions: Immutable.Map<number, ScreenExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
-    withTouchActions: (touchActions: Immutable.Map<number, number>) => State,
+    withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
     toJS: () => any,
 };
 
-export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number, touchActions: Immutable.Map<number, number>): State => (new StateImpl({
+export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>): State => (new StateImpl({
     screenExpressions,
     nextExprId,
-    touchActions,
+    activeDrags,
 }));
 
 export type Reset = {
@@ -662,5 +662,34 @@ export type ExprPath = {
 export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
     exprId,
     pathSteps,
+}));
+
+class DragDataImpl extends Immutable.Record({
+        exprId: undefined, offsetX: undefined, offsetY: undefined}) {
+    withExprId(exprId) {
+        return this.set('exprId', exprId)
+    }
+    withOffsetX(offsetX) {
+        return this.set('offsetX', offsetX)
+    }
+    withOffsetY(offsetY) {
+        return this.set('offsetY', offsetY)
+    }
+}
+
+export type DragData = {
+    exprId: number,
+    offsetX: number,
+    offsetY: number,
+    withExprId: (exprId: number) => DragData,
+    withOffsetX: (offsetX: number) => DragData,
+    withOffsetY: (offsetY: number) => DragData,
+    toJS: () => any,
+};
+
+export const newDragData = (exprId: number, offsetX: number, offsetY: number): DragData => (new DragDataImpl({
+    exprId,
+    offsetX,
+    offsetY,
 }));
 

@@ -60,6 +60,8 @@ type PlaygroundCanvasProps = {
 };
 
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
+    _responderMethods: any;
+
     componentWillMount() {
         DeviceEventEmitter.addListener('createLambda', (varName) => {
             store.dispatch(t.newAddExpression(
@@ -68,6 +70,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                     newCanvasPoint(100, 100))
             ));
         });
+        this._responderMethods = this.getResponderMethods();
     }
 
     getResponderMethods() {
@@ -117,7 +120,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                     key={exprId}
                 />
             });
-        return <View {...this.getResponderMethods()} style={{
+        return <View {...this._responderMethods} style={{
             backgroundColor: 'gray',
             flex: 1,
         }}>
