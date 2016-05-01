@@ -107,7 +107,43 @@ export const newEvaluateExpression = (exprId: number, targetPos: CanvasPoint): E
     targetPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | InsertAsArg | InsertAsBody | EvaluateExpression;
+export type FingerDown = {
+    type: 'fingerDown',
+    fingerId: number,
+    pos: ScreenPoint,
+};
+
+export const newFingerDown = (fingerId: number, pos: ScreenPoint): FingerDown => ({
+    type: 'fingerDown',
+    fingerId,
+    pos,
+});
+
+export type FingerMove = {
+    type: 'fingerMove',
+    fingerId: number,
+    pos: ScreenPoint,
+};
+
+export const newFingerMove = (fingerId: number, pos: ScreenPoint): FingerMove => ({
+    type: 'fingerMove',
+    fingerId,
+    pos,
+});
+
+export type FingerUp = {
+    type: 'fingerUp',
+    fingerId: number,
+    pos: ScreenPoint,
+};
+
+export const newFingerUp = (fingerId: number, pos: ScreenPoint): FingerUp => ({
+    type: 'fingerUp',
+    fingerId,
+    pos,
+});
+
+export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | InsertAsArg | InsertAsBody | EvaluateExpression | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
@@ -117,6 +153,9 @@ export type ActionVisitor<T> = {
     insertAsArg: (insertAsArg: InsertAsArg) => T,
     insertAsBody: (insertAsBody: InsertAsBody) => T,
     evaluateExpression: (evaluateExpression: EvaluateExpression) => T,
+    fingerDown: (fingerDown: FingerDown) => T,
+    fingerMove: (fingerMove: FingerMove) => T,
+    fingerUp: (fingerUp: FingerUp) => T,
 }
 
 export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>): T {
@@ -135,6 +174,12 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.insertAsBody(action);
         case 'evaluateExpression':
             return visitor.evaluateExpression(action);
+        case 'fingerDown':
+            return visitor.fingerDown(action);
+        case 'fingerMove':
+            return visitor.fingerMove(action);
+        case 'fingerUp':
+            return visitor.fingerUp(action);
         default:
             throw new Error('Unexpected type: ' + action.type);
     }

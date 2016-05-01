@@ -55,7 +55,19 @@ export default typeDefs = {
             EvaluateExpression: {
                 exprId: 'number',
                 targetPos: 'CanvasPoint',
-            }
+            },
+            FingerDown: {
+                fingerId: 'number',
+                pos: 'ScreenPoint',
+            },
+            FingerMove: {
+                fingerId: 'number',
+                pos: 'ScreenPoint',
+            },
+            FingerUp: {
+                fingerId: 'number',
+                pos: 'ScreenPoint',
+            },
         },
     },
     Expression: {

@@ -32,6 +32,7 @@ import type {
     CanvasPoint,
     UserExpression,
     ScreenExpression,
+    ScreenPoint,
 } from './types'
 
 type TopLevelExpressionPropTypes = {
@@ -70,12 +71,38 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     getResponderMethods() {
+        let lastTouches: Immutable.Map<number, ScreenPoint> =
+            new Immutable.Map();
+        const processEvent = ({nativeEvent: {touches}}) => {
+            const newTouches = new Immutable.Map(touches.map((touch) =>
+                [touch.identifier, t.newScreenPoint(touch.pageX, touch.pageY)]
+            ));
+
+            const fingers = Immutable.Set(lastTouches.keys())
+                .union(newTouches.keys());
+            fingers.forEach((fingerId) => {
+                const beforePoint = lastTouches.get(fingerId);
+                const afterPoint = newTouches.get(fingerId);
+                if (beforePoint && afterPoint) {
+                    store.dispatch(t.newFingerDown(fingerId, afterPoint));
+                } else if (afterPoint) {
+                    store.dispatch(t.newFingerMove(fingerId, afterPoint));
+                } else if (beforePoint) {
+                    store.dispatch(t.newFingerUp(fingerId, beforePoint));
+                }
+            });
+
+            lastTouches = newTouches;
+        };
+
+        // The different callbacks don't let us distinguish individual fingers;
+        // we need to look at the event data directly.
         return {
             onStartShouldSetResponder: (event) => true,
-            onResponderMove: ({nativeEvent: {pageX, pageY}}) => {
-                store.dispatch(t.newMoveExpression(
-                    0, t.newCanvasPoint(pageX, pageY)));
-            }
+            onResponderGrant: processEvent,
+            onResponderMove: processEvent,
+            onResponderRelease: processEvent,
+            onResponderTerminate: processEvent,
         }
     }
 

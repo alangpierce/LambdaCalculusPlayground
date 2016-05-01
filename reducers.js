@@ -81,6 +81,15 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             return addExpression(
                 state, t.newScreenExpression(evaluatedExpr, targetPos));
         },
+        fingerDown: () => {
+            return state;
+        },
+        fingerMove: () => {
+            return state;
+        },
+        fingerUp: () => {
+            return state;
+        },
     });
 };
 
