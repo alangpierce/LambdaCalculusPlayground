@@ -7,6 +7,8 @@ export default typeDefs = {
         fields: {
             screenExpressions: 'Immutable.Map<number, ScreenExpression>',
             nextExprId: 'number',
+            // Map from finger ID to expression ID.
+            touchActions: 'Immutable.Map<number, number>',
         },
     },
     Action: {
@@ -58,15 +60,15 @@ export default typeDefs = {
             },
             FingerDown: {
                 fingerId: 'number',
-                pos: 'ScreenPoint',
+                screenPos: 'ScreenPoint',
             },
             FingerMove: {
                 fingerId: 'number',
-                pos: 'ScreenPoint',
+                screenPos: 'ScreenPoint',
             },
             FingerUp: {
                 fingerId: 'number',
-                pos: 'ScreenPoint',
+                screenPos: 'ScreenPoint',
             },
         },
     },

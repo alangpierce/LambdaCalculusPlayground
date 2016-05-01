@@ -13,8 +13,10 @@ import type {
     State
 } from './types'
 import * as t from './types'
+import {resolveTouch} from './HitTester'
 
-const initialState: State = t.newState(new Immutable.Map(), 0);
+const initialState: State = t.newState(
+    new Immutable.Map(), 0, new Immutable.Map());
 
 // TODO: Consider adding a top-level try/catch.
 const playgroundApp = (state: State = initialState, action: Action): State => {
@@ -81,14 +83,29 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             return addExpression(
                 state, t.newScreenExpression(evaluatedExpr, targetPos));
         },
-        fingerDown: () => {
-            return state;
+        fingerDown: ({fingerId, screenPos}) => {
+            const exprId = resolveTouch(state, screenPos);
+            if (exprId === null || exprId === undefined) {
+                console.log("Touch didn't match anything.");
+                return state;
+            }
+            return state.withTouchActions(
+                state.touchActions.set(fingerId, exprId)
+            );
         },
-        fingerMove: () => {
-            return state;
+        fingerMove: ({fingerId, screenPos}) => {
+            const exprId = state.touchActions.get(fingerId);
+            const screenExpr = state.screenExpressions.get(exprId);
+            const {screenX, screenY} = screenPos;
+            return modifyExpression(
+                state, exprId, (expr) =>
+                    expr.withPos(t.newCanvasPoint(screenX, screenY)));
         },
-        fingerUp: () => {
-            return state;
+        fingerUp: ({fingerId, screenPos}) => {
+            const exprId = resolveTouch(state, screenPos);
+            return state.withTouchActions(
+                state.touchActions.remove(fingerId)
+            );
         },
     });
 };
@@ -96,7 +113,9 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
 const addExpression = (state: t.State, screenExpr: ScreenExpression): t.State => {
     const nextExprId = state.nextExprId;
     return t.newState(
-        state.screenExpressions.set(nextExprId, screenExpr), nextExprId + 1
+        state.screenExpressions.set(nextExprId, screenExpr),
+        nextExprId + 1,
+        state.touchActions,
     );
 };
 

@@ -7,26 +7,32 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        screenExpressions: undefined, nextExprId: undefined}) {
+        screenExpressions: undefined, nextExprId: undefined, touchActions: undefined}) {
     withScreenExpressions(screenExpressions) {
         return this.set('screenExpressions', screenExpressions)
     }
     withNextExprId(nextExprId) {
         return this.set('nextExprId', nextExprId)
     }
+    withTouchActions(touchActions) {
+        return this.set('touchActions', touchActions)
+    }
 }
 
 export type State = {
     screenExpressions: Immutable.Map<number, ScreenExpression>,
     nextExprId: number,
+    touchActions: Immutable.Map<number, number>,
     withScreenExpressions: (screenExpressions: Immutable.Map<number, ScreenExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
+    withTouchActions: (touchActions: Immutable.Map<number, number>) => State,
     toJS: () => any,
 };
 
-export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number): State => (new StateImpl({
+export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number, touchActions: Immutable.Map<number, number>): State => (new StateImpl({
     screenExpressions,
     nextExprId,
+    touchActions,
 }));
 
 export type Reset = {
@@ -110,37 +116,37 @@ export const newEvaluateExpression = (exprId: number, targetPos: CanvasPoint): E
 export type FingerDown = {
     type: 'fingerDown',
     fingerId: number,
-    pos: ScreenPoint,
+    screenPos: ScreenPoint,
 };
 
-export const newFingerDown = (fingerId: number, pos: ScreenPoint): FingerDown => ({
+export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => ({
     type: 'fingerDown',
     fingerId,
-    pos,
+    screenPos,
 });
 
 export type FingerMove = {
     type: 'fingerMove',
     fingerId: number,
-    pos: ScreenPoint,
+    screenPos: ScreenPoint,
 };
 
-export const newFingerMove = (fingerId: number, pos: ScreenPoint): FingerMove => ({
+export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => ({
     type: 'fingerMove',
     fingerId,
-    pos,
+    screenPos,
 });
 
 export type FingerUp = {
     type: 'fingerUp',
     fingerId: number,
-    pos: ScreenPoint,
+    screenPos: ScreenPoint,
 };
 
-export const newFingerUp = (fingerId: number, pos: ScreenPoint): FingerUp => ({
+export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => ({
     type: 'fingerUp',
     fingerId,
-    pos,
+    screenPos,
 });
 
 export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | InsertAsArg | InsertAsBody | EvaluateExpression | FingerDown | FingerMove | FingerUp;

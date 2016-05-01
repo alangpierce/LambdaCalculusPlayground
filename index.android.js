@@ -84,9 +84,9 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 const beforePoint = lastTouches.get(fingerId);
                 const afterPoint = newTouches.get(fingerId);
                 if (beforePoint && afterPoint) {
-                    store.dispatch(t.newFingerDown(fingerId, afterPoint));
-                } else if (afterPoint) {
                     store.dispatch(t.newFingerMove(fingerId, afterPoint));
+                } else if (afterPoint) {
+                    store.dispatch(t.newFingerDown(fingerId, afterPoint));
                 } else if (beforePoint) {
                     store.dispatch(t.newFingerUp(fingerId, beforePoint));
                 }

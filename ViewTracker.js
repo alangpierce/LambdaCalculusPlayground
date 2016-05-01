@@ -28,14 +28,16 @@ type MeasureOnSuccessCallback = (
 // TODO: Unregister views.
 // TODO: Handle when views move.
 export const registerView = (path: ExprPath, viewRef: NativeNode) => {
-    setTimeout(() => {
+    // TODO: Yuck. Change this to invalidate the positions properly (or some
+    // other nice solution) instead of recomputing it all the time.
+    setInterval(() => {
         viewRef.measure((x, y, width, height, pageX, pageY) => {
             viewMap = viewMap.set(path, t.newScreenRect(
                 t.newScreenPoint(pageX, pageY),
                 t.newScreenPoint(pageX + width, pageY + height)
             ));
         })
-    });
+    }, 500);
 };
 
 export const getPositionOnScreen = (path: ExprPath): ?ScreenRect => {
