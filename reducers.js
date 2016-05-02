@@ -12,7 +12,7 @@ import type {
     State
 } from './types'
 import * as t from './types'
-import {resolveTouch} from './HitTester'
+import {resolveDrop, resolveTouch} from './HitTester'
 import {
     addExpression,
     decomposeExpression,
@@ -113,15 +113,18 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                     dragData.updateScreenExpr((screenExpr) =>
                         screenExpr.withPos(newPos))));
         },
-        fingerUp: ({fingerId}) => {
+        fingerUp: ({fingerId, screenPos}) => {
             const dragData: ?DragData = state.activeDrags.get(fingerId);
             if (!dragData) {
                 return state;
             }
-            state = addExpression(state, dragData.screenExpr);
-            return state.withActiveDrags(
-                state.activeDrags.remove(fingerId)
-            );
+            const dropResult = resolveDrop(state, dragData, screenPos);
+            state = state.updateActiveDrags((drags) => drags.remove(fingerId));
+            return t.matchDropResult(dropResult, {
+                addToTopLevel: ({screenExpr}) => {
+                    return addExpression(state, screenExpr);
+                }
+            });
         },
     });
 };

@@ -9,6 +9,7 @@ import {ptInRect, ptMinusPt} from './Geometry';
 import * as t from './types';
 import type {
     DragData,
+    DropResult,
     PointDifference,
     ScreenPoint,
     State,
@@ -39,4 +40,10 @@ export const resolveTouch = (state: State, point: ScreenPoint): ?TouchResult => 
         }
     });
     return result;
+};
+
+export const resolveDrop = (
+        state: State, dragData: DragData, touchPos: ScreenPoint):
+        DropResult => {
+    return t.newAddToTopLevel(dragData.screenExpr);
 };

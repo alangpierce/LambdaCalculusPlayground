@@ -197,4 +197,12 @@ export default typeDefs = {
             screenExpr: 'ScreenExpression',
         },
     },
+    DropResult: {
+        type: 'union',
+        cases: {
+            AddToTopLevel: {
+                screenExpr: 'ScreenExpression'
+            }
+        }
+    },
 };

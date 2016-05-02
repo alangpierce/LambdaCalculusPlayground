@@ -858,3 +858,41 @@ export const newDragData = (offset: PointDifference, screenExpr: ScreenExpressio
     screenExpr,
 }));
 
+class AddToTopLevelImpl extends Immutable.Record({
+        type: undefined, screenExpr: undefined}) {
+    withScreenExpr(screenExpr) {
+        return this.set('screenExpr', screenExpr)
+    }
+    updateScreenExpr(updater) {
+        return this.set('screenExpr', updater(this.screenExpr))
+    }
+}
+
+export type AddToTopLevel = {
+    type: 'addToTopLevel',
+    screenExpr: ScreenExpression,
+    withScreenExpr: (screenExpr: ScreenExpression) => AddToTopLevel,
+    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => AddToTopLevel,
+    toJS: () => any,
+};
+
+export const newAddToTopLevel = (screenExpr: ScreenExpression): AddToTopLevel => (new AddToTopLevelImpl({
+    type: 'addToTopLevel',
+    screenExpr,
+}));
+
+export type DropResult = AddToTopLevel;
+
+export type DropResultVisitor<T> = {
+    addToTopLevel: (addToTopLevel: AddToTopLevel) => T,
+}
+
+export const matchDropResult = function<T>(dropResult: DropResult, visitor: DropResultVisitor<T>): T {
+    switch (dropResult.type) {
+        case 'addToTopLevel':
+            return visitor.addToTopLevel(dropResult);
+        default:
+            throw new Error('Unexpected type: ' + dropResult.type);
+    }
+};
+
