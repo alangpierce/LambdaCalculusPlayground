@@ -7,15 +7,15 @@
  */
 import * as Immutable from 'immutable';
 
-import type {ExprPath, ScreenRect} from './types';
+import type {ViewKey, ScreenRect} from './types';
 import * as t from './types';
 
 type NativeNode = {
     measure: (callback: MeasureOnSuccessCallback) => void,
 };
 
-let nodeMap: Immutable.Map<ExprPath, NativeNode> = new Immutable.Map();
-let viewMap: Immutable.Map<ExprPath, ScreenRect> = new Immutable.Map();
+let nodeMap: Immutable.Map<ViewKey, NativeNode> = new Immutable.Map();
+let viewMap: Immutable.Map<ViewKey, ScreenRect> = new Immutable.Map();
 
 type MeasureOnSuccessCallback = (
     x: number,
@@ -26,17 +26,16 @@ type MeasureOnSuccessCallback = (
     pageY: number
 ) => void;
 
-// TODO: Unregister views.
 // TODO: Handle when views move.
-export const registerView = (path: ExprPath, viewRef: NativeNode) => {
-    nodeMap = nodeMap.set(path, viewRef);
+export const registerView = (key: ViewKey, viewRef: NativeNode) => {
+    nodeMap = nodeMap.set(key, viewRef);
 };
 
-export const unregisterView = (path: ExprPath, viewRef: NativeNode) => {
-    const existingRef = nodeMap.get(path);
+export const unregisterView = (key: ViewKey, viewRef: NativeNode) => {
+    const existingRef = nodeMap.get(key);
     if (existingRef === viewRef) {
-        nodeMap = nodeMap.delete(path);
-        viewMap = viewMap.delete(path);
+        nodeMap = nodeMap.delete(key);
+        viewMap = viewMap.delete(key);
     }
 };
 
@@ -58,6 +57,6 @@ setInterval(() => {
     });
 }, 500);
 
-export const getPositionOnScreen = (path: ExprPath): ?ScreenRect => {
-    return viewMap.get(path);
+export const getPositionOnScreen = (key: ViewKey): ?ScreenRect => {
+    return viewMap.get(key);
 };

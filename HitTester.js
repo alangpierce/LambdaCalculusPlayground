@@ -26,8 +26,9 @@ type TouchResult = {
 export const resolveTouch = (state: State, point: ScreenPoint): ?TouchResult => {
     let result = null;
     state.screenExpressions.keySeq().forEach((exprId) => {
-        const screenRect =
-            getPositionOnScreen(t.newExprPath(exprId, new Immutable.List()));
+        const viewKey = t.newExpressionKey(
+            t.newExprPath(exprId, new Immutable.List()));
+        const screenRect = getPositionOnScreen(viewKey);
         if (!screenRect) {
             return;
         }

@@ -896,3 +896,93 @@ export const matchDropResult = function<T>(dropResult: DropResult, visitor: Drop
     }
 };
 
+class ExpressionKeyImpl extends Immutable.Record({
+        type: undefined, exprPath: undefined}) {
+    withExprPath(exprPath) {
+        return this.set('exprPath', exprPath)
+    }
+    updateExprPath(updater) {
+        return this.set('exprPath', updater(this.exprPath))
+    }
+}
+
+export type ExpressionKey = {
+    type: 'expressionKey',
+    exprPath: ExprPath,
+    withExprPath: (exprPath: ExprPath) => ExpressionKey,
+    updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => ExpressionKey,
+    toJS: () => any,
+};
+
+export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKeyImpl({
+    type: 'expressionKey',
+    exprPath,
+}));
+
+class EmptyBodyKeyImpl extends Immutable.Record({
+        type: undefined, lambdaPath: undefined}) {
+    withLambdaPath(lambdaPath) {
+        return this.set('lambdaPath', lambdaPath)
+    }
+    updateLambdaPath(updater) {
+        return this.set('lambdaPath', updater(this.lambdaPath))
+    }
+}
+
+export type EmptyBodyKey = {
+    type: 'emptyBodyKey',
+    lambdaPath: ExprPath,
+    withLambdaPath: (lambdaPath: ExprPath) => EmptyBodyKey,
+    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => EmptyBodyKey,
+    toJS: () => any,
+};
+
+export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKeyImpl({
+    type: 'emptyBodyKey',
+    lambdaPath,
+}));
+
+class LambdaVarKeyImpl extends Immutable.Record({
+        type: undefined, lambdaPath: undefined}) {
+    withLambdaPath(lambdaPath) {
+        return this.set('lambdaPath', lambdaPath)
+    }
+    updateLambdaPath(updater) {
+        return this.set('lambdaPath', updater(this.lambdaPath))
+    }
+}
+
+export type LambdaVarKey = {
+    type: 'lambdaVarKey',
+    lambdaPath: ExprPath,
+    withLambdaPath: (lambdaPath: ExprPath) => LambdaVarKey,
+    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => LambdaVarKey,
+    toJS: () => any,
+};
+
+export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKeyImpl({
+    type: 'lambdaVarKey',
+    lambdaPath,
+}));
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey;
+
+export type ViewKeyVisitor<T> = {
+    expressionKey: (expressionKey: ExpressionKey) => T,
+    emptyBodyKey: (emptyBodyKey: EmptyBodyKey) => T,
+    lambdaVarKey: (lambdaVarKey: LambdaVarKey) => T,
+}
+
+export const matchViewKey = function<T>(viewKey: ViewKey, visitor: ViewKeyVisitor<T>): T {
+    switch (viewKey.type) {
+        case 'expressionKey':
+            return visitor.expressionKey(viewKey);
+        case 'emptyBodyKey':
+            return visitor.emptyBodyKey(viewKey);
+        case 'lambdaVarKey':
+            return visitor.lambdaVarKey(viewKey);
+        default:
+            throw new Error('Unexpected type: ' + viewKey.type);
+    }
+};
+

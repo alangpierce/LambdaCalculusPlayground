@@ -205,4 +205,22 @@ export default typeDefs = {
             }
         }
     },
+    // An identifier that can be used for any view in the dragging and dropping
+    // system. Components identify themselves as having these identifiers, and
+    // the rest of the world can work completely in terms of these identifiers
+    // when computing things like drop targets.
+    ViewKey: {
+        type: 'union',
+        cases: {
+            ExpressionKey: {
+                exprPath: 'ExprPath',
+            },
+            EmptyBodyKey: {
+                lambdaPath: 'ExprPath',
+            },
+            LambdaVarKey: {
+                lambdaPath: 'ExprPath',
+            }
+        }
+    }
 };

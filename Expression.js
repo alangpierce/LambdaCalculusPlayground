@@ -13,7 +13,7 @@ import React, {
 } from 'react-native';
 
 import StatelessComponent from './StatelessComponent'
-import {registerView, unregisterView} from './ViewTracker'
+import {TrackedText, TrackedView} from './TrackedViews'
 
 import type {
     ExprPath,
@@ -22,7 +22,8 @@ import type {
     UserLambda,
     UserFuncCall,
     UserVariable,
-    UserReference
+    UserReference,
+    ViewKey,
 } from './types'
 
 import * as t from './types'
@@ -66,11 +67,13 @@ class Lambda extends StatelessComponent<LambdaPropTypes> {
             body = <Expression expr={expr.body}
                                path={stepPath(path, 'body')} />;
         } else {
-            body = <EmptyBody path={stepPath(path, 'body')} />;
+            const viewKey = path && t.newEmptyBodyKey(path);
+            body = <EmptyBody viewKey={viewKey} />;
         }
+        const varViewKey = path && t.newLambdaVarKey(path);
         return <ExprContainer path={path}>
             <ExprText>λ</ExprText>
-            <ExprText>{expr.varName}</ExprText>
+            <ExprText viewKey={varViewKey}>{expr.varName}</ExprText>
             <Bracket source={require('./img/left_bracket.png')}/>
             {body}
             <Bracket source={require('./img/right_bracket.png')}/>
@@ -125,21 +128,10 @@ type ExprContainerPropTypes = {
     path: ?ExprPath,
 }
 class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
-    componentDidMount() {
-        if (this.props.path) {
-            registerView(this.props.path, this.refs.viewRef);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.props.path) {
-            unregisterView(this.props.path, this.refs.viewRef);
-        }
-    }
-
     render() {
-        const {children} = this.props;
-        return <View ref="viewRef" style={{
+        const {children, path} = this.props;
+        const viewKey = path && t.newExpressionKey(path);
+        return <TrackedView viewKey={viewKey} style={{
             flexDirection: 'row',
             backgroundColor: "white",
             elevation: 5,
@@ -154,17 +146,18 @@ class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
             marginRight: 2,
         }}>
             {children}
-        </View>
+        </TrackedView>
     }
 }
 
 type ExprTextPropTypes = {
     children: any,
+    viewKey: ?ViewKey,
 }
 class ExprText extends StatelessComponent<ExprTextPropTypes> {
     render() {
-        const {children} = this.props;
-        return <Text style={{
+        const {children, viewKey} = this.props;
+        return <TrackedText viewKey={viewKey} style={{
                 paddingLeft: 6,
                 paddingRight: 6,
                 fontSize: 28,
@@ -173,28 +166,16 @@ class ExprText extends StatelessComponent<ExprTextPropTypes> {
                 textAlignVertical: "center",
             }}>
             {children}
-        </Text>;
+        </TrackedText>;
     }
 }
 
 type EmptyBodyPropTypes = {
-    path: ?ExprPath,
+    viewKey: ?ViewKey,
 }
 class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
-    componentDidMount() {
-        if (this.props.path) {
-            registerView(this.props.path, this.refs.viewRef);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.props.path) {
-            unregisterView(this.props.path, this.refs.viewRef);
-        }
-    }
-
     render() {
-        return <View ref="viewRef" style={{
+        return <TrackedView viewKey={this.props.viewKey} style={{
             backgroundColor: "#FFBBBB",
             padding: 2,
             width: 20,
@@ -202,7 +183,7 @@ class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
             margin: 1,
             alignSelf: "center",
         }}>
-        </View>;
+        </TrackedView>;
     }
 }
 
