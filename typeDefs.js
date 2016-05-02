@@ -200,10 +200,14 @@ export default typeDefs = {
     DropResult: {
         type: 'union',
         cases: {
-            AddToTopLevel: {
-                screenExpr: 'ScreenExpression'
-            }
-        }
+            AddToTopLevelResult: {
+                screenExpr: 'ScreenExpression',
+            },
+            InsertAsBodyResult: {
+                lambdaPath: 'ExprPath',
+                expr: 'UserExpression',
+            },
+        },
     },
     // An identifier that can be used for any view in the dragging and dropping
     // system. Components identify themselves as having these identifiers, and

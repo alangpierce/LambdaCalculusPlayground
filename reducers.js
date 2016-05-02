@@ -121,8 +121,16 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.updateActiveDrags((drags) => drags.remove(fingerId));
             return t.matchDropResult(dropResult, {
-                addToTopLevel: ({screenExpr}) => {
+                addToTopLevelResult: ({screenExpr}) => {
                     return addExpression(state, screenExpr);
+                },
+                insertAsBodyResult: ({lambdaPath: {exprId, pathSteps}, expr}) => {
+                    const targetScreenExpr = exprWithId(exprId);
+                    const resultExpr = insertAsBody(
+                        targetScreenExpr.expr, expr, pathSteps);
+                    const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
+                    return state.updateScreenExpressions((exprs) =>
+                        exprs.set(exprId, newScreenExpr));
                 }
             });
         },

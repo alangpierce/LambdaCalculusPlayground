@@ -18,6 +18,7 @@ import {connect, Provider} from 'react-redux';
 
 import './DebugGlobals'
 import Expression from './Expression'
+import {emptyPath} from './ExprPaths'
 import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
@@ -52,8 +53,7 @@ class TopLevelExpression
                 {translateY: canvasY},
             ],
         }}>
-            <Expression expr={expr}
-                        path={t.newExprPath(exprId, new Immutable.List())}/>
+            <Expression expr={expr} path={emptyPath(exprId)}/>
         </View>;
     }
 }

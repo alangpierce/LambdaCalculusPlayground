@@ -858,7 +858,7 @@ export const newDragData = (offset: PointDifference, screenExpr: ScreenExpressio
     screenExpr,
 }));
 
-class AddToTopLevelImpl extends Immutable.Record({
+class AddToTopLevelResultImpl extends Immutable.Record({
         type: undefined, screenExpr: undefined}) {
     withScreenExpr(screenExpr) {
         return this.set('screenExpr', screenExpr)
@@ -868,29 +868,65 @@ class AddToTopLevelImpl extends Immutable.Record({
     }
 }
 
-export type AddToTopLevel = {
-    type: 'addToTopLevel',
+export type AddToTopLevelResult = {
+    type: 'addToTopLevelResult',
     screenExpr: ScreenExpression,
-    withScreenExpr: (screenExpr: ScreenExpression) => AddToTopLevel,
-    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => AddToTopLevel,
+    withScreenExpr: (screenExpr: ScreenExpression) => AddToTopLevelResult,
+    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => AddToTopLevelResult,
     toJS: () => any,
 };
 
-export const newAddToTopLevel = (screenExpr: ScreenExpression): AddToTopLevel => (new AddToTopLevelImpl({
-    type: 'addToTopLevel',
+export const newAddToTopLevelResult = (screenExpr: ScreenExpression): AddToTopLevelResult => (new AddToTopLevelResultImpl({
+    type: 'addToTopLevelResult',
     screenExpr,
 }));
 
-export type DropResult = AddToTopLevel;
+class InsertAsBodyResultImpl extends Immutable.Record({
+        type: undefined, lambdaPath: undefined, expr: undefined}) {
+    withLambdaPath(lambdaPath) {
+        return this.set('lambdaPath', lambdaPath)
+    }
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    updateLambdaPath(updater) {
+        return this.set('lambdaPath', updater(this.lambdaPath))
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+}
+
+export type InsertAsBodyResult = {
+    type: 'insertAsBodyResult',
+    lambdaPath: ExprPath,
+    expr: UserExpression,
+    withLambdaPath: (lambdaPath: ExprPath) => InsertAsBodyResult,
+    withExpr: (expr: UserExpression) => InsertAsBodyResult,
+    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => InsertAsBodyResult,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => InsertAsBodyResult,
+    toJS: () => any,
+};
+
+export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResultImpl({
+    type: 'insertAsBodyResult',
+    lambdaPath,
+    expr,
+}));
+
+export type DropResult = AddToTopLevelResult | InsertAsBodyResult;
 
 export type DropResultVisitor<T> = {
-    addToTopLevel: (addToTopLevel: AddToTopLevel) => T,
+    addToTopLevelResult: (addToTopLevelResult: AddToTopLevelResult) => T,
+    insertAsBodyResult: (insertAsBodyResult: InsertAsBodyResult) => T,
 }
 
 export const matchDropResult = function<T>(dropResult: DropResult, visitor: DropResultVisitor<T>): T {
     switch (dropResult.type) {
-        case 'addToTopLevel':
-            return visitor.addToTopLevel(dropResult);
+        case 'addToTopLevelResult':
+            return visitor.addToTopLevelResult(dropResult);
+        case 'insertAsBodyResult':
+            return visitor.insertAsBodyResult(dropResult);
         default:
             throw new Error('Unexpected type: ' + dropResult.type);
     }
