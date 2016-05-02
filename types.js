@@ -914,11 +914,45 @@ export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression
     expr,
 }));
 
-export type DropResult = AddToTopLevelResult | InsertAsBodyResult;
+class InsertAsArgResultImpl extends Immutable.Record({
+        type: undefined, path: undefined, expr: undefined}) {
+    withPath(path) {
+        return this.set('path', path)
+    }
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    updatePath(updater) {
+        return this.set('path', updater(this.path))
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+}
+
+export type InsertAsArgResult = {
+    type: 'insertAsArgResult',
+    path: ExprPath,
+    expr: UserExpression,
+    withPath: (path: ExprPath) => InsertAsArgResult,
+    withExpr: (expr: UserExpression) => InsertAsArgResult,
+    updatePath: (updater: (path: ExprPath) => ExprPath) => InsertAsArgResult,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => InsertAsArgResult,
+    toJS: () => any,
+};
+
+export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResultImpl({
+    type: 'insertAsArgResult',
+    path,
+    expr,
+}));
+
+export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult;
 
 export type DropResultVisitor<T> = {
     addToTopLevelResult: (addToTopLevelResult: AddToTopLevelResult) => T,
     insertAsBodyResult: (insertAsBodyResult: InsertAsBodyResult) => T,
+    insertAsArgResult: (insertAsArgResult: InsertAsArgResult) => T,
 }
 
 export const matchDropResult = function<T>(dropResult: DropResult, visitor: DropResultVisitor<T>): T {
@@ -927,6 +961,8 @@ export const matchDropResult = function<T>(dropResult: DropResult, visitor: Drop
             return visitor.addToTopLevelResult(dropResult);
         case 'insertAsBodyResult':
             return visitor.insertAsBodyResult(dropResult);
+        case 'insertAsArgResult':
+            return visitor.insertAsArgResult(dropResult);
         default:
             throw new Error('Unexpected type: ' + dropResult.type);
     }

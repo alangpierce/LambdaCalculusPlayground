@@ -131,6 +131,14 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                     const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
                     return state.updateScreenExpressions((exprs) =>
                         exprs.set(exprId, newScreenExpr));
+                },
+                insertAsArgResult: ({path: {exprId, pathSteps}, expr}) => {
+                    const targetScreenExpr = exprWithId(exprId);
+                    const resultExpr = insertAsArg(
+                        targetScreenExpr.expr, expr, pathSteps);
+                    const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
+                    return state.updateScreenExpressions((exprs) =>
+                        exprs.set(exprId, newScreenExpr));
                 }
             });
         },

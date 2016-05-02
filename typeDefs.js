@@ -207,6 +207,10 @@ export default typeDefs = {
                 lambdaPath: 'ExprPath',
                 expr: 'UserExpression',
             },
+            InsertAsArgResult: {
+                path: 'ExprPath',
+                expr: 'UserExpression',
+            },
         },
     },
     // An identifier that can be used for any view in the dragging and dropping

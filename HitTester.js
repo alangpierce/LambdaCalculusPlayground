@@ -71,13 +71,25 @@ export const resolveDrop = (
         }
     };
 
+    const yieldFuncCallDrops = function* () {
+        for (let [path, expr] of yieldAllExpressions(state)) {
+            if (intersectsWithView(t.newExpressionKey(path))) {
+                yield [
+                    t.newInsertAsArgResult(path, dragData.screenExpr.expr),
+                    path.pathSteps.size,
+                ];
+            }
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
-        yield* yieldLambdaDrops(state, touchPos);
+        yield* yieldLambdaDrops();
+        yield* yieldFuncCallDrops();
     };
 
-    let bestPriority = 0;
+    let bestPriority = -1;
     let bestResult = t.newAddToTopLevelResult(dragData.screenExpr);
     for (let [dropResult, priority] of yieldDropCandidates(state)) {
         if (priority > bestPriority) {
