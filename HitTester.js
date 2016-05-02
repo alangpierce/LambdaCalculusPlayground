@@ -14,6 +14,7 @@ import type {
     ScreenPoint,
     State,
     UserExpression,
+    ViewKey,
 } from './types';
 
 type TouchResult = {
@@ -50,15 +51,41 @@ export const resolveTouch = (state: State, point: ScreenPoint): ?TouchResult => 
 export const resolveDrop = (
         state: State, dragData: DragData, touchPos: ScreenPoint):
         DropResult => {
-    for (let [path, expr] of yieldAllExpressions(state)) {
-        if (expr.type === 'userLambda' && !expr.body) {
-            const rect = getPositionOnScreen(t.newEmptyBodyKey(path));
-            if (rect && ptInRect(touchPos, rect)) {
-                return t.newInsertAsBodyResult(path, dragData.screenExpr.expr);
+    const intersectsWithView = (key: ViewKey): bool => {
+        const rect = getPositionOnScreen(key);
+        return !!rect && ptInRect(touchPos, rect);
+    };
+
+    const yieldLambdaDrops = function* () {
+        for (let [path, expr] of yieldAllExpressions(state)) {
+            if (expr.type !== 'userLambda' || expr.body) {
+                continue;
+            }
+            if (intersectsWithView(t.newEmptyBodyKey(path))) {
+                yield [
+                    t.newInsertAsBodyResult(path, dragData.screenExpr.expr),
+                    // The lambda body should show up as above the lambda.
+                    path.pathSteps.size + 1,
+                ];
             }
         }
+    };
+
+    // Yields the drop result and priority.
+    const yieldDropCandidates = function* ():
+        Generator<[DropResult, number], void, void> {
+        yield* yieldLambdaDrops(state, touchPos);
+    };
+
+    let bestPriority = 0;
+    let bestResult = t.newAddToTopLevelResult(dragData.screenExpr);
+    for (let [dropResult, priority] of yieldDropCandidates(state)) {
+        if (priority > bestPriority) {
+            bestResult = dropResult;
+            bestPriority = priority;
+        }
     }
-    return t.newAddToTopLevelResult(dragData.screenExpr);
+    return bestResult;
 };
 
 const yieldAllExpressions = function* (state: State):
