@@ -47,7 +47,7 @@ describe('reducers', () => {
     it('handles extract body', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[L y[L z[x]]]')));
-        store.dispatch(t.newDecomposeExpression(
+        store.dispatch(t.newDecomposeExpressionAction(
             newExprPath(0, list('body')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[L y[_]]', 50, 50);
@@ -57,7 +57,7 @@ describe('reducers', () => {
     it('handles extract arg', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeScreenExpr('L x[+(2)(x)]')));
-        store.dispatch(t.newDecomposeExpression(
+        store.dispatch(t.newDecomposeExpressionAction(
             newExprPath(0, list('body', 'func')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[+(x)]', 50, 50);

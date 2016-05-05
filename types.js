@@ -77,14 +77,14 @@ export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpress
     pos,
 });
 
-export type DecomposeExpression = {
-    type: 'decomposeExpression',
+export type DecomposeExpressionAction = {
+    type: 'decomposeExpressionAction',
     path: ExprPath,
     targetPos: CanvasPoint,
 };
 
-export const newDecomposeExpression = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpression => ({
-    type: 'decomposeExpression',
+export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => ({
+    type: 'decomposeExpressionAction',
     path,
     targetPos,
 });
@@ -161,13 +161,13 @@ export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp 
     screenPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | DecomposeExpression | InsertAsArg | InsertAsBody | EvaluateExpression | FingerDown | FingerMove | FingerUp;
+export type Action = Reset | AddExpression | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
     addExpression: (addExpression: AddExpression) => T,
     moveExpression: (moveExpression: MoveExpression) => T,
-    decomposeExpression: (decomposeExpression: DecomposeExpression) => T,
+    decomposeExpressionAction: (decomposeExpressionAction: DecomposeExpressionAction) => T,
     insertAsArg: (insertAsArg: InsertAsArg) => T,
     insertAsBody: (insertAsBody: InsertAsBody) => T,
     evaluateExpression: (evaluateExpression: EvaluateExpression) => T,
@@ -184,8 +184,8 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.addExpression(action);
         case 'moveExpression':
             return visitor.moveExpression(action);
-        case 'decomposeExpression':
-            return visitor.decomposeExpression(action);
+        case 'decomposeExpressionAction':
+            return visitor.decomposeExpressionAction(action);
         case 'insertAsArg':
             return visitor.insertAsArg(action);
         case 'insertAsBody':
@@ -826,6 +826,152 @@ export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathCompon
     exprId,
     pathSteps,
 }));
+
+class PickUpExpressionImpl extends Immutable.Record({
+        type: undefined, exprId: undefined, offset: undefined}) {
+    withExprId(exprId) {
+        return this.set('exprId', exprId)
+    }
+    withOffset(offset) {
+        return this.set('offset', offset)
+    }
+    updateExprId(updater) {
+        return this.set('exprId', updater(this.exprId))
+    }
+    updateOffset(updater) {
+        return this.set('offset', updater(this.offset))
+    }
+}
+
+export type PickUpExpression = {
+    type: 'pickUpExpression',
+    exprId: number,
+    offset: PointDifference,
+    withExprId: (exprId: number) => PickUpExpression,
+    withOffset: (offset: PointDifference) => PickUpExpression,
+    updateExprId: (updater: (exprId: number) => number) => PickUpExpression,
+    updateOffset: (updater: (offset: PointDifference) => PointDifference) => PickUpExpression,
+    toJS: () => any,
+};
+
+export const newPickUpExpression = (exprId: number, offset: PointDifference): PickUpExpression => (new PickUpExpressionImpl({
+    type: 'pickUpExpression',
+    exprId,
+    offset,
+}));
+
+class DecomposeExpressionImpl extends Immutable.Record({
+        type: undefined, exprPath: undefined, offset: undefined}) {
+    withExprPath(exprPath) {
+        return this.set('exprPath', exprPath)
+    }
+    withOffset(offset) {
+        return this.set('offset', offset)
+    }
+    updateExprPath(updater) {
+        return this.set('exprPath', updater(this.exprPath))
+    }
+    updateOffset(updater) {
+        return this.set('offset', updater(this.offset))
+    }
+}
+
+export type DecomposeExpression = {
+    type: 'decomposeExpression',
+    exprPath: ExprPath,
+    offset: PointDifference,
+    withExprPath: (exprPath: ExprPath) => DecomposeExpression,
+    withOffset: (offset: PointDifference) => DecomposeExpression,
+    updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => DecomposeExpression,
+    updateOffset: (updater: (offset: PointDifference) => PointDifference) => DecomposeExpression,
+    toJS: () => any,
+};
+
+export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference): DecomposeExpression => (new DecomposeExpressionImpl({
+    type: 'decomposeExpression',
+    exprPath,
+    offset,
+}));
+
+class CreateExpressionImpl extends Immutable.Record({
+        type: undefined, expr: undefined, offset: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withOffset(offset) {
+        return this.set('offset', offset)
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updateOffset(updater) {
+        return this.set('offset', updater(this.offset))
+    }
+}
+
+export type CreateExpression = {
+    type: 'createExpression',
+    expr: UserExpression,
+    offset: PointDifference,
+    withExpr: (expr: UserExpression) => CreateExpression,
+    withOffset: (offset: PointDifference) => CreateExpression,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => CreateExpression,
+    updateOffset: (updater: (offset: PointDifference) => PointDifference) => CreateExpression,
+    toJS: () => any,
+};
+
+export const newCreateExpression = (expr: UserExpression, offset: PointDifference): CreateExpression => (new CreateExpressionImpl({
+    type: 'createExpression',
+    expr,
+    offset,
+}));
+
+class StartPanImpl extends Immutable.Record({
+        type: undefined, startPos: undefined}) {
+    withStartPos(startPos) {
+        return this.set('startPos', startPos)
+    }
+    updateStartPos(updater) {
+        return this.set('startPos', updater(this.startPos))
+    }
+}
+
+export type StartPan = {
+    type: 'startPan',
+    startPos: ScreenPoint,
+    withStartPos: (startPos: ScreenPoint) => StartPan,
+    updateStartPos: (updater: (startPos: ScreenPoint) => ScreenPoint) => StartPan,
+    toJS: () => any,
+};
+
+export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPanImpl({
+    type: 'startPan',
+    startPos,
+}));
+
+export type DragResult = PickUpExpression | DecomposeExpression | CreateExpression | StartPan;
+
+export type DragResultVisitor<T> = {
+    pickUpExpression: (pickUpExpression: PickUpExpression) => T,
+    decomposeExpression: (decomposeExpression: DecomposeExpression) => T,
+    createExpression: (createExpression: CreateExpression) => T,
+    startPan: (startPan: StartPan) => T,
+}
+
+export const matchDragResult = function<T>(dragResult: DragResult, visitor: DragResultVisitor<T>): T {
+    switch (dragResult.type) {
+        case 'pickUpExpression':
+            return visitor.pickUpExpression(dragResult);
+        case 'decomposeExpression':
+            return visitor.decomposeExpression(dragResult);
+        case 'createExpression':
+            return visitor.createExpression(dragResult);
+        case 'startPan':
+            return visitor.startPan(dragResult);
+        default:
+            throw new Error('Unexpected type: ' + dragResult.type);
+    }
+};
 
 class DragDataImpl extends Immutable.Record({
         offset: undefined, screenExpr: undefined}) {

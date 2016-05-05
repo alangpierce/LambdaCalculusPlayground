@@ -38,7 +38,8 @@ export default typeDefs = {
              * argument, and create a new expression from it at the given
              * coordinates.
              */
-            DecomposeExpression: {
+            // TODO: Get rid of this, maybe. Or make namespacing better.
+            DecomposeExpressionAction: {
                 path: 'ExprPath',
                 targetPos: 'CanvasPoint',
             },
@@ -190,6 +191,27 @@ export default typeDefs = {
             pathSteps: 'Immutable.List<PathComponent>',
         }
     },
+    // The action to perform at the start of a drag operation.
+    DragResult: {
+        type: 'union',
+        cases: {
+            PickUpExpression: {
+                exprId: 'number',
+                offset: 'PointDifference',
+            },
+            DecomposeExpression: {
+                exprPath: 'ExprPath',
+                offset: 'PointDifference',
+            },
+            CreateExpression: {
+                expr: 'UserExpression',
+                offset: 'PointDifference',
+            },
+            StartPan: {
+                startPos: 'ScreenPoint',
+            }
+        },
+    },
     DragData: {
         type: 'struct',
         fields: {
@@ -197,6 +219,7 @@ export default typeDefs = {
             screenExpr: 'ScreenExpression',
         },
     },
+    // The action performed when dropping.
     DropResult: {
         type: 'union',
         cases: {

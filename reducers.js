@@ -48,7 +48,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 exprs.update(exprId, (screenExpr) =>
                     screenExpr.withPos(pos)));
         },
-        decomposeExpression: ({path: {exprId, pathSteps}, targetPos}) => {
+        decomposeExpressionAction: ({path: {exprId, pathSteps}, targetPos}) => {
             const existingScreenExpr = exprWithId(exprId);
             const {original, extracted} = decomposeExpression(
                 existingScreenExpr.expr, pathSteps);
@@ -89,17 +89,28 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 state, t.newScreenExpression(evaluatedExpr, targetPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
-            const touchResult = resolveTouch(state, screenPos);
-            if (touchResult === null || touchResult === undefined) {
-                console.log("Touch didn't match anything.");
-                return state;
-            }
-            const {exprId, offset} = touchResult;
-            const screenExpr = state.screenExpressions.get(exprId);
-            return state
-                .updateScreenExpressions(exprs => exprs.remove(exprId))
-                .updateActiveDrags((drags) =>
-                    drags.set(fingerId, t.newDragData(offset, screenExpr)));
+            const dragResult = resolveTouch(state, screenPos);
+            return t.matchDragResult(dragResult, {
+                pickUpExpression: ({exprId, offset}) => {
+                    const screenExpr = state.screenExpressions.get(exprId);
+                    return state
+                        .updateScreenExpressions(exprs => exprs.remove(exprId))
+                        .updateActiveDrags((drags) =>
+                            drags.set(fingerId, t.newDragData(offset, screenExpr)));
+                },
+                decomposeExpression: () => {
+                    // TODO
+                    return state;
+                },
+                createExpression: () => {
+                    // TODO
+                    return state;
+                },
+                startPan: () => {
+                    // TODO
+                    return state;
+                },
+            });
         },
         fingerMove: ({fingerId, screenPos: {screenX, screenY}}) => {
             const dragData: ?DragData = state.activeDrags.get(fingerId);

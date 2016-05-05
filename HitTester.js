@@ -8,37 +8,30 @@ import {ptInRect, ptMinusPt} from './Geometry';
 import * as t from './types';
 import type {
     DragData,
+    DragResult,
     DropResult,
     ExprPath,
-    PointDifference,
     ScreenPoint,
     State,
     UserExpression,
     ViewKey,
 } from './types';
 
-type TouchResult = {
-    exprId: number,
-    offset: PointDifference,
-}
-
 /**
  * Given a click on the screen, figure out what expression it is under, if any.
  */
-export const resolveTouch = (state: State, point: ScreenPoint): ?TouchResult => {
-    let result = null;
+export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
+    let result = t.newStartPan(point);
     for (let [exprId] of state.screenExpressions) {
         const viewKey = t.newExpressionKey(emptyPath(exprId));
         const screenRect = getPositionOnScreen(viewKey);
         if (!screenRect) {
-            return;
+            continue;
         }
         // TODO: Deal with tiebreaking.
         if (ptInRect(point, screenRect)) {
-            result = {
-                exprId,
-                offset: ptMinusPt(point, screenRect.topLeft),
-            };
+            result = t.newPickUpExpression(
+                exprId, ptMinusPt(point, screenRect.topLeft));
         }
     }
     return result;
