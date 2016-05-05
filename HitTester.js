@@ -21,20 +21,38 @@ import type {
  * Given a click on the screen, figure out what expression it is under, if any.
  */
 export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
-    let result = t.newStartPan(point);
-    for (let [exprId] of state.screenExpressions) {
-        const viewKey = t.newExpressionKey(emptyPath(exprId));
-        const screenRect = getPositionOnScreen(viewKey);
-        if (!screenRect) {
-            continue;
+    const yieldExpressionPickUps = function* () {
+        for (let [exprId] of state.screenExpressions) {
+            const viewKey = t.newExpressionKey(emptyPath(exprId));
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (ptInRect(point, screenRect)) {
+                yield [
+                    t.newPickUpExpression(
+                        exprId, ptMinusPt(point, screenRect.topLeft)),
+                    0,
+                ];
+            }
         }
-        // TODO: Deal with tiebreaking.
-        if (ptInRect(point, screenRect)) {
-            result = t.newPickUpExpression(
-                exprId, ptMinusPt(point, screenRect.topLeft));
+    };
+
+    // Yields the drag result and priority.
+    const yieldDragCandidates = function* ():
+        Generator<[DragResult, number], void, void> {
+        yield* yieldExpressionPickUps();
+    };
+
+    let bestPriority = -1;
+    let bestResult = t.newStartPan(point);
+    for (let [dragResult, priority] of yieldDragCandidates(state)) {
+        if (priority > bestPriority) {
+            bestResult = dragResult;
+            bestPriority = priority;
         }
     }
-    return result;
+    return bestResult;
 };
 
 /**
