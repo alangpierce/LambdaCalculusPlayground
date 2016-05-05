@@ -38,10 +38,59 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         }
     };
 
+    const yieldExpressionDecomposes = function* () {
+        for (let [path, _] of yieldAllExpressions(state)) {
+            // You can only decompose an expression that is a lambda body or a
+            // function arg.
+            const lastStep = path.pathSteps.get(path.pathSteps.size - 1, null);
+            if (lastStep !== 'body' && lastStep !== 'arg') {
+                continue;
+            }
+            const viewKey = t.newExpressionKey(path);
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (ptInRect(point, screenRect)) {
+                const parentPath = path.updatePathSteps((steps) => steps.pop());
+                yield [
+                    t.newDecomposeExpression(
+                        parentPath, ptMinusPt(point, screenRect.topLeft),
+                        screenRect.topLeft),
+                    path.pathSteps.size,
+                ];
+            }
+        }
+    };
+
+    const yieldLambdaVarGenerators = function* () {
+        for (let [path, expr] of yieldAllExpressions(state)) {
+            if (expr.type !== 'userLambda') {
+                continue;
+            }
+            const viewKey = t.newLambdaVarKey(path);
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (ptInRect(point, screenRect)) {
+                yield [
+                    t.newCreateExpression(
+                        t.newUserVariable(expr.varName),
+                        ptMinusPt(point, screenRect.topLeft),
+                        screenRect.topLeft),
+                    path.pathSteps.size + 1,
+                ];
+            }
+        }
+    };
+
     // Yields the drag result and priority.
     const yieldDragCandidates = function* ():
         Generator<[DragResult, number], void, void> {
         yield* yieldExpressionPickUps();
+        yield* yieldExpressionDecomposes();
+        yield* yieldLambdaVarGenerators();
     };
 
     let bestPriority = -1;

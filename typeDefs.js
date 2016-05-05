@@ -202,10 +202,12 @@ export default typeDefs = {
             DecomposeExpression: {
                 exprPath: 'ExprPath',
                 offset: 'PointDifference',
+                newPos: 'ScreenPoint',
             },
             CreateExpression: {
                 expr: 'UserExpression',
                 offset: 'PointDifference',
+                newPos: 'ScreenPoint',
             },
             StartPan: {
                 startPos: 'ScreenPoint',

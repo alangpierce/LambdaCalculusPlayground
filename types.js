@@ -861,12 +861,15 @@ export const newPickUpExpression = (exprId: number, offset: PointDifference): Pi
 }));
 
 class DecomposeExpressionImpl extends Immutable.Record({
-        type: undefined, exprPath: undefined, offset: undefined}) {
+        type: undefined, exprPath: undefined, offset: undefined, newPos: undefined}) {
     withExprPath(exprPath) {
         return this.set('exprPath', exprPath)
     }
     withOffset(offset) {
         return this.set('offset', offset)
+    }
+    withNewPos(newPos) {
+        return this.set('newPos', newPos)
     }
     updateExprPath(updater) {
         return this.set('exprPath', updater(this.exprPath))
@@ -874,32 +877,42 @@ class DecomposeExpressionImpl extends Immutable.Record({
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
+    updateNewPos(updater) {
+        return this.set('newPos', updater(this.newPos))
+    }
 }
 
 export type DecomposeExpression = {
     type: 'decomposeExpression',
     exprPath: ExprPath,
     offset: PointDifference,
+    newPos: ScreenPoint,
     withExprPath: (exprPath: ExprPath) => DecomposeExpression,
     withOffset: (offset: PointDifference) => DecomposeExpression,
+    withNewPos: (newPos: ScreenPoint) => DecomposeExpression,
     updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => DecomposeExpression,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => DecomposeExpression,
+    updateNewPos: (updater: (newPos: ScreenPoint) => ScreenPoint) => DecomposeExpression,
     toJS: () => any,
 };
 
-export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference): DecomposeExpression => (new DecomposeExpressionImpl({
+export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, newPos: ScreenPoint): DecomposeExpression => (new DecomposeExpressionImpl({
     type: 'decomposeExpression',
     exprPath,
     offset,
+    newPos,
 }));
 
 class CreateExpressionImpl extends Immutable.Record({
-        type: undefined, expr: undefined, offset: undefined}) {
+        type: undefined, expr: undefined, offset: undefined, newPos: undefined}) {
     withExpr(expr) {
         return this.set('expr', expr)
     }
     withOffset(offset) {
         return this.set('offset', offset)
+    }
+    withNewPos(newPos) {
+        return this.set('newPos', newPos)
     }
     updateExpr(updater) {
         return this.set('expr', updater(this.expr))
@@ -907,23 +920,30 @@ class CreateExpressionImpl extends Immutable.Record({
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
+    updateNewPos(updater) {
+        return this.set('newPos', updater(this.newPos))
+    }
 }
 
 export type CreateExpression = {
     type: 'createExpression',
     expr: UserExpression,
     offset: PointDifference,
+    newPos: ScreenPoint,
     withExpr: (expr: UserExpression) => CreateExpression,
     withOffset: (offset: PointDifference) => CreateExpression,
+    withNewPos: (newPos: ScreenPoint) => CreateExpression,
     updateExpr: (updater: (expr: UserExpression) => UserExpression) => CreateExpression,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => CreateExpression,
+    updateNewPos: (updater: (newPos: ScreenPoint) => ScreenPoint) => CreateExpression,
     toJS: () => any,
 };
 
-export const newCreateExpression = (expr: UserExpression, offset: PointDifference): CreateExpression => (new CreateExpressionImpl({
+export const newCreateExpression = (expr: UserExpression, offset: PointDifference, newPos: ScreenPoint): CreateExpression => (new CreateExpressionImpl({
     type: 'createExpression',
     expr,
     offset,
+    newPos,
 }));
 
 class StartPanImpl extends Immutable.Record({

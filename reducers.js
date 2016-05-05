@@ -98,13 +98,31 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                         .updateActiveDrags((drags) =>
                             drags.set(fingerId, t.newDragData(offset, screenExpr)));
                 },
-                decomposeExpression: () => {
-                    // TODO
-                    return state;
+                decomposeExpression: ({exprPath, offset, newPos}) => {
+                    const exprId = exprPath.exprId;
+                    const existingScreenExpr = exprWithId(exprId);
+                    const {original, extracted} = decomposeExpression(
+                        existingScreenExpr.expr, exprPath.pathSteps);
+                    const newCanvasPos =
+                        t.newCanvasPoint(newPos.screenX, newPos.screenY);
+                    const newScreenExpr =
+                        t.newScreenExpression(extracted, newCanvasPos);
+                    return state
+                        .updateScreenExpressions(screenExprs =>
+                            screenExprs.update(exprId, screenExpr =>
+                                screenExpr.withExpr(original)))
+                        .updateActiveDrags(drags =>
+                            drags.set(fingerId,
+                                t.newDragData(offset, newScreenExpr)));
                 },
-                createExpression: () => {
-                    // TODO
-                    return state;
+                createExpression: ({expr, offset, newPos}) => {
+                    const newCanvasPos =
+                        t.newCanvasPoint(newPos.screenX, newPos.screenY);
+                    const newScreenExpr =
+                        t.newScreenExpression(expr, newCanvasPos);
+                    return state.updateActiveDrags(drags =>
+                        drags.set(fingerId,
+                            t.newDragData(offset, newScreenExpr)));
                 },
                 startPan: () => {
                     // TODO
