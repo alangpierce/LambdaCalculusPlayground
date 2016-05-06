@@ -5,7 +5,7 @@ export default typeDefs = {
     State: {
         type: 'struct',
         fields: {
-            screenExpressions: 'Immutable.Map<number, ScreenExpression>',
+            canvasExpressions: 'Immutable.Map<number, CanvasExpression>',
             nextExprId: 'number',
             // Map from finger ID to expression ID.
             activeDrags: 'Immutable.Map<number, DragData>',
@@ -23,7 +23,7 @@ export default typeDefs = {
              * Create a new expression at the given position.
              */
             AddExpression: {
-                screenExpr: 'ScreenExpression',
+                canvasExpr: 'CanvasExpression',
             },
             /**
              * Move the existing expression on the canvas to a new point.
@@ -145,7 +145,7 @@ export default typeDefs = {
             },
         }
     },
-    ScreenExpression: {
+    CanvasExpression: {
         type: 'struct',
         fields: {
             expr: 'UserExpression',
@@ -218,7 +218,7 @@ export default typeDefs = {
         type: 'struct',
         fields: {
             offset: 'PointDifference',
-            screenExpr: 'ScreenExpression',
+            canvasExpr: 'CanvasExpression',
         },
     },
     // The action performed when dropping.
@@ -226,7 +226,7 @@ export default typeDefs = {
         type: 'union',
         cases: {
             AddToTopLevelResult: {
-                screenExpr: 'ScreenExpression',
+                canvasExpr: 'CanvasExpression',
             },
             InsertAsBodyResult: {
                 lambdaPath: 'ExprPath',

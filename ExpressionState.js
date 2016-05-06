@@ -5,27 +5,27 @@
 import * as Immutable from 'immutable';
 
 import type {
-    ScreenExpression,
+    CanvasExpression,
     UserExpression,
     PathComponent,
     State
 } from './types'
 import * as t from './types'
 
-export const addExpression = (state: State, screenExpr: ScreenExpression):
+export const addExpression = (state: State, canvasExpr: CanvasExpression):
         State => {
     const nextExprId = state.nextExprId;
     return state
-        .updateScreenExpressions((exprs) => exprs.set(nextExprId, screenExpr))
+        .updateCanvasExpressions((exprs) => exprs.set(nextExprId, canvasExpr))
         .withNextExprId(nextExprId + 1);
 };
 
 type Transform<T> = (t: T) => T;
 
 export const modifyExpression = (state: State, exprId: number,
-                                 transform: Transform<ScreenExpression>):
+                                 transform: Transform<CanvasExpression>):
         State => {
-    return state.updateScreenExpressions((exprs) =>
+    return state.updateCanvasExpressions((exprs) =>
         exprs.update(exprId, transform)
     );
 };

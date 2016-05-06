@@ -8,7 +8,7 @@ import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator'
 import type {
     Action,
     DragData,
-    ScreenExpression,
+    CanvasExpression,
     State
 } from './types'
 import * as t from './types'
@@ -32,8 +32,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
         return state;
     }
 
-    const exprWithId = (exprId: number): ScreenExpression => {
-        const result = state.screenExpressions.get(exprId);
+    const exprWithId = (exprId: number): CanvasExpression => {
+        const result = state.canvasExpressions.get(exprId);
         if (!result) {
             throw new Error('Expected expression with ID ' + exprId);
         }
@@ -42,87 +42,87 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
 
     return t.matchAction(action, {
         reset: () => initialState,
-        addExpression: ({screenExpr}) => addExpression(state, screenExpr),
+        addExpression: ({canvasExpr}) => addExpression(state, canvasExpr),
         moveExpression: ({exprId, pos}) => {
-            return state.updateScreenExpressions((exprs) =>
-                exprs.update(exprId, (screenExpr) =>
-                    screenExpr.withPos(pos)));
+            return state.updateCanvasExpressions((exprs) =>
+                exprs.update(exprId, (canvasExpr) =>
+                    canvasExpr.withPos(pos)));
         },
         decomposeExpressionAction: ({path: {exprId, pathSteps}, targetPos}) => {
-            const existingScreenExpr = exprWithId(exprId);
+            const existingCanvasExpr = exprWithId(exprId);
             const {original, extracted} = decomposeExpression(
-                existingScreenExpr.expr, pathSteps);
+                existingCanvasExpr.expr, pathSteps);
             state = addExpression(
-                state, t.newScreenExpression(extracted, targetPos));
+                state, t.newCanvasExpression(extracted, targetPos));
             state = modifyExpression(state, exprId,
-                () => existingScreenExpr.withExpr(original));
+                () => existingCanvasExpr.withExpr(original));
             return state;
         },
         insertAsArg: ({argExprId, path: {exprId, pathSteps}}) => {
-            const argScreenExpr = exprWithId(argExprId);
-            const targetScreenExpr = exprWithId(exprId);
+            const argCanvasExpr = exprWithId(argExprId);
+            const targetCanvasExpr = exprWithId(exprId);
             const resultExpr = insertAsArg(
-                targetScreenExpr.expr, argScreenExpr.expr, pathSteps);
-            const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            return state.updateScreenExpressions((exprs) =>
-                exprs.remove(argExprId).set(exprId, newScreenExpr));
+                targetCanvasExpr.expr, argCanvasExpr.expr, pathSteps);
+            const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
+            return state.updateCanvasExpressions((exprs) =>
+                exprs.remove(argExprId).set(exprId, newCanvasExpr));
         },
         insertAsBody: ({bodyExprId, path: {exprId, pathSteps}}) => {
-            const bodyScreenExpr = exprWithId(bodyExprId);
-            const targetScreenExpr = exprWithId(exprId);
+            const bodyCanvasExpr = exprWithId(bodyExprId);
+            const targetCanvasExpr = exprWithId(exprId);
             const resultExpr = insertAsBody(
-                targetScreenExpr.expr, bodyScreenExpr.expr, pathSteps);
-            const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-            return state.updateScreenExpressions((exprs) =>
-                exprs.remove(bodyExprId).set(exprId, newScreenExpr));
+                targetCanvasExpr.expr, bodyCanvasExpr.expr, pathSteps);
+            const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
+            return state.updateCanvasExpressions((exprs) =>
+                exprs.remove(bodyExprId).set(exprId, newCanvasExpr));
         },
         evaluateExpression: ({exprId, targetPos}) => {
-            const existingScreenExpr = exprWithId(exprId);
-            if (!canStepUserExpr(existingScreenExpr.expr)) {
+            const existingCanvasExpr = exprWithId(exprId);
+            if (!canStepUserExpr(existingCanvasExpr.expr)) {
                 return state;
             }
-            const evaluatedExpr = evaluateUserExpr(existingScreenExpr.expr);
+            const evaluatedExpr = evaluateUserExpr(existingCanvasExpr.expr);
             if (!evaluatedExpr) {
                 return state;
             }
             return addExpression(
-                state, t.newScreenExpression(evaluatedExpr, targetPos));
+                state, t.newCanvasExpression(evaluatedExpr, targetPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
             return t.matchDragResult(dragResult, {
                 pickUpExpression: ({exprId, offset}) => {
-                    const screenExpr = state.screenExpressions.get(exprId);
+                    const canvasExpr = state.canvasExpressions.get(exprId);
                     return state
-                        .updateScreenExpressions(exprs => exprs.remove(exprId))
+                        .updateCanvasExpressions(exprs => exprs.remove(exprId))
                         .updateActiveDrags((drags) =>
-                            drags.set(fingerId, t.newDragData(offset, screenExpr)));
+                            drags.set(fingerId, t.newDragData(offset, canvasExpr)));
                 },
                 decomposeExpression: ({exprPath, offset, newPos}) => {
                     const exprId = exprPath.exprId;
-                    const existingScreenExpr = exprWithId(exprId);
+                    const existingCanvasExpr = exprWithId(exprId);
                     const {original, extracted} = decomposeExpression(
-                        existingScreenExpr.expr, exprPath.pathSteps);
+                        existingCanvasExpr.expr, exprPath.pathSteps);
                     const newCanvasPos =
                         t.newCanvasPoint(newPos.screenX, newPos.screenY);
-                    const newScreenExpr =
-                        t.newScreenExpression(extracted, newCanvasPos);
+                    const newCanvasExpr =
+                        t.newCanvasExpression(extracted, newCanvasPos);
                     return state
-                        .updateScreenExpressions(screenExprs =>
-                            screenExprs.update(exprId, screenExpr =>
-                                screenExpr.withExpr(original)))
+                        .updateCanvasExpressions(canvasExprs =>
+                            canvasExprs.update(exprId, canvasExpr =>
+                                canvasExpr.withExpr(original)))
                         .updateActiveDrags(drags =>
                             drags.set(fingerId,
-                                t.newDragData(offset, newScreenExpr)));
+                                t.newDragData(offset, newCanvasExpr)));
                 },
                 createExpression: ({expr, offset, newPos}) => {
                     const newCanvasPos =
                         t.newCanvasPoint(newPos.screenX, newPos.screenY);
-                    const newScreenExpr =
-                        t.newScreenExpression(expr, newCanvasPos);
+                    const newCanvasExpr =
+                        t.newCanvasExpression(expr, newCanvasPos);
                     return state.updateActiveDrags(drags =>
                         drags.set(fingerId,
-                            t.newDragData(offset, newScreenExpr)));
+                            t.newDragData(offset, newCanvasExpr)));
                 },
                 startPan: () => {
                     // TODO
@@ -139,8 +139,8 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const newPos = t.newCanvasPoint(screenX - dx, screenY - dy);
             return state.updateActiveDrags((drags) =>
                 drags.update(fingerId, (dragData) =>
-                    dragData.updateScreenExpr((screenExpr) =>
-                        screenExpr.withPos(newPos))));
+                    dragData.updateCanvasExpr((canvasExpr) =>
+                        canvasExpr.withPos(newPos))));
         },
         fingerUp: ({fingerId, screenPos}) => {
             const dragData: ?DragData = state.activeDrags.get(fingerId);
@@ -150,24 +150,24 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.updateActiveDrags((drags) => drags.remove(fingerId));
             return t.matchDropResult(dropResult, {
-                addToTopLevelResult: ({screenExpr}) => {
-                    return addExpression(state, screenExpr);
+                addToTopLevelResult: ({canvasExpr}) => {
+                    return addExpression(state, canvasExpr);
                 },
                 insertAsBodyResult: ({lambdaPath: {exprId, pathSteps}, expr}) => {
-                    const targetScreenExpr = exprWithId(exprId);
+                    const targetCanvasExpr = exprWithId(exprId);
                     const resultExpr = insertAsBody(
-                        targetScreenExpr.expr, expr, pathSteps);
-                    const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-                    return state.updateScreenExpressions((exprs) =>
-                        exprs.set(exprId, newScreenExpr));
+                        targetCanvasExpr.expr, expr, pathSteps);
+                    const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
+                    return state.updateCanvasExpressions((exprs) =>
+                        exprs.set(exprId, newCanvasExpr));
                 },
                 insertAsArgResult: ({path: {exprId, pathSteps}, expr}) => {
-                    const targetScreenExpr = exprWithId(exprId);
+                    const targetCanvasExpr = exprWithId(exprId);
                     const resultExpr = insertAsArg(
-                        targetScreenExpr.expr, expr, pathSteps);
-                    const newScreenExpr = targetScreenExpr.withExpr(resultExpr);
-                    return state.updateScreenExpressions((exprs) =>
-                        exprs.set(exprId, newScreenExpr));
+                        targetCanvasExpr.expr, expr, pathSteps);
+                    const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
+                    return state.updateCanvasExpressions((exprs) =>
+                        exprs.set(exprId, newCanvasExpr));
                 }
             });
         },

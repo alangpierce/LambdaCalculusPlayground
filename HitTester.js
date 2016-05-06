@@ -22,7 +22,7 @@ import type {
  */
 export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
     const yieldExpressionPickUps = function* () {
-        for (let [exprId] of state.screenExpressions) {
+        for (let [exprId] of state.canvasExpressions) {
             const viewKey = t.newExpressionKey(emptyPath(exprId));
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
@@ -123,7 +123,7 @@ export const resolveDrop = (
             }
             if (intersectsWithView(t.newEmptyBodyKey(path))) {
                 yield [
-                    t.newInsertAsBodyResult(path, dragData.screenExpr.expr),
+                    t.newInsertAsBodyResult(path, dragData.canvasExpr.expr),
                     // The lambda body should show up as above the lambda.
                     path.pathSteps.size + 1,
                 ];
@@ -135,7 +135,7 @@ export const resolveDrop = (
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (intersectsWithView(t.newExpressionKey(path))) {
                 yield [
-                    t.newInsertAsArgResult(path, dragData.screenExpr.expr),
+                    t.newInsertAsArgResult(path, dragData.canvasExpr.expr),
                     path.pathSteps.size,
                 ];
             }
@@ -150,7 +150,7 @@ export const resolveDrop = (
     };
 
     let bestPriority = -1;
-    let bestResult = t.newAddToTopLevelResult(dragData.screenExpr);
+    let bestResult = t.newAddToTopLevelResult(dragData.canvasExpr);
     for (let [dropResult, priority] of yieldDropCandidates(state)) {
         if (priority > bestPriority) {
             bestResult = dropResult;
@@ -162,8 +162,8 @@ export const resolveDrop = (
 
 const yieldAllExpressions = function* (state: State):
         Generator<[ExprPath, UserExpression], void, void> {
-    for (let [exprId, screenExpr] of state.screenExpressions) {
-        yield* yieldExpressions(screenExpr.expr, emptyPath(exprId))
+    for (let [exprId, canvasExpr] of state.canvasExpressions) {
+        yield* yieldExpressions(canvasExpr.expr, emptyPath(exprId))
     }
 };
 

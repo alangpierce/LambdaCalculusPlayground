@@ -19,15 +19,15 @@ import * as t from './types'
  */
 const makeExpression = (exprString: string) => {
     const userExpr = parseExpr(exprString);
-    const screenExpr =
-        t.newScreenExpression(userExpr, t.newCanvasPoint(100, 100));
-    store.dispatch(t.newAddExpression(screenExpr));
+    const canvasExpr =
+        t.newCanvasExpression(userExpr, t.newCanvasPoint(100, 100));
+    store.dispatch(t.newAddExpression(canvasExpr));
 };
 
 const listExpressions = () => {
     const state = store.getState();
-    state.screenExpressions.forEach((screenExpression, exprId) => {
-        const {expr, pos: {canvasX, canvasY}} = screenExpression;
+    state.canvasExpressions.forEach((canvasExpression, exprId) => {
+        const {expr, pos: {canvasX, canvasY}} = canvasExpression;
         console.log(
             `Expr ${exprId} at (${canvasX}, ${canvasY}): ${formatExpr(expr)}`);
     });

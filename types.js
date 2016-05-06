@@ -7,9 +7,9 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        screenExpressions: undefined, nextExprId: undefined, activeDrags: undefined}) {
-    withScreenExpressions(screenExpressions) {
-        return this.set('screenExpressions', screenExpressions)
+        canvasExpressions: undefined, nextExprId: undefined, activeDrags: undefined}) {
+    withCanvasExpressions(canvasExpressions) {
+        return this.set('canvasExpressions', canvasExpressions)
     }
     withNextExprId(nextExprId) {
         return this.set('nextExprId', nextExprId)
@@ -17,8 +17,8 @@ class StateImpl extends Immutable.Record({
     withActiveDrags(activeDrags) {
         return this.set('activeDrags', activeDrags)
     }
-    updateScreenExpressions(updater) {
-        return this.set('screenExpressions', updater(this.screenExpressions))
+    updateCanvasExpressions(updater) {
+        return this.set('canvasExpressions', updater(this.canvasExpressions))
     }
     updateNextExprId(updater) {
         return this.set('nextExprId', updater(this.nextExprId))
@@ -29,20 +29,20 @@ class StateImpl extends Immutable.Record({
 }
 
 export type State = {
-    screenExpressions: Immutable.Map<number, ScreenExpression>,
+    canvasExpressions: Immutable.Map<number, CanvasExpression>,
     nextExprId: number,
     activeDrags: Immutable.Map<number, DragData>,
-    withScreenExpressions: (screenExpressions: Immutable.Map<number, ScreenExpression>) => State,
+    withCanvasExpressions: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
     withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
-    updateScreenExpressions: (updater: (screenExpressions: Immutable.Map<number, ScreenExpression>) => Immutable.Map<number, ScreenExpression>) => State,
+    updateCanvasExpressions: (updater: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => Immutable.Map<number, CanvasExpression>) => State,
     updateNextExprId: (updater: (nextExprId: number) => number) => State,
     updateActiveDrags: (updater: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
     toJS: () => any,
 };
 
-export const newState = (screenExpressions: Immutable.Map<number, ScreenExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>): State => (new StateImpl({
-    screenExpressions,
+export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>): State => (new StateImpl({
+    canvasExpressions,
     nextExprId,
     activeDrags,
 }));
@@ -57,12 +57,12 @@ export const newReset = (): Reset => ({
 
 export type AddExpression = {
     type: 'addExpression',
-    screenExpr: ScreenExpression,
+    canvasExpr: CanvasExpression,
 };
 
-export const newAddExpression = (screenExpr: ScreenExpression): AddExpression => ({
+export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => ({
     type: 'addExpression',
-    screenExpr,
+    canvasExpr,
 });
 
 export type MoveExpression = {
@@ -639,7 +639,7 @@ export const matchUserExpression = function<T>(userExpression: UserExpression, v
     }
 };
 
-class ScreenExpressionImpl extends Immutable.Record({
+class CanvasExpressionImpl extends Immutable.Record({
         expr: undefined, pos: undefined}) {
     withExpr(expr) {
         return this.set('expr', expr)
@@ -655,17 +655,17 @@ class ScreenExpressionImpl extends Immutable.Record({
     }
 }
 
-export type ScreenExpression = {
+export type CanvasExpression = {
     expr: UserExpression,
     pos: CanvasPoint,
-    withExpr: (expr: UserExpression) => ScreenExpression,
-    withPos: (pos: CanvasPoint) => ScreenExpression,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => ScreenExpression,
-    updatePos: (updater: (pos: CanvasPoint) => CanvasPoint) => ScreenExpression,
+    withExpr: (expr: UserExpression) => CanvasExpression,
+    withPos: (pos: CanvasPoint) => CanvasExpression,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => CanvasExpression,
+    updatePos: (updater: (pos: CanvasPoint) => CanvasPoint) => CanvasExpression,
     toJS: () => any,
 };
 
-export const newScreenExpression = (expr: UserExpression, pos: CanvasPoint): ScreenExpression => (new ScreenExpressionImpl({
+export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpressionImpl({
     expr,
     pos,
 }));
@@ -994,57 +994,57 @@ export const matchDragResult = function<T>(dragResult: DragResult, visitor: Drag
 };
 
 class DragDataImpl extends Immutable.Record({
-        offset: undefined, screenExpr: undefined}) {
+        offset: undefined, canvasExpr: undefined}) {
     withOffset(offset) {
         return this.set('offset', offset)
     }
-    withScreenExpr(screenExpr) {
-        return this.set('screenExpr', screenExpr)
+    withCanvasExpr(canvasExpr) {
+        return this.set('canvasExpr', canvasExpr)
     }
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
-    updateScreenExpr(updater) {
-        return this.set('screenExpr', updater(this.screenExpr))
+    updateCanvasExpr(updater) {
+        return this.set('canvasExpr', updater(this.canvasExpr))
     }
 }
 
 export type DragData = {
     offset: PointDifference,
-    screenExpr: ScreenExpression,
+    canvasExpr: CanvasExpression,
     withOffset: (offset: PointDifference) => DragData,
-    withScreenExpr: (screenExpr: ScreenExpression) => DragData,
+    withCanvasExpr: (canvasExpr: CanvasExpression) => DragData,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => DragData,
-    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => DragData,
+    updateCanvasExpr: (updater: (canvasExpr: CanvasExpression) => CanvasExpression) => DragData,
     toJS: () => any,
 };
 
-export const newDragData = (offset: PointDifference, screenExpr: ScreenExpression): DragData => (new DragDataImpl({
+export const newDragData = (offset: PointDifference, canvasExpr: CanvasExpression): DragData => (new DragDataImpl({
     offset,
-    screenExpr,
+    canvasExpr,
 }));
 
 class AddToTopLevelResultImpl extends Immutable.Record({
-        type: undefined, screenExpr: undefined}) {
-    withScreenExpr(screenExpr) {
-        return this.set('screenExpr', screenExpr)
+        type: undefined, canvasExpr: undefined}) {
+    withCanvasExpr(canvasExpr) {
+        return this.set('canvasExpr', canvasExpr)
     }
-    updateScreenExpr(updater) {
-        return this.set('screenExpr', updater(this.screenExpr))
+    updateCanvasExpr(updater) {
+        return this.set('canvasExpr', updater(this.canvasExpr))
     }
 }
 
 export type AddToTopLevelResult = {
     type: 'addToTopLevelResult',
-    screenExpr: ScreenExpression,
-    withScreenExpr: (screenExpr: ScreenExpression) => AddToTopLevelResult,
-    updateScreenExpr: (updater: (screenExpr: ScreenExpression) => ScreenExpression) => AddToTopLevelResult,
+    canvasExpr: CanvasExpression,
+    withCanvasExpr: (canvasExpr: CanvasExpression) => AddToTopLevelResult,
+    updateCanvasExpr: (updater: (canvasExpr: CanvasExpression) => CanvasExpression) => AddToTopLevelResult,
     toJS: () => any,
 };
 
-export const newAddToTopLevelResult = (screenExpr: ScreenExpression): AddToTopLevelResult => (new AddToTopLevelResultImpl({
+export const newAddToTopLevelResult = (canvasExpr: CanvasExpression): AddToTopLevelResult => (new AddToTopLevelResultImpl({
     type: 'addToTopLevelResult',
-    screenExpr,
+    canvasExpr,
 }));
 
 class InsertAsBodyResultImpl extends Immutable.Record({

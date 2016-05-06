@@ -25,7 +25,7 @@ import store from './store'
 import {
     newCanvasPoint,
     newUserLambda,
-    newScreenExpression,
+    newCanvasExpression,
 } from './types'
 import * as t from './types'
 
@@ -33,7 +33,7 @@ import type {
     CanvasPoint,
     DragData,
     UserExpression,
-    ScreenExpression,
+    CanvasExpression,
     ScreenPoint,
 } from './types'
 
@@ -82,7 +82,7 @@ extends StatelessComponent<DraggedExpressionPropTypes> {
 }
 
 type PlaygroundCanvasProps = {
-    screenExpressions: Immutable.Map<number, ScreenExpression>,
+    canvasExpressions: Immutable.Map<number, CanvasExpression>,
     activeDrags: Immutable.Map<number, DragData>
 };
 
@@ -92,7 +92,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     componentWillMount() {
         DeviceEventEmitter.addListener('createLambda', (varName) => {
             store.dispatch(t.newAddExpression(
-                newScreenExpression(
+                newCanvasExpression(
                     newUserLambda(varName, null),
                     newCanvasPoint(100, 100))
             ));
@@ -137,21 +137,21 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     render() {
-        const {screenExpressions, activeDrags} = this.props;
-        const exprNodes = Array.from(screenExpressions)
-            .map(([exprId, screenExpression]) => {
+        const {canvasExpressions, activeDrags} = this.props;
+        const exprNodes = Array.from(canvasExpressions)
+            .map(([exprId, canvasExpression]) => {
                 return <TopLevelExpression
                     exprId={exprId}
-                    expr={screenExpression.expr}
-                    pos={screenExpression.pos}
+                    expr={canvasExpression.expr}
+                    pos={canvasExpression.pos}
                     key={"expr" + exprId}
                 />
             });
         const dragNodes = Array.from(activeDrags)
             .map(([fingerId, dragData]) => {
                 return <DraggedExpression
-                    expr={dragData.screenExpr.expr}
-                    pos={dragData.screenExpr.pos}
+                    expr={dragData.canvasExpr.expr}
+                    pos={dragData.canvasExpr.pos}
                     key={"drag" + fingerId}
                 />;
             });
@@ -167,8 +167,8 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
 const ConnectedPlaygroundCanvasView =
     connect(
-        ({screenExpressions, activeDrags}) => ({
-            screenExpressions,
+        ({canvasExpressions, activeDrags}) => ({
+            canvasExpressions,
             activeDrags
         })
     )(PlaygroundCanvasView);
