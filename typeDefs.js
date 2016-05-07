@@ -143,13 +143,48 @@ export default typeDefs = {
             UserReference: {
                 defName: 'string',
             },
-        }
+        },
     },
     CanvasExpression: {
         type: 'struct',
         fields: {
             expr: 'UserExpression',
             pos: 'CanvasPoint',
+        },
+    },
+    ScreenExpression: {
+        type: 'struct',
+        fields: {
+            expr: 'DisplayExpression',
+            pos: 'ScreenPoint',
+            // A long-lived expression key to use as the React key.
+            key: 'string',
+            isDragging: 'bool',
+        },
+    },
+    DisplayExpression: {
+        type: 'union',
+        cases: {
+            DisplayLambda: {
+                exprKey: '?ExpressionKey',
+                varKey: '?LambdaVarKey',
+                emptyBodyKey: '?EmptyBodyKey',
+                varName: 'string',
+                body: '?DisplayExpression',
+            },
+            DisplayFuncCall: {
+                exprKey: '?ExpressionKey',
+                func: 'DisplayExpression',
+                arg: 'DisplayExpression',
+            },
+            DisplayVariable: {
+                exprKey: '?ExpressionKey',
+                varName: 'string',
+            },
+            DisplayReference: {
+                exprKey: '?ExpressionKey',
+                defName: 'string',
+            }
         },
     },
     CanvasPoint: {

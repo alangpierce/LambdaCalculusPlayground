@@ -10,6 +10,7 @@ import * as Immutable from 'immutable'
 
 import store from './store'
 import {parseExpr, formatExpr} from './ExpressionStr'
+import generateScreenExpressions from './generateScreenExpressions'
 import * as ViewTracker from './ViewTracker'
 
 import * as t from './types'
@@ -42,6 +43,7 @@ if (window.messageHandlers !== undefined) {
         t,
         makeExpression,
         listExpressions,
+        generateScreenExpressions,
         Immutable,
         ViewTracker,
     };

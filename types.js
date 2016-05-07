@@ -670,6 +670,253 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
     pos,
 }));
 
+class ScreenExpressionImpl extends Immutable.Record({
+        expr: undefined, pos: undefined, key: undefined, isDragging: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withPos(pos) {
+        return this.set('pos', pos)
+    }
+    withKey(key) {
+        return this.set('key', key)
+    }
+    withIsDragging(isDragging) {
+        return this.set('isDragging', isDragging)
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updatePos(updater) {
+        return this.set('pos', updater(this.pos))
+    }
+    updateKey(updater) {
+        return this.set('key', updater(this.key))
+    }
+    updateIsDragging(updater) {
+        return this.set('isDragging', updater(this.isDragging))
+    }
+}
+
+export type ScreenExpression = {
+    expr: DisplayExpression,
+    pos: ScreenPoint,
+    key: string,
+    isDragging: bool,
+    withExpr: (expr: DisplayExpression) => ScreenExpression,
+    withPos: (pos: ScreenPoint) => ScreenExpression,
+    withKey: (key: string) => ScreenExpression,
+    withIsDragging: (isDragging: bool) => ScreenExpression,
+    updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => ScreenExpression,
+    updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenExpression,
+    updateKey: (updater: (key: string) => string) => ScreenExpression,
+    updateIsDragging: (updater: (isDragging: bool) => bool) => ScreenExpression,
+    toJS: () => any,
+};
+
+export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: bool): ScreenExpression => (new ScreenExpressionImpl({
+    expr,
+    pos,
+    key,
+    isDragging,
+}));
+
+class DisplayLambdaImpl extends Immutable.Record({
+        type: undefined, exprKey: undefined, varKey: undefined, emptyBodyKey: undefined, varName: undefined, body: undefined}) {
+    withExprKey(exprKey) {
+        return this.set('exprKey', exprKey)
+    }
+    withVarKey(varKey) {
+        return this.set('varKey', varKey)
+    }
+    withEmptyBodyKey(emptyBodyKey) {
+        return this.set('emptyBodyKey', emptyBodyKey)
+    }
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+    withBody(body) {
+        return this.set('body', body)
+    }
+    updateExprKey(updater) {
+        return this.set('exprKey', updater(this.exprKey))
+    }
+    updateVarKey(updater) {
+        return this.set('varKey', updater(this.varKey))
+    }
+    updateEmptyBodyKey(updater) {
+        return this.set('emptyBodyKey', updater(this.emptyBodyKey))
+    }
+    updateVarName(updater) {
+        return this.set('varName', updater(this.varName))
+    }
+    updateBody(updater) {
+        return this.set('body', updater(this.body))
+    }
+}
+
+export type DisplayLambda = {
+    type: 'displayLambda',
+    exprKey: ?ExpressionKey,
+    varKey: ?LambdaVarKey,
+    emptyBodyKey: ?EmptyBodyKey,
+    varName: string,
+    body: ?DisplayExpression,
+    withExprKey: (exprKey: ?ExpressionKey) => DisplayLambda,
+    withVarKey: (varKey: ?LambdaVarKey) => DisplayLambda,
+    withEmptyBodyKey: (emptyBodyKey: ?EmptyBodyKey) => DisplayLambda,
+    withVarName: (varName: string) => DisplayLambda,
+    withBody: (body: ?DisplayExpression) => DisplayLambda,
+    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayLambda,
+    updateVarKey: (updater: (varKey: ?LambdaVarKey) => ?LambdaVarKey) => DisplayLambda,
+    updateEmptyBodyKey: (updater: (emptyBodyKey: ?EmptyBodyKey) => ?EmptyBodyKey) => DisplayLambda,
+    updateVarName: (updater: (varName: string) => string) => DisplayLambda,
+    updateBody: (updater: (body: ?DisplayExpression) => ?DisplayExpression) => DisplayLambda,
+    toJS: () => any,
+};
+
+export const newDisplayLambda = (exprKey: ?ExpressionKey, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
+    type: 'displayLambda',
+    exprKey,
+    varKey,
+    emptyBodyKey,
+    varName,
+    body,
+}));
+
+class DisplayFuncCallImpl extends Immutable.Record({
+        type: undefined, exprKey: undefined, func: undefined, arg: undefined}) {
+    withExprKey(exprKey) {
+        return this.set('exprKey', exprKey)
+    }
+    withFunc(func) {
+        return this.set('func', func)
+    }
+    withArg(arg) {
+        return this.set('arg', arg)
+    }
+    updateExprKey(updater) {
+        return this.set('exprKey', updater(this.exprKey))
+    }
+    updateFunc(updater) {
+        return this.set('func', updater(this.func))
+    }
+    updateArg(updater) {
+        return this.set('arg', updater(this.arg))
+    }
+}
+
+export type DisplayFuncCall = {
+    type: 'displayFuncCall',
+    exprKey: ?ExpressionKey,
+    func: DisplayExpression,
+    arg: DisplayExpression,
+    withExprKey: (exprKey: ?ExpressionKey) => DisplayFuncCall,
+    withFunc: (func: DisplayExpression) => DisplayFuncCall,
+    withArg: (arg: DisplayExpression) => DisplayFuncCall,
+    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayFuncCall,
+    updateFunc: (updater: (func: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
+    updateArg: (updater: (arg: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
+    toJS: () => any,
+};
+
+export const newDisplayFuncCall = (exprKey: ?ExpressionKey, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
+    type: 'displayFuncCall',
+    exprKey,
+    func,
+    arg,
+}));
+
+class DisplayVariableImpl extends Immutable.Record({
+        type: undefined, exprKey: undefined, varName: undefined}) {
+    withExprKey(exprKey) {
+        return this.set('exprKey', exprKey)
+    }
+    withVarName(varName) {
+        return this.set('varName', varName)
+    }
+    updateExprKey(updater) {
+        return this.set('exprKey', updater(this.exprKey))
+    }
+    updateVarName(updater) {
+        return this.set('varName', updater(this.varName))
+    }
+}
+
+export type DisplayVariable = {
+    type: 'displayVariable',
+    exprKey: ?ExpressionKey,
+    varName: string,
+    withExprKey: (exprKey: ?ExpressionKey) => DisplayVariable,
+    withVarName: (varName: string) => DisplayVariable,
+    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayVariable,
+    updateVarName: (updater: (varName: string) => string) => DisplayVariable,
+    toJS: () => any,
+};
+
+export const newDisplayVariable = (exprKey: ?ExpressionKey, varName: string): DisplayVariable => (new DisplayVariableImpl({
+    type: 'displayVariable',
+    exprKey,
+    varName,
+}));
+
+class DisplayReferenceImpl extends Immutable.Record({
+        type: undefined, exprKey: undefined, defName: undefined}) {
+    withExprKey(exprKey) {
+        return this.set('exprKey', exprKey)
+    }
+    withDefName(defName) {
+        return this.set('defName', defName)
+    }
+    updateExprKey(updater) {
+        return this.set('exprKey', updater(this.exprKey))
+    }
+    updateDefName(updater) {
+        return this.set('defName', updater(this.defName))
+    }
+}
+
+export type DisplayReference = {
+    type: 'displayReference',
+    exprKey: ?ExpressionKey,
+    defName: string,
+    withExprKey: (exprKey: ?ExpressionKey) => DisplayReference,
+    withDefName: (defName: string) => DisplayReference,
+    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayReference,
+    updateDefName: (updater: (defName: string) => string) => DisplayReference,
+    toJS: () => any,
+};
+
+export const newDisplayReference = (exprKey: ?ExpressionKey, defName: string): DisplayReference => (new DisplayReferenceImpl({
+    type: 'displayReference',
+    exprKey,
+    defName,
+}));
+
+export type DisplayExpression = DisplayLambda | DisplayFuncCall | DisplayVariable | DisplayReference;
+
+export type DisplayExpressionVisitor<T> = {
+    displayLambda: (displayLambda: DisplayLambda) => T,
+    displayFuncCall: (displayFuncCall: DisplayFuncCall) => T,
+    displayVariable: (displayVariable: DisplayVariable) => T,
+    displayReference: (displayReference: DisplayReference) => T,
+}
+
+export const matchDisplayExpression = function<T>(displayExpression: DisplayExpression, visitor: DisplayExpressionVisitor<T>): T {
+    switch (displayExpression.type) {
+        case 'displayLambda':
+            return visitor.displayLambda(displayExpression);
+        case 'displayFuncCall':
+            return visitor.displayFuncCall(displayExpression);
+        case 'displayVariable':
+            return visitor.displayVariable(displayExpression);
+        case 'displayReference':
+            return visitor.displayReference(displayExpression);
+        default:
+            throw new Error('Unexpected type: ' + displayExpression.type);
+    }
+};
+
 class CanvasPointImpl extends Immutable.Record({
         canvasX: undefined, canvasY: undefined}) {
     withCanvasX(canvasX) {

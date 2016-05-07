@@ -16,7 +16,7 @@ export const canStep = (expr: Expression): boolean => {
     return t.matchExpression(expr, {
         lambda: ({body}) => canStep(body),
         funcCall: ({func, arg}) =>
-        func.type === 'lambda' || canStep(func) || canStep(arg),
+            func.type === 'lambda' || canStep(func) || canStep(arg),
         variable: () => false,
     });
 };
