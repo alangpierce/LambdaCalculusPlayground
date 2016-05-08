@@ -34,3 +34,7 @@ export const rectPlusDiff = (rect: ScreenRect, diff: PointDifference):
 export const ptPlusDiff = (pt: ScreenPoint, diff: PointDifference): ScreenPoint => {
     return t.newScreenPoint(pt.screenX + diff.dx, pt.screenY + diff.dy);
 };
+
+export const rightSide = (rect: ScreenRect): ScreenRect => {
+    return rect.updateTopLeft((p) => p.withScreenX(rect.bottomRight.screenX));
+};

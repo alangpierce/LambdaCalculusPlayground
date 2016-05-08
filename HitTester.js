@@ -3,7 +3,7 @@
  */
 import {emptyPath, step} from './ExprPaths';
 import {getPositionOnScreen} from './ViewTracker';
-import {ptInRect, ptMinusPt, rectsOverlap} from './Geometry';
+import {ptInRect, ptMinusPt, rectsOverlap, rightSide} from './Geometry';
 
 import * as t from './types';
 import type {
@@ -114,6 +114,11 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         return !!rect && rectsOverlap(dragData.screenRect, rect);
     };
 
+    const intersectsWithRightSide = (key: ViewKey): bool => {
+        const rect = getPositionOnScreen(key);
+        return !!rect && rectsOverlap(dragData.screenRect, rightSide(rect));
+    };
+
     const yieldLambdaDrops = function* () {
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (expr.type !== 'userLambda' || expr.body) {
@@ -130,8 +135,8 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     };
 
     const yieldFuncCallDrops = function* () {
-        for (let [path, expr] of yieldAllExpressions(state)) {
-            if (intersectsWithView(t.newExpressionKey(path))) {
+        for (let [path, _] of yieldAllExpressions(state)) {
+            if (intersectsWithRightSide(t.newExpressionKey(path))) {
                 yield [
                     t.newInsertAsArgResult(path, dragData.userExpr),
                     path.pathSteps.size,
