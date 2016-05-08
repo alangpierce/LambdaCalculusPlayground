@@ -1460,12 +1460,26 @@ export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): Inse
     expr,
 }));
 
-export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult;
+class RemoveResultImpl extends Immutable.Record({
+        type: undefined, }) {
+}
+
+export type RemoveResult = {
+    type: 'removeResult',
+    toJS: () => any,
+};
+
+export const newRemoveResult = (): RemoveResult => (new RemoveResultImpl({
+    type: 'removeResult',
+}));
+
+export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult | RemoveResult;
 
 export type DropResultVisitor<T> = {
     addToTopLevelResult: (addToTopLevelResult: AddToTopLevelResult) => T,
     insertAsBodyResult: (insertAsBodyResult: InsertAsBodyResult) => T,
     insertAsArgResult: (insertAsArgResult: InsertAsArgResult) => T,
+    removeResult: (removeResult: RemoveResult) => T,
 }
 
 export const matchDropResult = function<T>(dropResult: DropResult, visitor: DropResultVisitor<T>): T {
@@ -1476,6 +1490,8 @@ export const matchDropResult = function<T>(dropResult: DropResult, visitor: Drop
             return visitor.insertAsBodyResult(dropResult);
         case 'insertAsArgResult':
             return visitor.insertAsArgResult(dropResult);
+        case 'removeResult':
+            return visitor.removeResult(dropResult);
         default:
             throw new Error('Unexpected type: ' + dropResult.type);
     }

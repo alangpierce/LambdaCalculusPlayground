@@ -172,7 +172,11 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                     const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
                     return state.updateCanvasExpressions((exprs) =>
                         exprs.set(exprId, newCanvasExpr));
-                }
+                },
+                removeResult: () => {
+                    // Do nothing; we've already removed the expression.
+                    return state;
+                },
             });
             return computeHighlights(state);
         },
@@ -188,7 +192,8 @@ const computeHighlights = (state: State): State => {
             insertAsBodyResult: ({lambdaPath}) => {
                 emptyBodyPaths.push(lambdaPath)
             },
-            insertAsArgResult: ({path}) => {exprPaths.push(path)}
+            insertAsArgResult: ({path}) => {exprPaths.push(path)},
+            removeResult: () => {},
         });
     }
     return state

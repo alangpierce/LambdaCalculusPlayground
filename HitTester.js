@@ -140,11 +140,29 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
     };
 
+    const yieldParamDeleteDrops = function* () {
+        if (dragData.userExpr.type !== 'userVariable') {
+            return;
+        }
+        for (let [path, expr] of yieldAllExpressions(state)) {
+            if (expr.type !== 'userLambda') {
+                continue;
+            }
+            if (intersectsWithView(t.newLambdaVarKey(path))) {
+                yield [
+                    t.newRemoveResult(),
+                    path.pathSteps.size + 1,
+                ];
+            }
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
         yield* yieldLambdaDrops();
         yield* yieldFuncCallDrops();
+        yield* yieldParamDeleteDrops();
     };
 
     let bestPriority = -1;

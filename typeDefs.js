@@ -285,6 +285,7 @@ export default typeDefs = {
                 path: 'ExprPath',
                 expr: 'UserExpression',
             },
+            RemoveResult: {},
         },
     },
     // An identifier that can be used for any view in the dragging and dropping
