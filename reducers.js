@@ -24,7 +24,11 @@ import {resolveDrop, resolveTouch} from './HitTester'
 import {screenPtToCanvasPt} from './PointConversion'
 
 const initialState: State = t.newState(
-    new Immutable.Map(), 0, new Immutable.Map());
+    new Immutable.Map(),
+    0,
+    new Immutable.Map(),
+    new Immutable.Set(),
+    new Immutable.Set());
 
 // TODO: Consider adding a top-level try/catch.
 const playgroundApp = (state: State = initialState, action: Action): State => {
@@ -92,7 +96,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
-            return t.matchDragResult(dragResult, {
+            state = t.matchDragResult(dragResult, {
                 pickUpExpression: ({exprId, offset, screenRect}) => {
                     const expr = exprWithId(exprId).expr;
                     return state
@@ -124,6 +128,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                     return state;
                 },
             });
+            return computeHighlights(state);
         },
         fingerMove: ({fingerId, screenPos}) => {
             const dragData: ?DragData = state.activeDrags.get(fingerId);
@@ -134,9 +139,10 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             const oldGrabPoint = ptPlusDiff(screenRect.topLeft, grabOffset);
             const shiftAmount = ptMinusPt(screenPos, oldGrabPoint);
             const newScreenRect = rectPlusDiff(screenRect, shiftAmount);
-            return state.updateActiveDrags((drags) =>
+            state = state.updateActiveDrags((drags) =>
                 drags.update(fingerId, (dragData) =>
                     dragData.withScreenRect(newScreenRect)));
+            return computeHighlights(state);
         },
         fingerUp: ({fingerId, screenPos}) => {
             const dragData: ?DragData = state.activeDrags.get(fingerId);
@@ -145,7 +151,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             }
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.updateActiveDrags((drags) => drags.remove(fingerId));
-            return t.matchDropResult(dropResult, {
+            state =  t.matchDropResult(dropResult, {
                 addToTopLevelResult: ({expr, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);
                     return addExpression(state,
@@ -168,8 +174,26 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                         exprs.set(exprId, newCanvasExpr));
                 }
             });
+            return computeHighlights(state);
         },
     });
+};
+
+const computeHighlights = (state: State): State => {
+    const exprPaths = [];
+    const emptyBodyPaths = [];
+    for (let [_, dragData] of state.activeDrags) {
+        t.matchDropResult(resolveDrop(state, dragData), {
+            addToTopLevelResult: () => {},
+            insertAsBodyResult: ({lambdaPath}) => {
+                emptyBodyPaths.push(lambdaPath)
+            },
+            insertAsArgResult: ({path}) => {exprPaths.push(path)}
+        });
+    }
+    return state
+        .withHighlightedExprs(new Immutable.Set(exprPaths))
+        .withHighlightedEmptyBodies(new Immutable.Set(emptyBodyPaths));
 };
 
 export default playgroundApp;

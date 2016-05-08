@@ -7,7 +7,7 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        canvasExpressions: undefined, nextExprId: undefined, activeDrags: undefined}) {
+        canvasExpressions: undefined, nextExprId: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
     withCanvasExpressions(canvasExpressions) {
         return this.set('canvasExpressions', canvasExpressions)
     }
@@ -16,6 +16,12 @@ class StateImpl extends Immutable.Record({
     }
     withActiveDrags(activeDrags) {
         return this.set('activeDrags', activeDrags)
+    }
+    withHighlightedExprs(highlightedExprs) {
+        return this.set('highlightedExprs', highlightedExprs)
+    }
+    withHighlightedEmptyBodies(highlightedEmptyBodies) {
+        return this.set('highlightedEmptyBodies', highlightedEmptyBodies)
     }
     updateCanvasExpressions(updater) {
         return this.set('canvasExpressions', updater(this.canvasExpressions))
@@ -26,25 +32,39 @@ class StateImpl extends Immutable.Record({
     updateActiveDrags(updater) {
         return this.set('activeDrags', updater(this.activeDrags))
     }
+    updateHighlightedExprs(updater) {
+        return this.set('highlightedExprs', updater(this.highlightedExprs))
+    }
+    updateHighlightedEmptyBodies(updater) {
+        return this.set('highlightedEmptyBodies', updater(this.highlightedEmptyBodies))
+    }
 }
 
 export type State = {
     canvasExpressions: Immutable.Map<number, CanvasExpression>,
     nextExprId: number,
     activeDrags: Immutable.Map<number, DragData>,
+    highlightedExprs: Immutable.Set<ExprPath>,
+    highlightedEmptyBodies: Immutable.Set<ExprPath>,
     withCanvasExpressions: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
     withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
+    withHighlightedExprs: (highlightedExprs: Immutable.Set<ExprPath>) => State,
+    withHighlightedEmptyBodies: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => State,
     updateCanvasExpressions: (updater: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => Immutable.Map<number, CanvasExpression>) => State,
     updateNextExprId: (updater: (nextExprId: number) => number) => State,
     updateActiveDrags: (updater: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
+    updateHighlightedExprs: (updater: (highlightedExprs: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
+    updateHighlightedEmptyBodies: (updater: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
     toJS: () => any,
 };
 
-export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>): State => (new StateImpl({
+export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
     canvasExpressions,
     nextExprId,
     activeDrags,
+    highlightedExprs,
+    highlightedEmptyBodies,
 }));
 
 export type Reset = {
@@ -702,19 +722,19 @@ export type ScreenExpression = {
     expr: DisplayExpression,
     pos: ScreenPoint,
     key: string,
-    isDragging: bool,
+    isDragging: boolean,
     withExpr: (expr: DisplayExpression) => ScreenExpression,
     withPos: (pos: ScreenPoint) => ScreenExpression,
     withKey: (key: string) => ScreenExpression,
-    withIsDragging: (isDragging: bool) => ScreenExpression,
+    withIsDragging: (isDragging: boolean) => ScreenExpression,
     updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => ScreenExpression,
     updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenExpression,
     updateKey: (updater: (key: string) => string) => ScreenExpression,
-    updateIsDragging: (updater: (isDragging: bool) => bool) => ScreenExpression,
+    updateIsDragging: (updater: (isDragging: boolean) => boolean) => ScreenExpression,
     toJS: () => any,
 };
 
-export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: bool): ScreenExpression => (new ScreenExpressionImpl({
+export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenExpression => (new ScreenExpressionImpl({
     expr,
     pos,
     key,
@@ -722,15 +742,21 @@ export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, k
 }));
 
 class DisplayLambdaImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, varKey: undefined, emptyBodyKey: undefined, varName: undefined, body: undefined}) {
+        type: undefined, exprKey: undefined, shouldHighlight: undefined, varKey: undefined, emptyBodyKey: undefined, shouldHighlightEmptyBody: undefined, varName: undefined, body: undefined}) {
     withExprKey(exprKey) {
         return this.set('exprKey', exprKey)
+    }
+    withShouldHighlight(shouldHighlight) {
+        return this.set('shouldHighlight', shouldHighlight)
     }
     withVarKey(varKey) {
         return this.set('varKey', varKey)
     }
     withEmptyBodyKey(emptyBodyKey) {
         return this.set('emptyBodyKey', emptyBodyKey)
+    }
+    withShouldHighlightEmptyBody(shouldHighlightEmptyBody) {
+        return this.set('shouldHighlightEmptyBody', shouldHighlightEmptyBody)
     }
     withVarName(varName) {
         return this.set('varName', varName)
@@ -741,11 +767,17 @@ class DisplayLambdaImpl extends Immutable.Record({
     updateExprKey(updater) {
         return this.set('exprKey', updater(this.exprKey))
     }
+    updateShouldHighlight(updater) {
+        return this.set('shouldHighlight', updater(this.shouldHighlight))
+    }
     updateVarKey(updater) {
         return this.set('varKey', updater(this.varKey))
     }
     updateEmptyBodyKey(updater) {
         return this.set('emptyBodyKey', updater(this.emptyBodyKey))
+    }
+    updateShouldHighlightEmptyBody(updater) {
+        return this.set('shouldHighlightEmptyBody', updater(this.shouldHighlightEmptyBody))
     }
     updateVarName(updater) {
         return this.set('varName', updater(this.varName))
@@ -758,36 +790,47 @@ class DisplayLambdaImpl extends Immutable.Record({
 export type DisplayLambda = {
     type: 'displayLambda',
     exprKey: ?ExpressionKey,
+    shouldHighlight: boolean,
     varKey: ?LambdaVarKey,
     emptyBodyKey: ?EmptyBodyKey,
+    shouldHighlightEmptyBody: boolean,
     varName: string,
     body: ?DisplayExpression,
     withExprKey: (exprKey: ?ExpressionKey) => DisplayLambda,
+    withShouldHighlight: (shouldHighlight: boolean) => DisplayLambda,
     withVarKey: (varKey: ?LambdaVarKey) => DisplayLambda,
     withEmptyBodyKey: (emptyBodyKey: ?EmptyBodyKey) => DisplayLambda,
+    withShouldHighlightEmptyBody: (shouldHighlightEmptyBody: boolean) => DisplayLambda,
     withVarName: (varName: string) => DisplayLambda,
     withBody: (body: ?DisplayExpression) => DisplayLambda,
     updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayLambda,
+    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayLambda,
     updateVarKey: (updater: (varKey: ?LambdaVarKey) => ?LambdaVarKey) => DisplayLambda,
     updateEmptyBodyKey: (updater: (emptyBodyKey: ?EmptyBodyKey) => ?EmptyBodyKey) => DisplayLambda,
+    updateShouldHighlightEmptyBody: (updater: (shouldHighlightEmptyBody: boolean) => boolean) => DisplayLambda,
     updateVarName: (updater: (varName: string) => string) => DisplayLambda,
     updateBody: (updater: (body: ?DisplayExpression) => ?DisplayExpression) => DisplayLambda,
     toJS: () => any,
 };
 
-export const newDisplayLambda = (exprKey: ?ExpressionKey, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
+export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
     type: 'displayLambda',
     exprKey,
+    shouldHighlight,
     varKey,
     emptyBodyKey,
+    shouldHighlightEmptyBody,
     varName,
     body,
 }));
 
 class DisplayFuncCallImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, func: undefined, arg: undefined}) {
+        type: undefined, exprKey: undefined, shouldHighlight: undefined, func: undefined, arg: undefined}) {
     withExprKey(exprKey) {
         return this.set('exprKey', exprKey)
+    }
+    withShouldHighlight(shouldHighlight) {
+        return this.set('shouldHighlight', shouldHighlight)
     }
     withFunc(func) {
         return this.set('func', func)
@@ -797,6 +840,9 @@ class DisplayFuncCallImpl extends Immutable.Record({
     }
     updateExprKey(updater) {
         return this.set('exprKey', updater(this.exprKey))
+    }
+    updateShouldHighlight(updater) {
+        return this.set('shouldHighlight', updater(this.shouldHighlight))
     }
     updateFunc(updater) {
         return this.set('func', updater(this.func))
@@ -809,34 +855,44 @@ class DisplayFuncCallImpl extends Immutable.Record({
 export type DisplayFuncCall = {
     type: 'displayFuncCall',
     exprKey: ?ExpressionKey,
+    shouldHighlight: boolean,
     func: DisplayExpression,
     arg: DisplayExpression,
     withExprKey: (exprKey: ?ExpressionKey) => DisplayFuncCall,
+    withShouldHighlight: (shouldHighlight: boolean) => DisplayFuncCall,
     withFunc: (func: DisplayExpression) => DisplayFuncCall,
     withArg: (arg: DisplayExpression) => DisplayFuncCall,
     updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayFuncCall,
+    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayFuncCall,
     updateFunc: (updater: (func: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
     updateArg: (updater: (arg: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
     toJS: () => any,
 };
 
-export const newDisplayFuncCall = (exprKey: ?ExpressionKey, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
+export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
     type: 'displayFuncCall',
     exprKey,
+    shouldHighlight,
     func,
     arg,
 }));
 
 class DisplayVariableImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, varName: undefined}) {
+        type: undefined, exprKey: undefined, shouldHighlight: undefined, varName: undefined}) {
     withExprKey(exprKey) {
         return this.set('exprKey', exprKey)
+    }
+    withShouldHighlight(shouldHighlight) {
+        return this.set('shouldHighlight', shouldHighlight)
     }
     withVarName(varName) {
         return this.set('varName', varName)
     }
     updateExprKey(updater) {
         return this.set('exprKey', updater(this.exprKey))
+    }
+    updateShouldHighlight(updater) {
+        return this.set('shouldHighlight', updater(this.shouldHighlight))
     }
     updateVarName(updater) {
         return this.set('varName', updater(this.varName))
@@ -846,30 +902,40 @@ class DisplayVariableImpl extends Immutable.Record({
 export type DisplayVariable = {
     type: 'displayVariable',
     exprKey: ?ExpressionKey,
+    shouldHighlight: boolean,
     varName: string,
     withExprKey: (exprKey: ?ExpressionKey) => DisplayVariable,
+    withShouldHighlight: (shouldHighlight: boolean) => DisplayVariable,
     withVarName: (varName: string) => DisplayVariable,
     updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayVariable,
+    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayVariable,
     updateVarName: (updater: (varName: string) => string) => DisplayVariable,
     toJS: () => any,
 };
 
-export const newDisplayVariable = (exprKey: ?ExpressionKey, varName: string): DisplayVariable => (new DisplayVariableImpl({
+export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariableImpl({
     type: 'displayVariable',
     exprKey,
+    shouldHighlight,
     varName,
 }));
 
 class DisplayReferenceImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, defName: undefined}) {
+        type: undefined, exprKey: undefined, shouldHighlight: undefined, defName: undefined}) {
     withExprKey(exprKey) {
         return this.set('exprKey', exprKey)
+    }
+    withShouldHighlight(shouldHighlight) {
+        return this.set('shouldHighlight', shouldHighlight)
     }
     withDefName(defName) {
         return this.set('defName', defName)
     }
     updateExprKey(updater) {
         return this.set('exprKey', updater(this.exprKey))
+    }
+    updateShouldHighlight(updater) {
+        return this.set('shouldHighlight', updater(this.shouldHighlight))
     }
     updateDefName(updater) {
         return this.set('defName', updater(this.defName))
@@ -879,17 +945,21 @@ class DisplayReferenceImpl extends Immutable.Record({
 export type DisplayReference = {
     type: 'displayReference',
     exprKey: ?ExpressionKey,
+    shouldHighlight: boolean,
     defName: string,
     withExprKey: (exprKey: ?ExpressionKey) => DisplayReference,
+    withShouldHighlight: (shouldHighlight: boolean) => DisplayReference,
     withDefName: (defName: string) => DisplayReference,
     updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayReference,
+    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayReference,
     updateDefName: (updater: (defName: string) => string) => DisplayReference,
     toJS: () => any,
 };
 
-export const newDisplayReference = (exprKey: ?ExpressionKey, defName: string): DisplayReference => (new DisplayReferenceImpl({
+export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReferenceImpl({
     type: 'displayReference',
     exprKey,
+    shouldHighlight,
     defName,
 }));
 

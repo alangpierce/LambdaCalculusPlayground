@@ -9,6 +9,9 @@ export default typeDefs = {
             nextExprId: 'number',
             // Map from finger ID to expression ID.
             activeDrags: 'Immutable.Map<number, DragData>',
+            highlightedExprs: 'Immutable.Set<ExprPath>',
+            // Set of lambda expressions where the body should be highlighted.
+            highlightedEmptyBodies: 'Immutable.Set<ExprPath>',
         },
     },
     Action: {
@@ -159,7 +162,7 @@ export default typeDefs = {
             pos: 'ScreenPoint',
             // A long-lived expression key to use as the React key.
             key: 'string',
-            isDragging: 'bool',
+            isDragging: 'boolean',
         },
     },
     DisplayExpression: {
@@ -167,22 +170,27 @@ export default typeDefs = {
         cases: {
             DisplayLambda: {
                 exprKey: '?ExpressionKey',
+                shouldHighlight: 'boolean',
                 varKey: '?LambdaVarKey',
                 emptyBodyKey: '?EmptyBodyKey',
+                shouldHighlightEmptyBody: 'boolean',
                 varName: 'string',
                 body: '?DisplayExpression',
             },
             DisplayFuncCall: {
                 exprKey: '?ExpressionKey',
+                shouldHighlight: 'boolean',
                 func: 'DisplayExpression',
                 arg: 'DisplayExpression',
             },
             DisplayVariable: {
                 exprKey: '?ExpressionKey',
+                shouldHighlight: 'boolean',
                 varName: 'string',
             },
             DisplayReference: {
                 exprKey: '?ExpressionKey',
+                shouldHighlight: 'boolean',
                 defName: 'string',
             }
         },

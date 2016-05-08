@@ -18,9 +18,11 @@ import type {
 const generateScreenExpressions = (state: State):
         Immutable.List<ScreenExpression> =>  {
     const results: Array<ScreenExpression> = [];
+    const {highlightedExprs, highlightedEmptyBodies} = state;
     
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
-        const displayExpr = buildDisplayExpression(canvasExpr.expr, exprId);
+        const displayExpr = buildDisplayExpression(
+            canvasExpr.expr, exprId, highlightedExprs, highlightedEmptyBodies);
         const isDragging = false;
         results.push(t.newScreenExpression(
             displayExpr,
@@ -31,7 +33,8 @@ const generateScreenExpressions = (state: State):
     }
 
     for (let [fingerId, dragData] of state.activeDrags) {
-        const displayExpr = buildDisplayExpression(dragData.userExpr, null);
+        const displayExpr = buildDisplayExpression(
+            dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
         results.push(t.newScreenExpression(
             displayExpr,
@@ -48,10 +51,13 @@ const generateScreenExpressions = (state: State):
  * Build a DisplayExpression with paths for the given expression ID. If exprId
  * is null, no paths are attached.
  */
-const buildDisplayExpression = (userExpr: UserExpression, exprId: ?number):
-        DisplayExpression => {
+const buildDisplayExpression = (
+        userExpr: UserExpression, exprId: ?number,
+        highlightedExprs: Immutable.Set<ExprPath>,
+        highlightedEmptyBodies: Immutable.Set<ExprPath>): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
         const exprKey = path && t.newExpressionKey(path);
+        const shouldHighlight = path != null && highlightedExprs.has(path);
         return t.matchUserExpression(expr, {
             userLambda: ({varName, body}) => {
                 const varKey = path && t.newLambdaVarKey(path);
@@ -59,22 +65,27 @@ const buildDisplayExpression = (userExpr: UserExpression, exprId: ?number):
                 if (body) {
                     const displayBody = rec(body, path && step(path, 'body'));
                     return t.newDisplayLambda(
-                        exprKey, varKey, null, varName, displayBody);
+                        exprKey, shouldHighlight, varKey, null, false, varName,
+                        displayBody);
                 } else {
+                    const highlightBody = path != null &&
+                        highlightedEmptyBodies.has(path);
                     return t.newDisplayLambda(
-                        exprKey, varKey, emptyBodyKey, varName, null);
+                        exprKey, shouldHighlight, varKey, emptyBodyKey,
+                        highlightBody, varName, null);
                 }
             },
             userFuncCall: ({func, arg}) => {
                 const displayFunc = rec(func, path && step(path, 'func'));
                 const displayArg = rec(arg, path && step(path, 'arg'));
-                return t.newDisplayFuncCall(exprKey, displayFunc, displayArg);
+                return t.newDisplayFuncCall(
+                    exprKey, shouldHighlight, displayFunc, displayArg);
             },
             userVariable: ({varName}) => {
-                return t.newDisplayVariable(exprKey, varName);
+                return t.newDisplayVariable(exprKey, shouldHighlight, varName);
             },
             userReference: ({defName}) => {
-                return t.newDisplayReference(exprKey, defName);
+                return t.newDisplayReference(exprKey, shouldHighlight, defName);
             },
         });
     };

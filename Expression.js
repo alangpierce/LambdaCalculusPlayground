@@ -49,14 +49,19 @@ type LambdaPropTypes = {
 }
 class Lambda extends StatelessComponent<LambdaPropTypes> {
     render() {
-        const {exprKey, varKey, emptyBodyKey, varName, body} = this.props.expr;
+        const {exprKey, shouldHighlight, varKey, emptyBodyKey,
+            shouldHighlightEmptyBody, varName, body} = this.props.expr;
         var bodyElement;
         if (body != null) {
             bodyElement = <Expression expr={body} />;
         } else {
-            bodyElement = <EmptyBody viewKey={emptyBodyKey} />;
+            bodyElement = <EmptyBody
+                viewKey={emptyBodyKey}
+                shouldHighlight={shouldHighlightEmptyBody}
+            />;
         }
-        return <ExprContainer viewKey={exprKey}>
+        return <ExprContainer viewKey={exprKey}
+                              shouldHighlight={shouldHighlight}>
             <ExprText>λ</ExprText>
             <ExprText viewKey={varKey}>{varName}</ExprText>
             <Bracket source={require('./img/left_bracket.png')}/>
@@ -71,8 +76,9 @@ type FuncCallPropTypes = {
 }
 class FuncCall extends StatelessComponent<FuncCallPropTypes> {
     render() {
-        const {exprKey, func, arg} = this.props.expr;
-        return <ExprContainer viewKey={exprKey}>
+        const {exprKey, shouldHighlight, func, arg} = this.props.expr;
+        return <ExprContainer viewKey={exprKey}
+                              shouldHighlight={shouldHighlight}>
             <Expression expr={func} />
             <Bracket source={require('./img/left_paren.png')}/>
             <Expression expr={arg} />
@@ -86,8 +92,9 @@ type VariablePropTypes = {
 }
 class Variable extends StatelessComponent<VariablePropTypes> {
     render() {
-        const {exprKey, varName} = this.props.expr;
-        return <ExprContainer viewKey={exprKey}>
+        const {exprKey, shouldHighlight, varName} = this.props.expr;
+        return <ExprContainer viewKey={exprKey}
+                              shouldHighlight={shouldHighlight}>
             <ExprText>{varName}</ExprText>
         </ExprContainer>;
     }
@@ -98,8 +105,9 @@ type ReferencePropTypes = {
 }
 class Reference extends StatelessComponent<ReferencePropTypes> {
     render() {
-        const {exprKey, defName} = this.props.expr;
-        return <ExprContainer viewKey={exprKey}>
+        const {exprKey, shouldHighlight, defName} = this.props.expr;
+        return <ExprContainer viewKey={exprKey}
+                              shouldHighlight={shouldHighlight}>
             <ExprText>{defName}</ExprText>
         </ExprContainer>
     }
@@ -108,13 +116,15 @@ class Reference extends StatelessComponent<ReferencePropTypes> {
 type ExprContainerPropTypes = {
     children: any,
     viewKey: ?ViewKey,
+    shouldHighlight: boolean,
 }
 class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
     render() {
-        const {children, viewKey} = this.props;
+        const {children, viewKey, shouldHighlight} = this.props;
+        const backgroundColor = shouldHighlight ? '#30EA30' : 'white';
         return <TrackedView viewKey={viewKey} style={{
             flexDirection: 'row',
-            backgroundColor: "white",
+            backgroundColor,
             elevation: 5,
             paddingTop: 1,
             alignItems: "center",
@@ -153,11 +163,14 @@ class ExprText extends StatelessComponent<ExprTextPropTypes> {
 
 type EmptyBodyPropTypes = {
     viewKey: ?ViewKey,
+    shouldHighlight: boolean,
 }
 class EmptyBody extends StatelessComponent<EmptyBodyPropTypes> {
     render() {
-        return <TrackedView viewKey={this.props.viewKey} style={{
-            backgroundColor: "#FFBBBB",
+        const {viewKey, shouldHighlight} = this.props;
+        const backgroundColor = shouldHighlight ? '#30EA30' : '#FFBBBB';
+        return <TrackedView viewKey={viewKey} style={{
+            backgroundColor,
             padding: 2,
             width: 20,
             height: 40,
