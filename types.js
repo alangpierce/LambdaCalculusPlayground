@@ -1075,12 +1075,15 @@ export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathCompon
 }));
 
 class PickUpExpressionImpl extends Immutable.Record({
-        type: undefined, exprId: undefined, offset: undefined}) {
+        type: undefined, exprId: undefined, offset: undefined, screenRect: undefined}) {
     withExprId(exprId) {
         return this.set('exprId', exprId)
     }
     withOffset(offset) {
         return this.set('offset', offset)
+    }
+    withScreenRect(screenRect) {
+        return this.set('screenRect', screenRect)
     }
     updateExprId(updater) {
         return this.set('exprId', updater(this.exprId))
@@ -1088,35 +1091,42 @@ class PickUpExpressionImpl extends Immutable.Record({
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
+    updateScreenRect(updater) {
+        return this.set('screenRect', updater(this.screenRect))
+    }
 }
 
 export type PickUpExpression = {
     type: 'pickUpExpression',
     exprId: number,
     offset: PointDifference,
+    screenRect: ScreenRect,
     withExprId: (exprId: number) => PickUpExpression,
     withOffset: (offset: PointDifference) => PickUpExpression,
+    withScreenRect: (screenRect: ScreenRect) => PickUpExpression,
     updateExprId: (updater: (exprId: number) => number) => PickUpExpression,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => PickUpExpression,
+    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => PickUpExpression,
     toJS: () => any,
 };
 
-export const newPickUpExpression = (exprId: number, offset: PointDifference): PickUpExpression => (new PickUpExpressionImpl({
+export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpressionImpl({
     type: 'pickUpExpression',
     exprId,
     offset,
+    screenRect,
 }));
 
 class DecomposeExpressionImpl extends Immutable.Record({
-        type: undefined, exprPath: undefined, offset: undefined, newPos: undefined}) {
+        type: undefined, exprPath: undefined, offset: undefined, screenRect: undefined}) {
     withExprPath(exprPath) {
         return this.set('exprPath', exprPath)
     }
     withOffset(offset) {
         return this.set('offset', offset)
     }
-    withNewPos(newPos) {
-        return this.set('newPos', newPos)
+    withScreenRect(screenRect) {
+        return this.set('screenRect', screenRect)
     }
     updateExprPath(updater) {
         return this.set('exprPath', updater(this.exprPath))
@@ -1124,8 +1134,8 @@ class DecomposeExpressionImpl extends Immutable.Record({
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
-    updateNewPos(updater) {
-        return this.set('newPos', updater(this.newPos))
+    updateScreenRect(updater) {
+        return this.set('screenRect', updater(this.screenRect))
     }
 }
 
@@ -1133,33 +1143,33 @@ export type DecomposeExpression = {
     type: 'decomposeExpression',
     exprPath: ExprPath,
     offset: PointDifference,
-    newPos: ScreenPoint,
+    screenRect: ScreenRect,
     withExprPath: (exprPath: ExprPath) => DecomposeExpression,
     withOffset: (offset: PointDifference) => DecomposeExpression,
-    withNewPos: (newPos: ScreenPoint) => DecomposeExpression,
+    withScreenRect: (screenRect: ScreenRect) => DecomposeExpression,
     updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => DecomposeExpression,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => DecomposeExpression,
-    updateNewPos: (updater: (newPos: ScreenPoint) => ScreenPoint) => DecomposeExpression,
+    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => DecomposeExpression,
     toJS: () => any,
 };
 
-export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, newPos: ScreenPoint): DecomposeExpression => (new DecomposeExpressionImpl({
+export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpressionImpl({
     type: 'decomposeExpression',
     exprPath,
     offset,
-    newPos,
+    screenRect,
 }));
 
 class CreateExpressionImpl extends Immutable.Record({
-        type: undefined, expr: undefined, offset: undefined, newPos: undefined}) {
+        type: undefined, expr: undefined, offset: undefined, screenRect: undefined}) {
     withExpr(expr) {
         return this.set('expr', expr)
     }
     withOffset(offset) {
         return this.set('offset', offset)
     }
-    withNewPos(newPos) {
-        return this.set('newPos', newPos)
+    withScreenRect(screenRect) {
+        return this.set('screenRect', screenRect)
     }
     updateExpr(updater) {
         return this.set('expr', updater(this.expr))
@@ -1167,8 +1177,8 @@ class CreateExpressionImpl extends Immutable.Record({
     updateOffset(updater) {
         return this.set('offset', updater(this.offset))
     }
-    updateNewPos(updater) {
-        return this.set('newPos', updater(this.newPos))
+    updateScreenRect(updater) {
+        return this.set('screenRect', updater(this.screenRect))
     }
 }
 
@@ -1176,21 +1186,21 @@ export type CreateExpression = {
     type: 'createExpression',
     expr: UserExpression,
     offset: PointDifference,
-    newPos: ScreenPoint,
+    screenRect: ScreenRect,
     withExpr: (expr: UserExpression) => CreateExpression,
     withOffset: (offset: PointDifference) => CreateExpression,
-    withNewPos: (newPos: ScreenPoint) => CreateExpression,
+    withScreenRect: (screenRect: ScreenRect) => CreateExpression,
     updateExpr: (updater: (expr: UserExpression) => UserExpression) => CreateExpression,
     updateOffset: (updater: (offset: PointDifference) => PointDifference) => CreateExpression,
-    updateNewPos: (updater: (newPos: ScreenPoint) => ScreenPoint) => CreateExpression,
+    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => CreateExpression,
     toJS: () => any,
 };
 
-export const newCreateExpression = (expr: UserExpression, offset: PointDifference, newPos: ScreenPoint): CreateExpression => (new CreateExpressionImpl({
+export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpressionImpl({
     type: 'createExpression',
     expr,
     offset,
-    newPos,
+    screenRect,
 }));
 
 class StartPanImpl extends Immutable.Record({
@@ -1241,57 +1251,77 @@ export const matchDragResult = function<T>(dragResult: DragResult, visitor: Drag
 };
 
 class DragDataImpl extends Immutable.Record({
-        offset: undefined, canvasExpr: undefined}) {
-    withOffset(offset) {
-        return this.set('offset', offset)
+        userExpr: undefined, grabOffset: undefined, screenRect: undefined}) {
+    withUserExpr(userExpr) {
+        return this.set('userExpr', userExpr)
     }
-    withCanvasExpr(canvasExpr) {
-        return this.set('canvasExpr', canvasExpr)
+    withGrabOffset(grabOffset) {
+        return this.set('grabOffset', grabOffset)
     }
-    updateOffset(updater) {
-        return this.set('offset', updater(this.offset))
+    withScreenRect(screenRect) {
+        return this.set('screenRect', screenRect)
     }
-    updateCanvasExpr(updater) {
-        return this.set('canvasExpr', updater(this.canvasExpr))
+    updateUserExpr(updater) {
+        return this.set('userExpr', updater(this.userExpr))
+    }
+    updateGrabOffset(updater) {
+        return this.set('grabOffset', updater(this.grabOffset))
+    }
+    updateScreenRect(updater) {
+        return this.set('screenRect', updater(this.screenRect))
     }
 }
 
 export type DragData = {
-    offset: PointDifference,
-    canvasExpr: CanvasExpression,
-    withOffset: (offset: PointDifference) => DragData,
-    withCanvasExpr: (canvasExpr: CanvasExpression) => DragData,
-    updateOffset: (updater: (offset: PointDifference) => PointDifference) => DragData,
-    updateCanvasExpr: (updater: (canvasExpr: CanvasExpression) => CanvasExpression) => DragData,
+    userExpr: UserExpression,
+    grabOffset: PointDifference,
+    screenRect: ScreenRect,
+    withUserExpr: (userExpr: UserExpression) => DragData,
+    withGrabOffset: (grabOffset: PointDifference) => DragData,
+    withScreenRect: (screenRect: ScreenRect) => DragData,
+    updateUserExpr: (updater: (userExpr: UserExpression) => UserExpression) => DragData,
+    updateGrabOffset: (updater: (grabOffset: PointDifference) => PointDifference) => DragData,
+    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => DragData,
     toJS: () => any,
 };
 
-export const newDragData = (offset: PointDifference, canvasExpr: CanvasExpression): DragData => (new DragDataImpl({
-    offset,
-    canvasExpr,
+export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragDataImpl({
+    userExpr,
+    grabOffset,
+    screenRect,
 }));
 
 class AddToTopLevelResultImpl extends Immutable.Record({
-        type: undefined, canvasExpr: undefined}) {
-    withCanvasExpr(canvasExpr) {
-        return this.set('canvasExpr', canvasExpr)
+        type: undefined, expr: undefined, screenPos: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
     }
-    updateCanvasExpr(updater) {
-        return this.set('canvasExpr', updater(this.canvasExpr))
+    withScreenPos(screenPos) {
+        return this.set('screenPos', screenPos)
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updateScreenPos(updater) {
+        return this.set('screenPos', updater(this.screenPos))
     }
 }
 
 export type AddToTopLevelResult = {
     type: 'addToTopLevelResult',
-    canvasExpr: CanvasExpression,
-    withCanvasExpr: (canvasExpr: CanvasExpression) => AddToTopLevelResult,
-    updateCanvasExpr: (updater: (canvasExpr: CanvasExpression) => CanvasExpression) => AddToTopLevelResult,
+    expr: UserExpression,
+    screenPos: ScreenPoint,
+    withExpr: (expr: UserExpression) => AddToTopLevelResult,
+    withScreenPos: (screenPos: ScreenPoint) => AddToTopLevelResult,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => AddToTopLevelResult,
+    updateScreenPos: (updater: (screenPos: ScreenPoint) => ScreenPoint) => AddToTopLevelResult,
     toJS: () => any,
 };
 
-export const newAddToTopLevelResult = (canvasExpr: CanvasExpression): AddToTopLevelResult => (new AddToTopLevelResultImpl({
+export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResultImpl({
     type: 'addToTopLevelResult',
-    canvasExpr,
+    expr,
+    screenPos,
 }));
 
 class InsertAsBodyResultImpl extends Immutable.Record({

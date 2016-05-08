@@ -3,7 +3,7 @@
  */
 import {emptyPath, step} from './ExprPaths';
 import {getPositionOnScreen} from './ViewTracker';
-import {ptInRect, ptMinusPt} from './Geometry';
+import {ptInRect, ptMinusPt, rectsOverlap} from './Geometry';
 
 import * as t from './types';
 import type {
@@ -31,7 +31,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (ptInRect(point, screenRect)) {
                 yield [
                     t.newPickUpExpression(
-                        exprId, ptMinusPt(point, screenRect.topLeft)),
+                        exprId, ptMinusPt(point, screenRect.topLeft), screenRect),
                     0,
                 ];
             }
@@ -56,7 +56,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 yield [
                     t.newDecomposeExpression(
                         parentPath, ptMinusPt(point, screenRect.topLeft),
-                        screenRect.topLeft),
+                        screenRect),
                     path.pathSteps.size,
                 ];
             }
@@ -78,7 +78,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                     t.newCreateExpression(
                         t.newUserVariable(expr.varName),
                         ptMinusPt(point, screenRect.topLeft),
-                        screenRect.topLeft),
+                        screenRect),
                     path.pathSteps.size + 1,
                 ];
             }
@@ -108,12 +108,10 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
  * Given a dragged item, determine the action that would happen if the item was
  * dropped. This is useful both to perform the drop and to do highlighting.
  */
-export const resolveDrop = (
-        state: State, dragData: DragData, touchPos: ScreenPoint):
-        DropResult => {
+export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     const intersectsWithView = (key: ViewKey): bool => {
         const rect = getPositionOnScreen(key);
-        return !!rect && ptInRect(touchPos, rect);
+        return !!rect && rectsOverlap(dragData.screenRect, rect);
     };
 
     const yieldLambdaDrops = function* () {
@@ -123,7 +121,7 @@ export const resolveDrop = (
             }
             if (intersectsWithView(t.newEmptyBodyKey(path))) {
                 yield [
-                    t.newInsertAsBodyResult(path, dragData.canvasExpr.expr),
+                    t.newInsertAsBodyResult(path, dragData.userExpr),
                     // The lambda body should show up as above the lambda.
                     path.pathSteps.size + 1,
                 ];
@@ -135,7 +133,7 @@ export const resolveDrop = (
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (intersectsWithView(t.newExpressionKey(path))) {
                 yield [
-                    t.newInsertAsArgResult(path, dragData.canvasExpr.expr),
+                    t.newInsertAsArgResult(path, dragData.userExpr),
                     path.pathSteps.size,
                 ];
             }
@@ -150,7 +148,8 @@ export const resolveDrop = (
     };
 
     let bestPriority = -1;
-    let bestResult = t.newAddToTopLevelResult(dragData.canvasExpr);
+    let bestResult = t.newAddToTopLevelResult(
+        dragData.userExpr, dragData.screenRect.topLeft);
     for (let [dropResult, priority] of yieldDropCandidates(state)) {
         if (priority > bestPriority) {
             bestResult = dropResult;

@@ -14,3 +14,7 @@ import * as t from './types'
 export const canvasPtToScreenPt = (canvasPt: CanvasPoint): ScreenPoint => {
     return t.newScreenPoint(canvasPt.canvasX, canvasPt.canvasY);
 };
+
+export const screenPtToCanvasPt = (screenPt: ScreenPoint): CanvasPoint => {
+    return t.newCanvasPoint(screenPt.screenX, screenPt.screenY);
+};

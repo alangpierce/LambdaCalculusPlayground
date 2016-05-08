@@ -233,16 +233,17 @@ export default typeDefs = {
             PickUpExpression: {
                 exprId: 'number',
                 offset: 'PointDifference',
+                screenRect: 'ScreenRect',
             },
             DecomposeExpression: {
                 exprPath: 'ExprPath',
                 offset: 'PointDifference',
-                newPos: 'ScreenPoint',
+                screenRect: 'ScreenRect',
             },
             CreateExpression: {
                 expr: 'UserExpression',
                 offset: 'PointDifference',
-                newPos: 'ScreenPoint',
+                screenRect: 'ScreenRect',
             },
             StartPan: {
                 startPos: 'ScreenPoint',
@@ -252,8 +253,12 @@ export default typeDefs = {
     DragData: {
         type: 'struct',
         fields: {
-            offset: 'PointDifference',
-            canvasExpr: 'CanvasExpression',
+            userExpr: 'UserExpression',
+            // The coordinates of the grab position relative to the top-left of
+            // the screen rectangle.
+            grabOffset: 'PointDifference',
+            // The position of the dragged object on the screen.
+            screenRect: 'ScreenRect',
         },
     },
     // The action performed when dropping.
@@ -261,7 +266,8 @@ export default typeDefs = {
         type: 'union',
         cases: {
             AddToTopLevelResult: {
-                canvasExpr: 'CanvasExpression',
+                expr: 'UserExpression',
+                screenPos: 'ScreenPoint',
             },
             InsertAsBodyResult: {
                 lambdaPath: 'ExprPath',

@@ -31,12 +31,11 @@ const generateScreenExpressions = (state: State):
     }
 
     for (let [fingerId, dragData] of state.activeDrags) {
-        const canvasExpr = dragData.canvasExpr;
-        const displayExpr = buildDisplayExpression(canvasExpr.expr, null);
+        const displayExpr = buildDisplayExpression(dragData.userExpr, null);
         const isDragging = true;
         results.push(t.newScreenExpression(
             displayExpr,
-            canvasPtToScreenPt(canvasExpr.pos),
+            dragData.screenRect.topLeft,
             'drag' + fingerId,
             isDragging,
         ));
