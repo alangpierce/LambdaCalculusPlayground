@@ -29,10 +29,26 @@ import * as t from './types'
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
+type DefinitionPropTypes = {
+    defName: string,
+    expr: DisplayExpression,
+}
+export class Definition extends StatelessComponent<DefinitionPropTypes> {
+    render() {
+        const {defName, expr} = this.props;
+        return <ExprContainer viewKey={null}
+                              shouldHighlight={false}>
+            <ExprText>{defName}</ExprText>
+            <ExprText>:=</ExprText>
+            <Expression expr={expr} />
+        </ExprContainer>;
+    }
+}
+
 type ExpressionPropTypes = {
     expr: DisplayExpression,
 }
-class Expression extends StatelessComponent<ExpressionPropTypes> {
+export class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
         const {expr} = this.props;
         return t.matchDisplayExpression(expr, {
@@ -204,5 +220,3 @@ class Bracket extends StatelessComponent<BracketPropTypes> {
         </View>;
     }
 }
-
-export default Expression;

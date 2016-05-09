@@ -181,6 +181,17 @@ export default typeDefs = {
             resultHandler: '(width: number, height: number) => void',
         },
     },
+    ScreenDefinition: {
+        type: 'struct',
+        fields: {
+            defName: 'string',
+            expr: '?DisplayExpression',
+            pos: 'ScreenPoint',
+            // A long-lived expression key to use as the React key.
+            key: 'string',
+            isDragging: 'boolean',
+        },
+    },
     ScreenExpression: {
         type: 'struct',
         fields: {

@@ -18,7 +18,7 @@ import {connect, Provider} from 'react-redux';
 
 import './DebugGlobals'
 import ExecuteButton from './ExecuteButton'
-import Expression from './Expression'
+import {Definition, Expression} from './Expression'
 import generateDisplayState from './generateDisplayState'
 import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
@@ -33,6 +33,7 @@ import * as t from './types'
 import type {
     DisplayState,
     MeasureRequest,
+    ScreenDefinition,
     ScreenExpression,
     ScreenPoint,
 } from './types'
@@ -99,6 +100,34 @@ class TopLevelExpression
                 <Expression expr={expr} />
             </View>
             {executeButton}
+        </View>;
+    }
+}
+
+type TopLevelDefinitionPropTypes = {
+    screenDef: ScreenDefinition,
+}
+class TopLevelDefinition extends StatelessComponent<TopLevelExpressionPropTypes> {
+    render() {
+        const {
+            defName, expr, pos: {screenX, screenY}, isDragging
+        } = this.props.screenDef;
+        const transform: Array<any> = [
+            {translateX: screenX},
+            {translateY: screenY},
+        ];
+        if (isDragging) {
+            transform.push(
+                {scaleX: 1.1},
+                {scaleY: 1.1},
+            )
+        }
+
+        return <View style={{
+            position: 'absolute',
+            transform,
+        }}>
+            <Definition defName={defName} expr={expr} />
         </View>;
     }
 }
@@ -189,18 +218,28 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             <MeasureHandler
                 measureRequest={measureRequest}
                 key={"measure" + i} />);
-        const nodes = screenExpressions.map((screenExpr) => {
+        const exprNodes = screenExpressions.map((screenExpr) => {
             return <TopLevelExpression
                 screenExpr={screenExpr}
                 key={screenExpr.key}
             />;
         });
+        const definitionNodes = [
+            <TopLevelDefinition screenDef={t.newScreenDefinition(
+                'A',
+                t.newDisplayVariable(null, false, 'a'),
+                t.newScreenPoint(50, 50),
+                'foo',
+                false,
+            )} key="foo" />
+        ];
         return <View {...this._responderMethods} style={{
             backgroundColor: 'gray',
             flex: 1,
         }}>
             {measureHandlers}
-            {nodes}
+            {exprNodes}
+            {definitionNodes}
         </View>;
     }
 }

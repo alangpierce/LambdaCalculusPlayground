@@ -808,6 +808,67 @@ export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width
     resultHandler,
 }));
 
+class ScreenDefinitionImpl extends Immutable.Record({
+        defName: undefined, expr: undefined, pos: undefined, key: undefined, isDragging: undefined}) {
+    withDefName(defName) {
+        return this.set('defName', defName)
+    }
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withPos(pos) {
+        return this.set('pos', pos)
+    }
+    withKey(key) {
+        return this.set('key', key)
+    }
+    withIsDragging(isDragging) {
+        return this.set('isDragging', isDragging)
+    }
+    updateDefName(updater) {
+        return this.set('defName', updater(this.defName))
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updatePos(updater) {
+        return this.set('pos', updater(this.pos))
+    }
+    updateKey(updater) {
+        return this.set('key', updater(this.key))
+    }
+    updateIsDragging(updater) {
+        return this.set('isDragging', updater(this.isDragging))
+    }
+}
+
+export type ScreenDefinition = {
+    defName: string,
+    expr: ?DisplayExpression,
+    pos: ScreenPoint,
+    key: string,
+    isDragging: boolean,
+    withDefName: (defName: string) => ScreenDefinition,
+    withExpr: (expr: ?DisplayExpression) => ScreenDefinition,
+    withPos: (pos: ScreenPoint) => ScreenDefinition,
+    withKey: (key: string) => ScreenDefinition,
+    withIsDragging: (isDragging: boolean) => ScreenDefinition,
+    updateDefName: (updater: (defName: string) => string) => ScreenDefinition,
+    updateExpr: (updater: (expr: ?DisplayExpression) => ?DisplayExpression) => ScreenDefinition,
+    updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenDefinition,
+    updateKey: (updater: (key: string) => string) => ScreenDefinition,
+    updateIsDragging: (updater: (isDragging: boolean) => boolean) => ScreenDefinition,
+    toJS: () => any,
+};
+
+export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinitionImpl({
+    defName,
+    expr,
+    pos,
+    key,
+    isDragging,
+}));
+
 class ScreenExpressionImpl extends Immutable.Record({
         expr: undefined, pos: undefined, key: undefined, isDragging: undefined, executeHandler: undefined}) {
     withExpr(expr) {
