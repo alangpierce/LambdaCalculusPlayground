@@ -91,13 +91,18 @@ describe('reducers', () => {
         store.dispatch(t.newAddExpression(makeCanvasExpr('L x[L y[x]](y)')));
         store.dispatch(t.newEvaluateExpression(0, newCanvasPoint(25, 25)));
         assertExpression(0, 'L x[L y[x]](y)', 50, 50);
-        assertExpression(1, "L y'[y]", 25, 25);
+        assertPendingExpression(1, "L y'[y]", 25, 25);
     });
 
     const assertExpression = (exprId, exprString, canvasX, canvasY) => {
         expect(store.getState().canvasExpressions.get(exprId).toJS()).toEqual(
             newCanvasExpression(parseExpr(exprString),
                 newCanvasPoint(canvasX, canvasY)).toJS());
+    };
+
+    const assertPendingExpression = (exprId, exprString, canvasX, canvasY) => {
+        expect(store.getState().pendingResults.get(exprId).toJS()).toEqual(
+            t.newPendingResult(parseExpr(exprString), 0).toJS());
     };
 
     const makeCanvasExpr = (exprString) => {
