@@ -2,9 +2,12 @@
  * @flow
  */
 import React, {
+    Text,
     TouchableWithoutFeedback,
     View,
 } from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import StatelessComponent from './StatelessComponent'
 
 /**
@@ -26,9 +29,12 @@ class ExecuteButton extends StatelessComponent<ExecuteButtonPropTypes> {
                 height: 40,
                 backgroundColor: '#00AA00',
                 borderRadius: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
                 ...this.props.style,
-            }}
-            />
+            }}>
+                <Icon name="play-arrow" size={24} color="white" />
+            </View>
         </TouchableWithoutFeedback>;
     }
 }
