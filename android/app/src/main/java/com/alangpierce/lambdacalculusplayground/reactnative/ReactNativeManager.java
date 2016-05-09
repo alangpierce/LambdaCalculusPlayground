@@ -14,4 +14,9 @@ public interface ReactNativeManager {
      * Place a lambda with the given name in a nice place on the React Native canvas.
      */
     void createLambda(String varName);
+
+    /**
+     * Place a lambda with the given name in a nice place on the React Native canvas.
+     */
+    void createDefinition(String defName);
 }

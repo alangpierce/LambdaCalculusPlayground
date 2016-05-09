@@ -94,6 +94,7 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
             return;
         }
 
+        reactNativeManager.createDefinition(defName);
         try {
             boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
             if (alreadyOnCanvas) {
