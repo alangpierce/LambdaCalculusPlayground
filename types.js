@@ -7,12 +7,15 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        canvasExpressions: undefined, nextExprId: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
+        canvasExpressions: undefined, nextExprId: undefined, pendingResults: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
     withCanvasExpressions(canvasExpressions) {
         return this.set('canvasExpressions', canvasExpressions)
     }
     withNextExprId(nextExprId) {
         return this.set('nextExprId', nextExprId)
+    }
+    withPendingResults(pendingResults) {
+        return this.set('pendingResults', pendingResults)
     }
     withActiveDrags(activeDrags) {
         return this.set('activeDrags', activeDrags)
@@ -29,6 +32,9 @@ class StateImpl extends Immutable.Record({
     updateNextExprId(updater) {
         return this.set('nextExprId', updater(this.nextExprId))
     }
+    updatePendingResults(updater) {
+        return this.set('pendingResults', updater(this.pendingResults))
+    }
     updateActiveDrags(updater) {
         return this.set('activeDrags', updater(this.activeDrags))
     }
@@ -43,25 +49,29 @@ class StateImpl extends Immutable.Record({
 export type State = {
     canvasExpressions: Immutable.Map<number, CanvasExpression>,
     nextExprId: number,
+    pendingResults: Immutable.Map<number, PendingResult>,
     activeDrags: Immutable.Map<number, DragData>,
     highlightedExprs: Immutable.Set<ExprPath>,
     highlightedEmptyBodies: Immutable.Set<ExprPath>,
     withCanvasExpressions: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
+    withPendingResults: (pendingResults: Immutable.Map<number, PendingResult>) => State,
     withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
     withHighlightedExprs: (highlightedExprs: Immutable.Set<ExprPath>) => State,
     withHighlightedEmptyBodies: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => State,
     updateCanvasExpressions: (updater: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => Immutable.Map<number, CanvasExpression>) => State,
     updateNextExprId: (updater: (nextExprId: number) => number) => State,
+    updatePendingResults: (updater: (pendingResults: Immutable.Map<number, PendingResult>) => Immutable.Map<number, PendingResult>) => State,
     updateActiveDrags: (updater: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
     updateHighlightedExprs: (updater: (highlightedExprs: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
     updateHighlightedEmptyBodies: (updater: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
     toJS: () => any,
 };
 
-export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
+export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
     canvasExpressions,
     nextExprId,
+    pendingResults,
     activeDrags,
     highlightedExprs,
     highlightedEmptyBodies,
@@ -143,6 +153,20 @@ export const newEvaluateExpression = (exprId: number): EvaluateExpression => ({
     exprId,
 });
 
+export type PlacePendingResult = {
+    type: 'placePendingResult',
+    exprId: number,
+    width: number,
+    height: number,
+};
+
+export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => ({
+    type: 'placePendingResult',
+    exprId,
+    width,
+    height,
+});
+
 export type FingerDown = {
     type: 'fingerDown',
     fingerId: number,
@@ -179,7 +203,7 @@ export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp 
     screenPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | FingerDown | FingerMove | FingerUp;
+export type Action = Reset | AddExpression | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
@@ -189,6 +213,7 @@ export type ActionVisitor<T> = {
     insertAsArg: (insertAsArg: InsertAsArg) => T,
     insertAsBody: (insertAsBody: InsertAsBody) => T,
     evaluateExpression: (evaluateExpression: EvaluateExpression) => T,
+    placePendingResult: (placePendingResult: PlacePendingResult) => T,
     fingerDown: (fingerDown: FingerDown) => T,
     fingerMove: (fingerMove: FingerMove) => T,
     fingerUp: (fingerUp: FingerUp) => T,
@@ -210,6 +235,8 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.insertAsBody(action);
         case 'evaluateExpression':
             return visitor.evaluateExpression(action);
+        case 'placePendingResult':
+            return visitor.placePendingResult(action);
         case 'fingerDown':
             return visitor.fingerDown(action);
         case 'fingerMove':
@@ -686,6 +713,37 @@ export type CanvasExpression = {
 export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpressionImpl({
     expr,
     pos,
+}));
+
+class PendingResultImpl extends Immutable.Record({
+        expr: undefined, sourceExprId: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withSourceExprId(sourceExprId) {
+        return this.set('sourceExprId', sourceExprId)
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updateSourceExprId(updater) {
+        return this.set('sourceExprId', updater(this.sourceExprId))
+    }
+}
+
+export type PendingResult = {
+    expr: UserExpression,
+    sourceExprId: number,
+    withExpr: (expr: UserExpression) => PendingResult,
+    withSourceExprId: (sourceExprId: number) => PendingResult,
+    updateExpr: (updater: (expr: UserExpression) => UserExpression) => PendingResult,
+    updateSourceExprId: (updater: (sourceExprId: number) => number) => PendingResult,
+    toJS: () => any,
+};
+
+export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResultImpl({
+    expr,
+    sourceExprId,
 }));
 
 class DisplayStateImpl extends Immutable.Record({

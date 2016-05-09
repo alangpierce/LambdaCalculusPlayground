@@ -4,11 +4,13 @@
 
 import * as Immutable from 'immutable';
 
-import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator'
+import {emptyPath} from './ExprPaths';
+import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator';
 import type {
     Action,
-    DragData,
     CanvasExpression,
+    CanvasPoint,
+    DragData,
     State
 } from './types'
 import * as t from './types'
@@ -22,10 +24,12 @@ import {
 import {ptMinusPt, ptPlusDiff, rectPlusDiff} from './Geometry'
 import {resolveDrop, resolveTouch} from './HitTester'
 import {screenPtToCanvasPt} from './PointConversion'
+import {getPositionOnScreen} from './ViewTracker';
 
 const initialState: State = t.newState(
     new Immutable.Map(),
     0,
+    new Immutable.Map(),
     new Immutable.Map(),
     new Immutable.Set(),
     new Immutable.Set());
@@ -91,10 +95,27 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             if (!evaluatedExpr) {
                 return state;
             }
-            // TODO: Horizontally center the result.
-            const targetPos = existingExpr.pos.updateCanvasY((y) => y + 100);
-            return addExpression(
-                state, t.newCanvasExpression(evaluatedExpr, targetPos));
+            // We don't have enough information to place the expression yet,
+            // since we don't know how big it is. Instead, place it in a list to
+            // be measured, and complete the operation when placePendingResult
+            // is triggered.
+            const pendingResultId = state.nextExprId;
+            return state
+                .updatePendingResults(pending =>
+                    pending.set(pendingResultId,
+                        t.newPendingResult(evaluatedExpr, exprId)))
+                .withNextExprId(pendingResultId + 1);
+        },
+        placePendingResult: ({exprId, width}) => {
+            const pendingResult = state.pendingResults.get(exprId);
+            if (pendingResult == null) {
+                return state;
+            }
+            const {expr, sourceExprId} = pendingResult;
+            const resultPos = computeResultPos(sourceExprId, width);
+            state = state.updatePendingResults(pending =>
+                pending.delete(exprId));
+            return addExpression(state, t.newCanvasExpression(expr, resultPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
@@ -183,6 +204,20 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             return computeHighlights(state);
         },
     });
+};
+
+const computeResultPos = (sourceExprId: number, width: number):
+        CanvasPoint => {
+    const sourceExprKey = t.newExpressionKey(emptyPath(sourceExprId));
+    const sourceRect = getPositionOnScreen(sourceExprKey);
+    if (sourceRect == null) {
+        return t.newCanvasPoint(100, 100);
+    }
+    const midPoint = (sourceRect.topLeft.screenX + sourceRect.bottomRight.screenX) / 2;
+    return t.newCanvasPoint(
+        midPoint - (width / 2),
+        sourceRect.bottomRight.screenY + 15,
+    )
 };
 
 const computeHighlights = (state: State): State => {

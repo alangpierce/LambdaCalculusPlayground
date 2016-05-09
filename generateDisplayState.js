@@ -57,13 +57,17 @@ const generateDisplayState = (state: State): DisplayState =>  {
         ));
     }
 
-    const measureRequests: Array<MeasureRequest> = [
-        t.newMeasureRequest(
-            buildDisplayExpression(t.newUserLambda('x', null), null,
-                highlightedExprs, highlightedEmptyBodies),
-            (w, h) => {console.log("Got result " + w + ", " + h);}
-        )
-    ];
+    const measureRequests: Array<MeasureRequest> = [];
+    for (let [exprId, pendingResult] of state.pendingResults) {
+        const displayExpr = buildDisplayExpression(
+            pendingResult.expr, null, highlightedExprs, highlightedEmptyBodies);
+        measureRequests.push(t.newMeasureRequest(
+            displayExpr,
+            (width, height) => {
+                store.dispatch(t.newPlacePendingResult(exprId, width, height));
+            }
+        ))
+    }
 
     return t.newDisplayState(
         new Immutable.List(screenExpressions),

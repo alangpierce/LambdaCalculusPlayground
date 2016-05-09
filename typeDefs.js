@@ -7,6 +7,9 @@ export default typeDefs = {
         fields: {
             canvasExpressions: 'Immutable.Map<number, CanvasExpression>',
             nextExprId: 'number',
+            // Evaluated expressions that haven't been measured yet. We need to
+            // measure them before we know where to place them.
+            pendingResults: 'Immutable.Map<number, PendingResult>',
             // Map from finger ID to expression ID.
             activeDrags: 'Immutable.Map<number, DragData>',
             highlightedExprs: 'Immutable.Set<ExprPath>',
@@ -56,6 +59,11 @@ export default typeDefs = {
             },
             EvaluateExpression: {
                 exprId: 'number',
+            },
+            PlacePendingResult: {
+                exprId: 'number',
+                width: 'number',
+                height: 'number',
             },
             FingerDown: {
                 fingerId: 'number',
@@ -149,6 +157,13 @@ export default typeDefs = {
             expr: 'UserExpression',
             pos: 'CanvasPoint',
         },
+    },
+    PendingResult: {
+        type: 'struct',
+        fields: {
+            expr: 'UserExpression',
+            sourceExprId: 'number',
+        }
     },
     // The state sent to React land to actually render. Ideally, any interesting
     // logic should happen before this stage rather than in React components.
