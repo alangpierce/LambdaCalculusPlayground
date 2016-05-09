@@ -691,7 +691,7 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
 }));
 
 class ScreenExpressionImpl extends Immutable.Record({
-        expr: undefined, pos: undefined, key: undefined, isDragging: undefined}) {
+        expr: undefined, pos: undefined, key: undefined, isDragging: undefined, isExecutable: undefined}) {
     withExpr(expr) {
         return this.set('expr', expr)
     }
@@ -703,6 +703,9 @@ class ScreenExpressionImpl extends Immutable.Record({
     }
     withIsDragging(isDragging) {
         return this.set('isDragging', isDragging)
+    }
+    withIsExecutable(isExecutable) {
+        return this.set('isExecutable', isExecutable)
     }
     updateExpr(updater) {
         return this.set('expr', updater(this.expr))
@@ -716,6 +719,9 @@ class ScreenExpressionImpl extends Immutable.Record({
     updateIsDragging(updater) {
         return this.set('isDragging', updater(this.isDragging))
     }
+    updateIsExecutable(updater) {
+        return this.set('isExecutable', updater(this.isExecutable))
+    }
 }
 
 export type ScreenExpression = {
@@ -723,22 +729,26 @@ export type ScreenExpression = {
     pos: ScreenPoint,
     key: string,
     isDragging: boolean,
+    isExecutable: boolean,
     withExpr: (expr: DisplayExpression) => ScreenExpression,
     withPos: (pos: ScreenPoint) => ScreenExpression,
     withKey: (key: string) => ScreenExpression,
     withIsDragging: (isDragging: boolean) => ScreenExpression,
+    withIsExecutable: (isExecutable: boolean) => ScreenExpression,
     updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => ScreenExpression,
     updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenExpression,
     updateKey: (updater: (key: string) => string) => ScreenExpression,
     updateIsDragging: (updater: (isDragging: boolean) => boolean) => ScreenExpression,
+    updateIsExecutable: (updater: (isExecutable: boolean) => boolean) => ScreenExpression,
     toJS: () => any,
 };
 
-export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenExpression => (new ScreenExpressionImpl({
+export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, isExecutable: boolean): ScreenExpression => (new ScreenExpressionImpl({
     expr,
     pos,
     key,
     isDragging,
+    isExecutable,
 }));
 
 class DisplayLambdaImpl extends Immutable.Record({

@@ -14,6 +14,7 @@ import type {
     State,
     UserExpression,
 } from './types'
+import {canStepUserExpr} from './UserExpressionEvaluator'
 
 const generateScreenExpressions = (state: State):
         Immutable.List<ScreenExpression> =>  {
@@ -24,11 +25,13 @@ const generateScreenExpressions = (state: State):
         const displayExpr = buildDisplayExpression(
             canvasExpr.expr, exprId, highlightedExprs, highlightedEmptyBodies);
         const isDragging = false;
+        const isExecutable = canStepUserExpr(canvasExpr.expr);
         results.push(t.newScreenExpression(
             displayExpr,
             canvasPtToScreenPt(canvasExpr.pos),
             'expr' + exprId,
             isDragging,
+            isExecutable,
         ));
     }
 
@@ -36,11 +39,13 @@ const generateScreenExpressions = (state: State):
         const displayExpr = buildDisplayExpression(
             dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
+        const isExecutable = false;
         results.push(t.newScreenExpression(
             displayExpr,
             dragData.screenRect.topLeft,
             'drag' + fingerId,
             isDragging,
+            isExecutable,
         ));
     }
     

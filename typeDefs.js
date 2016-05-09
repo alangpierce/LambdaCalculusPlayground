@@ -163,6 +163,7 @@ export default typeDefs = {
             // A long-lived expression key to use as the React key.
             key: 'string',
             isDragging: 'boolean',
+            isExecutable: 'boolean',
         },
     },
     DisplayExpression: {

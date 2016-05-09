@@ -59,7 +59,9 @@ class TopLevelExpression
     }
 
     render() {
-        const {expr, pos: {screenX, screenY}, isDragging} = this.props.screenExpr;
+        const {
+            expr, pos: {screenX, screenY}, isDragging, isExecutable
+        } = this.props.screenExpr;
         const transform: Array<any> = [
             {translateX: screenX},
             {translateY: screenY},
@@ -72,7 +74,7 @@ class TopLevelExpression
         }
 
         let executeButton = null;
-        if (!isDragging && this.state.measuredSize != null) {
+        if (isExecutable && this.state.measuredSize != null) {
             const {width, height} = this.state.measuredSize;
             executeButton = <ExecuteButton style={{
                 elevation: 5,
