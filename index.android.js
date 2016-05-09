@@ -17,10 +17,10 @@ import React, {
 import {connect, Provider} from 'react-redux';
 
 import './DebugGlobals'
+import ExecuteButton from './ExecuteButton'
 import Expression from './Expression'
 import generateScreenExpressions from './generateScreenExpressions'
 import SimpleComponent from './SimpleComponent'
-import StatelessComponent from './StatelessComponent'
 import store from './store'
 import {
     newCanvasPoint,
@@ -37,8 +37,27 @@ import type {
 type TopLevelExpressionPropTypes = {
     screenExpr: ScreenExpression,
 }
+type TopLevelExpressionState = {
+    measuredSize: ?{
+        width: number,
+        height: number,
+    }
+}
 class TopLevelExpression
-extends StatelessComponent<TopLevelExpressionPropTypes> {
+        extends SimpleComponent<TopLevelExpressionPropTypes, TopLevelExpressionState> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            measuredSize: null,
+        }
+    }
+
+    handleLayout({nativeEvent: {layout: {width, height}}}) {
+        this.setState({
+            measuredSize: {width, height},
+        });
+    }
+
     render() {
         const {expr, pos: {screenX, screenY}, isDragging} = this.props.screenExpr;
         const transform: Array<any> = [
@@ -52,11 +71,29 @@ extends StatelessComponent<TopLevelExpressionPropTypes> {
             )
         }
 
-        return <View style={{
-            position: 'absolute',
-            transform,
-        }}>
-            <Expression expr={expr} />
+        let executeButton = null;
+        if (!isDragging && this.state.measuredSize != null) {
+            const {width, height} = this.state.measuredSize;
+            executeButton = <ExecuteButton style={{
+                elevation: 5,
+                position: 'absolute',
+                transform: [
+                    {translateX: screenX + width - 20 + 8},
+                    {translateY: screenY + height - 20 + 8},
+                ],
+            }}/>
+        }
+
+        return <View>
+            <View
+                onLayout={this.handleLayout.bind(this)}
+                style={{
+                    position: 'absolute',
+                    transform,
+            }}>
+                <Expression expr={expr} />
+            </View>
+            {executeButton}
         </View>;
     }
 }
