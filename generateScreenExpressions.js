@@ -6,6 +6,7 @@ import * as Immutable from 'immutable'
 
 import {emptyPath, step} from './ExprPaths'
 import {canvasPtToScreenPt} from './PointConversion'
+import store from './store'
 import * as t from './types'
 import type {
     DisplayExpression,
@@ -15,6 +16,12 @@ import type {
     UserExpression,
 } from './types'
 import {canStepUserExpr} from './UserExpressionEvaluator'
+
+const executeHandler = (exprId) => {
+    return () => {
+        store.dispatch(t.newEvaluateExpression(exprId));
+    };
+};
 
 const generateScreenExpressions = (state: State):
         Immutable.List<ScreenExpression> =>  {
@@ -31,7 +38,7 @@ const generateScreenExpressions = (state: State):
             canvasPtToScreenPt(canvasExpr.pos),
             'expr' + exprId,
             isDragging,
-            isExecutable,
+            isExecutable ? executeHandler(exprId) : null,
         ));
     }
 
@@ -39,13 +46,13 @@ const generateScreenExpressions = (state: State):
         const displayExpr = buildDisplayExpression(
             dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
-        const isExecutable = false;
+        const executeHandler = null;
         results.push(t.newScreenExpression(
             displayExpr,
             dragData.screenRect.topLeft,
             'drag' + fingerId,
             isDragging,
-            isExecutable,
+            null,
         ));
     }
     

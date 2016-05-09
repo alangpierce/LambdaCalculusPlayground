@@ -14,7 +14,7 @@ import StatelessComponent from './StatelessComponent'
  * Custom-built FAB since none of the existing FABs seem to work the way I want.
  */
 type ExecuteButtonPropTypes = {
-    onPress: any,
+    onPress: () => void,
     style: any,
 };
 class ExecuteButton extends StatelessComponent<ExecuteButtonPropTypes> {
@@ -23,7 +23,7 @@ class ExecuteButton extends StatelessComponent<ExecuteButtonPropTypes> {
         // TODO: Use TouchableNativeFeedback on Android to get a nice ripple
         // effect, or use some other FAB, once it works without looking weird.
         // See https://github.com/facebook/react-native/issues/5203 .
-        return <TouchableWithoutFeedback>
+        return <TouchableWithoutFeedback onPress={this.props.onPress}>
             <View style={{
                 width: 40,
                 height: 40,

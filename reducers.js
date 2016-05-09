@@ -82,15 +82,17 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             return state.updateCanvasExpressions((exprs) =>
                 exprs.remove(bodyExprId).set(exprId, newCanvasExpr));
         },
-        evaluateExpression: ({exprId, targetPos}) => {
-            const existingCanvasExpr = exprWithId(exprId);
-            if (!canStepUserExpr(existingCanvasExpr.expr)) {
+        evaluateExpression: ({exprId}) => {
+            const existingExpr = exprWithId(exprId);
+            if (!canStepUserExpr(existingExpr.expr)) {
                 return state;
             }
-            const evaluatedExpr = evaluateUserExpr(existingCanvasExpr.expr);
+            const evaluatedExpr = evaluateUserExpr(existingExpr.expr);
             if (!evaluatedExpr) {
                 return state;
             }
+            // TODO: Horizontally center the result.
+            const targetPos = existingExpr.pos.updateCanvasY((y) => y + 100);
             return addExpression(
                 state, t.newCanvasExpression(evaluatedExpr, targetPos));
         },

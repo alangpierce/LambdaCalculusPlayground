@@ -54,13 +54,8 @@ export default typeDefs = {
                 bodyExprId: 'number',
                 path: 'ExprPath',
             },
-            /**
-             * If the given expression can be evaluated, evaluate it and place
-             * the result as a new expression in the given position.
-             */
             EvaluateExpression: {
                 exprId: 'number',
-                targetPos: 'CanvasPoint',
             },
             FingerDown: {
                 fingerId: 'number',
@@ -163,7 +158,8 @@ export default typeDefs = {
             // A long-lived expression key to use as the React key.
             key: 'string',
             isDragging: 'boolean',
-            isExecutable: 'boolean',
+            // If null, don't show an execute button.
+            executeHandler: '?() => void',
         },
     },
     DisplayExpression: {
