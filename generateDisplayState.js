@@ -10,6 +10,7 @@ import store from './store'
 import * as t from './types'
 import type {
     DisplayExpression,
+    DisplayState,
     ExprPath,
     ScreenExpression,
     State,
@@ -23,9 +24,8 @@ const executeHandler = (exprId) => {
     };
 };
 
-const generateScreenExpressions = (state: State):
-        Immutable.List<ScreenExpression> =>  {
-    const results: Array<ScreenExpression> = [];
+const generateDisplayState = (state: State): DisplayState =>  {
+    const screenExpressions: Array<ScreenExpression> = [];
     const {highlightedExprs, highlightedEmptyBodies} = state;
     
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
@@ -33,7 +33,7 @@ const generateScreenExpressions = (state: State):
             canvasExpr.expr, exprId, highlightedExprs, highlightedEmptyBodies);
         const isDragging = false;
         const isExecutable = canStepUserExpr(canvasExpr.expr);
-        results.push(t.newScreenExpression(
+        screenExpressions.push(t.newScreenExpression(
             displayExpr,
             canvasPtToScreenPt(canvasExpr.pos),
             'expr' + exprId,
@@ -47,16 +47,15 @@ const generateScreenExpressions = (state: State):
             dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
         const executeHandler = null;
-        results.push(t.newScreenExpression(
+        screenExpressions.push(t.newScreenExpression(
             displayExpr,
             dragData.screenRect.topLeft,
             'drag' + fingerId,
             isDragging,
-            null,
+            executeHandler,
         ));
     }
-    
-    return new Immutable.List(results);
+    return t.newDisplayState(new Immutable.List(screenExpressions));
 };
 
 /**
@@ -104,4 +103,4 @@ const buildDisplayExpression = (
     return rec(userExpr, exprId == null ? null : emptyPath(exprId));
 };
 
-export default generateScreenExpressions;
+export default generateDisplayState;

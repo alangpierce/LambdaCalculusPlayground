@@ -10,7 +10,7 @@ import * as Immutable from 'immutable'
 
 import store from './store'
 import {parseExpr, formatExpr} from './ExpressionStr'
-import generateScreenExpressions from './generateScreenExpressions'
+import generateScreenExpressions from './generateDisplayState'
 import * as ViewTracker from './ViewTracker'
 
 import * as t from './types'

@@ -19,7 +19,7 @@ import {connect, Provider} from 'react-redux';
 import './DebugGlobals'
 import ExecuteButton from './ExecuteButton'
 import Expression from './Expression'
-import generateScreenExpressions from './generateScreenExpressions'
+import generateDisplayState from './generateDisplayState'
 import SimpleComponent from './SimpleComponent'
 import store from './store'
 import {
@@ -30,6 +30,7 @@ import {
 import * as t from './types'
 
 import type {
+    DisplayState,
     ScreenExpression,
     ScreenPoint,
 } from './types'
@@ -101,7 +102,7 @@ class TopLevelExpression
 }
 
 type PlaygroundCanvasProps = {
-    screenExpressions: Immutable.List<ScreenExpression>,
+    displayState: DisplayState,
 };
 
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
@@ -155,7 +156,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     render() {
-        const {screenExpressions} = this.props;
+        const {screenExpressions} = this.props.displayState;
         const nodes = screenExpressions.map((screenExpr) => {
             return <TopLevelExpression
                 screenExpr={screenExpr}
@@ -173,7 +174,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
 const ConnectedPlaygroundCanvasView =
     connect((state) => ({
-            screenExpressions: generateScreenExpressions(state),
+            displayState: generateDisplayState(state),
         })
     )(PlaygroundCanvasView);
 

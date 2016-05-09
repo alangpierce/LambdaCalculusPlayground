@@ -150,6 +150,14 @@ export default typeDefs = {
             pos: 'CanvasPoint',
         },
     },
+    // The state sent to React land to actually render. Ideally, any interesting
+    // logic should happen before this stage rather than in React components.
+    DisplayState: {
+        type: 'struct',
+        fields: {
+            screenExpressions: 'Immutable.List<ScreenExpression>',
+        },
+    },
     ScreenExpression: {
         type: 'struct',
         fields: {

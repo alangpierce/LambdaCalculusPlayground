@@ -688,6 +688,27 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
     pos,
 }));
 
+class DisplayStateImpl extends Immutable.Record({
+        screenExpressions: undefined}) {
+    withScreenExpressions(screenExpressions) {
+        return this.set('screenExpressions', screenExpressions)
+    }
+    updateScreenExpressions(updater) {
+        return this.set('screenExpressions', updater(this.screenExpressions))
+    }
+}
+
+export type DisplayState = {
+    screenExpressions: Immutable.List<ScreenExpression>,
+    withScreenExpressions: (screenExpressions: Immutable.List<ScreenExpression>) => DisplayState,
+    updateScreenExpressions: (updater: (screenExpressions: Immutable.List<ScreenExpression>) => Immutable.List<ScreenExpression>) => DisplayState,
+    toJS: () => any,
+};
+
+export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>): DisplayState => (new DisplayStateImpl({
+    screenExpressions,
+}));
+
 class ScreenExpressionImpl extends Immutable.Record({
         expr: undefined, pos: undefined, key: undefined, isDragging: undefined, executeHandler: undefined}) {
     withExpr(expr) {
