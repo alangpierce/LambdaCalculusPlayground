@@ -689,24 +689,65 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
 }));
 
 class DisplayStateImpl extends Immutable.Record({
-        screenExpressions: undefined}) {
+        screenExpressions: undefined, measureRequests: undefined}) {
     withScreenExpressions(screenExpressions) {
         return this.set('screenExpressions', screenExpressions)
     }
+    withMeasureRequests(measureRequests) {
+        return this.set('measureRequests', measureRequests)
+    }
     updateScreenExpressions(updater) {
         return this.set('screenExpressions', updater(this.screenExpressions))
+    }
+    updateMeasureRequests(updater) {
+        return this.set('measureRequests', updater(this.measureRequests))
     }
 }
 
 export type DisplayState = {
     screenExpressions: Immutable.List<ScreenExpression>,
+    measureRequests: Immutable.List<MeasureRequest>,
     withScreenExpressions: (screenExpressions: Immutable.List<ScreenExpression>) => DisplayState,
+    withMeasureRequests: (measureRequests: Immutable.List<MeasureRequest>) => DisplayState,
     updateScreenExpressions: (updater: (screenExpressions: Immutable.List<ScreenExpression>) => Immutable.List<ScreenExpression>) => DisplayState,
+    updateMeasureRequests: (updater: (measureRequests: Immutable.List<MeasureRequest>) => Immutable.List<MeasureRequest>) => DisplayState,
     toJS: () => any,
 };
 
-export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>): DisplayState => (new DisplayStateImpl({
+export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
     screenExpressions,
+    measureRequests,
+}));
+
+class MeasureRequestImpl extends Immutable.Record({
+        expr: undefined, resultHandler: undefined}) {
+    withExpr(expr) {
+        return this.set('expr', expr)
+    }
+    withResultHandler(resultHandler) {
+        return this.set('resultHandler', resultHandler)
+    }
+    updateExpr(updater) {
+        return this.set('expr', updater(this.expr))
+    }
+    updateResultHandler(updater) {
+        return this.set('resultHandler', updater(this.resultHandler))
+    }
+}
+
+export type MeasureRequest = {
+    expr: DisplayExpression,
+    resultHandler: (width: number, height: number) => void,
+    withExpr: (expr: DisplayExpression) => MeasureRequest,
+    withResultHandler: (resultHandler: (width: number, height: number) => void) => MeasureRequest,
+    updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => MeasureRequest,
+    updateResultHandler: (updater: (resultHandler: (width: number, height: number) => void) => (width: number, height: number) => void) => MeasureRequest,
+    toJS: () => any,
+};
+
+export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequestImpl({
+    expr,
+    resultHandler,
 }));
 
 class ScreenExpressionImpl extends Immutable.Record({

@@ -156,6 +156,14 @@ export default typeDefs = {
         type: 'struct',
         fields: {
             screenExpressions: 'Immutable.List<ScreenExpression>',
+            measureRequests: 'Immutable.List<MeasureRequest>',
+        },
+    },
+    MeasureRequest: {
+        type: 'struct',
+        fields: {
+            expr: 'DisplayExpression',
+            resultHandler: '(width: number, height: number) => void',
         },
     },
     ScreenExpression: {

@@ -12,6 +12,7 @@ import type {
     DisplayExpression,
     DisplayState,
     ExprPath,
+    MeasureRequest,
     ScreenExpression,
     State,
     UserExpression,
@@ -55,7 +56,18 @@ const generateDisplayState = (state: State): DisplayState =>  {
             executeHandler,
         ));
     }
-    return t.newDisplayState(new Immutable.List(screenExpressions));
+
+    const measureRequests: Array<MeasureRequest> = [
+        t.newMeasureRequest(
+            buildDisplayExpression(t.newUserLambda('x', null), null,
+                highlightedExprs, highlightedEmptyBodies),
+            (w, h) => {console.log("Got result " + w + ", " + h);}
+        )
+    ];
+
+    return t.newDisplayState(
+        new Immutable.List(screenExpressions),
+        new Immutable.List(measureRequests));
 };
 
 /**

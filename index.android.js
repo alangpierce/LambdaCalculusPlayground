@@ -21,6 +21,7 @@ import ExecuteButton from './ExecuteButton'
 import Expression from './Expression'
 import generateDisplayState from './generateDisplayState'
 import SimpleComponent from './SimpleComponent'
+import StatelessComponent from './StatelessComponent'
 import store from './store'
 import {
     newCanvasPoint,
@@ -31,6 +32,7 @@ import * as t from './types'
 
 import type {
     DisplayState,
+    MeasureRequest,
     ScreenExpression,
     ScreenPoint,
 } from './types'
@@ -101,6 +103,29 @@ class TopLevelExpression
     }
 }
 
+/**
+ * Component used for taking measurements of expressions so we know where to
+ * position them when they're placed for real.
+ */
+type MeasureHandlerPropTypes = {
+    measureRequest: MeasureRequest,
+}
+class MeasureHandler extends StatelessComponent<MeasureHandlerPropTypes> {
+    handleLayout({nativeEvent: {layout: {width, height}}}) {
+        this.props.measureRequest.resultHandler(width, height);
+    }
+
+    render() {
+        const {expr} = this.props.measureRequest;
+        return <View onLayout={this.handleLayout.bind(this)} style={{
+            position: 'absolute',
+            opacity: 0,
+        }}>
+            <Expression expr={expr} />
+        </View>;
+    }
+}
+
 type PlaygroundCanvasProps = {
     displayState: DisplayState,
 };
@@ -156,7 +181,11 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     render() {
-        const {screenExpressions} = this.props.displayState;
+        const {screenExpressions, measureRequests} = this.props.displayState;
+        const measureHandlers = measureRequests.map((measureRequest, i) =>
+            <MeasureHandler
+                measureRequest={measureRequest}
+                key={"measure" + i} />);
         const nodes = screenExpressions.map((screenExpr) => {
             return <TopLevelExpression
                 screenExpr={screenExpr}
@@ -167,6 +196,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             backgroundColor: 'gray',
             flex: 1,
         }}>
+            {measureHandlers}
             {nodes}
         </View>;
     }
