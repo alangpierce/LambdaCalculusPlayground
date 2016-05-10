@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import {emptyPath, step} from './ExprPaths';
+import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths';
 import {getPositionOnScreen} from './ViewTracker';
 import {ptInRect, ptMinusPt, rectsOverlap, rightSide} from './Geometry';
 
@@ -23,7 +23,7 @@ import type {
 export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
     const yieldExpressionPickUps = function* () {
         for (let [exprId] of state.canvasExpressions) {
-            const viewKey = t.newExpressionKey(emptyPath(exprId));
+            const viewKey = t.newExpressionKey(emptyIdPath(exprId));
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
                 continue;
@@ -185,7 +185,13 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
 const yieldAllExpressions = function* (state: State):
         Generator<[ExprPath, UserExpression], void, void> {
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
-        yield* yieldExpressions(canvasExpr.expr, emptyPath(exprId))
+        yield* yieldExpressions(canvasExpr.expr, emptyIdPath(exprId))
+    }
+    for (let [defName, _] of state.canvasDefinitions) {
+        const userExpr = state.definitions.get(defName);
+        if (userExpr != null) {
+            yield* yieldExpressions(userExpr, emptyDefinitionPath(defName));
+        }
     }
 };
 

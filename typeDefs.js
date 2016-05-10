@@ -277,9 +277,21 @@ export default typeDefs = {
     ExprPath: {
         type: 'struct',
         fields: {
-            exprId: 'number',
+            container: 'ExprContainer',
             pathSteps: 'Immutable.List<PathComponent>',
         }
+    },
+    // A possible starting point for an expression.
+    ExprContainer: {
+        type: 'union',
+        cases: {
+            ExprIdContainer: {
+                exprId: 'number',
+            },
+            DefinitionContainer: {
+                defName: 'string',
+            },
+        },
     },
     // The action to perform at the start of a drag operation.
     DragResult: {
@@ -350,6 +362,9 @@ export default typeDefs = {
             },
             LambdaVarKey: {
                 lambdaPath: 'ExprPath',
+            },
+            DefinitionKey: {
+                defName: 'string',
             }
         }
     }

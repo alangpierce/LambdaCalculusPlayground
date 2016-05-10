@@ -4,7 +4,7 @@
 
 import * as Immutable from 'immutable';
 
-import {emptyPath} from './ExprPaths';
+import {emptyIdPath} from './ExprPaths';
 import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator';
 import type {
     Action,
@@ -19,7 +19,8 @@ import {
     decomposeExpression,
     modifyExpression,
     insertAsArg,
-    insertAsBody
+    insertAsBody,
+    updateExprContainer,
 } from './ExpressionState'
 import {ptMinusPt, ptPlusDiff, rectPlusDiff} from './Geometry'
 import {resolveDrop, resolveTouch} from './HitTester'
@@ -68,33 +69,36 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                 exprs.update(exprId, (canvasExpr) =>
                     canvasExpr.withPos(pos)));
         },
-        decomposeExpressionAction: ({path: {exprId, pathSteps}, targetPos}) => {
-            const existingCanvasExpr = exprWithId(exprId);
-            const {original, extracted} = decomposeExpression(
-                existingCanvasExpr.expr, pathSteps);
+        decomposeExpressionAction: ({path: {container, pathSteps}, targetPos}) => {
+            let extracted = null;
+            state = updateExprContainer(state, container, expr => {
+                const decomposed = decomposeExpression(expr, pathSteps);
+                extracted = decomposed.extracted;
+                return decomposed.original;
+            });
+            if (extracted == null) {
+                throw new Error('Expected extracted to be set.');
+            }
             state = addExpression(
                 state, t.newCanvasExpression(extracted, targetPos));
-            state = modifyExpression(state, exprId,
-                () => existingCanvasExpr.withExpr(original));
             return state;
         },
-        insertAsArg: ({argExprId, path: {exprId, pathSteps}}) => {
-            const argCanvasExpr = exprWithId(argExprId);
-            const targetCanvasExpr = exprWithId(exprId);
-            const resultExpr = insertAsArg(
-                targetCanvasExpr.expr, argCanvasExpr.expr, pathSteps);
-            const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
-            return state.updateCanvasExpressions((exprs) =>
-                exprs.remove(argExprId).set(exprId, newCanvasExpr));
+        insertAsArg: ({argExprId, path: {container, pathSteps}}) => {
+            state = updateExprContainer(state, container, expr => {
+                const argCanvasExpr = exprWithId(argExprId);
+                return insertAsArg(expr, argCanvasExpr.expr, pathSteps);
+            });
+            state = state.updateCanvasExpressions(exprs => exprs.remove(argExprId));
+            return state;
         },
-        insertAsBody: ({bodyExprId, path: {exprId, pathSteps}}) => {
-            const bodyCanvasExpr = exprWithId(bodyExprId);
-            const targetCanvasExpr = exprWithId(exprId);
-            const resultExpr = insertAsBody(
-                targetCanvasExpr.expr, bodyCanvasExpr.expr, pathSteps);
-            const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
-            return state.updateCanvasExpressions((exprs) =>
-                exprs.remove(bodyExprId).set(exprId, newCanvasExpr));
+        insertAsBody: ({bodyExprId, path: {container, pathSteps}}) => {
+            state = updateExprContainer(state, container, expr => {
+                const bodyCanvasExpr = exprWithId(bodyExprId);
+                return insertAsBody(expr, bodyCanvasExpr.expr, pathSteps);
+            });
+            state = state.updateCanvasExpressions(
+                exprs => exprs.remove(bodyExprId));
+            return state;
         },
         evaluateExpression: ({exprId}) => {
             const existingExpr = exprWithId(exprId);
@@ -139,14 +143,13 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
                                 t.newDragData(expr, offset, screenRect)));
                 },
                 decomposeExpression: ({exprPath, offset, screenRect}) => {
-                    const exprId = exprPath.exprId;
-                    const existingCanvasExpr = exprWithId(exprPath.exprId);
-                    const {original, extracted} = decomposeExpression(
-                        existingCanvasExpr.expr, exprPath.pathSteps);
+                    let extracted;
+                    state = updateExprContainer(state, exprPath.container, expr => {
+                        const decomposed = decomposeExpression(expr, exprPath.pathSteps);
+                        extracted = decomposed.extracted;
+                        return decomposed.original;
+                    });
                     return state
-                        .updateCanvasExpressions(canvasExprs =>
-                            canvasExprs.update(exprId, canvasExpr =>
-                                canvasExpr.withExpr(original)))
                         .updateActiveDrags(drags =>
                             drags.set(fingerId,
                                 t.newDragData(extracted, offset, screenRect)));
@@ -184,28 +187,20 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
             }
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.updateActiveDrags((drags) => drags.remove(fingerId));
-            state =  t.matchDropResult(dropResult, {
+            state = t.matchDropResult(dropResult, {
                 addToTopLevelResult: ({expr, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);
                     return addExpression(state,
                         t.newCanvasExpression(expr, canvasPos));
                 },
-                insertAsBodyResult: ({lambdaPath: {exprId, pathSteps}, expr}) => {
-                    const targetCanvasExpr = exprWithId(exprId);
-                    const resultExpr = insertAsBody(
-                        targetCanvasExpr.expr, expr, pathSteps);
-                    const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
-                    return state.updateCanvasExpressions((exprs) =>
-                        exprs.set(exprId, newCanvasExpr));
-                },
-                insertAsArgResult: ({path: {exprId, pathSteps}, expr}) => {
-                    const targetCanvasExpr = exprWithId(exprId);
-                    const resultExpr = insertAsArg(
-                        targetCanvasExpr.expr, expr, pathSteps);
-                    const newCanvasExpr = targetCanvasExpr.withExpr(resultExpr);
-                    return state.updateCanvasExpressions((exprs) =>
-                        exprs.set(exprId, newCanvasExpr));
-                },
+                insertAsBodyResult: ({lambdaPath: {container, pathSteps}, expr}) =>
+                    updateExprContainer(state, container, targetExpr =>
+                        insertAsBody(targetExpr, expr, pathSteps)
+                    ),
+                insertAsArgResult: ({path: {container, pathSteps}, expr}) =>
+                    updateExprContainer(state, container, targetExpr =>
+                        insertAsArg(targetExpr, expr, pathSteps)
+                    ),
                 removeResult: () => {
                     // Do nothing; we've already removed the expression.
                     return state;
@@ -218,7 +213,7 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
 
 const computeResultPos = (sourceExprId: number, width: number):
         CanvasPoint => {
-    const sourceExprKey = t.newExpressionKey(emptyPath(sourceExprId));
+    const sourceExprKey = t.newExpressionKey(emptyIdPath(sourceExprId));
     const sourceRect = getPositionOnScreen(sourceExprKey);
     if (sourceRect == null) {
         return t.newCanvasPoint(100, 100);

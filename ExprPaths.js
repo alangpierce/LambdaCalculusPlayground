@@ -10,8 +10,13 @@ import type {
 } from './types'
 import * as t from './types'
 
-export const emptyPath = (exprId: number): ExprPath => {
-    return t.newExprPath(exprId, new Immutable.List());
+export const emptyIdPath = (exprId: number): ExprPath => {
+    return t.newExprPath(t.newExprIdContainer(exprId), new Immutable.List());
+};
+
+export const emptyDefinitionPath = (defName: string): ExprPath => {
+    return t.newExprPath(
+        t.newDefinitionContainer(defName), new Immutable.List());
 };
 
 export const step = (path: ExprPath, component: PathComponent): ExprPath => {

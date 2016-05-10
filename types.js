@@ -1348,15 +1348,15 @@ export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): S
 export type PathComponent = 'func' | 'arg' | 'body';
 
 class ExprPathImpl extends Immutable.Record({
-        exprId: undefined, pathSteps: undefined}) {
-    withExprId(exprId) {
-        return this.set('exprId', exprId)
+        container: undefined, pathSteps: undefined}) {
+    withContainer(container) {
+        return this.set('container', container)
     }
     withPathSteps(pathSteps) {
         return this.set('pathSteps', pathSteps)
     }
-    updateExprId(updater) {
-        return this.set('exprId', updater(this.exprId))
+    updateContainer(updater) {
+        return this.set('container', updater(this.container))
     }
     updatePathSteps(updater) {
         return this.set('pathSteps', updater(this.pathSteps))
@@ -1364,19 +1364,83 @@ class ExprPathImpl extends Immutable.Record({
 }
 
 export type ExprPath = {
-    exprId: number,
+    container: ExprContainer,
     pathSteps: Immutable.List<PathComponent>,
-    withExprId: (exprId: number) => ExprPath,
+    withContainer: (container: ExprContainer) => ExprPath,
     withPathSteps: (pathSteps: Immutable.List<PathComponent>) => ExprPath,
-    updateExprId: (updater: (exprId: number) => number) => ExprPath,
+    updateContainer: (updater: (container: ExprContainer) => ExprContainer) => ExprPath,
     updatePathSteps: (updater: (pathSteps: Immutable.List<PathComponent>) => Immutable.List<PathComponent>) => ExprPath,
     toJS: () => any,
 };
 
-export const newExprPath = (exprId: number, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
-    exprId,
+export const newExprPath = (container: ExprContainer, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
+    container,
     pathSteps,
 }));
+
+class ExprIdContainerImpl extends Immutable.Record({
+        type: undefined, exprId: undefined}) {
+    withExprId(exprId) {
+        return this.set('exprId', exprId)
+    }
+    updateExprId(updater) {
+        return this.set('exprId', updater(this.exprId))
+    }
+}
+
+export type ExprIdContainer = {
+    type: 'exprIdContainer',
+    exprId: number,
+    withExprId: (exprId: number) => ExprIdContainer,
+    updateExprId: (updater: (exprId: number) => number) => ExprIdContainer,
+    toJS: () => any,
+};
+
+export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainerImpl({
+    type: 'exprIdContainer',
+    exprId,
+}));
+
+class DefinitionContainerImpl extends Immutable.Record({
+        type: undefined, defName: undefined}) {
+    withDefName(defName) {
+        return this.set('defName', defName)
+    }
+    updateDefName(updater) {
+        return this.set('defName', updater(this.defName))
+    }
+}
+
+export type DefinitionContainer = {
+    type: 'definitionContainer',
+    defName: string,
+    withDefName: (defName: string) => DefinitionContainer,
+    updateDefName: (updater: (defName: string) => string) => DefinitionContainer,
+    toJS: () => any,
+};
+
+export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainerImpl({
+    type: 'definitionContainer',
+    defName,
+}));
+
+export type ExprContainer = ExprIdContainer | DefinitionContainer;
+
+export type ExprContainerVisitor<T> = {
+    exprIdContainer: (exprIdContainer: ExprIdContainer) => T,
+    definitionContainer: (definitionContainer: DefinitionContainer) => T,
+}
+
+export const matchExprContainer = function<T>(exprContainer: ExprContainer, visitor: ExprContainerVisitor<T>): T {
+    switch (exprContainer.type) {
+        case 'exprIdContainer':
+            return visitor.exprIdContainer(exprContainer);
+        case 'definitionContainer':
+            return visitor.definitionContainer(exprContainer);
+        default:
+            throw new Error('Unexpected type: ' + exprContainer.type);
+    }
+};
 
 class PickUpExpressionImpl extends Immutable.Record({
         type: undefined, exprId: undefined, offset: undefined, screenRect: undefined}) {
@@ -1800,12 +1864,36 @@ export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new Lamb
     lambdaPath,
 }));
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey;
+class DefinitionKeyImpl extends Immutable.Record({
+        type: undefined, defName: undefined}) {
+    withDefName(defName) {
+        return this.set('defName', defName)
+    }
+    updateDefName(updater) {
+        return this.set('defName', updater(this.defName))
+    }
+}
+
+export type DefinitionKey = {
+    type: 'definitionKey',
+    defName: string,
+    withDefName: (defName: string) => DefinitionKey,
+    updateDefName: (updater: (defName: string) => string) => DefinitionKey,
+    toJS: () => any,
+};
+
+export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKeyImpl({
+    type: 'definitionKey',
+    defName,
+}));
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey: (expressionKey: ExpressionKey) => T,
     emptyBodyKey: (emptyBodyKey: EmptyBodyKey) => T,
     lambdaVarKey: (lambdaVarKey: LambdaVarKey) => T,
+    definitionKey: (definitionKey: DefinitionKey) => T,
 }
 
 export const matchViewKey = function<T>(viewKey: ViewKey, visitor: ViewKeyVisitor<T>): T {
@@ -1816,6 +1904,8 @@ export const matchViewKey = function<T>(viewKey: ViewKey, visitor: ViewKeyVisito
             return visitor.emptyBodyKey(viewKey);
         case 'lambdaVarKey':
             return visitor.lambdaVarKey(viewKey);
+        case 'definitionKey':
+            return visitor.definitionKey(viewKey);
         default:
             throw new Error('Unexpected type: ' + viewKey.type);
     }

@@ -1,7 +1,7 @@
 const exec = require('child_process').exec;
 
 exec('./node_modules/.bin/flow --json', (error, stdout, stderr) => {
-    if (stderr) {
+    if (!stdout && stderr) {
         console.log('Flow process gave error:');
         console.log(stderr);
         process.exit(1);

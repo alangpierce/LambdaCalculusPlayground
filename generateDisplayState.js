@@ -4,7 +4,7 @@
 
 import * as Immutable from 'immutable'
 
-import {emptyPath, step} from './ExprPaths'
+import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths'
 import {canvasPtToScreenPt} from './PointConversion'
 import store from './store'
 import * as t from './types'
@@ -31,8 +31,10 @@ const generateDisplayState = (state: State): DisplayState =>  {
     const {highlightedExprs, highlightedEmptyBodies} = state;
     
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
+        const rootPath = emptyIdPath(exprId);
         const displayExpr = buildDisplayExpression(
-            canvasExpr.expr, exprId, highlightedExprs, highlightedEmptyBodies);
+            canvasExpr.expr, rootPath, highlightedExprs,
+            highlightedEmptyBodies);
         const isDragging = false;
         const isExecutable = canStepUserExpr(canvasExpr.expr);
         screenExpressions.push(t.newScreenExpression(
@@ -64,9 +66,9 @@ const generateDisplayState = (state: State): DisplayState =>  {
         const isDragging = false;
         let displayExpr = null;
         if (userExpr != null) {
-            // TODO: Use proper paths here.
+            const rootPath = emptyDefinitionPath(defName);
             displayExpr = buildDisplayExpression(
-                userExpr, null, highlightedExprs, highlightedEmptyBodies);
+                userExpr, rootPath, highlightedExprs, highlightedEmptyBodies);
         }
         screenDefinitions.push(t.newScreenDefinition(
             defName,
@@ -100,7 +102,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
  * is null, no paths are attached.
  */
 const buildDisplayExpression = (
-        userExpr: UserExpression, exprId: ?number,
+        userExpr: UserExpression, rootPath: ?ExprPath,
         highlightedExprs: Immutable.Set<ExprPath>,
         highlightedEmptyBodies: Immutable.Set<ExprPath>): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
@@ -137,7 +139,7 @@ const buildDisplayExpression = (
             },
         });
     };
-    return rec(userExpr, exprId == null ? null : emptyPath(exprId));
+    return rec(userExpr, rootPath);
 };
 
 export default generateDisplayState;

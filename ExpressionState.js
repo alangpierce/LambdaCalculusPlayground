@@ -6,6 +6,7 @@ import * as Immutable from 'immutable';
 
 import type {
     CanvasExpression,
+    ExprContainer,
     UserExpression,
     PathComponent,
     State
@@ -28,6 +29,25 @@ export const modifyExpression = (state: State, exprId: number,
     return state.updateCanvasExpressions((exprs) =>
         exprs.update(exprId, transform)
     );
+};
+
+export const updateExprContainer = (
+        state: State, container: ExprContainer,
+        transform: Transform<UserExpression>): State => {
+    return t.matchExprContainer(container, {
+        exprIdContainer: ({exprId}) =>
+            state.updateCanvasExpressions((canvasExprs) =>
+                canvasExprs.update(exprId, (canvasExpr) =>
+                    canvasExpr.updateExpr(transform))),
+        definitionContainer: ({defName}) =>
+            state.updateDefinitions((definitions) =>
+                definitions.update(defName, (def) => {
+                    if (def == null) {
+                        throw new Error('Cannot update an empty definition.');
+                    }
+                    return transform(def);
+                })),
+    });
 };
 
 type DecomposeResult = {

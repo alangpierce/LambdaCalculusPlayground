@@ -48,7 +48,7 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeCanvasExpr('L x[L y[L z[x]]]')));
         store.dispatch(t.newDecomposeExpressionAction(
-            newExprPath(0, list('body')), newCanvasPoint(25, 25)
+            makeIdPath(0, list('body')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[L y[_]]', 50, 50);
         assertExpression(1, 'L z[x]', 25, 25);
@@ -58,7 +58,7 @@ describe('reducers', () => {
         store.dispatch(t.newReset());
         store.dispatch(t.newAddExpression(makeCanvasExpr('L x[+(2)(x)]')));
         store.dispatch(t.newDecomposeExpressionAction(
-            newExprPath(0, list('body', 'func')), newCanvasPoint(25, 25)
+            makeIdPath(0, list('body', 'func')), newCanvasPoint(25, 25)
         ));
         assertExpression(0, 'L x[+(x)]', 50, 50);
         assertExpression(1, '2', 25, 25);
@@ -69,7 +69,7 @@ describe('reducers', () => {
         store.dispatch(t.newAddExpression(makeCanvasExpr('L x[L y[_]]')));
         store.dispatch(t.newAddExpression(makeCanvasExpr('x(y)')));
         store.dispatch(
-            t.newInsertAsBody(1, newExprPath(0, list('body'))));
+            t.newInsertAsBody(1, makeIdPath(0, list('body'))));
         assertExpression(0, 'L x[L y[x(y)]]', 50, 50);
         // The other expression should have been removed.
         expect(store.getState().canvasExpressions.size).toEqual(1);
@@ -80,7 +80,7 @@ describe('reducers', () => {
         store.dispatch(t.newAddExpression(makeCanvasExpr('L x[x(y)]')));
         store.dispatch(t.newAddExpression(makeCanvasExpr('FOO')));
         store.dispatch(
-            t.newInsertAsArg(1, newExprPath(0, list('body', 'arg'))));
+            t.newInsertAsArg(1, makeIdPath(0, list('body', 'arg'))));
         assertExpression(0, 'L x[x(y(FOO))]', 50, 50);
         // The other expression should have been removed.
         expect(store.getState().canvasExpressions.size).toEqual(1);
@@ -103,6 +103,10 @@ describe('reducers', () => {
     const assertPendingExpression = (exprId, exprString, canvasX, canvasY) => {
         expect(store.getState().pendingResults.get(exprId).toJS()).toEqual(
             t.newPendingResult(parseExpr(exprString), 0).toJS());
+    };
+
+    const makeIdPath = (exprId, steps) => {
+        return t.newExprPath(t.newExprIdContainer(exprId), steps);
     };
 
     const makeCanvasExpr = (exprString) => {
