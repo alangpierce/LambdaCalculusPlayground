@@ -31,16 +31,22 @@ type AssetId = number;
 
 type DefinitionPropTypes = {
     defName: string,
-    expr: DisplayExpression,
+    expr: ?DisplayExpression,
 }
 export class Definition extends StatelessComponent<DefinitionPropTypes> {
     render() {
         const {defName, expr} = this.props;
+        let exprElement;
+        if (expr != null) {
+            exprElement = <Expression expr={expr} />;
+        } else {
+            exprElement = <EmptyBody viewKey={null} shouldHighlight={false} />;
+        }
         return <ExprContainer viewKey={null}
                               shouldHighlight={false}>
             <ExprText>{defName}</ExprText>
             <ExprText>:=</ExprText>
-            <Expression expr={expr} />
+            {exprElement}
         </ExprContainer>;
     }
 }

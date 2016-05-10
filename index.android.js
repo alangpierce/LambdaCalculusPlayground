@@ -107,7 +107,7 @@ class TopLevelExpression
 type TopLevelDefinitionPropTypes = {
     screenDef: ScreenDefinition,
 }
-class TopLevelDefinition extends StatelessComponent<TopLevelExpressionPropTypes> {
+class TopLevelDefinition extends StatelessComponent<TopLevelDefinitionPropTypes> {
     render() {
         const {
             defName, expr, pos: {screenX, screenY}, isDragging
