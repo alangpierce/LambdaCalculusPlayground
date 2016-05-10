@@ -747,15 +747,21 @@ export const newPendingResult = (expr: UserExpression, sourceExprId: number): Pe
 }));
 
 class DisplayStateImpl extends Immutable.Record({
-        screenExpressions: undefined, measureRequests: undefined}) {
+        screenExpressions: undefined, screenDefinitions: undefined, measureRequests: undefined}) {
     withScreenExpressions(screenExpressions) {
         return this.set('screenExpressions', screenExpressions)
+    }
+    withScreenDefinitions(screenDefinitions) {
+        return this.set('screenDefinitions', screenDefinitions)
     }
     withMeasureRequests(measureRequests) {
         return this.set('measureRequests', measureRequests)
     }
     updateScreenExpressions(updater) {
         return this.set('screenExpressions', updater(this.screenExpressions))
+    }
+    updateScreenDefinitions(updater) {
+        return this.set('screenDefinitions', updater(this.screenDefinitions))
     }
     updateMeasureRequests(updater) {
         return this.set('measureRequests', updater(this.measureRequests))
@@ -764,16 +770,20 @@ class DisplayStateImpl extends Immutable.Record({
 
 export type DisplayState = {
     screenExpressions: Immutable.List<ScreenExpression>,
+    screenDefinitions: Immutable.List<ScreenDefinition>,
     measureRequests: Immutable.List<MeasureRequest>,
     withScreenExpressions: (screenExpressions: Immutable.List<ScreenExpression>) => DisplayState,
+    withScreenDefinitions: (screenDefinitions: Immutable.List<ScreenDefinition>) => DisplayState,
     withMeasureRequests: (measureRequests: Immutable.List<MeasureRequest>) => DisplayState,
     updateScreenExpressions: (updater: (screenExpressions: Immutable.List<ScreenExpression>) => Immutable.List<ScreenExpression>) => DisplayState,
+    updateScreenDefinitions: (updater: (screenDefinitions: Immutable.List<ScreenDefinition>) => Immutable.List<ScreenDefinition>) => DisplayState,
     updateMeasureRequests: (updater: (measureRequests: Immutable.List<MeasureRequest>) => Immutable.List<MeasureRequest>) => DisplayState,
     toJS: () => any,
 };
 
-export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
+export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, screenDefinitions: Immutable.List<ScreenDefinition>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
     screenExpressions,
+    screenDefinitions,
     measureRequests,
 }));
 

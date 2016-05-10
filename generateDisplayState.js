@@ -13,6 +13,7 @@ import type {
     DisplayState,
     ExprPath,
     MeasureRequest,
+    ScreenDefinition,
     ScreenExpression,
     State,
     UserExpression,
@@ -57,6 +58,15 @@ const generateDisplayState = (state: State): DisplayState =>  {
         ));
     }
 
+    const screenDefinitions: Array<ScreenDefinition> = [];
+    screenDefinitions.push(t.newScreenDefinition(
+        'PLUS',
+        null,
+        t.newScreenPoint(25, 25),
+        'foo',
+        false,
+    ));
+
     const measureRequests: Array<MeasureRequest> = [];
     for (let [exprId, pendingResult] of state.pendingResults) {
         const displayExpr = buildDisplayExpression(
@@ -71,6 +81,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
 
     return t.newDisplayState(
         new Immutable.List(screenExpressions),
+        new Immutable.List(screenDefinitions),
         new Immutable.List(measureRequests));
 };
 

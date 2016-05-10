@@ -171,6 +171,7 @@ export default typeDefs = {
         type: 'struct',
         fields: {
             screenExpressions: 'Immutable.List<ScreenExpression>',
+            screenDefinitions: 'Immutable.List<ScreenDefinition>',
             measureRequests: 'Immutable.List<MeasureRequest>',
         },
     },

@@ -213,26 +213,25 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     render() {
-        const {screenExpressions, measureRequests} = this.props.displayState;
+        const {
+            screenExpressions, screenDefinitions, measureRequests
+        } = this.props.displayState;
         const measureHandlers = measureRequests.map((measureRequest, i) =>
             <MeasureHandler
                 measureRequest={measureRequest}
                 key={"measure" + i} />);
-        const exprNodes = screenExpressions.map((screenExpr) => {
-            return <TopLevelExpression
+        const exprNodes = screenExpressions.map((screenExpr) =>
+            <TopLevelExpression
                 screenExpr={screenExpr}
                 key={screenExpr.key}
-            />;
-        });
-        const definitionNodes = [
-            <TopLevelDefinition screenDef={t.newScreenDefinition(
-                'A',
-                t.newDisplayVariable(null, false, 'a'),
-                t.newScreenPoint(50, 50),
-                'foo',
-                false,
-            )} key="foo" />
-        ];
+            />
+        );
+        const definitionNodes = screenDefinitions.map((screenDef) =>
+            <TopLevelDefinition
+                screenDef={screenDef}
+                key={screenDef.key}
+            />
+        );
         return <View {...this._responderMethods} style={{
             backgroundColor: 'gray',
             flex: 1,
