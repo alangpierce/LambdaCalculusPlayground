@@ -59,13 +59,23 @@ const generateDisplayState = (state: State): DisplayState =>  {
     }
 
     const screenDefinitions: Array<ScreenDefinition> = [];
-    screenDefinitions.push(t.newScreenDefinition(
-        'PLUS',
-        null,
-        t.newScreenPoint(25, 25),
-        'foo',
-        false,
-    ));
+    for (let [defName, canvasPoint] of state.canvasDefinitions) {
+        const userExpr = state.definitions.get(defName);
+        const isDragging = false;
+        let displayExpr = null;
+        if (userExpr != null) {
+            // TODO: Use proper paths here.
+            displayExpr = buildDisplayExpression(
+                userExpr, null, highlightedExprs, highlightedEmptyBodies);
+        }
+        screenDefinitions.push(t.newScreenDefinition(
+            defName,
+            displayExpr,
+            canvasPtToScreenPt(canvasPoint),
+            'def' + defName,
+            isDragging,
+        ))
+    }
 
     const measureRequests: Array<MeasureRequest> = [];
     for (let [exprId, pendingResult] of state.pendingResults) {

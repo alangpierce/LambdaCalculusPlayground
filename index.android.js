@@ -171,7 +171,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             ));
         });
         DeviceEventEmitter.addListener('createDefinition', (defName) => {
-            console.log('Created definition ' + defName);
+            store.dispatch(t.newPlaceDefinition(
+                defName,
+                t.newScreenPoint(100, 100),
+            ));
         });
         this._responderMethods = this.getResponderMethods();
     }

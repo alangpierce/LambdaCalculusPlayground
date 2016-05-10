@@ -7,12 +7,18 @@
 import * as Immutable from 'immutable'
  
 class StateImpl extends Immutable.Record({
-        canvasExpressions: undefined, nextExprId: undefined, pendingResults: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
+        canvasExpressions: undefined, nextExprId: undefined, canvasDefinitions: undefined, definitions: undefined, pendingResults: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
     withCanvasExpressions(canvasExpressions) {
         return this.set('canvasExpressions', canvasExpressions)
     }
     withNextExprId(nextExprId) {
         return this.set('nextExprId', nextExprId)
+    }
+    withCanvasDefinitions(canvasDefinitions) {
+        return this.set('canvasDefinitions', canvasDefinitions)
+    }
+    withDefinitions(definitions) {
+        return this.set('definitions', definitions)
     }
     withPendingResults(pendingResults) {
         return this.set('pendingResults', pendingResults)
@@ -32,6 +38,12 @@ class StateImpl extends Immutable.Record({
     updateNextExprId(updater) {
         return this.set('nextExprId', updater(this.nextExprId))
     }
+    updateCanvasDefinitions(updater) {
+        return this.set('canvasDefinitions', updater(this.canvasDefinitions))
+    }
+    updateDefinitions(updater) {
+        return this.set('definitions', updater(this.definitions))
+    }
     updatePendingResults(updater) {
         return this.set('pendingResults', updater(this.pendingResults))
     }
@@ -49,18 +61,24 @@ class StateImpl extends Immutable.Record({
 export type State = {
     canvasExpressions: Immutable.Map<number, CanvasExpression>,
     nextExprId: number,
+    canvasDefinitions: Immutable.Map<string, CanvasPoint>,
+    definitions: Immutable.Map<string, ?UserExpression>,
     pendingResults: Immutable.Map<number, PendingResult>,
     activeDrags: Immutable.Map<number, DragData>,
     highlightedExprs: Immutable.Set<ExprPath>,
     highlightedEmptyBodies: Immutable.Set<ExprPath>,
     withCanvasExpressions: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => State,
     withNextExprId: (nextExprId: number) => State,
+    withCanvasDefinitions: (canvasDefinitions: Immutable.Map<string, CanvasPoint>) => State,
+    withDefinitions: (definitions: Immutable.Map<string, ?UserExpression>) => State,
     withPendingResults: (pendingResults: Immutable.Map<number, PendingResult>) => State,
     withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
     withHighlightedExprs: (highlightedExprs: Immutable.Set<ExprPath>) => State,
     withHighlightedEmptyBodies: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => State,
     updateCanvasExpressions: (updater: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => Immutable.Map<number, CanvasExpression>) => State,
     updateNextExprId: (updater: (nextExprId: number) => number) => State,
+    updateCanvasDefinitions: (updater: (canvasDefinitions: Immutable.Map<string, CanvasPoint>) => Immutable.Map<string, CanvasPoint>) => State,
+    updateDefinitions: (updater: (definitions: Immutable.Map<string, ?UserExpression>) => Immutable.Map<string, ?UserExpression>) => State,
     updatePendingResults: (updater: (pendingResults: Immutable.Map<number, PendingResult>) => Immutable.Map<number, PendingResult>) => State,
     updateActiveDrags: (updater: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
     updateHighlightedExprs: (updater: (highlightedExprs: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
@@ -68,9 +86,11 @@ export type State = {
     toJS: () => any,
 };
 
-export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
+export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, canvasDefinitions: Immutable.Map<string, CanvasPoint>, definitions: Immutable.Map<string, ?UserExpression>, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
     canvasExpressions,
     nextExprId,
+    canvasDefinitions,
+    definitions,
     pendingResults,
     activeDrags,
     highlightedExprs,
@@ -93,6 +113,18 @@ export type AddExpression = {
 export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => ({
     type: 'addExpression',
     canvasExpr,
+});
+
+export type PlaceDefinition = {
+    type: 'placeDefinition',
+    defName: string,
+    screenPos: ScreenPoint,
+};
+
+export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => ({
+    type: 'placeDefinition',
+    defName,
+    screenPos,
 });
 
 export type MoveExpression = {
@@ -203,11 +235,12 @@ export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp 
     screenPos,
 });
 
-export type Action = Reset | AddExpression | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
+export type Action = Reset | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset: (reset: Reset) => T,
     addExpression: (addExpression: AddExpression) => T,
+    placeDefinition: (placeDefinition: PlaceDefinition) => T,
     moveExpression: (moveExpression: MoveExpression) => T,
     decomposeExpressionAction: (decomposeExpressionAction: DecomposeExpressionAction) => T,
     insertAsArg: (insertAsArg: InsertAsArg) => T,
@@ -225,6 +258,8 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
             return visitor.reset(action);
         case 'addExpression':
             return visitor.addExpression(action);
+        case 'placeDefinition':
+            return visitor.placeDefinition(action);
         case 'moveExpression':
             return visitor.moveExpression(action);
         case 'decomposeExpressionAction':

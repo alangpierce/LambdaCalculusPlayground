@@ -7,6 +7,8 @@ export default typeDefs = {
         fields: {
             canvasExpressions: 'Immutable.Map<number, CanvasExpression>',
             nextExprId: 'number',
+            canvasDefinitions: 'Immutable.Map<string, CanvasPoint>',
+            definitions: 'Immutable.Map<string, ?UserExpression>',
             // Evaluated expressions that haven't been measured yet. We need to
             // measure them before we know where to place them.
             pendingResults: 'Immutable.Map<number, PendingResult>',
@@ -30,6 +32,11 @@ export default typeDefs = {
              */
             AddExpression: {
                 canvasExpr: 'CanvasExpression',
+            },
+            // Create the given definition, or
+            PlaceDefinition: {
+                defName: 'string',
+                screenPos: 'ScreenPoint',
             },
             /**
              * Move the existing expression on the canvas to a new point.

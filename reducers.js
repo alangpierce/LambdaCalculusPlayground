@@ -31,6 +31,8 @@ const initialState: State = t.newState(
     0,
     new Immutable.Map(),
     new Immutable.Map(),
+    new Immutable.Map(),
+    new Immutable.Map(),
     new Immutable.Set(),
     new Immutable.Set());
 
@@ -53,6 +55,14 @@ const playgroundApp = (state: State = initialState, action: Action): State => {
     return t.matchAction(action, {
         reset: () => initialState,
         addExpression: ({canvasExpr}) => addExpression(state, canvasExpr),
+        placeDefinition: ({defName, screenPos}) => {
+            return state
+                .updateCanvasDefinitions(canvasDefs => canvasDefs.set(
+                    defName, screenPtToCanvasPt(screenPos)))
+                // Create an entry for the definition, which may be null.
+                .updateDefinitions(defs =>
+                    defs.set(defName, defs.get(defName)));
+        },
         moveExpression: ({exprId, pos}) => {
             return state.updateCanvasExpressions((exprs) =>
                 exprs.update(exprId, (canvasExpr) =>
