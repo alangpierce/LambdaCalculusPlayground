@@ -5,58 +5,11 @@
  */
  
 import * as Immutable from 'immutable'
- 
-class StateImpl extends Immutable.Record({
-        canvasExpressions: undefined, nextExprId: undefined, canvasDefinitions: undefined, definitions: undefined, pendingResults: undefined, activeDrags: undefined, highlightedExprs: undefined, highlightedEmptyBodies: undefined}) {
-    withCanvasExpressions(canvasExpressions) {
-        return this.set('canvasExpressions', canvasExpressions)
-    }
-    withNextExprId(nextExprId) {
-        return this.set('nextExprId', nextExprId)
-    }
-    withCanvasDefinitions(canvasDefinitions) {
-        return this.set('canvasDefinitions', canvasDefinitions)
-    }
-    withDefinitions(definitions) {
-        return this.set('definitions', definitions)
-    }
-    withPendingResults(pendingResults) {
-        return this.set('pendingResults', pendingResults)
-    }
-    withActiveDrags(activeDrags) {
-        return this.set('activeDrags', activeDrags)
-    }
-    withHighlightedExprs(highlightedExprs) {
-        return this.set('highlightedExprs', highlightedExprs)
-    }
-    withHighlightedEmptyBodies(highlightedEmptyBodies) {
-        return this.set('highlightedEmptyBodies', highlightedEmptyBodies)
-    }
-    updateCanvasExpressions(updater) {
-        return this.set('canvasExpressions', updater(this.canvasExpressions))
-    }
-    updateNextExprId(updater) {
-        return this.set('nextExprId', updater(this.nextExprId))
-    }
-    updateCanvasDefinitions(updater) {
-        return this.set('canvasDefinitions', updater(this.canvasDefinitions))
-    }
-    updateDefinitions(updater) {
-        return this.set('definitions', updater(this.definitions))
-    }
-    updatePendingResults(updater) {
-        return this.set('pendingResults', updater(this.pendingResults))
-    }
-    updateActiveDrags(updater) {
-        return this.set('activeDrags', updater(this.activeDrags))
-    }
-    updateHighlightedExprs(updater) {
-        return this.set('highlightedExprs', updater(this.highlightedExprs))
-    }
-    updateHighlightedEmptyBodies(updater) {
-        return this.set('highlightedEmptyBodies', updater(this.highlightedEmptyBodies))
-    }
-}
+
+import {buildUnionCaseClass, buildValueClass} from './types-lib'
+import type {Updater} from './types-lib'
+
+const StateImpl = buildValueClass(['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
 
 export type State = {
     canvasExpressions: Immutable.Map<number, CanvasExpression>,
@@ -67,23 +20,23 @@ export type State = {
     activeDrags: Immutable.Map<number, DragData>,
     highlightedExprs: Immutable.Set<ExprPath>,
     highlightedEmptyBodies: Immutable.Set<ExprPath>,
-    withCanvasExpressions: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => State,
-    withNextExprId: (nextExprId: number) => State,
-    withCanvasDefinitions: (canvasDefinitions: Immutable.Map<string, CanvasPoint>) => State,
-    withDefinitions: (definitions: Immutable.Map<string, ?UserExpression>) => State,
-    withPendingResults: (pendingResults: Immutable.Map<number, PendingResult>) => State,
-    withActiveDrags: (activeDrags: Immutable.Map<number, DragData>) => State,
-    withHighlightedExprs: (highlightedExprs: Immutable.Set<ExprPath>) => State,
-    withHighlightedEmptyBodies: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => State,
-    updateCanvasExpressions: (updater: (canvasExpressions: Immutable.Map<number, CanvasExpression>) => Immutable.Map<number, CanvasExpression>) => State,
-    updateNextExprId: (updater: (nextExprId: number) => number) => State,
-    updateCanvasDefinitions: (updater: (canvasDefinitions: Immutable.Map<string, CanvasPoint>) => Immutable.Map<string, CanvasPoint>) => State,
-    updateDefinitions: (updater: (definitions: Immutable.Map<string, ?UserExpression>) => Immutable.Map<string, ?UserExpression>) => State,
-    updatePendingResults: (updater: (pendingResults: Immutable.Map<number, PendingResult>) => Immutable.Map<number, PendingResult>) => State,
-    updateActiveDrags: (updater: (activeDrags: Immutable.Map<number, DragData>) => Immutable.Map<number, DragData>) => State,
-    updateHighlightedExprs: (updater: (highlightedExprs: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
-    updateHighlightedEmptyBodies: (updater: (highlightedEmptyBodies: Immutable.Set<ExprPath>) => Immutable.Set<ExprPath>) => State,
-    toJS: () => any,
+    withCanvasExpressions(canvasExpressions: Immutable.Map<number, CanvasExpression>): State,
+    withNextExprId(nextExprId: number): State,
+    withCanvasDefinitions(canvasDefinitions: Immutable.Map<string, CanvasPoint>): State,
+    withDefinitions(definitions: Immutable.Map<string, ?UserExpression>): State,
+    withPendingResults(pendingResults: Immutable.Map<number, PendingResult>): State,
+    withActiveDrags(activeDrags: Immutable.Map<number, DragData>): State,
+    withHighlightedExprs(highlightedExprs: Immutable.Set<ExprPath>): State,
+    withHighlightedEmptyBodies(highlightedEmptyBodies: Immutable.Set<ExprPath>): State,
+    updateCanvasExpressions(updater: Updater<Immutable.Map<number, CanvasExpression>>): State,
+    updateNextExprId(updater: Updater<number>): State,
+    updateCanvasDefinitions(updater: Updater<Immutable.Map<string, CanvasPoint>>): State,
+    updateDefinitions(updater: Updater<Immutable.Map<string, ?UserExpression>>): State,
+    updatePendingResults(updater: Updater<Immutable.Map<number, PendingResult>>): State,
+    updateActiveDrags(updater: Updater<Immutable.Map<number, DragData>>): State,
+    updateHighlightedExprs(updater: Updater<Immutable.Set<ExprPath>>): State,
+    updateHighlightedEmptyBodies(updater: Updater<Immutable.Set<ExprPath>>): State,
+    toJS(): any,
 };
 
 export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, canvasDefinitions: Immutable.Map<string, CanvasPoint>, definitions: Immutable.Map<string, ?UserExpression>, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
@@ -283,31 +236,16 @@ export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>
     }
 };
 
-class LambdaImpl extends Immutable.Record({
-        type: undefined, varName: undefined, body: undefined}) {
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    withBody(body) {
-        return this.set('body', body)
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-    updateBody(updater) {
-        return this.set('body', updater(this.body))
-    }
-}
-
+const LambdaImpl = buildUnionCaseClass('lambda', ['varName', 'body']);
 export type Lambda = {
     type: 'lambda',
     varName: string,
     body: Expression,
-    withVarName: (varName: string) => Lambda,
-    withBody: (body: Expression) => Lambda,
-    updateVarName: (updater: (varName: string) => string) => Lambda,
-    updateBody: (updater: (body: Expression) => Expression) => Lambda,
-    toJS: () => any,
+    withVarName(varName: string): Lambda,
+    withBody(body: Expression): Lambda,
+    updateVarName(updater: Updater<string>): Lambda,
+    updateBody(updater: Updater<Expression>): Lambda,
+    toJS(): any,
 };
 
 export const newLambda = (varName: string, body: Expression): Lambda => (new LambdaImpl({
@@ -316,31 +254,16 @@ export const newLambda = (varName: string, body: Expression): Lambda => (new Lam
     body,
 }));
 
-class FuncCallImpl extends Immutable.Record({
-        type: undefined, func: undefined, arg: undefined}) {
-    withFunc(func) {
-        return this.set('func', func)
-    }
-    withArg(arg) {
-        return this.set('arg', arg)
-    }
-    updateFunc(updater) {
-        return this.set('func', updater(this.func))
-    }
-    updateArg(updater) {
-        return this.set('arg', updater(this.arg))
-    }
-}
-
+const FuncCallImpl = buildUnionCaseClass('funcCall', ['func', 'arg']);
 export type FuncCall = {
     type: 'funcCall',
     func: Expression,
     arg: Expression,
-    withFunc: (func: Expression) => FuncCall,
-    withArg: (arg: Expression) => FuncCall,
-    updateFunc: (updater: (func: Expression) => Expression) => FuncCall,
-    updateArg: (updater: (arg: Expression) => Expression) => FuncCall,
-    toJS: () => any,
+    withFunc(func: Expression): FuncCall,
+    withArg(arg: Expression): FuncCall,
+    updateFunc(updater: Updater<Expression>): FuncCall,
+    updateArg(updater: Updater<Expression>): FuncCall,
+    toJS(): any,
 };
 
 export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCallImpl({
@@ -349,22 +272,13 @@ export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new
     arg,
 }));
 
-class VariableImpl extends Immutable.Record({
-        type: undefined, varName: undefined}) {
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-}
-
+const VariableImpl = buildUnionCaseClass('variable', ['varName']);
 export type Variable = {
     type: 'variable',
     varName: string,
-    withVarName: (varName: string) => Variable,
-    updateVarName: (updater: (varName: string) => string) => Variable,
-    toJS: () => any,
+    withVarName(varName: string): Variable,
+    updateVarName(updater: Updater<string>): Variable,
+    toJS(): any,
 };
 
 export const newVariable = (varName: string): Variable => (new VariableImpl({
@@ -401,40 +315,19 @@ export type Slot = {
 
 export type VarMarker = number;
 
-class EvalLambdaImpl extends Immutable.Record({
-        type: undefined, varMarker: undefined, originalVarName: undefined, body: undefined}) {
-    withVarMarker(varMarker) {
-        return this.set('varMarker', varMarker)
-    }
-    withOriginalVarName(originalVarName) {
-        return this.set('originalVarName', originalVarName)
-    }
-    withBody(body) {
-        return this.set('body', body)
-    }
-    updateVarMarker(updater) {
-        return this.set('varMarker', updater(this.varMarker))
-    }
-    updateOriginalVarName(updater) {
-        return this.set('originalVarName', updater(this.originalVarName))
-    }
-    updateBody(updater) {
-        return this.set('body', updater(this.body))
-    }
-}
-
+const EvalLambdaImpl = buildUnionCaseClass('evalLambda', ['varMarker', 'originalVarName', 'body']);
 export type EvalLambda = {
     type: 'evalLambda',
     varMarker: VarMarker,
     originalVarName: string,
     body: EvalExpression,
-    withVarMarker: (varMarker: VarMarker) => EvalLambda,
-    withOriginalVarName: (originalVarName: string) => EvalLambda,
-    withBody: (body: EvalExpression) => EvalLambda,
-    updateVarMarker: (updater: (varMarker: VarMarker) => VarMarker) => EvalLambda,
-    updateOriginalVarName: (updater: (originalVarName: string) => string) => EvalLambda,
-    updateBody: (updater: (body: EvalExpression) => EvalExpression) => EvalLambda,
-    toJS: () => any,
+    withVarMarker(varMarker: VarMarker): EvalLambda,
+    withOriginalVarName(originalVarName: string): EvalLambda,
+    withBody(body: EvalExpression): EvalLambda,
+    updateVarMarker(updater: Updater<VarMarker>): EvalLambda,
+    updateOriginalVarName(updater: Updater<string>): EvalLambda,
+    updateBody(updater: Updater<EvalExpression>): EvalLambda,
+    toJS(): any,
 };
 
 export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
@@ -444,31 +337,16 @@ export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, bod
     body,
 }));
 
-class EvalFuncCallImpl extends Immutable.Record({
-        type: undefined, func: undefined, arg: undefined}) {
-    withFunc(func) {
-        return this.set('func', func)
-    }
-    withArg(arg) {
-        return this.set('arg', arg)
-    }
-    updateFunc(updater) {
-        return this.set('func', updater(this.func))
-    }
-    updateArg(updater) {
-        return this.set('arg', updater(this.arg))
-    }
-}
-
+const EvalFuncCallImpl = buildUnionCaseClass('evalFuncCall', ['func', 'arg']);
 export type EvalFuncCall = {
     type: 'evalFuncCall',
     func: EvalExpression,
     arg: EvalExpression,
-    withFunc: (func: EvalExpression) => EvalFuncCall,
-    withArg: (arg: EvalExpression) => EvalFuncCall,
-    updateFunc: (updater: (func: EvalExpression) => EvalExpression) => EvalFuncCall,
-    updateArg: (updater: (arg: EvalExpression) => EvalExpression) => EvalFuncCall,
-    toJS: () => any,
+    withFunc(func: EvalExpression): EvalFuncCall,
+    withArg(arg: EvalExpression): EvalFuncCall,
+    updateFunc(updater: Updater<EvalExpression>): EvalFuncCall,
+    updateArg(updater: Updater<EvalExpression>): EvalFuncCall,
+    toJS(): any,
 };
 
 export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCallImpl({
@@ -477,22 +355,13 @@ export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): Eval
     arg,
 }));
 
-class EvalBoundVariableImpl extends Immutable.Record({
-        type: undefined, slot: undefined}) {
-    withSlot(slot) {
-        return this.set('slot', slot)
-    }
-    updateSlot(updater) {
-        return this.set('slot', updater(this.slot))
-    }
-}
-
+const EvalBoundVariableImpl = buildUnionCaseClass('evalBoundVariable', ['slot']);
 export type EvalBoundVariable = {
     type: 'evalBoundVariable',
     slot: Slot,
-    withSlot: (slot: Slot) => EvalBoundVariable,
-    updateSlot: (updater: (slot: Slot) => Slot) => EvalBoundVariable,
-    toJS: () => any,
+    withSlot(slot: Slot): EvalBoundVariable,
+    updateSlot(updater: Updater<Slot>): EvalBoundVariable,
+    toJS(): any,
 };
 
 export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariableImpl({
@@ -500,31 +369,16 @@ export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new Eval
     slot,
 }));
 
-class EvalUnboundVariableImpl extends Immutable.Record({
-        type: undefined, varMarker: undefined, originalVarName: undefined}) {
-    withVarMarker(varMarker) {
-        return this.set('varMarker', varMarker)
-    }
-    withOriginalVarName(originalVarName) {
-        return this.set('originalVarName', originalVarName)
-    }
-    updateVarMarker(updater) {
-        return this.set('varMarker', updater(this.varMarker))
-    }
-    updateOriginalVarName(updater) {
-        return this.set('originalVarName', updater(this.originalVarName))
-    }
-}
-
+const EvalUnboundVariableImpl = buildUnionCaseClass('evalUnboundVariable', ['varMarker', 'originalVarName']);
 export type EvalUnboundVariable = {
     type: 'evalUnboundVariable',
     varMarker: VarMarker,
     originalVarName: string,
-    withVarMarker: (varMarker: VarMarker) => EvalUnboundVariable,
-    withOriginalVarName: (originalVarName: string) => EvalUnboundVariable,
-    updateVarMarker: (updater: (varMarker: VarMarker) => VarMarker) => EvalUnboundVariable,
-    updateOriginalVarName: (updater: (originalVarName: string) => string) => EvalUnboundVariable,
-    toJS: () => any,
+    withVarMarker(varMarker: VarMarker): EvalUnboundVariable,
+    withOriginalVarName(originalVarName: string): EvalUnboundVariable,
+    updateVarMarker(updater: Updater<VarMarker>): EvalUnboundVariable,
+    updateOriginalVarName(updater: Updater<string>): EvalUnboundVariable,
+    toJS(): any,
 };
 
 export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
@@ -533,22 +387,13 @@ export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: st
     originalVarName,
 }));
 
-class EvalFreeVariableImpl extends Immutable.Record({
-        type: undefined, varName: undefined}) {
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-}
-
+const EvalFreeVariableImpl = buildUnionCaseClass('evalFreeVariable', ['varName']);
 export type EvalFreeVariable = {
     type: 'evalFreeVariable',
     varName: string,
-    withVarName: (varName: string) => EvalFreeVariable,
-    updateVarName: (updater: (varName: string) => string) => EvalFreeVariable,
-    toJS: () => any,
+    withVarName(varName: string): EvalFreeVariable,
+    updateVarName(updater: Updater<string>): EvalFreeVariable,
+    toJS(): any,
 };
 
 export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariableImpl({
@@ -583,31 +428,16 @@ export const matchEvalExpression = function<T>(evalExpression: EvalExpression, v
     }
 };
 
-class UserLambdaImpl extends Immutable.Record({
-        type: undefined, varName: undefined, body: undefined}) {
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    withBody(body) {
-        return this.set('body', body)
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-    updateBody(updater) {
-        return this.set('body', updater(this.body))
-    }
-}
-
+const UserLambdaImpl = buildUnionCaseClass('userLambda', ['varName', 'body']);
 export type UserLambda = {
     type: 'userLambda',
     varName: string,
     body: ?UserExpression,
-    withVarName: (varName: string) => UserLambda,
-    withBody: (body: ?UserExpression) => UserLambda,
-    updateVarName: (updater: (varName: string) => string) => UserLambda,
-    updateBody: (updater: (body: ?UserExpression) => ?UserExpression) => UserLambda,
-    toJS: () => any,
+    withVarName(varName: string): UserLambda,
+    withBody(body: ?UserExpression): UserLambda,
+    updateVarName(updater: Updater<string>): UserLambda,
+    updateBody(updater: Updater<?UserExpression>): UserLambda,
+    toJS(): any,
 };
 
 export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambdaImpl({
@@ -616,31 +446,16 @@ export const newUserLambda = (varName: string, body: ?UserExpression): UserLambd
     body,
 }));
 
-class UserFuncCallImpl extends Immutable.Record({
-        type: undefined, func: undefined, arg: undefined}) {
-    withFunc(func) {
-        return this.set('func', func)
-    }
-    withArg(arg) {
-        return this.set('arg', arg)
-    }
-    updateFunc(updater) {
-        return this.set('func', updater(this.func))
-    }
-    updateArg(updater) {
-        return this.set('arg', updater(this.arg))
-    }
-}
-
+const UserFuncCallImpl = buildUnionCaseClass('userFuncCall', ['func', 'arg']);
 export type UserFuncCall = {
     type: 'userFuncCall',
     func: UserExpression,
     arg: UserExpression,
-    withFunc: (func: UserExpression) => UserFuncCall,
-    withArg: (arg: UserExpression) => UserFuncCall,
-    updateFunc: (updater: (func: UserExpression) => UserExpression) => UserFuncCall,
-    updateArg: (updater: (arg: UserExpression) => UserExpression) => UserFuncCall,
-    toJS: () => any,
+    withFunc(func: UserExpression): UserFuncCall,
+    withArg(arg: UserExpression): UserFuncCall,
+    updateFunc(updater: Updater<UserExpression>): UserFuncCall,
+    updateArg(updater: Updater<UserExpression>): UserFuncCall,
+    toJS(): any,
 };
 
 export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCallImpl({
@@ -649,22 +464,13 @@ export const newUserFuncCall = (func: UserExpression, arg: UserExpression): User
     arg,
 }));
 
-class UserVariableImpl extends Immutable.Record({
-        type: undefined, varName: undefined}) {
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-}
-
+const UserVariableImpl = buildUnionCaseClass('userVariable', ['varName']);
 export type UserVariable = {
     type: 'userVariable',
     varName: string,
-    withVarName: (varName: string) => UserVariable,
-    updateVarName: (updater: (varName: string) => string) => UserVariable,
-    toJS: () => any,
+    withVarName(varName: string): UserVariable,
+    updateVarName(updater: Updater<string>): UserVariable,
+    toJS(): any,
 };
 
 export const newUserVariable = (varName: string): UserVariable => (new UserVariableImpl({
@@ -672,22 +478,13 @@ export const newUserVariable = (varName: string): UserVariable => (new UserVaria
     varName,
 }));
 
-class UserReferenceImpl extends Immutable.Record({
-        type: undefined, defName: undefined}) {
-    withDefName(defName) {
-        return this.set('defName', defName)
-    }
-    updateDefName(updater) {
-        return this.set('defName', updater(this.defName))
-    }
-}
-
+const UserReferenceImpl = buildUnionCaseClass('userReference', ['defName']);
 export type UserReference = {
     type: 'userReference',
     defName: string,
-    withDefName: (defName: string) => UserReference,
-    updateDefName: (updater: (defName: string) => string) => UserReference,
-    toJS: () => any,
+    withDefName(defName: string): UserReference,
+    updateDefName(updater: Updater<string>): UserReference,
+    toJS(): any,
 };
 
 export const newUserReference = (defName: string): UserReference => (new UserReferenceImpl({
@@ -719,30 +516,16 @@ export const matchUserExpression = function<T>(userExpression: UserExpression, v
     }
 };
 
-class CanvasExpressionImpl extends Immutable.Record({
-        expr: undefined, pos: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withPos(pos) {
-        return this.set('pos', pos)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updatePos(updater) {
-        return this.set('pos', updater(this.pos))
-    }
-}
+const CanvasExpressionImpl = buildValueClass(['expr', 'pos']);
 
 export type CanvasExpression = {
     expr: UserExpression,
     pos: CanvasPoint,
-    withExpr: (expr: UserExpression) => CanvasExpression,
-    withPos: (pos: CanvasPoint) => CanvasExpression,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => CanvasExpression,
-    updatePos: (updater: (pos: CanvasPoint) => CanvasPoint) => CanvasExpression,
-    toJS: () => any,
+    withExpr(expr: UserExpression): CanvasExpression,
+    withPos(pos: CanvasPoint): CanvasExpression,
+    updateExpr(updater: Updater<UserExpression>): CanvasExpression,
+    updatePos(updater: Updater<CanvasPoint>): CanvasExpression,
+    toJS(): any,
 };
 
 export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpressionImpl({
@@ -750,30 +533,16 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
     pos,
 }));
 
-class PendingResultImpl extends Immutable.Record({
-        expr: undefined, sourceExprId: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withSourceExprId(sourceExprId) {
-        return this.set('sourceExprId', sourceExprId)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updateSourceExprId(updater) {
-        return this.set('sourceExprId', updater(this.sourceExprId))
-    }
-}
+const PendingResultImpl = buildValueClass(['expr', 'sourceExprId']);
 
 export type PendingResult = {
     expr: UserExpression,
     sourceExprId: number,
-    withExpr: (expr: UserExpression) => PendingResult,
-    withSourceExprId: (sourceExprId: number) => PendingResult,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => PendingResult,
-    updateSourceExprId: (updater: (sourceExprId: number) => number) => PendingResult,
-    toJS: () => any,
+    withExpr(expr: UserExpression): PendingResult,
+    withSourceExprId(sourceExprId: number): PendingResult,
+    updateExpr(updater: Updater<UserExpression>): PendingResult,
+    updateSourceExprId(updater: Updater<number>): PendingResult,
+    toJS(): any,
 };
 
 export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResultImpl({
@@ -781,39 +550,19 @@ export const newPendingResult = (expr: UserExpression, sourceExprId: number): Pe
     sourceExprId,
 }));
 
-class DisplayStateImpl extends Immutable.Record({
-        screenExpressions: undefined, screenDefinitions: undefined, measureRequests: undefined}) {
-    withScreenExpressions(screenExpressions) {
-        return this.set('screenExpressions', screenExpressions)
-    }
-    withScreenDefinitions(screenDefinitions) {
-        return this.set('screenDefinitions', screenDefinitions)
-    }
-    withMeasureRequests(measureRequests) {
-        return this.set('measureRequests', measureRequests)
-    }
-    updateScreenExpressions(updater) {
-        return this.set('screenExpressions', updater(this.screenExpressions))
-    }
-    updateScreenDefinitions(updater) {
-        return this.set('screenDefinitions', updater(this.screenDefinitions))
-    }
-    updateMeasureRequests(updater) {
-        return this.set('measureRequests', updater(this.measureRequests))
-    }
-}
+const DisplayStateImpl = buildValueClass(['screenExpressions', 'screenDefinitions', 'measureRequests']);
 
 export type DisplayState = {
     screenExpressions: Immutable.List<ScreenExpression>,
     screenDefinitions: Immutable.List<ScreenDefinition>,
     measureRequests: Immutable.List<MeasureRequest>,
-    withScreenExpressions: (screenExpressions: Immutable.List<ScreenExpression>) => DisplayState,
-    withScreenDefinitions: (screenDefinitions: Immutable.List<ScreenDefinition>) => DisplayState,
-    withMeasureRequests: (measureRequests: Immutable.List<MeasureRequest>) => DisplayState,
-    updateScreenExpressions: (updater: (screenExpressions: Immutable.List<ScreenExpression>) => Immutable.List<ScreenExpression>) => DisplayState,
-    updateScreenDefinitions: (updater: (screenDefinitions: Immutable.List<ScreenDefinition>) => Immutable.List<ScreenDefinition>) => DisplayState,
-    updateMeasureRequests: (updater: (measureRequests: Immutable.List<MeasureRequest>) => Immutable.List<MeasureRequest>) => DisplayState,
-    toJS: () => any,
+    withScreenExpressions(screenExpressions: Immutable.List<ScreenExpression>): DisplayState,
+    withScreenDefinitions(screenDefinitions: Immutable.List<ScreenDefinition>): DisplayState,
+    withMeasureRequests(measureRequests: Immutable.List<MeasureRequest>): DisplayState,
+    updateScreenExpressions(updater: Updater<Immutable.List<ScreenExpression>>): DisplayState,
+    updateScreenDefinitions(updater: Updater<Immutable.List<ScreenDefinition>>): DisplayState,
+    updateMeasureRequests(updater: Updater<Immutable.List<MeasureRequest>>): DisplayState,
+    toJS(): any,
 };
 
 export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, screenDefinitions: Immutable.List<ScreenDefinition>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
@@ -822,30 +571,16 @@ export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpressi
     measureRequests,
 }));
 
-class MeasureRequestImpl extends Immutable.Record({
-        expr: undefined, resultHandler: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withResultHandler(resultHandler) {
-        return this.set('resultHandler', resultHandler)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updateResultHandler(updater) {
-        return this.set('resultHandler', updater(this.resultHandler))
-    }
-}
+const MeasureRequestImpl = buildValueClass(['expr', 'resultHandler']);
 
 export type MeasureRequest = {
     expr: DisplayExpression,
     resultHandler: (width: number, height: number) => void,
-    withExpr: (expr: DisplayExpression) => MeasureRequest,
-    withResultHandler: (resultHandler: (width: number, height: number) => void) => MeasureRequest,
-    updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => MeasureRequest,
-    updateResultHandler: (updater: (resultHandler: (width: number, height: number) => void) => (width: number, height: number) => void) => MeasureRequest,
-    toJS: () => any,
+    withExpr(expr: DisplayExpression): MeasureRequest,
+    withResultHandler(resultHandler: (width: number, height: number) => void): MeasureRequest,
+    updateExpr(updater: Updater<DisplayExpression>): MeasureRequest,
+    updateResultHandler(updater: Updater<(width: number, height: number) => void>): MeasureRequest,
+    toJS(): any,
 };
 
 export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequestImpl({
@@ -853,39 +588,7 @@ export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width
     resultHandler,
 }));
 
-class ScreenDefinitionImpl extends Immutable.Record({
-        defName: undefined, expr: undefined, pos: undefined, key: undefined, isDragging: undefined}) {
-    withDefName(defName) {
-        return this.set('defName', defName)
-    }
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withPos(pos) {
-        return this.set('pos', pos)
-    }
-    withKey(key) {
-        return this.set('key', key)
-    }
-    withIsDragging(isDragging) {
-        return this.set('isDragging', isDragging)
-    }
-    updateDefName(updater) {
-        return this.set('defName', updater(this.defName))
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updatePos(updater) {
-        return this.set('pos', updater(this.pos))
-    }
-    updateKey(updater) {
-        return this.set('key', updater(this.key))
-    }
-    updateIsDragging(updater) {
-        return this.set('isDragging', updater(this.isDragging))
-    }
-}
+const ScreenDefinitionImpl = buildValueClass(['defName', 'expr', 'pos', 'key', 'isDragging']);
 
 export type ScreenDefinition = {
     defName: string,
@@ -893,17 +596,17 @@ export type ScreenDefinition = {
     pos: ScreenPoint,
     key: string,
     isDragging: boolean,
-    withDefName: (defName: string) => ScreenDefinition,
-    withExpr: (expr: ?DisplayExpression) => ScreenDefinition,
-    withPos: (pos: ScreenPoint) => ScreenDefinition,
-    withKey: (key: string) => ScreenDefinition,
-    withIsDragging: (isDragging: boolean) => ScreenDefinition,
-    updateDefName: (updater: (defName: string) => string) => ScreenDefinition,
-    updateExpr: (updater: (expr: ?DisplayExpression) => ?DisplayExpression) => ScreenDefinition,
-    updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenDefinition,
-    updateKey: (updater: (key: string) => string) => ScreenDefinition,
-    updateIsDragging: (updater: (isDragging: boolean) => boolean) => ScreenDefinition,
-    toJS: () => any,
+    withDefName(defName: string): ScreenDefinition,
+    withExpr(expr: ?DisplayExpression): ScreenDefinition,
+    withPos(pos: ScreenPoint): ScreenDefinition,
+    withKey(key: string): ScreenDefinition,
+    withIsDragging(isDragging: boolean): ScreenDefinition,
+    updateDefName(updater: Updater<string>): ScreenDefinition,
+    updateExpr(updater: Updater<?DisplayExpression>): ScreenDefinition,
+    updatePos(updater: Updater<ScreenPoint>): ScreenDefinition,
+    updateKey(updater: Updater<string>): ScreenDefinition,
+    updateIsDragging(updater: Updater<boolean>): ScreenDefinition,
+    toJS(): any,
 };
 
 export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinitionImpl({
@@ -914,39 +617,7 @@ export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, p
     isDragging,
 }));
 
-class ScreenExpressionImpl extends Immutable.Record({
-        expr: undefined, pos: undefined, key: undefined, isDragging: undefined, executeHandler: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withPos(pos) {
-        return this.set('pos', pos)
-    }
-    withKey(key) {
-        return this.set('key', key)
-    }
-    withIsDragging(isDragging) {
-        return this.set('isDragging', isDragging)
-    }
-    withExecuteHandler(executeHandler) {
-        return this.set('executeHandler', executeHandler)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updatePos(updater) {
-        return this.set('pos', updater(this.pos))
-    }
-    updateKey(updater) {
-        return this.set('key', updater(this.key))
-    }
-    updateIsDragging(updater) {
-        return this.set('isDragging', updater(this.isDragging))
-    }
-    updateExecuteHandler(updater) {
-        return this.set('executeHandler', updater(this.executeHandler))
-    }
-}
+const ScreenExpressionImpl = buildValueClass(['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
 
 export type ScreenExpression = {
     expr: DisplayExpression,
@@ -954,17 +625,17 @@ export type ScreenExpression = {
     key: string,
     isDragging: boolean,
     executeHandler: ?() => void,
-    withExpr: (expr: DisplayExpression) => ScreenExpression,
-    withPos: (pos: ScreenPoint) => ScreenExpression,
-    withKey: (key: string) => ScreenExpression,
-    withIsDragging: (isDragging: boolean) => ScreenExpression,
-    withExecuteHandler: (executeHandler: ?() => void) => ScreenExpression,
-    updateExpr: (updater: (expr: DisplayExpression) => DisplayExpression) => ScreenExpression,
-    updatePos: (updater: (pos: ScreenPoint) => ScreenPoint) => ScreenExpression,
-    updateKey: (updater: (key: string) => string) => ScreenExpression,
-    updateIsDragging: (updater: (isDragging: boolean) => boolean) => ScreenExpression,
-    updateExecuteHandler: (updater: (executeHandler: ?() => void) => ?() => void) => ScreenExpression,
-    toJS: () => any,
+    withExpr(expr: DisplayExpression): ScreenExpression,
+    withPos(pos: ScreenPoint): ScreenExpression,
+    withKey(key: string): ScreenExpression,
+    withIsDragging(isDragging: boolean): ScreenExpression,
+    withExecuteHandler(executeHandler: ?() => void): ScreenExpression,
+    updateExpr(updater: Updater<DisplayExpression>): ScreenExpression,
+    updatePos(updater: Updater<ScreenPoint>): ScreenExpression,
+    updateKey(updater: Updater<string>): ScreenExpression,
+    updateIsDragging(updater: Updater<boolean>): ScreenExpression,
+    updateExecuteHandler(updater: Updater<?() => void>): ScreenExpression,
+    toJS(): any,
 };
 
 export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression => (new ScreenExpressionImpl({
@@ -975,52 +646,7 @@ export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, k
     executeHandler,
 }));
 
-class DisplayLambdaImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, shouldHighlight: undefined, varKey: undefined, emptyBodyKey: undefined, shouldHighlightEmptyBody: undefined, varName: undefined, body: undefined}) {
-    withExprKey(exprKey) {
-        return this.set('exprKey', exprKey)
-    }
-    withShouldHighlight(shouldHighlight) {
-        return this.set('shouldHighlight', shouldHighlight)
-    }
-    withVarKey(varKey) {
-        return this.set('varKey', varKey)
-    }
-    withEmptyBodyKey(emptyBodyKey) {
-        return this.set('emptyBodyKey', emptyBodyKey)
-    }
-    withShouldHighlightEmptyBody(shouldHighlightEmptyBody) {
-        return this.set('shouldHighlightEmptyBody', shouldHighlightEmptyBody)
-    }
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    withBody(body) {
-        return this.set('body', body)
-    }
-    updateExprKey(updater) {
-        return this.set('exprKey', updater(this.exprKey))
-    }
-    updateShouldHighlight(updater) {
-        return this.set('shouldHighlight', updater(this.shouldHighlight))
-    }
-    updateVarKey(updater) {
-        return this.set('varKey', updater(this.varKey))
-    }
-    updateEmptyBodyKey(updater) {
-        return this.set('emptyBodyKey', updater(this.emptyBodyKey))
-    }
-    updateShouldHighlightEmptyBody(updater) {
-        return this.set('shouldHighlightEmptyBody', updater(this.shouldHighlightEmptyBody))
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-    updateBody(updater) {
-        return this.set('body', updater(this.body))
-    }
-}
-
+const DisplayLambdaImpl = buildUnionCaseClass('displayLambda', ['exprKey', 'shouldHighlight', 'varKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'varName', 'body']);
 export type DisplayLambda = {
     type: 'displayLambda',
     exprKey: ?ExpressionKey,
@@ -1030,21 +656,21 @@ export type DisplayLambda = {
     shouldHighlightEmptyBody: boolean,
     varName: string,
     body: ?DisplayExpression,
-    withExprKey: (exprKey: ?ExpressionKey) => DisplayLambda,
-    withShouldHighlight: (shouldHighlight: boolean) => DisplayLambda,
-    withVarKey: (varKey: ?LambdaVarKey) => DisplayLambda,
-    withEmptyBodyKey: (emptyBodyKey: ?EmptyBodyKey) => DisplayLambda,
-    withShouldHighlightEmptyBody: (shouldHighlightEmptyBody: boolean) => DisplayLambda,
-    withVarName: (varName: string) => DisplayLambda,
-    withBody: (body: ?DisplayExpression) => DisplayLambda,
-    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayLambda,
-    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayLambda,
-    updateVarKey: (updater: (varKey: ?LambdaVarKey) => ?LambdaVarKey) => DisplayLambda,
-    updateEmptyBodyKey: (updater: (emptyBodyKey: ?EmptyBodyKey) => ?EmptyBodyKey) => DisplayLambda,
-    updateShouldHighlightEmptyBody: (updater: (shouldHighlightEmptyBody: boolean) => boolean) => DisplayLambda,
-    updateVarName: (updater: (varName: string) => string) => DisplayLambda,
-    updateBody: (updater: (body: ?DisplayExpression) => ?DisplayExpression) => DisplayLambda,
-    toJS: () => any,
+    withExprKey(exprKey: ?ExpressionKey): DisplayLambda,
+    withShouldHighlight(shouldHighlight: boolean): DisplayLambda,
+    withVarKey(varKey: ?LambdaVarKey): DisplayLambda,
+    withEmptyBodyKey(emptyBodyKey: ?EmptyBodyKey): DisplayLambda,
+    withShouldHighlightEmptyBody(shouldHighlightEmptyBody: boolean): DisplayLambda,
+    withVarName(varName: string): DisplayLambda,
+    withBody(body: ?DisplayExpression): DisplayLambda,
+    updateExprKey(updater: Updater<?ExpressionKey>): DisplayLambda,
+    updateShouldHighlight(updater: Updater<boolean>): DisplayLambda,
+    updateVarKey(updater: Updater<?LambdaVarKey>): DisplayLambda,
+    updateEmptyBodyKey(updater: Updater<?EmptyBodyKey>): DisplayLambda,
+    updateShouldHighlightEmptyBody(updater: Updater<boolean>): DisplayLambda,
+    updateVarName(updater: Updater<string>): DisplayLambda,
+    updateBody(updater: Updater<?DisplayExpression>): DisplayLambda,
+    toJS(): any,
 };
 
 export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
@@ -1058,49 +684,22 @@ export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boole
     body,
 }));
 
-class DisplayFuncCallImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, shouldHighlight: undefined, func: undefined, arg: undefined}) {
-    withExprKey(exprKey) {
-        return this.set('exprKey', exprKey)
-    }
-    withShouldHighlight(shouldHighlight) {
-        return this.set('shouldHighlight', shouldHighlight)
-    }
-    withFunc(func) {
-        return this.set('func', func)
-    }
-    withArg(arg) {
-        return this.set('arg', arg)
-    }
-    updateExprKey(updater) {
-        return this.set('exprKey', updater(this.exprKey))
-    }
-    updateShouldHighlight(updater) {
-        return this.set('shouldHighlight', updater(this.shouldHighlight))
-    }
-    updateFunc(updater) {
-        return this.set('func', updater(this.func))
-    }
-    updateArg(updater) {
-        return this.set('arg', updater(this.arg))
-    }
-}
-
+const DisplayFuncCallImpl = buildUnionCaseClass('displayFuncCall', ['exprKey', 'shouldHighlight', 'func', 'arg']);
 export type DisplayFuncCall = {
     type: 'displayFuncCall',
     exprKey: ?ExpressionKey,
     shouldHighlight: boolean,
     func: DisplayExpression,
     arg: DisplayExpression,
-    withExprKey: (exprKey: ?ExpressionKey) => DisplayFuncCall,
-    withShouldHighlight: (shouldHighlight: boolean) => DisplayFuncCall,
-    withFunc: (func: DisplayExpression) => DisplayFuncCall,
-    withArg: (arg: DisplayExpression) => DisplayFuncCall,
-    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayFuncCall,
-    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayFuncCall,
-    updateFunc: (updater: (func: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
-    updateArg: (updater: (arg: DisplayExpression) => DisplayExpression) => DisplayFuncCall,
-    toJS: () => any,
+    withExprKey(exprKey: ?ExpressionKey): DisplayFuncCall,
+    withShouldHighlight(shouldHighlight: boolean): DisplayFuncCall,
+    withFunc(func: DisplayExpression): DisplayFuncCall,
+    withArg(arg: DisplayExpression): DisplayFuncCall,
+    updateExprKey(updater: Updater<?ExpressionKey>): DisplayFuncCall,
+    updateShouldHighlight(updater: Updater<boolean>): DisplayFuncCall,
+    updateFunc(updater: Updater<DisplayExpression>): DisplayFuncCall,
+    updateArg(updater: Updater<DisplayExpression>): DisplayFuncCall,
+    toJS(): any,
 };
 
 export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
@@ -1111,40 +710,19 @@ export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boo
     arg,
 }));
 
-class DisplayVariableImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, shouldHighlight: undefined, varName: undefined}) {
-    withExprKey(exprKey) {
-        return this.set('exprKey', exprKey)
-    }
-    withShouldHighlight(shouldHighlight) {
-        return this.set('shouldHighlight', shouldHighlight)
-    }
-    withVarName(varName) {
-        return this.set('varName', varName)
-    }
-    updateExprKey(updater) {
-        return this.set('exprKey', updater(this.exprKey))
-    }
-    updateShouldHighlight(updater) {
-        return this.set('shouldHighlight', updater(this.shouldHighlight))
-    }
-    updateVarName(updater) {
-        return this.set('varName', updater(this.varName))
-    }
-}
-
+const DisplayVariableImpl = buildUnionCaseClass('displayVariable', ['exprKey', 'shouldHighlight', 'varName']);
 export type DisplayVariable = {
     type: 'displayVariable',
     exprKey: ?ExpressionKey,
     shouldHighlight: boolean,
     varName: string,
-    withExprKey: (exprKey: ?ExpressionKey) => DisplayVariable,
-    withShouldHighlight: (shouldHighlight: boolean) => DisplayVariable,
-    withVarName: (varName: string) => DisplayVariable,
-    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayVariable,
-    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayVariable,
-    updateVarName: (updater: (varName: string) => string) => DisplayVariable,
-    toJS: () => any,
+    withExprKey(exprKey: ?ExpressionKey): DisplayVariable,
+    withShouldHighlight(shouldHighlight: boolean): DisplayVariable,
+    withVarName(varName: string): DisplayVariable,
+    updateExprKey(updater: Updater<?ExpressionKey>): DisplayVariable,
+    updateShouldHighlight(updater: Updater<boolean>): DisplayVariable,
+    updateVarName(updater: Updater<string>): DisplayVariable,
+    toJS(): any,
 };
 
 export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariableImpl({
@@ -1154,40 +732,19 @@ export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boo
     varName,
 }));
 
-class DisplayReferenceImpl extends Immutable.Record({
-        type: undefined, exprKey: undefined, shouldHighlight: undefined, defName: undefined}) {
-    withExprKey(exprKey) {
-        return this.set('exprKey', exprKey)
-    }
-    withShouldHighlight(shouldHighlight) {
-        return this.set('shouldHighlight', shouldHighlight)
-    }
-    withDefName(defName) {
-        return this.set('defName', defName)
-    }
-    updateExprKey(updater) {
-        return this.set('exprKey', updater(this.exprKey))
-    }
-    updateShouldHighlight(updater) {
-        return this.set('shouldHighlight', updater(this.shouldHighlight))
-    }
-    updateDefName(updater) {
-        return this.set('defName', updater(this.defName))
-    }
-}
-
+const DisplayReferenceImpl = buildUnionCaseClass('displayReference', ['exprKey', 'shouldHighlight', 'defName']);
 export type DisplayReference = {
     type: 'displayReference',
     exprKey: ?ExpressionKey,
     shouldHighlight: boolean,
     defName: string,
-    withExprKey: (exprKey: ?ExpressionKey) => DisplayReference,
-    withShouldHighlight: (shouldHighlight: boolean) => DisplayReference,
-    withDefName: (defName: string) => DisplayReference,
-    updateExprKey: (updater: (exprKey: ?ExpressionKey) => ?ExpressionKey) => DisplayReference,
-    updateShouldHighlight: (updater: (shouldHighlight: boolean) => boolean) => DisplayReference,
-    updateDefName: (updater: (defName: string) => string) => DisplayReference,
-    toJS: () => any,
+    withExprKey(exprKey: ?ExpressionKey): DisplayReference,
+    withShouldHighlight(shouldHighlight: boolean): DisplayReference,
+    withDefName(defName: string): DisplayReference,
+    updateExprKey(updater: Updater<?ExpressionKey>): DisplayReference,
+    updateShouldHighlight(updater: Updater<boolean>): DisplayReference,
+    updateDefName(updater: Updater<string>): DisplayReference,
+    toJS(): any,
 };
 
 export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReferenceImpl({
@@ -1221,30 +778,16 @@ export const matchDisplayExpression = function<T>(displayExpression: DisplayExpr
     }
 };
 
-class CanvasPointImpl extends Immutable.Record({
-        canvasX: undefined, canvasY: undefined}) {
-    withCanvasX(canvasX) {
-        return this.set('canvasX', canvasX)
-    }
-    withCanvasY(canvasY) {
-        return this.set('canvasY', canvasY)
-    }
-    updateCanvasX(updater) {
-        return this.set('canvasX', updater(this.canvasX))
-    }
-    updateCanvasY(updater) {
-        return this.set('canvasY', updater(this.canvasY))
-    }
-}
+const CanvasPointImpl = buildValueClass(['canvasX', 'canvasY']);
 
 export type CanvasPoint = {
     canvasX: number,
     canvasY: number,
-    withCanvasX: (canvasX: number) => CanvasPoint,
-    withCanvasY: (canvasY: number) => CanvasPoint,
-    updateCanvasX: (updater: (canvasX: number) => number) => CanvasPoint,
-    updateCanvasY: (updater: (canvasY: number) => number) => CanvasPoint,
-    toJS: () => any,
+    withCanvasX(canvasX: number): CanvasPoint,
+    withCanvasY(canvasY: number): CanvasPoint,
+    updateCanvasX(updater: Updater<number>): CanvasPoint,
+    updateCanvasY(updater: Updater<number>): CanvasPoint,
+    toJS(): any,
 };
 
 export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPointImpl({
@@ -1252,30 +795,16 @@ export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint =>
     canvasY,
 }));
 
-class PointDifferenceImpl extends Immutable.Record({
-        dx: undefined, dy: undefined}) {
-    withDx(dx) {
-        return this.set('dx', dx)
-    }
-    withDy(dy) {
-        return this.set('dy', dy)
-    }
-    updateDx(updater) {
-        return this.set('dx', updater(this.dx))
-    }
-    updateDy(updater) {
-        return this.set('dy', updater(this.dy))
-    }
-}
+const PointDifferenceImpl = buildValueClass(['dx', 'dy']);
 
 export type PointDifference = {
     dx: number,
     dy: number,
-    withDx: (dx: number) => PointDifference,
-    withDy: (dy: number) => PointDifference,
-    updateDx: (updater: (dx: number) => number) => PointDifference,
-    updateDy: (updater: (dy: number) => number) => PointDifference,
-    toJS: () => any,
+    withDx(dx: number): PointDifference,
+    withDy(dy: number): PointDifference,
+    updateDx(updater: Updater<number>): PointDifference,
+    updateDy(updater: Updater<number>): PointDifference,
+    toJS(): any,
 };
 
 export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifferenceImpl({
@@ -1283,30 +812,16 @@ export const newPointDifference = (dx: number, dy: number): PointDifference => (
     dy,
 }));
 
-class ScreenPointImpl extends Immutable.Record({
-        screenX: undefined, screenY: undefined}) {
-    withScreenX(screenX) {
-        return this.set('screenX', screenX)
-    }
-    withScreenY(screenY) {
-        return this.set('screenY', screenY)
-    }
-    updateScreenX(updater) {
-        return this.set('screenX', updater(this.screenX))
-    }
-    updateScreenY(updater) {
-        return this.set('screenY', updater(this.screenY))
-    }
-}
+const ScreenPointImpl = buildValueClass(['screenX', 'screenY']);
 
 export type ScreenPoint = {
     screenX: number,
     screenY: number,
-    withScreenX: (screenX: number) => ScreenPoint,
-    withScreenY: (screenY: number) => ScreenPoint,
-    updateScreenX: (updater: (screenX: number) => number) => ScreenPoint,
-    updateScreenY: (updater: (screenY: number) => number) => ScreenPoint,
-    toJS: () => any,
+    withScreenX(screenX: number): ScreenPoint,
+    withScreenY(screenY: number): ScreenPoint,
+    updateScreenX(updater: Updater<number>): ScreenPoint,
+    updateScreenY(updater: Updater<number>): ScreenPoint,
+    toJS(): any,
 };
 
 export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPointImpl({
@@ -1314,30 +829,16 @@ export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint =>
     screenY,
 }));
 
-class ScreenRectImpl extends Immutable.Record({
-        topLeft: undefined, bottomRight: undefined}) {
-    withTopLeft(topLeft) {
-        return this.set('topLeft', topLeft)
-    }
-    withBottomRight(bottomRight) {
-        return this.set('bottomRight', bottomRight)
-    }
-    updateTopLeft(updater) {
-        return this.set('topLeft', updater(this.topLeft))
-    }
-    updateBottomRight(updater) {
-        return this.set('bottomRight', updater(this.bottomRight))
-    }
-}
+const ScreenRectImpl = buildValueClass(['topLeft', 'bottomRight']);
 
 export type ScreenRect = {
     topLeft: ScreenPoint,
     bottomRight: ScreenPoint,
-    withTopLeft: (topLeft: ScreenPoint) => ScreenRect,
-    withBottomRight: (bottomRight: ScreenPoint) => ScreenRect,
-    updateTopLeft: (updater: (topLeft: ScreenPoint) => ScreenPoint) => ScreenRect,
-    updateBottomRight: (updater: (bottomRight: ScreenPoint) => ScreenPoint) => ScreenRect,
-    toJS: () => any,
+    withTopLeft(topLeft: ScreenPoint): ScreenRect,
+    withBottomRight(bottomRight: ScreenPoint): ScreenRect,
+    updateTopLeft(updater: Updater<ScreenPoint>): ScreenRect,
+    updateBottomRight(updater: Updater<ScreenPoint>): ScreenRect,
+    toJS(): any,
 };
 
 export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRectImpl({
@@ -1347,30 +848,16 @@ export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): S
 
 export type PathComponent = 'func' | 'arg' | 'body';
 
-class ExprPathImpl extends Immutable.Record({
-        container: undefined, pathSteps: undefined}) {
-    withContainer(container) {
-        return this.set('container', container)
-    }
-    withPathSteps(pathSteps) {
-        return this.set('pathSteps', pathSteps)
-    }
-    updateContainer(updater) {
-        return this.set('container', updater(this.container))
-    }
-    updatePathSteps(updater) {
-        return this.set('pathSteps', updater(this.pathSteps))
-    }
-}
+const ExprPathImpl = buildValueClass(['container', 'pathSteps']);
 
 export type ExprPath = {
     container: ExprContainer,
     pathSteps: Immutable.List<PathComponent>,
-    withContainer: (container: ExprContainer) => ExprPath,
-    withPathSteps: (pathSteps: Immutable.List<PathComponent>) => ExprPath,
-    updateContainer: (updater: (container: ExprContainer) => ExprContainer) => ExprPath,
-    updatePathSteps: (updater: (pathSteps: Immutable.List<PathComponent>) => Immutable.List<PathComponent>) => ExprPath,
-    toJS: () => any,
+    withContainer(container: ExprContainer): ExprPath,
+    withPathSteps(pathSteps: Immutable.List<PathComponent>): ExprPath,
+    updateContainer(updater: Updater<ExprContainer>): ExprPath,
+    updatePathSteps(updater: Updater<Immutable.List<PathComponent>>): ExprPath,
+    toJS(): any,
 };
 
 export const newExprPath = (container: ExprContainer, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
@@ -1378,22 +865,13 @@ export const newExprPath = (container: ExprContainer, pathSteps: Immutable.List<
     pathSteps,
 }));
 
-class ExprIdContainerImpl extends Immutable.Record({
-        type: undefined, exprId: undefined}) {
-    withExprId(exprId) {
-        return this.set('exprId', exprId)
-    }
-    updateExprId(updater) {
-        return this.set('exprId', updater(this.exprId))
-    }
-}
-
+const ExprIdContainerImpl = buildUnionCaseClass('exprIdContainer', ['exprId']);
 export type ExprIdContainer = {
     type: 'exprIdContainer',
     exprId: number,
-    withExprId: (exprId: number) => ExprIdContainer,
-    updateExprId: (updater: (exprId: number) => number) => ExprIdContainer,
-    toJS: () => any,
+    withExprId(exprId: number): ExprIdContainer,
+    updateExprId(updater: Updater<number>): ExprIdContainer,
+    toJS(): any,
 };
 
 export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainerImpl({
@@ -1401,22 +879,13 @@ export const newExprIdContainer = (exprId: number): ExprIdContainer => (new Expr
     exprId,
 }));
 
-class DefinitionContainerImpl extends Immutable.Record({
-        type: undefined, defName: undefined}) {
-    withDefName(defName) {
-        return this.set('defName', defName)
-    }
-    updateDefName(updater) {
-        return this.set('defName', updater(this.defName))
-    }
-}
-
+const DefinitionContainerImpl = buildUnionCaseClass('definitionContainer', ['defName']);
 export type DefinitionContainer = {
     type: 'definitionContainer',
     defName: string,
-    withDefName: (defName: string) => DefinitionContainer,
-    updateDefName: (updater: (defName: string) => string) => DefinitionContainer,
-    toJS: () => any,
+    withDefName(defName: string): DefinitionContainer,
+    updateDefName(updater: Updater<string>): DefinitionContainer,
+    toJS(): any,
 };
 
 export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainerImpl({
@@ -1442,40 +911,19 @@ export const matchExprContainer = function<T>(exprContainer: ExprContainer, visi
     }
 };
 
-class PickUpExpressionImpl extends Immutable.Record({
-        type: undefined, exprId: undefined, offset: undefined, screenRect: undefined}) {
-    withExprId(exprId) {
-        return this.set('exprId', exprId)
-    }
-    withOffset(offset) {
-        return this.set('offset', offset)
-    }
-    withScreenRect(screenRect) {
-        return this.set('screenRect', screenRect)
-    }
-    updateExprId(updater) {
-        return this.set('exprId', updater(this.exprId))
-    }
-    updateOffset(updater) {
-        return this.set('offset', updater(this.offset))
-    }
-    updateScreenRect(updater) {
-        return this.set('screenRect', updater(this.screenRect))
-    }
-}
-
+const PickUpExpressionImpl = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
 export type PickUpExpression = {
     type: 'pickUpExpression',
     exprId: number,
     offset: PointDifference,
     screenRect: ScreenRect,
-    withExprId: (exprId: number) => PickUpExpression,
-    withOffset: (offset: PointDifference) => PickUpExpression,
-    withScreenRect: (screenRect: ScreenRect) => PickUpExpression,
-    updateExprId: (updater: (exprId: number) => number) => PickUpExpression,
-    updateOffset: (updater: (offset: PointDifference) => PointDifference) => PickUpExpression,
-    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => PickUpExpression,
-    toJS: () => any,
+    withExprId(exprId: number): PickUpExpression,
+    withOffset(offset: PointDifference): PickUpExpression,
+    withScreenRect(screenRect: ScreenRect): PickUpExpression,
+    updateExprId(updater: Updater<number>): PickUpExpression,
+    updateOffset(updater: Updater<PointDifference>): PickUpExpression,
+    updateScreenRect(updater: Updater<ScreenRect>): PickUpExpression,
+    toJS(): any,
 };
 
 export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpressionImpl({
@@ -1485,40 +933,19 @@ export const newPickUpExpression = (exprId: number, offset: PointDifference, scr
     screenRect,
 }));
 
-class DecomposeExpressionImpl extends Immutable.Record({
-        type: undefined, exprPath: undefined, offset: undefined, screenRect: undefined}) {
-    withExprPath(exprPath) {
-        return this.set('exprPath', exprPath)
-    }
-    withOffset(offset) {
-        return this.set('offset', offset)
-    }
-    withScreenRect(screenRect) {
-        return this.set('screenRect', screenRect)
-    }
-    updateExprPath(updater) {
-        return this.set('exprPath', updater(this.exprPath))
-    }
-    updateOffset(updater) {
-        return this.set('offset', updater(this.offset))
-    }
-    updateScreenRect(updater) {
-        return this.set('screenRect', updater(this.screenRect))
-    }
-}
-
+const DecomposeExpressionImpl = buildUnionCaseClass('decomposeExpression', ['exprPath', 'offset', 'screenRect']);
 export type DecomposeExpression = {
     type: 'decomposeExpression',
     exprPath: ExprPath,
     offset: PointDifference,
     screenRect: ScreenRect,
-    withExprPath: (exprPath: ExprPath) => DecomposeExpression,
-    withOffset: (offset: PointDifference) => DecomposeExpression,
-    withScreenRect: (screenRect: ScreenRect) => DecomposeExpression,
-    updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => DecomposeExpression,
-    updateOffset: (updater: (offset: PointDifference) => PointDifference) => DecomposeExpression,
-    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => DecomposeExpression,
-    toJS: () => any,
+    withExprPath(exprPath: ExprPath): DecomposeExpression,
+    withOffset(offset: PointDifference): DecomposeExpression,
+    withScreenRect(screenRect: ScreenRect): DecomposeExpression,
+    updateExprPath(updater: Updater<ExprPath>): DecomposeExpression,
+    updateOffset(updater: Updater<PointDifference>): DecomposeExpression,
+    updateScreenRect(updater: Updater<ScreenRect>): DecomposeExpression,
+    toJS(): any,
 };
 
 export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpressionImpl({
@@ -1528,40 +955,19 @@ export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifferen
     screenRect,
 }));
 
-class CreateExpressionImpl extends Immutable.Record({
-        type: undefined, expr: undefined, offset: undefined, screenRect: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withOffset(offset) {
-        return this.set('offset', offset)
-    }
-    withScreenRect(screenRect) {
-        return this.set('screenRect', screenRect)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updateOffset(updater) {
-        return this.set('offset', updater(this.offset))
-    }
-    updateScreenRect(updater) {
-        return this.set('screenRect', updater(this.screenRect))
-    }
-}
-
+const CreateExpressionImpl = buildUnionCaseClass('createExpression', ['expr', 'offset', 'screenRect']);
 export type CreateExpression = {
     type: 'createExpression',
     expr: UserExpression,
     offset: PointDifference,
     screenRect: ScreenRect,
-    withExpr: (expr: UserExpression) => CreateExpression,
-    withOffset: (offset: PointDifference) => CreateExpression,
-    withScreenRect: (screenRect: ScreenRect) => CreateExpression,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => CreateExpression,
-    updateOffset: (updater: (offset: PointDifference) => PointDifference) => CreateExpression,
-    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => CreateExpression,
-    toJS: () => any,
+    withExpr(expr: UserExpression): CreateExpression,
+    withOffset(offset: PointDifference): CreateExpression,
+    withScreenRect(screenRect: ScreenRect): CreateExpression,
+    updateExpr(updater: Updater<UserExpression>): CreateExpression,
+    updateOffset(updater: Updater<PointDifference>): CreateExpression,
+    updateScreenRect(updater: Updater<ScreenRect>): CreateExpression,
+    toJS(): any,
 };
 
 export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpressionImpl({
@@ -1571,22 +977,13 @@ export const newCreateExpression = (expr: UserExpression, offset: PointDifferenc
     screenRect,
 }));
 
-class StartPanImpl extends Immutable.Record({
-        type: undefined, startPos: undefined}) {
-    withStartPos(startPos) {
-        return this.set('startPos', startPos)
-    }
-    updateStartPos(updater) {
-        return this.set('startPos', updater(this.startPos))
-    }
-}
-
+const StartPanImpl = buildUnionCaseClass('startPan', ['startPos']);
 export type StartPan = {
     type: 'startPan',
     startPos: ScreenPoint,
-    withStartPos: (startPos: ScreenPoint) => StartPan,
-    updateStartPos: (updater: (startPos: ScreenPoint) => ScreenPoint) => StartPan,
-    toJS: () => any,
+    withStartPos(startPos: ScreenPoint): StartPan,
+    updateStartPos(updater: Updater<ScreenPoint>): StartPan,
+    toJS(): any,
 };
 
 export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPanImpl({
@@ -1618,39 +1015,19 @@ export const matchDragResult = function<T>(dragResult: DragResult, visitor: Drag
     }
 };
 
-class DragDataImpl extends Immutable.Record({
-        userExpr: undefined, grabOffset: undefined, screenRect: undefined}) {
-    withUserExpr(userExpr) {
-        return this.set('userExpr', userExpr)
-    }
-    withGrabOffset(grabOffset) {
-        return this.set('grabOffset', grabOffset)
-    }
-    withScreenRect(screenRect) {
-        return this.set('screenRect', screenRect)
-    }
-    updateUserExpr(updater) {
-        return this.set('userExpr', updater(this.userExpr))
-    }
-    updateGrabOffset(updater) {
-        return this.set('grabOffset', updater(this.grabOffset))
-    }
-    updateScreenRect(updater) {
-        return this.set('screenRect', updater(this.screenRect))
-    }
-}
+const DragDataImpl = buildValueClass(['userExpr', 'grabOffset', 'screenRect']);
 
 export type DragData = {
     userExpr: UserExpression,
     grabOffset: PointDifference,
     screenRect: ScreenRect,
-    withUserExpr: (userExpr: UserExpression) => DragData,
-    withGrabOffset: (grabOffset: PointDifference) => DragData,
-    withScreenRect: (screenRect: ScreenRect) => DragData,
-    updateUserExpr: (updater: (userExpr: UserExpression) => UserExpression) => DragData,
-    updateGrabOffset: (updater: (grabOffset: PointDifference) => PointDifference) => DragData,
-    updateScreenRect: (updater: (screenRect: ScreenRect) => ScreenRect) => DragData,
-    toJS: () => any,
+    withUserExpr(userExpr: UserExpression): DragData,
+    withGrabOffset(grabOffset: PointDifference): DragData,
+    withScreenRect(screenRect: ScreenRect): DragData,
+    updateUserExpr(updater: Updater<UserExpression>): DragData,
+    updateGrabOffset(updater: Updater<PointDifference>): DragData,
+    updateScreenRect(updater: Updater<ScreenRect>): DragData,
+    toJS(): any,
 };
 
 export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragDataImpl({
@@ -1659,31 +1036,16 @@ export const newDragData = (userExpr: UserExpression, grabOffset: PointDifferenc
     screenRect,
 }));
 
-class AddToTopLevelResultImpl extends Immutable.Record({
-        type: undefined, expr: undefined, screenPos: undefined}) {
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    withScreenPos(screenPos) {
-        return this.set('screenPos', screenPos)
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-    updateScreenPos(updater) {
-        return this.set('screenPos', updater(this.screenPos))
-    }
-}
-
+const AddToTopLevelResultImpl = buildUnionCaseClass('addToTopLevelResult', ['expr', 'screenPos']);
 export type AddToTopLevelResult = {
     type: 'addToTopLevelResult',
     expr: UserExpression,
     screenPos: ScreenPoint,
-    withExpr: (expr: UserExpression) => AddToTopLevelResult,
-    withScreenPos: (screenPos: ScreenPoint) => AddToTopLevelResult,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => AddToTopLevelResult,
-    updateScreenPos: (updater: (screenPos: ScreenPoint) => ScreenPoint) => AddToTopLevelResult,
-    toJS: () => any,
+    withExpr(expr: UserExpression): AddToTopLevelResult,
+    withScreenPos(screenPos: ScreenPoint): AddToTopLevelResult,
+    updateExpr(updater: Updater<UserExpression>): AddToTopLevelResult,
+    updateScreenPos(updater: Updater<ScreenPoint>): AddToTopLevelResult,
+    toJS(): any,
 };
 
 export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResultImpl({
@@ -1692,31 +1054,16 @@ export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPo
     screenPos,
 }));
 
-class InsertAsBodyResultImpl extends Immutable.Record({
-        type: undefined, lambdaPath: undefined, expr: undefined}) {
-    withLambdaPath(lambdaPath) {
-        return this.set('lambdaPath', lambdaPath)
-    }
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    updateLambdaPath(updater) {
-        return this.set('lambdaPath', updater(this.lambdaPath))
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-}
-
+const InsertAsBodyResultImpl = buildUnionCaseClass('insertAsBodyResult', ['lambdaPath', 'expr']);
 export type InsertAsBodyResult = {
     type: 'insertAsBodyResult',
     lambdaPath: ExprPath,
     expr: UserExpression,
-    withLambdaPath: (lambdaPath: ExprPath) => InsertAsBodyResult,
-    withExpr: (expr: UserExpression) => InsertAsBodyResult,
-    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => InsertAsBodyResult,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => InsertAsBodyResult,
-    toJS: () => any,
+    withLambdaPath(lambdaPath: ExprPath): InsertAsBodyResult,
+    withExpr(expr: UserExpression): InsertAsBodyResult,
+    updateLambdaPath(updater: Updater<ExprPath>): InsertAsBodyResult,
+    updateExpr(updater: Updater<UserExpression>): InsertAsBodyResult,
+    toJS(): any,
 };
 
 export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResultImpl({
@@ -1725,31 +1072,16 @@ export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression
     expr,
 }));
 
-class InsertAsArgResultImpl extends Immutable.Record({
-        type: undefined, path: undefined, expr: undefined}) {
-    withPath(path) {
-        return this.set('path', path)
-    }
-    withExpr(expr) {
-        return this.set('expr', expr)
-    }
-    updatePath(updater) {
-        return this.set('path', updater(this.path))
-    }
-    updateExpr(updater) {
-        return this.set('expr', updater(this.expr))
-    }
-}
-
+const InsertAsArgResultImpl = buildUnionCaseClass('insertAsArgResult', ['path', 'expr']);
 export type InsertAsArgResult = {
     type: 'insertAsArgResult',
     path: ExprPath,
     expr: UserExpression,
-    withPath: (path: ExprPath) => InsertAsArgResult,
-    withExpr: (expr: UserExpression) => InsertAsArgResult,
-    updatePath: (updater: (path: ExprPath) => ExprPath) => InsertAsArgResult,
-    updateExpr: (updater: (expr: UserExpression) => UserExpression) => InsertAsArgResult,
-    toJS: () => any,
+    withPath(path: ExprPath): InsertAsArgResult,
+    withExpr(expr: UserExpression): InsertAsArgResult,
+    updatePath(updater: Updater<ExprPath>): InsertAsArgResult,
+    updateExpr(updater: Updater<UserExpression>): InsertAsArgResult,
+    toJS(): any,
 };
 
 export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResultImpl({
@@ -1758,13 +1090,10 @@ export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): Inse
     expr,
 }));
 
-class RemoveResultImpl extends Immutable.Record({
-        type: undefined, }) {
-}
-
+const RemoveResultImpl = buildUnionCaseClass('removeResult', []);
 export type RemoveResult = {
     type: 'removeResult',
-    toJS: () => any,
+    toJS(): any,
 };
 
 export const newRemoveResult = (): RemoveResult => (new RemoveResultImpl({
@@ -1795,22 +1124,13 @@ export const matchDropResult = function<T>(dropResult: DropResult, visitor: Drop
     }
 };
 
-class ExpressionKeyImpl extends Immutable.Record({
-        type: undefined, exprPath: undefined}) {
-    withExprPath(exprPath) {
-        return this.set('exprPath', exprPath)
-    }
-    updateExprPath(updater) {
-        return this.set('exprPath', updater(this.exprPath))
-    }
-}
-
+const ExpressionKeyImpl = buildUnionCaseClass('expressionKey', ['exprPath']);
 export type ExpressionKey = {
     type: 'expressionKey',
     exprPath: ExprPath,
-    withExprPath: (exprPath: ExprPath) => ExpressionKey,
-    updateExprPath: (updater: (exprPath: ExprPath) => ExprPath) => ExpressionKey,
-    toJS: () => any,
+    withExprPath(exprPath: ExprPath): ExpressionKey,
+    updateExprPath(updater: Updater<ExprPath>): ExpressionKey,
+    toJS(): any,
 };
 
 export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKeyImpl({
@@ -1818,22 +1138,13 @@ export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new Expr
     exprPath,
 }));
 
-class EmptyBodyKeyImpl extends Immutable.Record({
-        type: undefined, lambdaPath: undefined}) {
-    withLambdaPath(lambdaPath) {
-        return this.set('lambdaPath', lambdaPath)
-    }
-    updateLambdaPath(updater) {
-        return this.set('lambdaPath', updater(this.lambdaPath))
-    }
-}
-
+const EmptyBodyKeyImpl = buildUnionCaseClass('emptyBodyKey', ['lambdaPath']);
 export type EmptyBodyKey = {
     type: 'emptyBodyKey',
     lambdaPath: ExprPath,
-    withLambdaPath: (lambdaPath: ExprPath) => EmptyBodyKey,
-    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => EmptyBodyKey,
-    toJS: () => any,
+    withLambdaPath(lambdaPath: ExprPath): EmptyBodyKey,
+    updateLambdaPath(updater: Updater<ExprPath>): EmptyBodyKey,
+    toJS(): any,
 };
 
 export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKeyImpl({
@@ -1841,22 +1152,13 @@ export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new Empt
     lambdaPath,
 }));
 
-class LambdaVarKeyImpl extends Immutable.Record({
-        type: undefined, lambdaPath: undefined}) {
-    withLambdaPath(lambdaPath) {
-        return this.set('lambdaPath', lambdaPath)
-    }
-    updateLambdaPath(updater) {
-        return this.set('lambdaPath', updater(this.lambdaPath))
-    }
-}
-
+const LambdaVarKeyImpl = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);
 export type LambdaVarKey = {
     type: 'lambdaVarKey',
     lambdaPath: ExprPath,
-    withLambdaPath: (lambdaPath: ExprPath) => LambdaVarKey,
-    updateLambdaPath: (updater: (lambdaPath: ExprPath) => ExprPath) => LambdaVarKey,
-    toJS: () => any,
+    withLambdaPath(lambdaPath: ExprPath): LambdaVarKey,
+    updateLambdaPath(updater: Updater<ExprPath>): LambdaVarKey,
+    toJS(): any,
 };
 
 export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKeyImpl({
@@ -1864,22 +1166,13 @@ export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new Lamb
     lambdaPath,
 }));
 
-class DefinitionKeyImpl extends Immutable.Record({
-        type: undefined, defName: undefined}) {
-    withDefName(defName) {
-        return this.set('defName', defName)
-    }
-    updateDefName(updater) {
-        return this.set('defName', updater(this.defName))
-    }
-}
-
+const DefinitionKeyImpl = buildUnionCaseClass('definitionKey', ['defName']);
 export type DefinitionKey = {
     type: 'definitionKey',
     defName: string,
-    withDefName: (defName: string) => DefinitionKey,
-    updateDefName: (updater: (defName: string) => string) => DefinitionKey,
-    toJS: () => any,
+    withDefName(defName: string): DefinitionKey,
+    updateDefName(updater: Updater<string>): DefinitionKey,
+    toJS(): any,
 };
 
 export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKeyImpl({

@@ -19,7 +19,10 @@ const generateTypes = (types) => {
  */
  
 import * as Immutable from 'immutable'
- 
+
+import {buildUnionCaseClass, buildValueClass} from './types-lib'
+import type {Updater} from './types-lib'
+
 ${joinMap(types, '\n', genType)}
 `;
 };
@@ -50,25 +53,13 @@ export type ${typeName} = ${value};
 const genStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-class ${typeName}Impl extends Immutable.Record({
-        ${genComma((f) => `${f}: undefined`)}}) {
-${joinMap(fields, '', (f, t) => `\
-    with${upperName(f)}(${f}) {
-        return this.set('${f}', ${f})
-    }
-`)}\
-${joinMap(fields, '', (f, t) => `\
-    update${upperName(f)}(updater) {
-        return this.set('${f}', updater(this.${f}))
-    }
-`)}\
-}
+const ${typeName}Impl = buildValueClass([${genComma((f) => `'${f}'`)}]);
 
 export type ${typeName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
-${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${typeName},`)}\
-${genLines((f, t) => `update${upperName(f)}: (updater: (${f}: ${t}) => ${t}) => ${typeName},`)}\
-    toJS: () => any,
+${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${typeName},`)}\
+${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${typeName},`)}\
+    toJS(): any,
 };
 
 export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}Impl({
@@ -115,34 +106,21 @@ ${joinMap(cases, '\n', (caseName) => `\
  *
  * Also, we need to handle a special case where Redux actions need to be plain
  * objects.
- */
+*/
 const genUnionCase = (caseName, fields, isObject) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
 ${isObject ? '' : `\
-class ${caseName}Impl extends Immutable.Record({
-        type: undefined, ${genComma((f) => `${f}: undefined`)}}) {
-${joinMap(fields, '', (f, t) => `\
-    with${upperName(f)}(${f}) {
-        return this.set('${f}', ${f})
-    }
-`)}\
-${joinMap(fields, '', (f, t) => `\
-    update${upperName(f)}(updater) {
-        return this.set('${f}', updater(this.${f}))
-    }
-`)}\
-}
-
+const ${caseName}Impl = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
 `}\
 export type ${caseName} = {
     type: '${tagName}',
 ${genLines((f, t) => `${f}: ${t},`)}\
 ${isObject ? '' : `\
-${genLines((f, t) => `with${upperName(f)}: (${f}: ${t}) => ${caseName},`)}\
-${genLines((f, t) => `update${upperName(f)}: (updater: (${f}: ${t}) => ${t}) => ${caseName},`)}\
-    toJS: () => any,
+${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName},`)}\
+${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName},`)}\
+    toJS(): any,
 `}\
 };
 
