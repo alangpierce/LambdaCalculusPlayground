@@ -81,7 +81,7 @@ const serialize = (obj: any): any => {
     return obj;
 };
 
-// TODO: Handle immutable maps. Currently it just doesn't serialized them.
+// TODO: Handle immutable maps. Currently it just doesn't serialize them.
 export const deserialize = (obj: any): any => {
     if (obj == null || typeof obj !== 'object') {
         return obj;
@@ -98,4 +98,13 @@ export const deserialize = (obj: any): any => {
     }
     const constructor = registeredConstructors[className];
     return new constructor(constructorArg);
+};
+
+export const serializeActionsMiddleware = (store: any) => (next: any) => (action: any) => {
+    if (action != null &&
+            typeof action === 'object' &&
+            typeof action.serialize === 'function') {
+        action = action.serialize();
+    }
+    return next(action);
 };

@@ -17,7 +17,6 @@ import * as t from './types'
 import {
     addExpression,
     decomposeExpression,
-    modifyExpression,
     insertAsArg,
     insertAsBody,
     updateExprContainer,
@@ -25,6 +24,7 @@ import {
 import {ptMinusPt, ptPlusDiff, rectPlusDiff} from './Geometry'
 import {resolveDrop, resolveTouch} from './HitTester'
 import {screenPtToCanvasPt} from './PointConversion'
+import {deserialize} from './types-lib'
 import {getPositionOnScreen} from './ViewTracker';
 
 const initialState: State = t.newState(
@@ -38,12 +38,13 @@ const initialState: State = t.newState(
     new Immutable.Set());
 
 // TODO: Consider adding a top-level try/catch.
-const playgroundApp = (state: State = initialState, action: Action): State => {
+const playgroundApp = (state: State = initialState, rawAction: any): State => {
     // Despite our action union, there are some internal redux actions that
     // start with @@, which we want to just ignore.
-    if (action.type.startsWith('@@')) {
+    if (rawAction.type.startsWith('@@')) {
         return state;
     }
+    const action: Action = deserialize(rawAction);
 
     const exprWithId = (exprId: number): CanvasExpression => {
         const result = state.canvasExpressions.get(exprId);

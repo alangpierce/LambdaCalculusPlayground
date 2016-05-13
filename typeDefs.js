@@ -20,8 +20,7 @@ export default typeDefs = {
         },
     },
     Action: {
-        // Redux complains if the don't use plain objects for actions.
-        type: 'objectUnion',
+        type: 'union',
         cases: {
             /**
              * Clear the state. Useful for testing.

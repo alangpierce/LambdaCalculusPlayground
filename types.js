@@ -51,143 +51,221 @@ export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpressi
     highlightedEmptyBodies,
 }));
 
+const ResetImpl = buildUnionCaseClass('reset', []);
 export type Reset = {
     type: 'reset',
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newReset = (): Reset => ({
+export const newReset = (): Reset => (new ResetImpl({
     type: 'reset',
-});
+}));
 
+const AddExpressionImpl = buildUnionCaseClass('addExpression', ['canvasExpr']);
 export type AddExpression = {
     type: 'addExpression',
     canvasExpr: CanvasExpression,
+    withCanvasExpr(canvasExpr: CanvasExpression): AddExpression,
+    updateCanvasExpr(updater: Updater<CanvasExpression>): AddExpression,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => ({
+export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => (new AddExpressionImpl({
     type: 'addExpression',
     canvasExpr,
-});
+}));
 
+const PlaceDefinitionImpl = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
 export type PlaceDefinition = {
     type: 'placeDefinition',
     defName: string,
     screenPos: ScreenPoint,
+    withDefName(defName: string): PlaceDefinition,
+    withScreenPos(screenPos: ScreenPoint): PlaceDefinition,
+    updateDefName(updater: Updater<string>): PlaceDefinition,
+    updateScreenPos(updater: Updater<ScreenPoint>): PlaceDefinition,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => ({
+export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => (new PlaceDefinitionImpl({
     type: 'placeDefinition',
     defName,
     screenPos,
-});
+}));
 
+const MoveExpressionImpl = buildUnionCaseClass('moveExpression', ['exprId', 'pos']);
 export type MoveExpression = {
     type: 'moveExpression',
     exprId: number,
     pos: CanvasPoint,
+    withExprId(exprId: number): MoveExpression,
+    withPos(pos: CanvasPoint): MoveExpression,
+    updateExprId(updater: Updater<number>): MoveExpression,
+    updatePos(updater: Updater<CanvasPoint>): MoveExpression,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => ({
+export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => (new MoveExpressionImpl({
     type: 'moveExpression',
     exprId,
     pos,
-});
+}));
 
+const DecomposeExpressionActionImpl = buildUnionCaseClass('decomposeExpressionAction', ['path', 'targetPos']);
 export type DecomposeExpressionAction = {
     type: 'decomposeExpressionAction',
     path: ExprPath,
     targetPos: CanvasPoint,
+    withPath(path: ExprPath): DecomposeExpressionAction,
+    withTargetPos(targetPos: CanvasPoint): DecomposeExpressionAction,
+    updatePath(updater: Updater<ExprPath>): DecomposeExpressionAction,
+    updateTargetPos(updater: Updater<CanvasPoint>): DecomposeExpressionAction,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => ({
+export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => (new DecomposeExpressionActionImpl({
     type: 'decomposeExpressionAction',
     path,
     targetPos,
-});
+}));
 
+const InsertAsArgImpl = buildUnionCaseClass('insertAsArg', ['argExprId', 'path']);
 export type InsertAsArg = {
     type: 'insertAsArg',
     argExprId: number,
     path: ExprPath,
+    withArgExprId(argExprId: number): InsertAsArg,
+    withPath(path: ExprPath): InsertAsArg,
+    updateArgExprId(updater: Updater<number>): InsertAsArg,
+    updatePath(updater: Updater<ExprPath>): InsertAsArg,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => ({
+export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => (new InsertAsArgImpl({
     type: 'insertAsArg',
     argExprId,
     path,
-});
+}));
 
+const InsertAsBodyImpl = buildUnionCaseClass('insertAsBody', ['bodyExprId', 'path']);
 export type InsertAsBody = {
     type: 'insertAsBody',
     bodyExprId: number,
     path: ExprPath,
+    withBodyExprId(bodyExprId: number): InsertAsBody,
+    withPath(path: ExprPath): InsertAsBody,
+    updateBodyExprId(updater: Updater<number>): InsertAsBody,
+    updatePath(updater: Updater<ExprPath>): InsertAsBody,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => ({
+export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => (new InsertAsBodyImpl({
     type: 'insertAsBody',
     bodyExprId,
     path,
-});
+}));
 
+const EvaluateExpressionImpl = buildUnionCaseClass('evaluateExpression', ['exprId']);
 export type EvaluateExpression = {
     type: 'evaluateExpression',
     exprId: number,
+    withExprId(exprId: number): EvaluateExpression,
+    updateExprId(updater: Updater<number>): EvaluateExpression,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newEvaluateExpression = (exprId: number): EvaluateExpression => ({
+export const newEvaluateExpression = (exprId: number): EvaluateExpression => (new EvaluateExpressionImpl({
     type: 'evaluateExpression',
     exprId,
-});
+}));
 
+const PlacePendingResultImpl = buildUnionCaseClass('placePendingResult', ['exprId', 'width', 'height']);
 export type PlacePendingResult = {
     type: 'placePendingResult',
     exprId: number,
     width: number,
     height: number,
+    withExprId(exprId: number): PlacePendingResult,
+    withWidth(width: number): PlacePendingResult,
+    withHeight(height: number): PlacePendingResult,
+    updateExprId(updater: Updater<number>): PlacePendingResult,
+    updateWidth(updater: Updater<number>): PlacePendingResult,
+    updateHeight(updater: Updater<number>): PlacePendingResult,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => ({
+export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => (new PlacePendingResultImpl({
     type: 'placePendingResult',
     exprId,
     width,
     height,
-});
+}));
 
+const FingerDownImpl = buildUnionCaseClass('fingerDown', ['fingerId', 'screenPos']);
 export type FingerDown = {
     type: 'fingerDown',
     fingerId: number,
     screenPos: ScreenPoint,
+    withFingerId(fingerId: number): FingerDown,
+    withScreenPos(screenPos: ScreenPoint): FingerDown,
+    updateFingerId(updater: Updater<number>): FingerDown,
+    updateScreenPos(updater: Updater<ScreenPoint>): FingerDown,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => ({
+export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => (new FingerDownImpl({
     type: 'fingerDown',
     fingerId,
     screenPos,
-});
+}));
 
+const FingerMoveImpl = buildUnionCaseClass('fingerMove', ['fingerId', 'screenPos']);
 export type FingerMove = {
     type: 'fingerMove',
     fingerId: number,
     screenPos: ScreenPoint,
+    withFingerId(fingerId: number): FingerMove,
+    withScreenPos(screenPos: ScreenPoint): FingerMove,
+    updateFingerId(updater: Updater<number>): FingerMove,
+    updateScreenPos(updater: Updater<ScreenPoint>): FingerMove,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => ({
+export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => (new FingerMoveImpl({
     type: 'fingerMove',
     fingerId,
     screenPos,
-});
+}));
 
+const FingerUpImpl = buildUnionCaseClass('fingerUp', ['fingerId', 'screenPos']);
 export type FingerUp = {
     type: 'fingerUp',
     fingerId: number,
     screenPos: ScreenPoint,
+    withFingerId(fingerId: number): FingerUp,
+    withScreenPos(screenPos: ScreenPoint): FingerUp,
+    updateFingerId(updater: Updater<number>): FingerUp,
+    updateScreenPos(updater: Updater<ScreenPoint>): FingerUp,
+    toJS(): any,
+    serialize(): any,
 };
 
-export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => ({
+export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => (new FingerUpImpl({
     type: 'fingerUp',
     fingerId,
     screenPos,
-});
+}));
 
 export type Action = Reset | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
