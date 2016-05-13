@@ -6,10 +6,13 @@ import * as Immutable from 'immutable'
 
 export type Updater<T> = (t: T) => T;
 
+const registeredConstructors = {};
+
 /**
  * Construct a class with properly-named fields.
  */
-export const buildValueClass = (fieldNames: Array<string>): any => {
+export const buildValueClass = (
+        className: string, fieldNames: Array<string>): any => {
     const defaults: any = {};
     for (const name of fieldNames) {
         defaults[name] = undefined;
@@ -25,6 +28,15 @@ export const buildValueClass = (fieldNames: Array<string>): any => {
             return this.set(name, updater(this[name]));
         };
     }
+    resultClass.serialize = function() {
+        const result = {};
+        result.__SERIALIZED_CLASS = className;
+        for (const name of fieldNames) {
+            result[name] = serialize(this[name]);
+        }
+        return result;
+    };
+    registeredConstructors[className] = resultConstructor;
     return resultConstructor;
 };
 
@@ -46,5 +58,44 @@ export const buildUnionCaseClass = (
             return this.set(name, updater(this[name]));
         };
     }
+    resultClass.serialize = function() {
+        const result = {};
+        result.__SERIALIZED_CLASS = caseName;
+        for (const name of fieldNames) {
+            result[name] = serialize(this[name]);
+        }
+        result.type = this.type;
+        return result;
+    };
+    registeredConstructors[caseName] = resultConstructor;
     return resultConstructor;
+};
+
+const serialize = (obj: any): any => {
+    if (obj == null || typeof obj !== 'object') {
+        return obj;
+    }
+    if (typeof obj.serialize === 'function') {
+        return obj.serialize();
+    }
+    return obj;
+};
+
+// TODO: Handle immutable maps. Currently it just doesn't serialized them.
+export const deserialize = (obj: any): any => {
+    if (obj == null || typeof obj !== 'object') {
+        return obj;
+    }
+    const className = obj.__SERIALIZED_CLASS;
+    if (className == null) {
+        return obj;
+    }
+    const constructorArg = {};
+    for (const name of Object.keys(obj)) {
+        if (name !== '__SERIALIZED_CLASS') {
+            constructorArg[name] = deserialize(obj[name]);
+        }
+    }
+    const constructor = registeredConstructors[className];
+    return new constructor(constructorArg);
 };

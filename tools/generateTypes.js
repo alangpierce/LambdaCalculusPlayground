@@ -53,13 +53,14 @@ export type ${typeName} = ${value};
 const genStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-const ${typeName}Impl = buildValueClass([${genComma((f) => `'${f}'`)}]);
+const ${typeName}Impl = buildValueClass('${typeName}', [${genComma((f) => `'${f}'`)}]);
 
 export type ${typeName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${typeName},`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${typeName},`)}\
     toJS(): any,
+    serialize(): any,
 };
 
 export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}Impl({
@@ -121,6 +122,7 @@ ${isObject ? '' : `\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName},`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName},`)}\
     toJS(): any,
+    serialize(): any,
 `}\
 };
 

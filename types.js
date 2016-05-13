@@ -9,7 +9,7 @@ import * as Immutable from 'immutable'
 import {buildUnionCaseClass, buildValueClass} from './types-lib'
 import type {Updater} from './types-lib'
 
-const StateImpl = buildValueClass(['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
+const StateImpl = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
 
 export type State = {
     canvasExpressions: Immutable.Map<number, CanvasExpression>,
@@ -37,6 +37,7 @@ export type State = {
     updateHighlightedExprs(updater: Updater<Immutable.Set<ExprPath>>): State,
     updateHighlightedEmptyBodies(updater: Updater<Immutable.Set<ExprPath>>): State,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, canvasDefinitions: Immutable.Map<string, CanvasPoint>, definitions: Immutable.Map<string, ?UserExpression>, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
@@ -246,6 +247,7 @@ export type Lambda = {
     updateVarName(updater: Updater<string>): Lambda,
     updateBody(updater: Updater<Expression>): Lambda,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newLambda = (varName: string, body: Expression): Lambda => (new LambdaImpl({
@@ -264,6 +266,7 @@ export type FuncCall = {
     updateFunc(updater: Updater<Expression>): FuncCall,
     updateArg(updater: Updater<Expression>): FuncCall,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCallImpl({
@@ -279,6 +282,7 @@ export type Variable = {
     withVarName(varName: string): Variable,
     updateVarName(updater: Updater<string>): Variable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newVariable = (varName: string): Variable => (new VariableImpl({
@@ -328,6 +332,7 @@ export type EvalLambda = {
     updateOriginalVarName(updater: Updater<string>): EvalLambda,
     updateBody(updater: Updater<EvalExpression>): EvalLambda,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
@@ -347,6 +352,7 @@ export type EvalFuncCall = {
     updateFunc(updater: Updater<EvalExpression>): EvalFuncCall,
     updateArg(updater: Updater<EvalExpression>): EvalFuncCall,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCallImpl({
@@ -362,6 +368,7 @@ export type EvalBoundVariable = {
     withSlot(slot: Slot): EvalBoundVariable,
     updateSlot(updater: Updater<Slot>): EvalBoundVariable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariableImpl({
@@ -379,6 +386,7 @@ export type EvalUnboundVariable = {
     updateVarMarker(updater: Updater<VarMarker>): EvalUnboundVariable,
     updateOriginalVarName(updater: Updater<string>): EvalUnboundVariable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
@@ -394,6 +402,7 @@ export type EvalFreeVariable = {
     withVarName(varName: string): EvalFreeVariable,
     updateVarName(updater: Updater<string>): EvalFreeVariable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariableImpl({
@@ -438,6 +447,7 @@ export type UserLambda = {
     updateVarName(updater: Updater<string>): UserLambda,
     updateBody(updater: Updater<?UserExpression>): UserLambda,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambdaImpl({
@@ -456,6 +466,7 @@ export type UserFuncCall = {
     updateFunc(updater: Updater<UserExpression>): UserFuncCall,
     updateArg(updater: Updater<UserExpression>): UserFuncCall,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCallImpl({
@@ -471,6 +482,7 @@ export type UserVariable = {
     withVarName(varName: string): UserVariable,
     updateVarName(updater: Updater<string>): UserVariable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newUserVariable = (varName: string): UserVariable => (new UserVariableImpl({
@@ -485,6 +497,7 @@ export type UserReference = {
     withDefName(defName: string): UserReference,
     updateDefName(updater: Updater<string>): UserReference,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newUserReference = (defName: string): UserReference => (new UserReferenceImpl({
@@ -516,7 +529,7 @@ export const matchUserExpression = function<T>(userExpression: UserExpression, v
     }
 };
 
-const CanvasExpressionImpl = buildValueClass(['expr', 'pos']);
+const CanvasExpressionImpl = buildValueClass('CanvasExpression', ['expr', 'pos']);
 
 export type CanvasExpression = {
     expr: UserExpression,
@@ -526,6 +539,7 @@ export type CanvasExpression = {
     updateExpr(updater: Updater<UserExpression>): CanvasExpression,
     updatePos(updater: Updater<CanvasPoint>): CanvasExpression,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpressionImpl({
@@ -533,7 +547,7 @@ export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): Can
     pos,
 }));
 
-const PendingResultImpl = buildValueClass(['expr', 'sourceExprId']);
+const PendingResultImpl = buildValueClass('PendingResult', ['expr', 'sourceExprId']);
 
 export type PendingResult = {
     expr: UserExpression,
@@ -543,6 +557,7 @@ export type PendingResult = {
     updateExpr(updater: Updater<UserExpression>): PendingResult,
     updateSourceExprId(updater: Updater<number>): PendingResult,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResultImpl({
@@ -550,7 +565,7 @@ export const newPendingResult = (expr: UserExpression, sourceExprId: number): Pe
     sourceExprId,
 }));
 
-const DisplayStateImpl = buildValueClass(['screenExpressions', 'screenDefinitions', 'measureRequests']);
+const DisplayStateImpl = buildValueClass('DisplayState', ['screenExpressions', 'screenDefinitions', 'measureRequests']);
 
 export type DisplayState = {
     screenExpressions: Immutable.List<ScreenExpression>,
@@ -563,6 +578,7 @@ export type DisplayState = {
     updateScreenDefinitions(updater: Updater<Immutable.List<ScreenDefinition>>): DisplayState,
     updateMeasureRequests(updater: Updater<Immutable.List<MeasureRequest>>): DisplayState,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, screenDefinitions: Immutable.List<ScreenDefinition>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
@@ -571,7 +587,7 @@ export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpressi
     measureRequests,
 }));
 
-const MeasureRequestImpl = buildValueClass(['expr', 'resultHandler']);
+const MeasureRequestImpl = buildValueClass('MeasureRequest', ['expr', 'resultHandler']);
 
 export type MeasureRequest = {
     expr: DisplayExpression,
@@ -581,6 +597,7 @@ export type MeasureRequest = {
     updateExpr(updater: Updater<DisplayExpression>): MeasureRequest,
     updateResultHandler(updater: Updater<(width: number, height: number) => void>): MeasureRequest,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequestImpl({
@@ -588,7 +605,7 @@ export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width
     resultHandler,
 }));
 
-const ScreenDefinitionImpl = buildValueClass(['defName', 'expr', 'pos', 'key', 'isDragging']);
+const ScreenDefinitionImpl = buildValueClass('ScreenDefinition', ['defName', 'expr', 'pos', 'key', 'isDragging']);
 
 export type ScreenDefinition = {
     defName: string,
@@ -607,6 +624,7 @@ export type ScreenDefinition = {
     updateKey(updater: Updater<string>): ScreenDefinition,
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinitionImpl({
@@ -617,7 +635,7 @@ export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, p
     isDragging,
 }));
 
-const ScreenExpressionImpl = buildValueClass(['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
+const ScreenExpressionImpl = buildValueClass('ScreenExpression', ['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
 
 export type ScreenExpression = {
     expr: DisplayExpression,
@@ -636,6 +654,7 @@ export type ScreenExpression = {
     updateIsDragging(updater: Updater<boolean>): ScreenExpression,
     updateExecuteHandler(updater: Updater<?() => void>): ScreenExpression,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression => (new ScreenExpressionImpl({
@@ -671,6 +690,7 @@ export type DisplayLambda = {
     updateVarName(updater: Updater<string>): DisplayLambda,
     updateBody(updater: Updater<?DisplayExpression>): DisplayLambda,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
@@ -700,6 +720,7 @@ export type DisplayFuncCall = {
     updateFunc(updater: Updater<DisplayExpression>): DisplayFuncCall,
     updateArg(updater: Updater<DisplayExpression>): DisplayFuncCall,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
@@ -723,6 +744,7 @@ export type DisplayVariable = {
     updateShouldHighlight(updater: Updater<boolean>): DisplayVariable,
     updateVarName(updater: Updater<string>): DisplayVariable,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariableImpl({
@@ -745,6 +767,7 @@ export type DisplayReference = {
     updateShouldHighlight(updater: Updater<boolean>): DisplayReference,
     updateDefName(updater: Updater<string>): DisplayReference,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReferenceImpl({
@@ -778,7 +801,7 @@ export const matchDisplayExpression = function<T>(displayExpression: DisplayExpr
     }
 };
 
-const CanvasPointImpl = buildValueClass(['canvasX', 'canvasY']);
+const CanvasPointImpl = buildValueClass('CanvasPoint', ['canvasX', 'canvasY']);
 
 export type CanvasPoint = {
     canvasX: number,
@@ -788,6 +811,7 @@ export type CanvasPoint = {
     updateCanvasX(updater: Updater<number>): CanvasPoint,
     updateCanvasY(updater: Updater<number>): CanvasPoint,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPointImpl({
@@ -795,7 +819,7 @@ export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint =>
     canvasY,
 }));
 
-const PointDifferenceImpl = buildValueClass(['dx', 'dy']);
+const PointDifferenceImpl = buildValueClass('PointDifference', ['dx', 'dy']);
 
 export type PointDifference = {
     dx: number,
@@ -805,6 +829,7 @@ export type PointDifference = {
     updateDx(updater: Updater<number>): PointDifference,
     updateDy(updater: Updater<number>): PointDifference,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifferenceImpl({
@@ -812,7 +837,7 @@ export const newPointDifference = (dx: number, dy: number): PointDifference => (
     dy,
 }));
 
-const ScreenPointImpl = buildValueClass(['screenX', 'screenY']);
+const ScreenPointImpl = buildValueClass('ScreenPoint', ['screenX', 'screenY']);
 
 export type ScreenPoint = {
     screenX: number,
@@ -822,6 +847,7 @@ export type ScreenPoint = {
     updateScreenX(updater: Updater<number>): ScreenPoint,
     updateScreenY(updater: Updater<number>): ScreenPoint,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPointImpl({
@@ -829,7 +855,7 @@ export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint =>
     screenY,
 }));
 
-const ScreenRectImpl = buildValueClass(['topLeft', 'bottomRight']);
+const ScreenRectImpl = buildValueClass('ScreenRect', ['topLeft', 'bottomRight']);
 
 export type ScreenRect = {
     topLeft: ScreenPoint,
@@ -839,6 +865,7 @@ export type ScreenRect = {
     updateTopLeft(updater: Updater<ScreenPoint>): ScreenRect,
     updateBottomRight(updater: Updater<ScreenPoint>): ScreenRect,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRectImpl({
@@ -848,7 +875,7 @@ export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): S
 
 export type PathComponent = 'func' | 'arg' | 'body';
 
-const ExprPathImpl = buildValueClass(['container', 'pathSteps']);
+const ExprPathImpl = buildValueClass('ExprPath', ['container', 'pathSteps']);
 
 export type ExprPath = {
     container: ExprContainer,
@@ -858,6 +885,7 @@ export type ExprPath = {
     updateContainer(updater: Updater<ExprContainer>): ExprPath,
     updatePathSteps(updater: Updater<Immutable.List<PathComponent>>): ExprPath,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newExprPath = (container: ExprContainer, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
@@ -872,6 +900,7 @@ export type ExprIdContainer = {
     withExprId(exprId: number): ExprIdContainer,
     updateExprId(updater: Updater<number>): ExprIdContainer,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainerImpl({
@@ -886,6 +915,7 @@ export type DefinitionContainer = {
     withDefName(defName: string): DefinitionContainer,
     updateDefName(updater: Updater<string>): DefinitionContainer,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainerImpl({
@@ -924,6 +954,7 @@ export type PickUpExpression = {
     updateOffset(updater: Updater<PointDifference>): PickUpExpression,
     updateScreenRect(updater: Updater<ScreenRect>): PickUpExpression,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpressionImpl({
@@ -946,6 +977,7 @@ export type DecomposeExpression = {
     updateOffset(updater: Updater<PointDifference>): DecomposeExpression,
     updateScreenRect(updater: Updater<ScreenRect>): DecomposeExpression,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpressionImpl({
@@ -968,6 +1000,7 @@ export type CreateExpression = {
     updateOffset(updater: Updater<PointDifference>): CreateExpression,
     updateScreenRect(updater: Updater<ScreenRect>): CreateExpression,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpressionImpl({
@@ -984,6 +1017,7 @@ export type StartPan = {
     withStartPos(startPos: ScreenPoint): StartPan,
     updateStartPos(updater: Updater<ScreenPoint>): StartPan,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPanImpl({
@@ -1015,7 +1049,7 @@ export const matchDragResult = function<T>(dragResult: DragResult, visitor: Drag
     }
 };
 
-const DragDataImpl = buildValueClass(['userExpr', 'grabOffset', 'screenRect']);
+const DragDataImpl = buildValueClass('DragData', ['userExpr', 'grabOffset', 'screenRect']);
 
 export type DragData = {
     userExpr: UserExpression,
@@ -1028,6 +1062,7 @@ export type DragData = {
     updateGrabOffset(updater: Updater<PointDifference>): DragData,
     updateScreenRect(updater: Updater<ScreenRect>): DragData,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragDataImpl({
@@ -1046,6 +1081,7 @@ export type AddToTopLevelResult = {
     updateExpr(updater: Updater<UserExpression>): AddToTopLevelResult,
     updateScreenPos(updater: Updater<ScreenPoint>): AddToTopLevelResult,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResultImpl({
@@ -1064,6 +1100,7 @@ export type InsertAsBodyResult = {
     updateLambdaPath(updater: Updater<ExprPath>): InsertAsBodyResult,
     updateExpr(updater: Updater<UserExpression>): InsertAsBodyResult,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResultImpl({
@@ -1082,6 +1119,7 @@ export type InsertAsArgResult = {
     updatePath(updater: Updater<ExprPath>): InsertAsArgResult,
     updateExpr(updater: Updater<UserExpression>): InsertAsArgResult,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResultImpl({
@@ -1094,6 +1132,7 @@ const RemoveResultImpl = buildUnionCaseClass('removeResult', []);
 export type RemoveResult = {
     type: 'removeResult',
     toJS(): any,
+    serialize(): any,
 };
 
 export const newRemoveResult = (): RemoveResult => (new RemoveResultImpl({
@@ -1131,6 +1170,7 @@ export type ExpressionKey = {
     withExprPath(exprPath: ExprPath): ExpressionKey,
     updateExprPath(updater: Updater<ExprPath>): ExpressionKey,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKeyImpl({
@@ -1145,6 +1185,7 @@ export type EmptyBodyKey = {
     withLambdaPath(lambdaPath: ExprPath): EmptyBodyKey,
     updateLambdaPath(updater: Updater<ExprPath>): EmptyBodyKey,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKeyImpl({
@@ -1159,6 +1200,7 @@ export type LambdaVarKey = {
     withLambdaPath(lambdaPath: ExprPath): LambdaVarKey,
     updateLambdaPath(updater: Updater<ExprPath>): LambdaVarKey,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKeyImpl({
@@ -1173,6 +1215,7 @@ export type DefinitionKey = {
     withDefName(defName: string): DefinitionKey,
     updateDefName(updater: Updater<string>): DefinitionKey,
     toJS(): any,
+    serialize(): any,
 };
 
 export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKeyImpl({
