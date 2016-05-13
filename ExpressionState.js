@@ -34,7 +34,7 @@ export const modifyExpression = (state: State, exprId: number,
 export const updateExprContainer = (
         state: State, container: ExprContainer,
         transform: Transform<UserExpression>): State => {
-    return t.matchExprContainer(container, {
+    return container.match({
         exprIdContainer: ({exprId}) =>
             state.updateCanvasExpressions((canvasExprs) =>
                 canvasExprs.update(exprId, (canvasExpr) =>

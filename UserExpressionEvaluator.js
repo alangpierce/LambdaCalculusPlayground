@@ -33,7 +33,7 @@ const collapseDefinitions = (expr: Expression): UserExpression => {
     if (defName) {
         return t.newUserReference(defName);
     }
-    return t.matchExpression(expr, {
+    return expr.match({
         lambda: ({varName, body}) =>
             t.newUserLambda(varName, collapseDefinitions(body)),
         funcCall: ({func, arg}) =>

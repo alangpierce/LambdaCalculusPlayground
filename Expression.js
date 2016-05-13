@@ -57,7 +57,7 @@ type ExpressionPropTypes = {
 export class Expression extends StatelessComponent<ExpressionPropTypes> {
     render() {
         const {expr} = this.props;
-        return t.matchDisplayExpression(expr, {
+        return expr.match({
             displayLambda: (expr) => <Lambda expr={expr} />,
             displayFuncCall: (expr) => <FuncCall expr={expr} />,
             displayVariable: (expr) => <Variable expr={expr} />,

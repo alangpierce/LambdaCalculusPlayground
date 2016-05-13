@@ -53,8 +53,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
         }
         return result;
     };
-
-    return t.matchAction(action, {
+    return action.match({
         reset: () => initialState,
         addExpression: ({canvasExpr}) => addExpression(state, canvasExpr),
         placeDefinition: ({defName, screenPos}) => {
@@ -134,7 +133,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
-            state = t.matchDragResult(dragResult, {
+            state = dragResult.match({
                 pickUpExpression: ({exprId, offset, screenRect}) => {
                     const expr = exprWithId(exprId).expr;
                     return state
@@ -188,7 +187,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             }
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.updateActiveDrags((drags) => drags.remove(fingerId));
-            state = t.matchDropResult(dropResult, {
+            state = dropResult.match({
                 addToTopLevelResult: ({expr, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);
                     return addExpression(state,
@@ -230,7 +229,7 @@ const computeHighlights = (state: State): State => {
     const exprPaths = [];
     const emptyBodyPaths = [];
     for (let [_, dragData] of state.activeDrags) {
-        t.matchDropResult(resolveDrop(state, dragData), {
+        resolveDrop(state, dragData).match({
             addToTopLevelResult: () => {},
             insertAsBodyResult: ({lambdaPath}) => {
                 emptyBodyPaths.push(lambdaPath)

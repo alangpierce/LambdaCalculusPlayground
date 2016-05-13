@@ -70,14 +70,10 @@ ${genLines((f, t) => `${f},`)}\
 const genUnion = (typeName, cases) => {
     let result = '';
     result += joinMap(cases, '\n',
-        (caseName, fields) => genUnionCase(caseName, fields));
+        (caseName, fields) => genUnionCase(typeName, caseName, fields));
 
     const varName = lowerName(typeName);
 
-    // For the match function, we use normal functions instead of arrow
-    // functions because WebStorm doesn't yet like type parameters on arrow
-    // functions.
-    // TODO: Move to arrow functions when WebStorm gets smarter.
     result += `
 export type ${typeName} = ${joinMap(cases, ' | ', (caseName) => caseName)};
 
@@ -85,16 +81,6 @@ export type ${typeName}Visitor<T> = {
 ${joinMap(cases, '\n', (caseName) => `\
     ${lowerName(caseName)}: (${lowerName(caseName)}: ${caseName}) => T,`)}
 }
-
-export const match${typeName} = function<T>(${varName}: ${typeName}, visitor: ${typeName}Visitor<T>): T {
-    switch (${varName}.type) {
-${joinMap(cases, '\n', (caseName) => `\
-        case '${lowerName(caseName)}':
-            return visitor.${lowerName(caseName)}(${varName});`)}
-        default:
-            throw new Error('Unexpected type: ' + ${varName}.type);
-    }
-};
 `;
     return result;
 };
@@ -106,7 +92,7 @@ ${joinMap(cases, '\n', (caseName) => `\
  * Also, we need to handle a special case where Redux actions need to be plain
  * objects.
 */
-const genUnionCase = (caseName, fields) => {
+const genUnionCase = (unionName, caseName, fields) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
@@ -116,6 +102,7 @@ export type ${caseName} = {
 ${genLines((f, t) => `${f}: ${t},`)}\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName},`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName},`)}\
+    match<T>(visitor: ${unionName}Visitor<T>): T,
     toJS(): any,
     serialize(): any,
 };

@@ -198,7 +198,7 @@ const yieldAllExpressions = function* (state: State):
 const yieldExpressions = function* (expr: UserExpression, path: ExprPath):
         Generator<[ExprPath, UserExpression], void, void> {
     yield [path, expr];
-    yield* t.matchUserExpression(expr, {
+    yield* expr.match({
         userLambda: function* ({body}) {
             if (body) {
                 yield* yieldExpressions(body, step(path, 'body'));

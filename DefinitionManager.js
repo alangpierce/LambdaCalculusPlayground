@@ -42,7 +42,7 @@ export const tryResolveExpression = (expr: Expression): ?string => {
  * the user expression is invalid in any way.
  */
 export const expandUserExpr = (userExpr: UserExpression): ?Expression => {
-    return t.matchUserExpression(userExpr, {
+    return userExpr.match({
         userLambda: ({varName, body}) => {
             if (!body) {
                 return null;
@@ -67,5 +67,5 @@ export const expandUserExpr = (userExpr: UserExpression): ?Expression => {
         userVariable: ({varName}) => t.newVariable(varName),
         // This returns null if the definition isn't valid.
         userReference: ({defName}) => definitions.get(defName)
-    })
+    });
 };

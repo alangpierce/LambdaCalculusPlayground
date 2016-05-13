@@ -108,7 +108,7 @@ const buildDisplayExpression = (
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
         const exprKey = path && t.newExpressionKey(path);
         const shouldHighlight = path != null && highlightedExprs.has(path);
-        return t.matchUserExpression(expr, {
+        return expr.match({
             userLambda: ({varName, body}) => {
                 const varKey = path && t.newLambdaVarKey(path);
                 const emptyBodyKey = path && t.newEmptyBodyKey(path);

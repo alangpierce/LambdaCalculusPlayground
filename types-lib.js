@@ -58,6 +58,9 @@ export const buildUnionCaseClass = (
             return this.set(name, updater(this[name]));
         };
     }
+    resultClass.match = function(visitor) {
+        return visitor[caseName](this);
+    };
     resultClass.serialize = function() {
         const result = {};
         result.__SERIALIZED_CLASS = caseName;

@@ -13,7 +13,7 @@ import * as t from './types'
 import type {Expression, EvalExpression, Slot, VarMarker} from './types'
 
 export const canStep = (expr: Expression): boolean => {
-    return t.matchExpression(expr, {
+    return expr.match({
         lambda: ({body}) => canStep(body),
         funcCall: ({func, arg}) =>
             func.type === 'lambda' || canStep(func) || canStep(arg),
@@ -31,7 +31,7 @@ export const evaluate = (expr: Expression): Expression => {
 const evaluateRec = (
         expr: EvalExpression, freeMarkers: Immutable.Set<VarMarker>,
         topLevel: boolean): EvalExpression => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: (lambda) => {
             if (topLevel) {
                 freeMarkers = freeMarkers.add(lambda.varMarker);
@@ -77,7 +77,7 @@ const evaluateRec = (
 
 const bindVariable = (varMarker: VarMarker, slot: Slot, expr: EvalExpression):
         EvalExpression => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: (lambda) => {
             // TODO: Is it possible to get ambiguous markers? What if a lambda
             // in the original code is able to have a copy of itself with both
@@ -112,7 +112,7 @@ const bindVariable = (varMarker: VarMarker, slot: Slot, expr: EvalExpression):
 };
 
 const containsUsage = (varMarker: VarMarker, expr: EvalExpression) => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: ({body}) => containsUsage(varMarker, body),
         evalFuncCall: ({func, arg}) =>
             containsUsage(varMarker, func) || containsUsage(varMarker, arg),
@@ -125,7 +125,7 @@ const containsUsage = (varMarker: VarMarker, expr: EvalExpression) => {
 const containsOnlyFreeVars = (
         expr: EvalExpression, freeMarkers: Immutable.Set<VarMarker>):
         boolean => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: () => true,
         evalFuncCall: ({func, arg}) =>
             containsOnlyFreeVars(func, freeMarkers) &&
@@ -141,7 +141,7 @@ const containsOnlyFreeVars = (
 type Context = Immutable.Map<string, VarMarker>;
 
 const compile = (context: Context, expr: Expression): EvalExpression => {
-    return t.matchExpression(expr, {
+    return expr.match({
         lambda: ({varName, body}) => {
             const marker = newMarker();
             const newContext = context.set(varName, marker);
@@ -168,7 +168,7 @@ const newMarker = (): VarMarker => {
 const assignNames = (
         expr: EvalExpression, namesByMarker: Immutable.Map<VarMarker, string>):
         Expression => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: ({varMarker, originalVarName, body}) => {
             let varName = originalVarName;
             // We shouldn't use a variable name that conflicts with a
@@ -208,7 +208,7 @@ const assignNames = (
  * If we care about performance, this would be pretty easy to optimize.
  */
 const containsFreeVarName = (expr: EvalExpression, name: string): boolean => {
-    return t.matchEvalExpression(expr, {
+    return expr.match({
         evalLambda: ({body}) => containsFreeVarName(body, name),
         evalFuncCall: ({func, arg}) =>
             containsFreeVarName(func, name) || containsFreeVarName(arg, name),

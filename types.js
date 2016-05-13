@@ -54,6 +54,7 @@ export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpressi
 const ResetImpl = buildUnionCaseClass('reset', []);
 export type Reset = {
     type: 'reset',
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -68,6 +69,7 @@ export type AddExpression = {
     canvasExpr: CanvasExpression,
     withCanvasExpr(canvasExpr: CanvasExpression): AddExpression,
     updateCanvasExpr(updater: Updater<CanvasExpression>): AddExpression,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -86,6 +88,7 @@ export type PlaceDefinition = {
     withScreenPos(screenPos: ScreenPoint): PlaceDefinition,
     updateDefName(updater: Updater<string>): PlaceDefinition,
     updateScreenPos(updater: Updater<ScreenPoint>): PlaceDefinition,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -105,6 +108,7 @@ export type MoveExpression = {
     withPos(pos: CanvasPoint): MoveExpression,
     updateExprId(updater: Updater<number>): MoveExpression,
     updatePos(updater: Updater<CanvasPoint>): MoveExpression,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -124,6 +128,7 @@ export type DecomposeExpressionAction = {
     withTargetPos(targetPos: CanvasPoint): DecomposeExpressionAction,
     updatePath(updater: Updater<ExprPath>): DecomposeExpressionAction,
     updateTargetPos(updater: Updater<CanvasPoint>): DecomposeExpressionAction,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -143,6 +148,7 @@ export type InsertAsArg = {
     withPath(path: ExprPath): InsertAsArg,
     updateArgExprId(updater: Updater<number>): InsertAsArg,
     updatePath(updater: Updater<ExprPath>): InsertAsArg,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -162,6 +168,7 @@ export type InsertAsBody = {
     withPath(path: ExprPath): InsertAsBody,
     updateBodyExprId(updater: Updater<number>): InsertAsBody,
     updatePath(updater: Updater<ExprPath>): InsertAsBody,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -178,6 +185,7 @@ export type EvaluateExpression = {
     exprId: number,
     withExprId(exprId: number): EvaluateExpression,
     updateExprId(updater: Updater<number>): EvaluateExpression,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -199,6 +207,7 @@ export type PlacePendingResult = {
     updateExprId(updater: Updater<number>): PlacePendingResult,
     updateWidth(updater: Updater<number>): PlacePendingResult,
     updateHeight(updater: Updater<number>): PlacePendingResult,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -219,6 +228,7 @@ export type FingerDown = {
     withScreenPos(screenPos: ScreenPoint): FingerDown,
     updateFingerId(updater: Updater<number>): FingerDown,
     updateScreenPos(updater: Updater<ScreenPoint>): FingerDown,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -238,6 +248,7 @@ export type FingerMove = {
     withScreenPos(screenPos: ScreenPoint): FingerMove,
     updateFingerId(updater: Updater<number>): FingerMove,
     updateScreenPos(updater: Updater<ScreenPoint>): FingerMove,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -257,6 +268,7 @@ export type FingerUp = {
     withScreenPos(screenPos: ScreenPoint): FingerUp,
     updateFingerId(updater: Updater<number>): FingerUp,
     updateScreenPos(updater: Updater<ScreenPoint>): FingerUp,
+    match<T>(visitor: ActionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -284,37 +296,6 @@ export type ActionVisitor<T> = {
     fingerUp: (fingerUp: FingerUp) => T,
 }
 
-export const matchAction = function<T>(action: Action, visitor: ActionVisitor<T>): T {
-    switch (action.type) {
-        case 'reset':
-            return visitor.reset(action);
-        case 'addExpression':
-            return visitor.addExpression(action);
-        case 'placeDefinition':
-            return visitor.placeDefinition(action);
-        case 'moveExpression':
-            return visitor.moveExpression(action);
-        case 'decomposeExpressionAction':
-            return visitor.decomposeExpressionAction(action);
-        case 'insertAsArg':
-            return visitor.insertAsArg(action);
-        case 'insertAsBody':
-            return visitor.insertAsBody(action);
-        case 'evaluateExpression':
-            return visitor.evaluateExpression(action);
-        case 'placePendingResult':
-            return visitor.placePendingResult(action);
-        case 'fingerDown':
-            return visitor.fingerDown(action);
-        case 'fingerMove':
-            return visitor.fingerMove(action);
-        case 'fingerUp':
-            return visitor.fingerUp(action);
-        default:
-            throw new Error('Unexpected type: ' + action.type);
-    }
-};
-
 const LambdaImpl = buildUnionCaseClass('lambda', ['varName', 'body']);
 export type Lambda = {
     type: 'lambda',
@@ -324,6 +305,7 @@ export type Lambda = {
     withBody(body: Expression): Lambda,
     updateVarName(updater: Updater<string>): Lambda,
     updateBody(updater: Updater<Expression>): Lambda,
+    match<T>(visitor: ExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -343,6 +325,7 @@ export type FuncCall = {
     withArg(arg: Expression): FuncCall,
     updateFunc(updater: Updater<Expression>): FuncCall,
     updateArg(updater: Updater<Expression>): FuncCall,
+    match<T>(visitor: ExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -359,6 +342,7 @@ export type Variable = {
     varName: string,
     withVarName(varName: string): Variable,
     updateVarName(updater: Updater<string>): Variable,
+    match<T>(visitor: ExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -375,19 +359,6 @@ export type ExpressionVisitor<T> = {
     funcCall: (funcCall: FuncCall) => T,
     variable: (variable: Variable) => T,
 }
-
-export const matchExpression = function<T>(expression: Expression, visitor: ExpressionVisitor<T>): T {
-    switch (expression.type) {
-        case 'lambda':
-            return visitor.lambda(expression);
-        case 'funcCall':
-            return visitor.funcCall(expression);
-        case 'variable':
-            return visitor.variable(expression);
-        default:
-            throw new Error('Unexpected type: ' + expression.type);
-    }
-};
 
 export type Slot = {
     isValue: boolean,
@@ -409,6 +380,7 @@ export type EvalLambda = {
     updateVarMarker(updater: Updater<VarMarker>): EvalLambda,
     updateOriginalVarName(updater: Updater<string>): EvalLambda,
     updateBody(updater: Updater<EvalExpression>): EvalLambda,
+    match<T>(visitor: EvalExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -429,6 +401,7 @@ export type EvalFuncCall = {
     withArg(arg: EvalExpression): EvalFuncCall,
     updateFunc(updater: Updater<EvalExpression>): EvalFuncCall,
     updateArg(updater: Updater<EvalExpression>): EvalFuncCall,
+    match<T>(visitor: EvalExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -445,6 +418,7 @@ export type EvalBoundVariable = {
     slot: Slot,
     withSlot(slot: Slot): EvalBoundVariable,
     updateSlot(updater: Updater<Slot>): EvalBoundVariable,
+    match<T>(visitor: EvalExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -463,6 +437,7 @@ export type EvalUnboundVariable = {
     withOriginalVarName(originalVarName: string): EvalUnboundVariable,
     updateVarMarker(updater: Updater<VarMarker>): EvalUnboundVariable,
     updateOriginalVarName(updater: Updater<string>): EvalUnboundVariable,
+    match<T>(visitor: EvalExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -479,6 +454,7 @@ export type EvalFreeVariable = {
     varName: string,
     withVarName(varName: string): EvalFreeVariable,
     updateVarName(updater: Updater<string>): EvalFreeVariable,
+    match<T>(visitor: EvalExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -498,23 +474,6 @@ export type EvalExpressionVisitor<T> = {
     evalFreeVariable: (evalFreeVariable: EvalFreeVariable) => T,
 }
 
-export const matchEvalExpression = function<T>(evalExpression: EvalExpression, visitor: EvalExpressionVisitor<T>): T {
-    switch (evalExpression.type) {
-        case 'evalLambda':
-            return visitor.evalLambda(evalExpression);
-        case 'evalFuncCall':
-            return visitor.evalFuncCall(evalExpression);
-        case 'evalBoundVariable':
-            return visitor.evalBoundVariable(evalExpression);
-        case 'evalUnboundVariable':
-            return visitor.evalUnboundVariable(evalExpression);
-        case 'evalFreeVariable':
-            return visitor.evalFreeVariable(evalExpression);
-        default:
-            throw new Error('Unexpected type: ' + evalExpression.type);
-    }
-};
-
 const UserLambdaImpl = buildUnionCaseClass('userLambda', ['varName', 'body']);
 export type UserLambda = {
     type: 'userLambda',
@@ -524,6 +483,7 @@ export type UserLambda = {
     withBody(body: ?UserExpression): UserLambda,
     updateVarName(updater: Updater<string>): UserLambda,
     updateBody(updater: Updater<?UserExpression>): UserLambda,
+    match<T>(visitor: UserExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -543,6 +503,7 @@ export type UserFuncCall = {
     withArg(arg: UserExpression): UserFuncCall,
     updateFunc(updater: Updater<UserExpression>): UserFuncCall,
     updateArg(updater: Updater<UserExpression>): UserFuncCall,
+    match<T>(visitor: UserExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -559,6 +520,7 @@ export type UserVariable = {
     varName: string,
     withVarName(varName: string): UserVariable,
     updateVarName(updater: Updater<string>): UserVariable,
+    match<T>(visitor: UserExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -574,6 +536,7 @@ export type UserReference = {
     defName: string,
     withDefName(defName: string): UserReference,
     updateDefName(updater: Updater<string>): UserReference,
+    match<T>(visitor: UserExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -591,21 +554,6 @@ export type UserExpressionVisitor<T> = {
     userVariable: (userVariable: UserVariable) => T,
     userReference: (userReference: UserReference) => T,
 }
-
-export const matchUserExpression = function<T>(userExpression: UserExpression, visitor: UserExpressionVisitor<T>): T {
-    switch (userExpression.type) {
-        case 'userLambda':
-            return visitor.userLambda(userExpression);
-        case 'userFuncCall':
-            return visitor.userFuncCall(userExpression);
-        case 'userVariable':
-            return visitor.userVariable(userExpression);
-        case 'userReference':
-            return visitor.userReference(userExpression);
-        default:
-            throw new Error('Unexpected type: ' + userExpression.type);
-    }
-};
 
 const CanvasExpressionImpl = buildValueClass('CanvasExpression', ['expr', 'pos']);
 
@@ -767,6 +715,7 @@ export type DisplayLambda = {
     updateShouldHighlightEmptyBody(updater: Updater<boolean>): DisplayLambda,
     updateVarName(updater: Updater<string>): DisplayLambda,
     updateBody(updater: Updater<?DisplayExpression>): DisplayLambda,
+    match<T>(visitor: DisplayExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -797,6 +746,7 @@ export type DisplayFuncCall = {
     updateShouldHighlight(updater: Updater<boolean>): DisplayFuncCall,
     updateFunc(updater: Updater<DisplayExpression>): DisplayFuncCall,
     updateArg(updater: Updater<DisplayExpression>): DisplayFuncCall,
+    match<T>(visitor: DisplayExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -821,6 +771,7 @@ export type DisplayVariable = {
     updateExprKey(updater: Updater<?ExpressionKey>): DisplayVariable,
     updateShouldHighlight(updater: Updater<boolean>): DisplayVariable,
     updateVarName(updater: Updater<string>): DisplayVariable,
+    match<T>(visitor: DisplayExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -844,6 +795,7 @@ export type DisplayReference = {
     updateExprKey(updater: Updater<?ExpressionKey>): DisplayReference,
     updateShouldHighlight(updater: Updater<boolean>): DisplayReference,
     updateDefName(updater: Updater<string>): DisplayReference,
+    match<T>(visitor: DisplayExpressionVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -863,21 +815,6 @@ export type DisplayExpressionVisitor<T> = {
     displayVariable: (displayVariable: DisplayVariable) => T,
     displayReference: (displayReference: DisplayReference) => T,
 }
-
-export const matchDisplayExpression = function<T>(displayExpression: DisplayExpression, visitor: DisplayExpressionVisitor<T>): T {
-    switch (displayExpression.type) {
-        case 'displayLambda':
-            return visitor.displayLambda(displayExpression);
-        case 'displayFuncCall':
-            return visitor.displayFuncCall(displayExpression);
-        case 'displayVariable':
-            return visitor.displayVariable(displayExpression);
-        case 'displayReference':
-            return visitor.displayReference(displayExpression);
-        default:
-            throw new Error('Unexpected type: ' + displayExpression.type);
-    }
-};
 
 const CanvasPointImpl = buildValueClass('CanvasPoint', ['canvasX', 'canvasY']);
 
@@ -977,6 +914,7 @@ export type ExprIdContainer = {
     exprId: number,
     withExprId(exprId: number): ExprIdContainer,
     updateExprId(updater: Updater<number>): ExprIdContainer,
+    match<T>(visitor: ExprContainerVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -992,6 +930,7 @@ export type DefinitionContainer = {
     defName: string,
     withDefName(defName: string): DefinitionContainer,
     updateDefName(updater: Updater<string>): DefinitionContainer,
+    match<T>(visitor: ExprContainerVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1008,17 +947,6 @@ export type ExprContainerVisitor<T> = {
     definitionContainer: (definitionContainer: DefinitionContainer) => T,
 }
 
-export const matchExprContainer = function<T>(exprContainer: ExprContainer, visitor: ExprContainerVisitor<T>): T {
-    switch (exprContainer.type) {
-        case 'exprIdContainer':
-            return visitor.exprIdContainer(exprContainer);
-        case 'definitionContainer':
-            return visitor.definitionContainer(exprContainer);
-        default:
-            throw new Error('Unexpected type: ' + exprContainer.type);
-    }
-};
-
 const PickUpExpressionImpl = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
 export type PickUpExpression = {
     type: 'pickUpExpression',
@@ -1031,6 +959,7 @@ export type PickUpExpression = {
     updateExprId(updater: Updater<number>): PickUpExpression,
     updateOffset(updater: Updater<PointDifference>): PickUpExpression,
     updateScreenRect(updater: Updater<ScreenRect>): PickUpExpression,
+    match<T>(visitor: DragResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1054,6 +983,7 @@ export type DecomposeExpression = {
     updateExprPath(updater: Updater<ExprPath>): DecomposeExpression,
     updateOffset(updater: Updater<PointDifference>): DecomposeExpression,
     updateScreenRect(updater: Updater<ScreenRect>): DecomposeExpression,
+    match<T>(visitor: DragResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1077,6 +1007,7 @@ export type CreateExpression = {
     updateExpr(updater: Updater<UserExpression>): CreateExpression,
     updateOffset(updater: Updater<PointDifference>): CreateExpression,
     updateScreenRect(updater: Updater<ScreenRect>): CreateExpression,
+    match<T>(visitor: DragResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1094,6 +1025,7 @@ export type StartPan = {
     startPos: ScreenPoint,
     withStartPos(startPos: ScreenPoint): StartPan,
     updateStartPos(updater: Updater<ScreenPoint>): StartPan,
+    match<T>(visitor: DragResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1111,21 +1043,6 @@ export type DragResultVisitor<T> = {
     createExpression: (createExpression: CreateExpression) => T,
     startPan: (startPan: StartPan) => T,
 }
-
-export const matchDragResult = function<T>(dragResult: DragResult, visitor: DragResultVisitor<T>): T {
-    switch (dragResult.type) {
-        case 'pickUpExpression':
-            return visitor.pickUpExpression(dragResult);
-        case 'decomposeExpression':
-            return visitor.decomposeExpression(dragResult);
-        case 'createExpression':
-            return visitor.createExpression(dragResult);
-        case 'startPan':
-            return visitor.startPan(dragResult);
-        default:
-            throw new Error('Unexpected type: ' + dragResult.type);
-    }
-};
 
 const DragDataImpl = buildValueClass('DragData', ['userExpr', 'grabOffset', 'screenRect']);
 
@@ -1158,6 +1075,7 @@ export type AddToTopLevelResult = {
     withScreenPos(screenPos: ScreenPoint): AddToTopLevelResult,
     updateExpr(updater: Updater<UserExpression>): AddToTopLevelResult,
     updateScreenPos(updater: Updater<ScreenPoint>): AddToTopLevelResult,
+    match<T>(visitor: DropResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1177,6 +1095,7 @@ export type InsertAsBodyResult = {
     withExpr(expr: UserExpression): InsertAsBodyResult,
     updateLambdaPath(updater: Updater<ExprPath>): InsertAsBodyResult,
     updateExpr(updater: Updater<UserExpression>): InsertAsBodyResult,
+    match<T>(visitor: DropResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1196,6 +1115,7 @@ export type InsertAsArgResult = {
     withExpr(expr: UserExpression): InsertAsArgResult,
     updatePath(updater: Updater<ExprPath>): InsertAsArgResult,
     updateExpr(updater: Updater<UserExpression>): InsertAsArgResult,
+    match<T>(visitor: DropResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1209,6 +1129,7 @@ export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): Inse
 const RemoveResultImpl = buildUnionCaseClass('removeResult', []);
 export type RemoveResult = {
     type: 'removeResult',
+    match<T>(visitor: DropResultVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1226,27 +1147,13 @@ export type DropResultVisitor<T> = {
     removeResult: (removeResult: RemoveResult) => T,
 }
 
-export const matchDropResult = function<T>(dropResult: DropResult, visitor: DropResultVisitor<T>): T {
-    switch (dropResult.type) {
-        case 'addToTopLevelResult':
-            return visitor.addToTopLevelResult(dropResult);
-        case 'insertAsBodyResult':
-            return visitor.insertAsBodyResult(dropResult);
-        case 'insertAsArgResult':
-            return visitor.insertAsArgResult(dropResult);
-        case 'removeResult':
-            return visitor.removeResult(dropResult);
-        default:
-            throw new Error('Unexpected type: ' + dropResult.type);
-    }
-};
-
 const ExpressionKeyImpl = buildUnionCaseClass('expressionKey', ['exprPath']);
 export type ExpressionKey = {
     type: 'expressionKey',
     exprPath: ExprPath,
     withExprPath(exprPath: ExprPath): ExpressionKey,
     updateExprPath(updater: Updater<ExprPath>): ExpressionKey,
+    match<T>(visitor: ViewKeyVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1262,6 +1169,7 @@ export type EmptyBodyKey = {
     lambdaPath: ExprPath,
     withLambdaPath(lambdaPath: ExprPath): EmptyBodyKey,
     updateLambdaPath(updater: Updater<ExprPath>): EmptyBodyKey,
+    match<T>(visitor: ViewKeyVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1277,6 +1185,7 @@ export type LambdaVarKey = {
     lambdaPath: ExprPath,
     withLambdaPath(lambdaPath: ExprPath): LambdaVarKey,
     updateLambdaPath(updater: Updater<ExprPath>): LambdaVarKey,
+    match<T>(visitor: ViewKeyVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1292,6 +1201,7 @@ export type DefinitionKey = {
     defName: string,
     withDefName(defName: string): DefinitionKey,
     updateDefName(updater: Updater<string>): DefinitionKey,
+    match<T>(visitor: ViewKeyVisitor<T>): T,
     toJS(): any,
     serialize(): any,
 };
@@ -1309,19 +1219,4 @@ export type ViewKeyVisitor<T> = {
     lambdaVarKey: (lambdaVarKey: LambdaVarKey) => T,
     definitionKey: (definitionKey: DefinitionKey) => T,
 }
-
-export const matchViewKey = function<T>(viewKey: ViewKey, visitor: ViewKeyVisitor<T>): T {
-    switch (viewKey.type) {
-        case 'expressionKey':
-            return visitor.expressionKey(viewKey);
-        case 'emptyBodyKey':
-            return visitor.emptyBodyKey(viewKey);
-        case 'lambdaVarKey':
-            return visitor.lambdaVarKey(viewKey);
-        case 'definitionKey':
-            return visitor.definitionKey(viewKey);
-        default:
-            throw new Error('Unexpected type: ' + viewKey.type);
-    }
-};
 

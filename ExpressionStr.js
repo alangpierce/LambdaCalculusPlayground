@@ -79,7 +79,7 @@ const assert = (condition: bool, message: string) => {
 };
 
 export const formatExpr = (expr: UserExpression): string => {
-    return t.matchUserExpression(expr, {
+    return expr.match({
         userLambda: ({body, varName}) =>
             `L ${varName}[${body ? formatExpr(body) : '_'}]`,
         userFuncCall: ({func, arg}) =>
