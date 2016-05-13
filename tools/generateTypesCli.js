@@ -2,7 +2,7 @@
 
 import fs from 'fs'
 
-import generateTypes from './generateTypes'
+import {generateTypes, generateWebstormTypes} from './TypeGenerator'
 import typeDefs from '../typeDefs'
 
 const main = () => {
@@ -11,7 +11,16 @@ const main = () => {
         if (err) {
             console.log('Error: ' + err);
         } else {
-            console.log('Done!');
+            console.log('Wrote types file!');
+        }
+    });
+
+    const webstormTypesFileStr = generateWebstormTypes(typeDefs);
+    fs.writeFile(__dirname + '/../webstorm-types.js', webstormTypesFileStr, (err) => {
+        if (err) {
+            console.log('Error writing webstorm file: ' + err);
+        } else {
+            console.log('Wrote WebStorm types file!');
         }
     });
 };
