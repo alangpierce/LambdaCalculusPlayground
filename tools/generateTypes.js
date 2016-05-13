@@ -38,9 +38,7 @@ const genType = (typeName, typeData) => {
     } else if (typeData.type === 'struct') {
         return genStruct(typeName, typeData.fields);
     } else if (typeData.type === 'union') {
-        return genUnion(typeName, typeData.cases, false);
-    } else if (typeData.type === 'objectUnion') {
-        return genUnion(typeName, typeData.cases, true);
+        return genUnion(typeName, typeData.cases);
     }
 };
 
@@ -69,10 +67,10 @@ ${genLines((f, t) => `${f},`)}\
 `;
 };
 
-const genUnion = (typeName, cases, isObject) => {
+const genUnion = (typeName, cases) => {
     let result = '';
     result += joinMap(cases, '\n',
-        (caseName, fields) => genUnionCase(caseName, fields, isObject));
+        (caseName, fields) => genUnionCase(caseName, fields));
 
     const varName = lowerName(typeName);
 
@@ -108,28 +106,24 @@ ${joinMap(cases, '\n', (caseName) => `\
  * Also, we need to handle a special case where Redux actions need to be plain
  * objects.
 */
-const genUnionCase = (caseName, fields, isObject) => {
+const genUnionCase = (caseName, fields) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-${isObject ? '' : `\
 const ${caseName}Impl = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
-`}\
 export type ${caseName} = {
     type: '${tagName}',
 ${genLines((f, t) => `${f}: ${t},`)}\
-${isObject ? '' : `\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName},`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName},`)}\
     toJS(): any,
     serialize(): any,
-`}\
 };
 
-export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (${isObject ? '' : `new ${caseName}Impl(`}{
+export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (new ${caseName}Impl({
     type: '${tagName}',
 ${genLines((f, t) => `${f},`)}\
-}${isObject ? '' : `)`});
+}));
 `;
 };
 
