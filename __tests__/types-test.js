@@ -54,5 +54,23 @@ describe('types', () => {
         expect(rect2.owner).toEqual(null);
         expect(rect2.topLeft.y).toEqual(7);
         expect(rect2.bottomRight.updateX(x => x - 2).x).toEqual(8);
-    })
+    });
+
+    it('transforms objects using lenses', () => {
+        const Rect = buildValueClass(
+            'Rect', ['topLeft', 'bottomRight']);
+        const Point = buildValueClass('Point', ['x', 'y']);
+        const rect = new Rect({
+            topLeft: new Point({
+                x: 5,
+                y: 8,
+            }),
+            bottomRight: new Point({
+                x: 12,
+                y: 15,
+            }),
+        });
+        const rect2 = rect.lens().topLeft().y().update(y => y + 3);
+        expect(rect2.topLeft.y).toEqual(11);
+    });
 });

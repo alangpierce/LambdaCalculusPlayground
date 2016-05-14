@@ -9,10 +9,48 @@ export type Updater<T> = (t: T) => T;
 const registeredConstructors = {};
 
 /**
+ * A "lens", as defined here, is a path down an existing object with the ability
+ * to do an immutable replacement deep in the object tree. All generated value
+ * types know how to create a type-specific lens to assist in navigating through
+ * them, and for other types, we
+ */
+class Lens<T, Result> {
+    value: T;
+    replace: (t: T) => Result;
+
+    constructor(value: T, replace: (t: T) => Result) {
+        this.value = value;
+        this.replace = replace;
+    }
+
+    update(updater: Updater<T>): Result {
+        return this.replace(updater(this.value));
+    }
+}
+
+const makeLens = function<T, Result>(
+        value: T, replace: (t: T) => Result): Lens<T, Result> {
+    if (typeof value.makeLens === 'function') {
+        return value.makeLens(replace);
+    }
+    return new Lens(value, replace);
+};
+
+/**
  * Construct a class with properly-named fields.
  */
 export const buildValueClass = (
         className: string, fieldNames: Array<string>): any => {
+    class CustomLens extends Lens {}
+    const customLensPrototype: any = CustomLens.prototype;
+    for (const name of fieldNames) {
+        customLensPrototype[name] = function() {
+            const replaceChild = newChildVal =>
+                this.replace(this.value.set(name, newChildVal));
+            return makeLens(this.value[name], replaceChild);
+        };
+    }
+
     const defaults: any = {};
     for (const name of fieldNames) {
         defaults[name] = undefined;
@@ -25,6 +63,12 @@ export const buildValueClass = (
                 result[name] = serialize(this[name]);
             }
             return result;
+        }
+        lens() {
+            return this.makeLens(newValue => newValue);
+        }
+        makeLens(replace) {
+            return new CustomLens(this, replace);
         }
     }
     for (const name of fieldNames) {
