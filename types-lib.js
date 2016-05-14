@@ -17,27 +17,27 @@ export const buildValueClass = (
     for (const name of fieldNames) {
         defaults[name] = undefined;
     }
-    const resultConstructor = Immutable.Record(defaults);
-    const resultClass = resultConstructor.prototype;
+    class ValueClass extends Immutable.Record(defaults) {
+        serialize() {
+            const result = {};
+            result.__SERIALIZED_CLASS = className;
+            for (const name of fieldNames) {
+                result[name] = serialize(this[name]);
+            }
+            return result;
+        }
+    }
     for (const name of fieldNames) {
         const upperName = name[0].toUpperCase() + name.slice(1);
-        resultClass['with' + upperName] = function(newVal) {
+        ValueClass.prototype['with' + upperName] = function(newVal) {
             return this.set(name, newVal);
         };
-        resultClass['update' + upperName] = function(updater) {
+        ValueClass.prototype['update' + upperName] = function(updater) {
             return this.set(name, updater(this[name]));
         };
     }
-    resultClass.serialize = function() {
-        const result = {};
-        result.__SERIALIZED_CLASS = className;
-        for (const name of fieldNames) {
-            result[name] = serialize(this[name]);
-        }
-        return result;
-    };
-    registeredConstructors[className] = resultConstructor;
-    return resultConstructor;
+    registeredConstructors[className] = ValueClass;
+    return ValueClass;
 };
 
 export const buildUnionCaseClass = (
@@ -47,31 +47,31 @@ export const buildUnionCaseClass = (
         defaults[name] = undefined;
     }
     defaults.type = undefined;
-    const resultConstructor = Immutable.Record(defaults);
-    const resultClass = resultConstructor.prototype;
+    class UnionCaseClass extends Immutable.Record(defaults) {
+        match(visitor) {
+            return visitor[caseName](this);
+        }
+        serialize() {
+            const result = {};
+            result.__SERIALIZED_CLASS = caseName;
+            for (const name of fieldNames) {
+                result[name] = serialize(this[name]);
+            }
+            result.type = this.type;
+            return result;
+        }
+    }
     for (const name of fieldNames) {
         const upperName = name[0].toUpperCase() + name.slice(1);
-        resultClass['with' + upperName] = function(newVal) {
+        UnionCaseClass.prototype['with' + upperName] = function(newVal) {
             return this.set(name, newVal);
         };
-        resultClass['update' + upperName] = function(updater) {
+        UnionCaseClass.prototype['update' + upperName] = function(updater) {
             return this.set(name, updater(this[name]));
         };
     }
-    resultClass.match = function(visitor) {
-        return visitor[caseName](this);
-    };
-    resultClass.serialize = function() {
-        const result = {};
-        result.__SERIALIZED_CLASS = caseName;
-        for (const name of fieldNames) {
-            result[name] = serialize(this[name]);
-        }
-        result.type = this.type;
-        return result;
-    };
-    registeredConstructors[caseName] = resultConstructor;
-    return resultConstructor;
+    registeredConstructors[caseName] = UnionCaseClass;
+    return UnionCaseClass;
 };
 
 const serialize = (obj: any): any => {
