@@ -282,18 +282,18 @@ export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp 
 export type Action = Reset | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
-    reset: (reset: Reset) => T,
-    addExpression: (addExpression: AddExpression) => T,
-    placeDefinition: (placeDefinition: PlaceDefinition) => T,
-    moveExpression: (moveExpression: MoveExpression) => T,
-    decomposeExpressionAction: (decomposeExpressionAction: DecomposeExpressionAction) => T,
-    insertAsArg: (insertAsArg: InsertAsArg) => T,
-    insertAsBody: (insertAsBody: InsertAsBody) => T,
-    evaluateExpression: (evaluateExpression: EvaluateExpression) => T,
-    placePendingResult: (placePendingResult: PlacePendingResult) => T,
-    fingerDown: (fingerDown: FingerDown) => T,
-    fingerMove: (fingerMove: FingerMove) => T,
-    fingerUp: (fingerUp: FingerUp) => T,
+    reset(reset: Reset): T,
+    addExpression(addExpression: AddExpression): T,
+    placeDefinition(placeDefinition: PlaceDefinition): T,
+    moveExpression(moveExpression: MoveExpression): T,
+    decomposeExpressionAction(decomposeExpressionAction: DecomposeExpressionAction): T,
+    insertAsArg(insertAsArg: InsertAsArg): T,
+    insertAsBody(insertAsBody: InsertAsBody): T,
+    evaluateExpression(evaluateExpression: EvaluateExpression): T,
+    placePendingResult(placePendingResult: PlacePendingResult): T,
+    fingerDown(fingerDown: FingerDown): T,
+    fingerMove(fingerMove: FingerMove): T,
+    fingerUp(fingerUp: FingerUp): T,
 }
 
 const LambdaImpl = buildUnionCaseClass('lambda', ['varName', 'body']);
@@ -355,9 +355,9 @@ export const newVariable = (varName: string): Variable => (new VariableImpl({
 export type Expression = Lambda | FuncCall | Variable;
 
 export type ExpressionVisitor<T> = {
-    lambda: (lambda: Lambda) => T,
-    funcCall: (funcCall: FuncCall) => T,
-    variable: (variable: Variable) => T,
+    lambda(lambda: Lambda): T,
+    funcCall(funcCall: FuncCall): T,
+    variable(variable: Variable): T,
 }
 
 export type Slot = {
@@ -467,11 +467,11 @@ export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new E
 export type EvalExpression = EvalLambda | EvalFuncCall | EvalBoundVariable | EvalUnboundVariable | EvalFreeVariable;
 
 export type EvalExpressionVisitor<T> = {
-    evalLambda: (evalLambda: EvalLambda) => T,
-    evalFuncCall: (evalFuncCall: EvalFuncCall) => T,
-    evalBoundVariable: (evalBoundVariable: EvalBoundVariable) => T,
-    evalUnboundVariable: (evalUnboundVariable: EvalUnboundVariable) => T,
-    evalFreeVariable: (evalFreeVariable: EvalFreeVariable) => T,
+    evalLambda(evalLambda: EvalLambda): T,
+    evalFuncCall(evalFuncCall: EvalFuncCall): T,
+    evalBoundVariable(evalBoundVariable: EvalBoundVariable): T,
+    evalUnboundVariable(evalUnboundVariable: EvalUnboundVariable): T,
+    evalFreeVariable(evalFreeVariable: EvalFreeVariable): T,
 }
 
 const UserLambdaImpl = buildUnionCaseClass('userLambda', ['varName', 'body']);
@@ -549,10 +549,10 @@ export const newUserReference = (defName: string): UserReference => (new UserRef
 export type UserExpression = UserLambda | UserFuncCall | UserVariable | UserReference;
 
 export type UserExpressionVisitor<T> = {
-    userLambda: (userLambda: UserLambda) => T,
-    userFuncCall: (userFuncCall: UserFuncCall) => T,
-    userVariable: (userVariable: UserVariable) => T,
-    userReference: (userReference: UserReference) => T,
+    userLambda(userLambda: UserLambda): T,
+    userFuncCall(userFuncCall: UserFuncCall): T,
+    userVariable(userVariable: UserVariable): T,
+    userReference(userReference: UserReference): T,
 }
 
 const CanvasExpressionImpl = buildValueClass('CanvasExpression', ['expr', 'pos']);
@@ -810,10 +810,10 @@ export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: bo
 export type DisplayExpression = DisplayLambda | DisplayFuncCall | DisplayVariable | DisplayReference;
 
 export type DisplayExpressionVisitor<T> = {
-    displayLambda: (displayLambda: DisplayLambda) => T,
-    displayFuncCall: (displayFuncCall: DisplayFuncCall) => T,
-    displayVariable: (displayVariable: DisplayVariable) => T,
-    displayReference: (displayReference: DisplayReference) => T,
+    displayLambda(displayLambda: DisplayLambda): T,
+    displayFuncCall(displayFuncCall: DisplayFuncCall): T,
+    displayVariable(displayVariable: DisplayVariable): T,
+    displayReference(displayReference: DisplayReference): T,
 }
 
 const CanvasPointImpl = buildValueClass('CanvasPoint', ['canvasX', 'canvasY']);
@@ -943,8 +943,8 @@ export const newDefinitionContainer = (defName: string): DefinitionContainer => 
 export type ExprContainer = ExprIdContainer | DefinitionContainer;
 
 export type ExprContainerVisitor<T> = {
-    exprIdContainer: (exprIdContainer: ExprIdContainer) => T,
-    definitionContainer: (definitionContainer: DefinitionContainer) => T,
+    exprIdContainer(exprIdContainer: ExprIdContainer): T,
+    definitionContainer(definitionContainer: DefinitionContainer): T,
 }
 
 const PickUpExpressionImpl = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
@@ -1038,10 +1038,10 @@ export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPanImp
 export type DragResult = PickUpExpression | DecomposeExpression | CreateExpression | StartPan;
 
 export type DragResultVisitor<T> = {
-    pickUpExpression: (pickUpExpression: PickUpExpression) => T,
-    decomposeExpression: (decomposeExpression: DecomposeExpression) => T,
-    createExpression: (createExpression: CreateExpression) => T,
-    startPan: (startPan: StartPan) => T,
+    pickUpExpression(pickUpExpression: PickUpExpression): T,
+    decomposeExpression(decomposeExpression: DecomposeExpression): T,
+    createExpression(createExpression: CreateExpression): T,
+    startPan(startPan: StartPan): T,
 }
 
 const DragDataImpl = buildValueClass('DragData', ['userExpr', 'grabOffset', 'screenRect']);
@@ -1141,10 +1141,10 @@ export const newRemoveResult = (): RemoveResult => (new RemoveResultImpl({
 export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult | RemoveResult;
 
 export type DropResultVisitor<T> = {
-    addToTopLevelResult: (addToTopLevelResult: AddToTopLevelResult) => T,
-    insertAsBodyResult: (insertAsBodyResult: InsertAsBodyResult) => T,
-    insertAsArgResult: (insertAsArgResult: InsertAsArgResult) => T,
-    removeResult: (removeResult: RemoveResult) => T,
+    addToTopLevelResult(addToTopLevelResult: AddToTopLevelResult): T,
+    insertAsBodyResult(insertAsBodyResult: InsertAsBodyResult): T,
+    insertAsArgResult(insertAsArgResult: InsertAsArgResult): T,
+    removeResult(removeResult: RemoveResult): T,
 }
 
 const ExpressionKeyImpl = buildUnionCaseClass('expressionKey', ['exprPath']);
@@ -1214,9 +1214,9 @@ export const newDefinitionKey = (defName: string): DefinitionKey => (new Definit
 export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey;
 
 export type ViewKeyVisitor<T> = {
-    expressionKey: (expressionKey: ExpressionKey) => T,
-    emptyBodyKey: (emptyBodyKey: EmptyBodyKey) => T,
-    lambdaVarKey: (lambdaVarKey: LambdaVarKey) => T,
-    definitionKey: (definitionKey: DefinitionKey) => T,
+    expressionKey(expressionKey: ExpressionKey): T,
+    emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
+    lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
+    definitionKey(definitionKey: DefinitionKey): T,
 }
 

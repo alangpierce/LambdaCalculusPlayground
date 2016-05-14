@@ -7,38 +7,89 @@
  */
 
 type Action = {
-    match<T>(visitor: ActionVisitor<T>): T,
+    match<T>(visitor: {
+        reset(reset: Reset): T,
+        addExpression(addExpression: AddExpression): T,
+        placeDefinition(placeDefinition: PlaceDefinition): T,
+        moveExpression(moveExpression: MoveExpression): T,
+        decomposeExpressionAction(decomposeExpressionAction: DecomposeExpressionAction): T,
+        insertAsArg(insertAsArg: InsertAsArg): T,
+        insertAsBody(insertAsBody: InsertAsBody): T,
+        evaluateExpression(evaluateExpression: EvaluateExpression): T,
+        placePendingResult(placePendingResult: PlacePendingResult): T,
+        fingerDown(fingerDown: FingerDown): T,
+        fingerMove(fingerMove: FingerMove): T,
+        fingerUp(fingerUp: FingerUp): T,
+    }): T,
 };
 
 type Expression = {
-    match<T>(visitor: ExpressionVisitor<T>): T,
+    match<T>(visitor: {
+        lambda(lambda: Lambda): T,
+        funcCall(funcCall: FuncCall): T,
+        variable(variable: Variable): T,
+    }): T,
 };
 
 type EvalExpression = {
-    match<T>(visitor: EvalExpressionVisitor<T>): T,
+    match<T>(visitor: {
+        evalLambda(evalLambda: EvalLambda): T,
+        evalFuncCall(evalFuncCall: EvalFuncCall): T,
+        evalBoundVariable(evalBoundVariable: EvalBoundVariable): T,
+        evalUnboundVariable(evalUnboundVariable: EvalUnboundVariable): T,
+        evalFreeVariable(evalFreeVariable: EvalFreeVariable): T,
+    }): T,
 };
 
 type UserExpression = {
-    match<T>(visitor: UserExpressionVisitor<T>): T,
+    match<T>(visitor: {
+        userLambda(userLambda: UserLambda): T,
+        userFuncCall(userFuncCall: UserFuncCall): T,
+        userVariable(userVariable: UserVariable): T,
+        userReference(userReference: UserReference): T,
+    }): T,
 };
 
 type DisplayExpression = {
-    match<T>(visitor: DisplayExpressionVisitor<T>): T,
+    match<T>(visitor: {
+        displayLambda(displayLambda: DisplayLambda): T,
+        displayFuncCall(displayFuncCall: DisplayFuncCall): T,
+        displayVariable(displayVariable: DisplayVariable): T,
+        displayReference(displayReference: DisplayReference): T,
+    }): T,
 };
 
 type ExprContainer = {
-    match<T>(visitor: ExprContainerVisitor<T>): T,
+    match<T>(visitor: {
+        exprIdContainer(exprIdContainer: ExprIdContainer): T,
+        definitionContainer(definitionContainer: DefinitionContainer): T,
+    }): T,
 };
 
 type DragResult = {
-    match<T>(visitor: DragResultVisitor<T>): T,
+    match<T>(visitor: {
+        pickUpExpression(pickUpExpression: PickUpExpression): T,
+        decomposeExpression(decomposeExpression: DecomposeExpression): T,
+        createExpression(createExpression: CreateExpression): T,
+        startPan(startPan: StartPan): T,
+    }): T,
 };
 
 type DropResult = {
-    match<T>(visitor: DropResultVisitor<T>): T,
+    match<T>(visitor: {
+        addToTopLevelResult(addToTopLevelResult: AddToTopLevelResult): T,
+        insertAsBodyResult(insertAsBodyResult: InsertAsBodyResult): T,
+        insertAsArgResult(insertAsArgResult: InsertAsArgResult): T,
+        removeResult(removeResult: RemoveResult): T,
+    }): T,
 };
 
 type ViewKey = {
-    match<T>(visitor: ViewKeyVisitor<T>): T,
+    match<T>(visitor: {
+        expressionKey(expressionKey: ExpressionKey): T,
+        emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
+        lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
+        definitionKey(definitionKey: DefinitionKey): T,
+    }): T,
 };
 

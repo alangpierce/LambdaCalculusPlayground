@@ -72,14 +72,12 @@ const genUnion = (typeName, cases) => {
     result += joinMap(cases, '\n',
         (caseName, fields) => genUnionCase(typeName, caseName, fields));
 
-    const varName = lowerName(typeName);
-
     result += `
 export type ${typeName} = ${joinMap(cases, ' | ', (caseName) => caseName)};
 
 export type ${typeName}Visitor<T> = {
 ${joinMap(cases, '\n', (caseName) => `\
-    ${lowerName(caseName)}: (${lowerName(caseName)}: ${caseName}) => T,`)}
+    ${lowerName(caseName)}(${lowerName(caseName)}: ${caseName}): T,`)}
 }
 `;
     return result;
@@ -152,15 +150,20 @@ ${joinMap(types, '', genWebstormType)}
 
 const genWebstormType = (typeName, typeData) => {
     if (typeData.type === 'union') {
-        return genWebstormUnion(typeName);
+        return genWebstormUnion(typeName, typeData);
     }
     return '';
 };
 
-const genWebstormUnion = (typeName) => {
+const genWebstormUnion = (typeName, typeData) => {
+    const {cases} = typeData;
+    // Show the expanded type because that's more useful in WebStorm.
     return `
 type ${typeName} = {
-    match<T>(visitor: ${typeName}Visitor<T>): T,
+    match<T>(visitor: {
+${joinMap(cases, '\n', (caseName) => `\
+        ${lowerName(caseName)}(${lowerName(caseName)}: ${caseName}): T,`)}
+    }): T,
 };
 `
 };
