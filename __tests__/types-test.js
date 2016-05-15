@@ -4,6 +4,7 @@
 
 jest.disableAutomock();
 
+import {IList, IMap} from '../types-collections'
 import {buildValueClass, deserialize} from '../types-lib'
 
 describe('types', () => {
@@ -54,6 +55,18 @@ describe('types', () => {
         expect(rect2.owner).toEqual(null);
         expect(rect2.topLeft.y).toEqual(7);
         expect(rect2.bottomRight.updateX(x => x - 2).x).toEqual(8);
+    });
+
+    it('handles immutable maps and lists', () => {
+        const map = IMap.make({x: 5, y: 7});
+        expect(map.get('x')).toEqual(5);
+        const map2 = map.lens().atKey('x').update(x => x + 1);
+        expect(map2.get('x')).toEqual(6);
+
+        const list = IList.make([2, 8, 3]);
+        expect(list.get(1)).toEqual(8);
+        const list2 = list.lens().atIndex(1).update(val => val + 3);
+        expect(list2.get(1)).toEqual(11);
     });
 
     it('transforms objects using lenses', () => {

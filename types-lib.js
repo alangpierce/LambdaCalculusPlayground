@@ -14,7 +14,7 @@ const registeredConstructors = {};
  * types know how to create a type-specific lens to assist in navigating through
  * them, and for other types, we
  */
-class Lens<T, Result> {
+export class Lens<T, Result> {
     value: T;
     replace: (t: T) => Result;
 
@@ -28,7 +28,7 @@ class Lens<T, Result> {
     }
 }
 
-const makeLens = function<T, Result>(
+export const makeLens = function<T, Result>(
         value: T, replace: (t: T) => Result): Lens<T, Result> {
     if (typeof value.makeLens === 'function') {
         return value.makeLens(replace);
