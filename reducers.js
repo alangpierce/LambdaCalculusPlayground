@@ -88,7 +88,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 const argCanvasExpr = exprWithId(argExprId);
                 return insertAsArg(expr, argCanvasExpr.expr, pathSteps);
             });
-            state = state.updateCanvasExpressions(exprs => exprs.remove(argExprId));
+            state = state.updateCanvasExpressions(exprs => exprs.delete(argExprId));
             return state;
         },
         insertAsBody: ({bodyExprId, path: {container, pathSteps}}) => {
@@ -97,7 +97,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 return insertAsBody(expr, bodyCanvasExpr.expr, pathSteps);
             });
             state = state.updateCanvasExpressions(
-                exprs => exprs.remove(bodyExprId));
+                exprs => exprs.delete(bodyExprId));
             return state;
         },
         evaluateExpression: ({exprId}) => {
@@ -137,7 +137,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 pickUpExpression: ({exprId, offset, screenRect}) => {
                     const expr = exprWithId(exprId).expr;
                     return state
-                        .updateCanvasExpressions(exprs => exprs.remove(exprId))
+                        .updateCanvasExpressions(exprs => exprs.delete(exprId))
                         .updateActiveDrags((drags) =>
                             drags.set(fingerId,
                                 t.newDragData(expr, offset, screenRect)));
@@ -186,7 +186,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 return state;
             }
             const dropResult = resolveDrop(state, dragData, screenPos);
-            state = state.updateActiveDrags((drags) => drags.remove(fingerId));
+            state = state.updateActiveDrags((drags) => drags.delete(fingerId));
             state = dropResult.match({
                 addToTopLevelResult: ({expr, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);

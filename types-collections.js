@@ -13,10 +13,12 @@ import type {Updater} from './types-lib'
  */
 export class IMap<K, V> extends Iterable<[K, V]> {
     backingMap: Immutable.Map<K, V>;
+    size: number;
 
     constructor(backingMap: Immutable.Map<K, V>) {
         super();
         this.backingMap = backingMap;
+        this.size = backingMap.size;
     }
 
     static make<K, V>(): IMap<K, V> {
@@ -33,6 +35,10 @@ export class IMap<K, V> extends Iterable<[K, V]> {
 
     get(key: K): V {
         return this.backingMap.get(key);
+    }
+
+    delete(key: K): IMap<K, V> {
+        return new IMap(this.backingMap.delete(key));
     }
 
     lens(): IMapLens<K, V, IMap<K, V>> {
@@ -59,10 +65,12 @@ export class IMapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
 
 export class IList<T> extends Iterable<T> {
     backingList: Immutable.List<T>;
+    size: number;
 
     constructor(backingList: Immutable.List<T>) {
         super();
         this.backingList = backingList;
+        this.size = backingList.size;
     }
 
     static make<K, V>(): IList<T> {
@@ -73,8 +81,20 @@ export class IList<T> extends Iterable<T> {
         return new IList(this.backingList.set(index, value));
     }
 
+    push(value: T): IList<T> {
+        return new IList(this.backingList.push(value));
+    }
+
+    pop(): IList<T> {
+        return new IList(this.backingList.pop());
+    }
+
     update(index: number, updater: Updater<T>): IList<T> {
         return new IList(this.backingList.update(index, updater));
+    }
+
+    map<U>(mapper: (t: T, i: number) => U): IList<U> {
+        return new IList(this.backingList.map(mapper));
     }
 
     get(index: number): T {
@@ -105,10 +125,12 @@ export class IListLens<T, Result> extends Lens<IList<T>, Result> {
 
 export class ISet<T> extends Iterable<T> {
     backingSet: Immutable.Set<T>;
+    size: number;
 
     constructor(backingSet: Immutable.Set<T>) {
         super();
         this.backingSet = backingSet;
+        this.size = backingSet.size;
     }
 
     static make<K, V>(): ISet<T> {
