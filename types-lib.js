@@ -56,6 +56,13 @@ export const buildValueClass = (
         defaults[name] = undefined;
     }
     class ValueClass extends Immutable.Record(defaults) {
+        static make(...args) {
+            const constructorArg = {};
+            for (let i = 0; i < fieldNames.length; i++) {
+                constructorArg[fieldNames[i]] = args[i];
+            }
+            return new ValueClass(constructorArg);
+        }
         serialize() {
             const result = {};
             result.__SERIALIZED_CLASS = className;
@@ -92,6 +99,14 @@ export const buildUnionCaseClass = (
     }
     defaults.type = undefined;
     class UnionCaseClass extends Immutable.Record(defaults) {
+        static make(...args) {
+            const constructorArg = {};
+            constructorArg.type = caseName;
+            for (let i = 0; i < fieldNames.length; i++) {
+                constructorArg[fieldNames[i]] = args[i];
+            }
+            return new UnionCaseClass(constructorArg);
+        }
         match(visitor) {
             return visitor[caseName](this);
         }

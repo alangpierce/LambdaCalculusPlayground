@@ -10,7 +10,7 @@ import {buildValueClass, deserialize} from '../types-lib'
 describe('types', () => {
     it('generates types', () => {
         const Point = buildValueClass('Point', ['x', 'y']);
-        const p = new Point({x: 5, y: 7});
+        const p = Point.make(5, 7);
         expect(p.x).toEqual(5);
         expect(p.withX(9).x).toEqual(9);
         expect(p.updateY(y => y - 3).y).toEqual(4);
@@ -20,19 +20,13 @@ describe('types', () => {
         const Rect = buildValueClass(
             'Rect', ['topLeft', 'bottomRight', 'color', 'depth', 'owner']);
         const Point = buildValueClass('Point', ['x', 'y']);
-        const rect = new Rect({
-            topLeft: new Point({
-                x: 5,
-                y: 7,
-            }),
-            bottomRight: new Point({
-                x: 10,
-                y: 12,
-            }),
-            color: 'green',
-            depth: 3,
-            owner: null,
-        });
+        const rect = Rect.make(
+            Point.make(5, 7),
+            Point.make(10, 12),
+            'green',
+            3,
+            null,
+        );
         const serializedRect = rect.serialize();
         expect(serializedRect).toEqual({
             __SERIALIZED_CLASS: 'Rect',
@@ -77,16 +71,7 @@ describe('types', () => {
         const Rect = buildValueClass(
             'Rect', ['topLeft', 'bottomRight']);
         const Point = buildValueClass('Point', ['x', 'y']);
-        const rect = new Rect({
-            topLeft: new Point({
-                x: 5,
-                y: 8,
-            }),
-            bottomRight: new Point({
-                x: 12,
-                y: 15,
-            }),
-        });
+        const rect = Rect.make(Point.make(5, 8), Point.make(12, 15));
         const rect2 = rect.lens().topLeft().y().update(y => y + 3);
         expect(rect2.topLeft.y).toEqual(11);
     });

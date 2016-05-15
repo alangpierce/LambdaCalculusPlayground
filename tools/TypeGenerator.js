@@ -94,6 +94,7 @@ const genUnionCase = (unionName, caseName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
 const ${caseName}Impl = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
+
 export type ${caseName} = {
     type: '${tagName}',
 ${genLines((f, t) => `${f}: ${t},`)}\
