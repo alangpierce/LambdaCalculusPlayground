@@ -65,7 +65,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
 
     const yieldLambdaVarGenerators = function* () {
         for (let [path, expr] of yieldAllExpressions(state)) {
-            if (expr.type !== 'userLambda') {
+            if (!(expr instanceof t.UserLambda)) {
                 continue;
             }
             const viewKey = t.newLambdaVarKey(path);

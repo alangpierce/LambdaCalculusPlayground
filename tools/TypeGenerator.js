@@ -40,9 +40,9 @@ const genType = (typeName, typeData) => {
 const genStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `
-const ${typeName}Impl = buildValueClass('${typeName}', [${genComma((f) => `'${f}'`)}]);
+export const ${typeName} = buildValueClass('${typeName}', [${genComma((f) => `'${f}'`)}]);
 
-export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}Impl({
+export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}({
 ${genLines((f, t) => `${f},`)}\
 }));
 `;
@@ -57,9 +57,9 @@ const genUnionCase = (unionName, caseName, fields) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-const ${caseName}Impl = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
+export const ${caseName} = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
 
-export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (new ${caseName}Impl({
+export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (new ${caseName}({
     type: '${tagName}',
 ${genLines((f, t) => `${f},`)}\
 }));
@@ -106,17 +106,15 @@ export type ${typeName} = ${value};
 const genFlowStruct = (typeName, fields) => {
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-const ${typeName}Impl = buildValueClass('${typeName}', [${genComma((f) => `'${f}'`)}]);
-
-export type ${typeName} = {
-${genLines((f, t) => `${f}: ${t},`)}\
-${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${typeName},`)}\
-${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${typeName},`)}\
-    toJS(): any,
-    serialize(): any,
+declare export class ${typeName} {
+${genLines((f, t) => `${f}: ${t};`)}\
+${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${typeName};`)}\
+${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${typeName};`)}\
+    toJS(): any;
+    serialize(): any;
 };
 
-export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}Impl({
+export const new${typeName} = (${genComma((f, t) => `${f}: ${t}`)}): ${typeName} => (new ${typeName}({
 ${genLines((f, t) => `${f},`)}\
 }));
 `;
@@ -149,19 +147,17 @@ const genFlowUnionCase = (unionName, caseName, fields) => {
     const tagName = lowerName(caseName);
     const {genLines, genComma} = fieldOperators(fields);
     return `\
-const ${caseName}Impl = buildUnionCaseClass('${tagName}', [${genComma((f) => `'${f}'`)}]);
-
-export type ${caseName} = {
-    type: '${tagName}',
-${genLines((f, t) => `${f}: ${t},`)}\
-${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName},`)}\
-${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName},`)}\
-    match<T>(visitor: ${unionName}Visitor<T>): T,
-    toJS(): any,
-    serialize(): any,
+declare export class ${caseName} {
+    type: '${tagName}';
+${genLines((f, t) => `${f}: ${t};`)}\
+${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName};`)}\
+${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName};`)}\
+    match<T>(visitor: ${unionName}Visitor<T>): T;
+    toJS(): any;
+    serialize(): any;
 };
 
-export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (new ${caseName}Impl({
+export const new${caseName} = (${genComma((f, t) => `${f}: ${t}`)}): ${caseName} => (new ${caseName}({
     type: '${tagName}',
 ${genLines((f, t) => `${f},`)}\
 }));

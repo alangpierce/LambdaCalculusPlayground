@@ -5,9 +5,9 @@ import {buildUnionCaseClass, buildValueClass} from './types-lib'
 import {IList, IMap, ISet} from './types-collections'
 
  
-const StateImpl = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
+export const State = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
 
-export const newState = (canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State => (new StateImpl({
+export const newState = (canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State => (new State({
     canvasExpressions,
     nextExprId,
     canvasDefinitions,
@@ -18,230 +18,230 @@ export const newState = (canvasExpressions: IMap<number, CanvasExpression>, next
     highlightedEmptyBodies,
 }));
 
-const ResetImpl = buildUnionCaseClass('reset', []);
+export const Reset = buildUnionCaseClass('reset', []);
 
-export const newReset = (): Reset => (new ResetImpl({
+export const newReset = (): Reset => (new Reset({
     type: 'reset',
 }));
 
-const AddExpressionImpl = buildUnionCaseClass('addExpression', ['canvasExpr']);
+export const AddExpression = buildUnionCaseClass('addExpression', ['canvasExpr']);
 
-export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => (new AddExpressionImpl({
+export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => (new AddExpression({
     type: 'addExpression',
     canvasExpr,
 }));
 
-const PlaceDefinitionImpl = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
+export const PlaceDefinition = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
 
-export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => (new PlaceDefinitionImpl({
+export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => (new PlaceDefinition({
     type: 'placeDefinition',
     defName,
     screenPos,
 }));
 
-const MoveExpressionImpl = buildUnionCaseClass('moveExpression', ['exprId', 'pos']);
+export const MoveExpression = buildUnionCaseClass('moveExpression', ['exprId', 'pos']);
 
-export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => (new MoveExpressionImpl({
+export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => (new MoveExpression({
     type: 'moveExpression',
     exprId,
     pos,
 }));
 
-const DecomposeExpressionActionImpl = buildUnionCaseClass('decomposeExpressionAction', ['path', 'targetPos']);
+export const DecomposeExpressionAction = buildUnionCaseClass('decomposeExpressionAction', ['path', 'targetPos']);
 
-export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => (new DecomposeExpressionActionImpl({
+export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => (new DecomposeExpressionAction({
     type: 'decomposeExpressionAction',
     path,
     targetPos,
 }));
 
-const InsertAsArgImpl = buildUnionCaseClass('insertAsArg', ['argExprId', 'path']);
+export const InsertAsArg = buildUnionCaseClass('insertAsArg', ['argExprId', 'path']);
 
-export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => (new InsertAsArgImpl({
+export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => (new InsertAsArg({
     type: 'insertAsArg',
     argExprId,
     path,
 }));
 
-const InsertAsBodyImpl = buildUnionCaseClass('insertAsBody', ['bodyExprId', 'path']);
+export const InsertAsBody = buildUnionCaseClass('insertAsBody', ['bodyExprId', 'path']);
 
-export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => (new InsertAsBodyImpl({
+export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => (new InsertAsBody({
     type: 'insertAsBody',
     bodyExprId,
     path,
 }));
 
-const EvaluateExpressionImpl = buildUnionCaseClass('evaluateExpression', ['exprId']);
+export const EvaluateExpression = buildUnionCaseClass('evaluateExpression', ['exprId']);
 
-export const newEvaluateExpression = (exprId: number): EvaluateExpression => (new EvaluateExpressionImpl({
+export const newEvaluateExpression = (exprId: number): EvaluateExpression => (new EvaluateExpression({
     type: 'evaluateExpression',
     exprId,
 }));
 
-const PlacePendingResultImpl = buildUnionCaseClass('placePendingResult', ['exprId', 'width', 'height']);
+export const PlacePendingResult = buildUnionCaseClass('placePendingResult', ['exprId', 'width', 'height']);
 
-export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => (new PlacePendingResultImpl({
+export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => (new PlacePendingResult({
     type: 'placePendingResult',
     exprId,
     width,
     height,
 }));
 
-const FingerDownImpl = buildUnionCaseClass('fingerDown', ['fingerId', 'screenPos']);
+export const FingerDown = buildUnionCaseClass('fingerDown', ['fingerId', 'screenPos']);
 
-export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => (new FingerDownImpl({
+export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => (new FingerDown({
     type: 'fingerDown',
     fingerId,
     screenPos,
 }));
 
-const FingerMoveImpl = buildUnionCaseClass('fingerMove', ['fingerId', 'screenPos']);
+export const FingerMove = buildUnionCaseClass('fingerMove', ['fingerId', 'screenPos']);
 
-export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => (new FingerMoveImpl({
+export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => (new FingerMove({
     type: 'fingerMove',
     fingerId,
     screenPos,
 }));
 
-const FingerUpImpl = buildUnionCaseClass('fingerUp', ['fingerId', 'screenPos']);
+export const FingerUp = buildUnionCaseClass('fingerUp', ['fingerId', 'screenPos']);
 
-export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => (new FingerUpImpl({
+export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => (new FingerUp({
     type: 'fingerUp',
     fingerId,
     screenPos,
 }));
 
-const LambdaImpl = buildUnionCaseClass('lambda', ['varName', 'body']);
+export const Lambda = buildUnionCaseClass('lambda', ['varName', 'body']);
 
-export const newLambda = (varName: string, body: Expression): Lambda => (new LambdaImpl({
+export const newLambda = (varName: string, body: Expression): Lambda => (new Lambda({
     type: 'lambda',
     varName,
     body,
 }));
 
-const FuncCallImpl = buildUnionCaseClass('funcCall', ['func', 'arg']);
+export const FuncCall = buildUnionCaseClass('funcCall', ['func', 'arg']);
 
-export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCallImpl({
+export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCall({
     type: 'funcCall',
     func,
     arg,
 }));
 
-const VariableImpl = buildUnionCaseClass('variable', ['varName']);
+export const Variable = buildUnionCaseClass('variable', ['varName']);
 
-export const newVariable = (varName: string): Variable => (new VariableImpl({
+export const newVariable = (varName: string): Variable => (new Variable({
     type: 'variable',
     varName,
 }));
 
 
 
-const EvalLambdaImpl = buildUnionCaseClass('evalLambda', ['varMarker', 'originalVarName', 'body']);
+export const EvalLambda = buildUnionCaseClass('evalLambda', ['varMarker', 'originalVarName', 'body']);
 
-export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambdaImpl({
+export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambda({
     type: 'evalLambda',
     varMarker,
     originalVarName,
     body,
 }));
 
-const EvalFuncCallImpl = buildUnionCaseClass('evalFuncCall', ['func', 'arg']);
+export const EvalFuncCall = buildUnionCaseClass('evalFuncCall', ['func', 'arg']);
 
-export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCallImpl({
+export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCall({
     type: 'evalFuncCall',
     func,
     arg,
 }));
 
-const EvalBoundVariableImpl = buildUnionCaseClass('evalBoundVariable', ['slot']);
+export const EvalBoundVariable = buildUnionCaseClass('evalBoundVariable', ['slot']);
 
-export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariableImpl({
+export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariable({
     type: 'evalBoundVariable',
     slot,
 }));
 
-const EvalUnboundVariableImpl = buildUnionCaseClass('evalUnboundVariable', ['varMarker', 'originalVarName']);
+export const EvalUnboundVariable = buildUnionCaseClass('evalUnboundVariable', ['varMarker', 'originalVarName']);
 
-export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariableImpl({
+export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariable({
     type: 'evalUnboundVariable',
     varMarker,
     originalVarName,
 }));
 
-const EvalFreeVariableImpl = buildUnionCaseClass('evalFreeVariable', ['varName']);
+export const EvalFreeVariable = buildUnionCaseClass('evalFreeVariable', ['varName']);
 
-export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariableImpl({
+export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariable({
     type: 'evalFreeVariable',
     varName,
 }));
 
-const UserLambdaImpl = buildUnionCaseClass('userLambda', ['varName', 'body']);
+export const UserLambda = buildUnionCaseClass('userLambda', ['varName', 'body']);
 
-export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambdaImpl({
+export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambda({
     type: 'userLambda',
     varName,
     body,
 }));
 
-const UserFuncCallImpl = buildUnionCaseClass('userFuncCall', ['func', 'arg']);
+export const UserFuncCall = buildUnionCaseClass('userFuncCall', ['func', 'arg']);
 
-export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCallImpl({
+export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCall({
     type: 'userFuncCall',
     func,
     arg,
 }));
 
-const UserVariableImpl = buildUnionCaseClass('userVariable', ['varName']);
+export const UserVariable = buildUnionCaseClass('userVariable', ['varName']);
 
-export const newUserVariable = (varName: string): UserVariable => (new UserVariableImpl({
+export const newUserVariable = (varName: string): UserVariable => (new UserVariable({
     type: 'userVariable',
     varName,
 }));
 
-const UserReferenceImpl = buildUnionCaseClass('userReference', ['defName']);
+export const UserReference = buildUnionCaseClass('userReference', ['defName']);
 
-export const newUserReference = (defName: string): UserReference => (new UserReferenceImpl({
+export const newUserReference = (defName: string): UserReference => (new UserReference({
     type: 'userReference',
     defName,
 }));
 
 
-const CanvasExpressionImpl = buildValueClass('CanvasExpression', ['expr', 'pos']);
+export const CanvasExpression = buildValueClass('CanvasExpression', ['expr', 'pos']);
 
-export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpressionImpl({
+export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpression({
     expr,
     pos,
 }));
 
 
-const PendingResultImpl = buildValueClass('PendingResult', ['expr', 'sourceExprId']);
+export const PendingResult = buildValueClass('PendingResult', ['expr', 'sourceExprId']);
 
-export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResultImpl({
+export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResult({
     expr,
     sourceExprId,
 }));
 
 
-const DisplayStateImpl = buildValueClass('DisplayState', ['screenExpressions', 'screenDefinitions', 'measureRequests']);
+export const DisplayState = buildValueClass('DisplayState', ['screenExpressions', 'screenDefinitions', 'measureRequests']);
 
-export const newDisplayState = (screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState => (new DisplayStateImpl({
+export const newDisplayState = (screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState => (new DisplayState({
     screenExpressions,
     screenDefinitions,
     measureRequests,
 }));
 
 
-const MeasureRequestImpl = buildValueClass('MeasureRequest', ['expr', 'resultHandler']);
+export const MeasureRequest = buildValueClass('MeasureRequest', ['expr', 'resultHandler']);
 
-export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequestImpl({
+export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequest({
     expr,
     resultHandler,
 }));
 
 
-const ScreenDefinitionImpl = buildValueClass('ScreenDefinition', ['defName', 'expr', 'pos', 'key', 'isDragging']);
+export const ScreenDefinition = buildValueClass('ScreenDefinition', ['defName', 'expr', 'pos', 'key', 'isDragging']);
 
-export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinitionImpl({
+export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinition({
     defName,
     expr,
     pos,
@@ -250,9 +250,9 @@ export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, p
 }));
 
 
-const ScreenExpressionImpl = buildValueClass('ScreenExpression', ['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
+export const ScreenExpression = buildValueClass('ScreenExpression', ['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
 
-export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression => (new ScreenExpressionImpl({
+export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression => (new ScreenExpression({
     expr,
     pos,
     key,
@@ -260,9 +260,9 @@ export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, k
     executeHandler,
 }));
 
-const DisplayLambdaImpl = buildUnionCaseClass('displayLambda', ['exprKey', 'shouldHighlight', 'varKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'varName', 'body']);
+export const DisplayLambda = buildUnionCaseClass('displayLambda', ['exprKey', 'shouldHighlight', 'varKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'varName', 'body']);
 
-export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambdaImpl({
+export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambda({
     type: 'displayLambda',
     exprKey,
     shouldHighlight,
@@ -273,9 +273,9 @@ export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boole
     body,
 }));
 
-const DisplayFuncCallImpl = buildUnionCaseClass('displayFuncCall', ['exprKey', 'shouldHighlight', 'func', 'arg']);
+export const DisplayFuncCall = buildUnionCaseClass('displayFuncCall', ['exprKey', 'shouldHighlight', 'func', 'arg']);
 
-export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCallImpl({
+export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCall({
     type: 'displayFuncCall',
     exprKey,
     shouldHighlight,
@@ -283,18 +283,18 @@ export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boo
     arg,
 }));
 
-const DisplayVariableImpl = buildUnionCaseClass('displayVariable', ['exprKey', 'shouldHighlight', 'varName']);
+export const DisplayVariable = buildUnionCaseClass('displayVariable', ['exprKey', 'shouldHighlight', 'varName']);
 
-export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariableImpl({
+export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariable({
     type: 'displayVariable',
     exprKey,
     shouldHighlight,
     varName,
 }));
 
-const DisplayReferenceImpl = buildUnionCaseClass('displayReference', ['exprKey', 'shouldHighlight', 'defName']);
+export const DisplayReference = buildUnionCaseClass('displayReference', ['exprKey', 'shouldHighlight', 'defName']);
 
-export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReferenceImpl({
+export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReference({
     type: 'displayReference',
     exprKey,
     shouldHighlight,
@@ -302,157 +302,157 @@ export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: bo
 }));
 
 
-const CanvasPointImpl = buildValueClass('CanvasPoint', ['canvasX', 'canvasY']);
+export const CanvasPoint = buildValueClass('CanvasPoint', ['canvasX', 'canvasY']);
 
-export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPointImpl({
+export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPoint({
     canvasX,
     canvasY,
 }));
 
 
-const PointDifferenceImpl = buildValueClass('PointDifference', ['dx', 'dy']);
+export const PointDifference = buildValueClass('PointDifference', ['dx', 'dy']);
 
-export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifferenceImpl({
+export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifference({
     dx,
     dy,
 }));
 
 
-const ScreenPointImpl = buildValueClass('ScreenPoint', ['screenX', 'screenY']);
+export const ScreenPoint = buildValueClass('ScreenPoint', ['screenX', 'screenY']);
 
-export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPointImpl({
+export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPoint({
     screenX,
     screenY,
 }));
 
 
-const ScreenRectImpl = buildValueClass('ScreenRect', ['topLeft', 'bottomRight']);
+export const ScreenRect = buildValueClass('ScreenRect', ['topLeft', 'bottomRight']);
 
-export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRectImpl({
+export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRect({
     topLeft,
     bottomRight,
 }));
 
 
 
-const ExprPathImpl = buildValueClass('ExprPath', ['container', 'pathSteps']);
+export const ExprPath = buildValueClass('ExprPath', ['container', 'pathSteps']);
 
-export const newExprPath = (container: ExprContainer, pathSteps: IList<PathComponent>): ExprPath => (new ExprPathImpl({
+export const newExprPath = (container: ExprContainer, pathSteps: IList<PathComponent>): ExprPath => (new ExprPath({
     container,
     pathSteps,
 }));
 
-const ExprIdContainerImpl = buildUnionCaseClass('exprIdContainer', ['exprId']);
+export const ExprIdContainer = buildUnionCaseClass('exprIdContainer', ['exprId']);
 
-export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainerImpl({
+export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainer({
     type: 'exprIdContainer',
     exprId,
 }));
 
-const DefinitionContainerImpl = buildUnionCaseClass('definitionContainer', ['defName']);
+export const DefinitionContainer = buildUnionCaseClass('definitionContainer', ['defName']);
 
-export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainerImpl({
+export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainer({
     type: 'definitionContainer',
     defName,
 }));
 
-const PickUpExpressionImpl = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
+export const PickUpExpression = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
 
-export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpressionImpl({
+export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpression({
     type: 'pickUpExpression',
     exprId,
     offset,
     screenRect,
 }));
 
-const DecomposeExpressionImpl = buildUnionCaseClass('decomposeExpression', ['exprPath', 'offset', 'screenRect']);
+export const DecomposeExpression = buildUnionCaseClass('decomposeExpression', ['exprPath', 'offset', 'screenRect']);
 
-export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpressionImpl({
+export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpression({
     type: 'decomposeExpression',
     exprPath,
     offset,
     screenRect,
 }));
 
-const CreateExpressionImpl = buildUnionCaseClass('createExpression', ['expr', 'offset', 'screenRect']);
+export const CreateExpression = buildUnionCaseClass('createExpression', ['expr', 'offset', 'screenRect']);
 
-export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpressionImpl({
+export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpression({
     type: 'createExpression',
     expr,
     offset,
     screenRect,
 }));
 
-const StartPanImpl = buildUnionCaseClass('startPan', ['startPos']);
+export const StartPan = buildUnionCaseClass('startPan', ['startPos']);
 
-export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPanImpl({
+export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPan({
     type: 'startPan',
     startPos,
 }));
 
 
-const DragDataImpl = buildValueClass('DragData', ['userExpr', 'grabOffset', 'screenRect']);
+export const DragData = buildValueClass('DragData', ['userExpr', 'grabOffset', 'screenRect']);
 
-export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragDataImpl({
+export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragData({
     userExpr,
     grabOffset,
     screenRect,
 }));
 
-const AddToTopLevelResultImpl = buildUnionCaseClass('addToTopLevelResult', ['expr', 'screenPos']);
+export const AddToTopLevelResult = buildUnionCaseClass('addToTopLevelResult', ['expr', 'screenPos']);
 
-export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResultImpl({
+export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResult({
     type: 'addToTopLevelResult',
     expr,
     screenPos,
 }));
 
-const InsertAsBodyResultImpl = buildUnionCaseClass('insertAsBodyResult', ['lambdaPath', 'expr']);
+export const InsertAsBodyResult = buildUnionCaseClass('insertAsBodyResult', ['lambdaPath', 'expr']);
 
-export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResultImpl({
+export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResult({
     type: 'insertAsBodyResult',
     lambdaPath,
     expr,
 }));
 
-const InsertAsArgResultImpl = buildUnionCaseClass('insertAsArgResult', ['path', 'expr']);
+export const InsertAsArgResult = buildUnionCaseClass('insertAsArgResult', ['path', 'expr']);
 
-export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResultImpl({
+export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResult({
     type: 'insertAsArgResult',
     path,
     expr,
 }));
 
-const RemoveResultImpl = buildUnionCaseClass('removeResult', []);
+export const RemoveResult = buildUnionCaseClass('removeResult', []);
 
-export const newRemoveResult = (): RemoveResult => (new RemoveResultImpl({
+export const newRemoveResult = (): RemoveResult => (new RemoveResult({
     type: 'removeResult',
 }));
 
-const ExpressionKeyImpl = buildUnionCaseClass('expressionKey', ['exprPath']);
+export const ExpressionKey = buildUnionCaseClass('expressionKey', ['exprPath']);
 
-export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKeyImpl({
+export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKey({
     type: 'expressionKey',
     exprPath,
 }));
 
-const EmptyBodyKeyImpl = buildUnionCaseClass('emptyBodyKey', ['lambdaPath']);
+export const EmptyBodyKey = buildUnionCaseClass('emptyBodyKey', ['lambdaPath']);
 
-export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKeyImpl({
+export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKey({
     type: 'emptyBodyKey',
     lambdaPath,
 }));
 
-const LambdaVarKeyImpl = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);
+export const LambdaVarKey = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);
 
-export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKeyImpl({
+export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKey({
     type: 'lambdaVarKey',
     lambdaPath,
 }));
 
-const DefinitionKeyImpl = buildUnionCaseClass('definitionKey', ['defName']);
+export const DefinitionKey = buildUnionCaseClass('definitionKey', ['defName']);
 
-export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKeyImpl({
+export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKey({
     type: 'definitionKey',
     defName,
 }));

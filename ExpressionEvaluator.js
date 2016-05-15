@@ -41,7 +41,7 @@ const evaluateRec = (
         evalFuncCall: ({func, arg}) => {
             // TODO: Maybe don't fully evaluate the func if it's a lambda?
             func = evaluateRec(func, freeMarkers, false);
-            if (func.type === 'evalLambda') {
+            if (func instanceof t.EvalLambda) {
                 const {varMarker, originalVarName, body} = func;
                 const slot = {
                     isValue: false,

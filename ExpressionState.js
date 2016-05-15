@@ -64,10 +64,10 @@ export const decomposeExpression = (
         expr: UserExpression, path: IList<PathComponent>): DecomposeResult => {
     let extracted = null;
     const original = transformAtPath(expr, path, (expr) => {
-        if (expr.type === 'userLambda' && expr.body) {
+        if (expr instanceof t.UserLambda && expr.body) {
             extracted = expr.body;
             return expr.withBody(null);
-        } else if (expr.type === 'userFuncCall') {
+        } else if (expr instanceof t.UserFuncCall) {
             extracted = expr.arg;
             return expr.func;
         }
@@ -94,7 +94,7 @@ export const insertAsBody = (
         targetExpr: UserExpression, newBodyExpr: UserExpression,
         path: IList<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) => {
-        if (expr.type !== 'userLambda' || expr.body) {
+        if (!(expr instanceof t.UserLambda) || expr.body) {
             throw new Error('Invalid expression to insert body into.');
         }
         return expr.withBody(newBodyExpr);
@@ -121,11 +121,11 @@ const transformAtPath = (
 
 const updateChild = (expr: UserExpression, step: PathComponent,
                      updater: Transform<UserExpression>): UserExpression => {
-    if (step === 'func' && expr.type === 'userFuncCall') {
+    if (step === 'func' && expr instanceof t.UserFuncCall) {
         return expr.updateFunc(updater);
-    } else if (step === 'arg' && expr.type === 'userFuncCall') {
+    } else if (step === 'arg' && expr instanceof t.UserFuncCall) {
         return expr.updateArg(updater);
-    } else if (step === 'body' && expr.type === 'userLambda' && expr.body) {
+    } else if (step === 'body' && expr instanceof t.UserLambda && expr.body) {
         return expr.withBody(updater(expr.body));
     }
     throw new Error('Unexpected step: ' + JSON.stringify(step));
