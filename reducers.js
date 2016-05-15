@@ -2,8 +2,6 @@
  * @flow
  */
 
-import * as Immutable from 'immutable';
-
 import {emptyIdPath} from './ExprPaths';
 import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator';
 import type {
@@ -14,6 +12,7 @@ import type {
     State
 } from './types'
 import * as t from './types'
+import {IMap, ISet} from './types-collections'
 import {
     addExpression,
     decomposeExpression,
@@ -28,14 +27,14 @@ import {deserialize} from './types-lib'
 import {getPositionOnScreen} from './ViewTracker';
 
 const initialState: State = t.newState(
-    new Immutable.Map(),
+    IMap.make(),
     0,
-    new Immutable.Map(),
-    new Immutable.Map(),
-    new Immutable.Map(),
-    new Immutable.Map(),
-    new Immutable.Set(),
-    new Immutable.Set());
+    IMap.make(),
+    IMap.make(),
+    IMap.make(),
+    IMap.make(),
+    ISet.make(),
+    ISet.make());
 
 // TODO: Consider adding a top-level try/catch.
 const playgroundApp = (state: State = initialState, rawAction: any): State => {
@@ -239,8 +238,8 @@ const computeHighlights = (state: State): State => {
         });
     }
     return state
-        .withHighlightedExprs(new Immutable.Set(exprPaths))
-        .withHighlightedEmptyBodies(new Immutable.Set(emptyBodyPaths));
+        .withHighlightedExprs(ISet.make(exprPaths))
+        .withHighlightedEmptyBodies(ISet.make(emptyBodyPaths));
 };
 
 export default playgroundApp;

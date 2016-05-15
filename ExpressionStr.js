@@ -7,8 +7,6 @@
  * @flow
  */
 
-import * as Immutable from 'immutable'
-
 import {
     newUserLambda,
     newUserFuncCall,
@@ -16,7 +14,6 @@ import {
     newUserReference
 } from './types'
 import type {UserExpression} from './types'
-import * as t from './types'
 
 export const parseExpr = (str: string): UserExpression => {
     // Allow redundant whitespace.

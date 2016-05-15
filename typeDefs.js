@@ -5,18 +5,18 @@ export default typeDefs = {
     State: {
         type: 'struct',
         fields: {
-            canvasExpressions: 'Immutable.Map<number, CanvasExpression>',
+            canvasExpressions: 'IMap<number, CanvasExpression>',
             nextExprId: 'number',
-            canvasDefinitions: 'Immutable.Map<string, CanvasPoint>',
-            definitions: 'Immutable.Map<string, ?UserExpression>',
+            canvasDefinitions: 'IMap<string, CanvasPoint>',
+            definitions: 'IMap<string, ?UserExpression>',
             // Evaluated expressions that haven't been measured yet. We need to
             // measure them before we know where to place them.
-            pendingResults: 'Immutable.Map<number, PendingResult>',
+            pendingResults: 'IMap<number, PendingResult>',
             // Map from finger ID to expression ID.
-            activeDrags: 'Immutable.Map<number, DragData>',
-            highlightedExprs: 'Immutable.Set<ExprPath>',
+            activeDrags: 'IMap<number, DragData>',
+            highlightedExprs: 'ISet<ExprPath>',
             // Set of lambda expressions where the body should be highlighted.
-            highlightedEmptyBodies: 'Immutable.Set<ExprPath>',
+            highlightedEmptyBodies: 'ISet<ExprPath>',
         },
     },
     Action: {
@@ -176,9 +176,9 @@ export default typeDefs = {
     DisplayState: {
         type: 'struct',
         fields: {
-            screenExpressions: 'Immutable.List<ScreenExpression>',
-            screenDefinitions: 'Immutable.List<ScreenDefinition>',
-            measureRequests: 'Immutable.List<MeasureRequest>',
+            screenExpressions: 'IList<ScreenExpression>',
+            screenDefinitions: 'IList<ScreenDefinition>',
+            measureRequests: 'IList<MeasureRequest>',
         },
     },
     MeasureRequest: {
@@ -277,7 +277,7 @@ export default typeDefs = {
         type: 'struct',
         fields: {
             container: 'ExprContainer',
-            pathSteps: 'Immutable.List<PathComponent>',
+            pathSteps: 'IList<PathComponent>',
         }
     },
     // A possible starting point for an expression.

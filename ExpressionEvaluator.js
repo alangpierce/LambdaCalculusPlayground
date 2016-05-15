@@ -7,10 +7,9 @@
  * @flow
  */
 
-import * as Immutable from 'immutable'
-
 import * as t from './types'
 import type {Expression, EvalExpression, Slot, VarMarker} from './types'
+import {IMap, ISet} from './types-collections'
 
 export const canStep = (expr: Expression): boolean => {
     return expr.match({
@@ -23,13 +22,13 @@ export const canStep = (expr: Expression): boolean => {
 
 // TODO: Run in a web worker or something to avoid infinite loops.
 export const evaluate = (expr: Expression): Expression => {
-    const compiledExpr = compile(new Immutable.Map(), expr);
-    const evaluatedExpr = evaluateRec(compiledExpr, new Immutable.Set(), true);
-    return assignNames(evaluatedExpr, new Immutable.Map());
+    const compiledExpr = compile(IMap.make(), expr);
+    const evaluatedExpr = evaluateRec(compiledExpr, ISet.make(), true);
+    return assignNames(evaluatedExpr, IMap.make());
 };
 
 const evaluateRec = (
-        expr: EvalExpression, freeMarkers: Immutable.Set<VarMarker>,
+        expr: EvalExpression, freeMarkers: ISet<VarMarker>,
         topLevel: boolean): EvalExpression => {
     return expr.match({
         evalLambda: (lambda) => {
@@ -123,7 +122,7 @@ const containsUsage = (varMarker: VarMarker, expr: EvalExpression) => {
 };
 
 const containsOnlyFreeVars = (
-        expr: EvalExpression, freeMarkers: Immutable.Set<VarMarker>):
+        expr: EvalExpression, freeMarkers: ISet<VarMarker>):
         boolean => {
     return expr.match({
         evalLambda: () => true,
@@ -138,7 +137,7 @@ const containsOnlyFreeVars = (
 };
 
 
-type Context = Immutable.Map<string, VarMarker>;
+type Context = IMap<string, VarMarker>;
 
 const compile = (context: Context, expr: Expression): EvalExpression => {
     return expr.match({
@@ -166,7 +165,7 @@ const newMarker = (): VarMarker => {
 };
 
 const assignNames = (
-        expr: EvalExpression, namesByMarker: Immutable.Map<VarMarker, string>):
+        expr: EvalExpression, namesByMarker: IMap<VarMarker, string>):
         Expression => {
     return expr.match({
         evalLambda: ({varMarker, originalVarName, body}) => {

@@ -6,7 +6,6 @@
  */
 
 import {NativeModules} from 'react-native'
-import * as Immutable from 'immutable'
 
 import store from './store'
 import {parseExpr, formatExpr} from './ExpressionStr'
@@ -44,7 +43,6 @@ if (window.messageHandlers !== undefined) {
         makeExpression,
         listExpressions,
         generateScreenExpressions,
-        Immutable,
         ViewTracker,
     };
 

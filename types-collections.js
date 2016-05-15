@@ -21,8 +21,8 @@ export class IMap<K, V> extends Iterable<[K, V]> {
         this.size = backingMap.size;
     }
 
-    static make<K, V>(): IMap<K, V> {
-        return new IMap(Reflect.construct(Immutable.Map, arguments));
+    static make<K, V>(...args): IMap<K, V> {
+        return new IMap(Reflect.construct(Immutable.Map, args));
     }
 
     set(key: K, value: V): IMap<K, V> {
@@ -35,6 +35,10 @@ export class IMap<K, V> extends Iterable<[K, V]> {
 
     get(key: K): V {
         return this.backingMap.get(key);
+    }
+
+    keys(): Iterator<K> {
+        return this.backingMap.keys();
     }
 
     delete(key: K): IMap<K, V> {
@@ -73,8 +77,8 @@ export class IList<T> extends Iterable<T> {
         this.size = backingList.size;
     }
 
-    static make<K, V>(): IList<T> {
-        return new IList(Reflect.construct(Immutable.List, arguments));
+    static make<T>(...args): IList<T> {
+        return new IList(Reflect.construct(Immutable.List, args));
     }
 
     set(index: number, value: T): IList<T> {
@@ -95,6 +99,10 @@ export class IList<T> extends Iterable<T> {
 
     map<U>(mapper: (t: T, i: number) => U): IList<U> {
         return new IList(this.backingList.map(mapper));
+    }
+
+    slice(begin?: number, end?: number): IList<T> {
+        return new IList(this.backingList.slice(begin, end));
     }
 
     get(index: number): T {
@@ -133,8 +141,8 @@ export class ISet<T> extends Iterable<T> {
         this.size = backingSet.size;
     }
 
-    static make<K, V>(): ISet<T> {
-        return new ISet(Reflect.construct(Immutable.Set, arguments));
+    static make<K, V>(...args): ISet<T> {
+        return new ISet(Reflect.construct(Immutable.Set, args));
     }
 
     add(value: T): ISet<T> {
@@ -143,6 +151,10 @@ export class ISet<T> extends Iterable<T> {
 
     has(value: T): boolean {
         return this.backingSet.has(value);
+    }
+
+    union(other: Iterator<T>): ISet<T> {
+        return new ISet(this.backingSet.union(other));
     }
 
     iterator(): Iterator<T> {

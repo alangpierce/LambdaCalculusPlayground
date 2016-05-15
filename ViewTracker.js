@@ -5,17 +5,16 @@
  *
  * @flow
  */
-import * as Immutable from 'immutable';
-
 import type {ViewKey, ScreenRect} from './types';
 import * as t from './types';
+import {IMap} from './types-collections'
 
 type NativeNode = {
     measure: (callback: MeasureOnSuccessCallback) => void,
 };
 
-let nodeMap: Immutable.Map<ViewKey, NativeNode> = new Immutable.Map();
-let viewMap: Immutable.Map<ViewKey, ScreenRect> = new Immutable.Map();
+let nodeMap: IMap<ViewKey, NativeNode> = IMap.make();
+let viewMap: IMap<ViewKey, ScreenRect> = IMap.make();
 
 type MeasureOnSuccessCallback = (
     x: number,

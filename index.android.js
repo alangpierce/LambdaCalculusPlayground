@@ -5,7 +5,6 @@
  */
 'use strict';
 
-import * as Immutable from 'immutable'
 import React, {
     DeviceEventEmitter,
     Image,
@@ -37,6 +36,7 @@ import type {
     ScreenExpression,
     ScreenPoint,
 } from './types'
+import {IMap, ISet} from './types-collections'
 
 type TopLevelExpressionPropTypes = {
     screenExpr: ScreenExpression,
@@ -180,14 +180,13 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     }
 
     getResponderMethods() {
-        let lastTouches: Immutable.Map<number, ScreenPoint> =
-            new Immutable.Map();
+        let lastTouches: IMap<number, ScreenPoint> = IMap.make();
         const processEvent = ({nativeEvent: {touches}}) => {
-            const newTouches = new Immutable.Map(touches.map((touch) =>
+            const newTouches = new IMap(touches.map((touch) =>
                 [touch.identifier, t.newScreenPoint(touch.pageX, touch.pageY)]
             ));
 
-            const fingers = Immutable.Set(lastTouches.keys())
+            const fingers = ISet.make(lastTouches.keys())
                 .union(newTouches.keys());
             for (const fingerId of fingers) {
                 const beforePoint = lastTouches.get(fingerId);

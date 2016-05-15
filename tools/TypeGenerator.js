@@ -18,8 +18,7 @@ export const generateTypes = (types) => {
  * @flow
  */
  
-import * as Immutable from 'immutable'
-
+import {IList, IMap, ISet} from './types-collections'
 import {buildUnionCaseClass, buildValueClass} from './types-lib'
 import type {Updater} from './types-lib'
 

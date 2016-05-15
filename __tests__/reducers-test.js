@@ -4,17 +4,16 @@
 
 jest.disableAutomock();
 
-import * as Immutable from 'immutable'
-
 import {formatExpr, parseExpr} from '../ExpressionStr'
 import store from '../store'
 import type {PathComponent} from '../types'
 import {newCanvasPoint, newExprPath, newCanvasExpression} from '../types'
 import * as t from '../types'
+import {IList} from '../types-collections'
 
 // Just use a normal function lambda for now so that arguments works.
-const list = function(): Immutable.List<PathComponent> {
-    return new Immutable.List(arguments);
+const list = function(...args): IList<PathComponent> {
+    return IList.make(args);
 };
 
 describe('reducers', () => {

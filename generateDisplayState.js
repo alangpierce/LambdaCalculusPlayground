@@ -2,8 +2,6 @@
  * @flow
  */
 
-import * as Immutable from 'immutable'
-
 import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths'
 import {canvasPtToScreenPt} from './PointConversion'
 import store from './store'
@@ -18,6 +16,7 @@ import type {
     State,
     UserExpression,
 } from './types'
+import {IList, ISet} from './types-collections'
 import {canStepUserExpr} from './UserExpressionEvaluator'
 
 const executeHandler = (exprId) => {
@@ -92,9 +91,9 @@ const generateDisplayState = (state: State): DisplayState =>  {
     }
 
     return t.newDisplayState(
-        new Immutable.List(screenExpressions),
-        new Immutable.List(screenDefinitions),
-        new Immutable.List(measureRequests));
+        IList.make(screenExpressions),
+        IList.make(screenDefinitions),
+        IList.make(measureRequests));
 };
 
 /**
@@ -103,8 +102,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
  */
 const buildDisplayExpression = (
         userExpr: UserExpression, rootPath: ?ExprPath,
-        highlightedExprs: Immutable.Set<ExprPath>,
-        highlightedEmptyBodies: Immutable.Set<ExprPath>): DisplayExpression => {
+        highlightedExprs: ISet<ExprPath>,
+        highlightedEmptyBodies: ISet<ExprPath>): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
         const exprKey = path && t.newExpressionKey(path);
         const shouldHighlight = path != null && highlightedExprs.has(path);

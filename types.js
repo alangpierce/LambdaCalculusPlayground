@@ -4,43 +4,42 @@
  * @flow
  */
  
-import * as Immutable from 'immutable'
-
+import {IList, IMap, ISet} from './types-collections'
 import {buildUnionCaseClass, buildValueClass} from './types-lib'
 import type {Updater} from './types-lib'
 
 const StateImpl = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
 
 export type State = {
-    canvasExpressions: Immutable.Map<number, CanvasExpression>,
+    canvasExpressions: IMap<number, CanvasExpression>,
     nextExprId: number,
-    canvasDefinitions: Immutable.Map<string, CanvasPoint>,
-    definitions: Immutable.Map<string, ?UserExpression>,
-    pendingResults: Immutable.Map<number, PendingResult>,
-    activeDrags: Immutable.Map<number, DragData>,
-    highlightedExprs: Immutable.Set<ExprPath>,
-    highlightedEmptyBodies: Immutable.Set<ExprPath>,
-    withCanvasExpressions(canvasExpressions: Immutable.Map<number, CanvasExpression>): State,
+    canvasDefinitions: IMap<string, CanvasPoint>,
+    definitions: IMap<string, ?UserExpression>,
+    pendingResults: IMap<number, PendingResult>,
+    activeDrags: IMap<number, DragData>,
+    highlightedExprs: ISet<ExprPath>,
+    highlightedEmptyBodies: ISet<ExprPath>,
+    withCanvasExpressions(canvasExpressions: IMap<number, CanvasExpression>): State,
     withNextExprId(nextExprId: number): State,
-    withCanvasDefinitions(canvasDefinitions: Immutable.Map<string, CanvasPoint>): State,
-    withDefinitions(definitions: Immutable.Map<string, ?UserExpression>): State,
-    withPendingResults(pendingResults: Immutable.Map<number, PendingResult>): State,
-    withActiveDrags(activeDrags: Immutable.Map<number, DragData>): State,
-    withHighlightedExprs(highlightedExprs: Immutable.Set<ExprPath>): State,
-    withHighlightedEmptyBodies(highlightedEmptyBodies: Immutable.Set<ExprPath>): State,
-    updateCanvasExpressions(updater: Updater<Immutable.Map<number, CanvasExpression>>): State,
+    withCanvasDefinitions(canvasDefinitions: IMap<string, CanvasPoint>): State,
+    withDefinitions(definitions: IMap<string, ?UserExpression>): State,
+    withPendingResults(pendingResults: IMap<number, PendingResult>): State,
+    withActiveDrags(activeDrags: IMap<number, DragData>): State,
+    withHighlightedExprs(highlightedExprs: ISet<ExprPath>): State,
+    withHighlightedEmptyBodies(highlightedEmptyBodies: ISet<ExprPath>): State,
+    updateCanvasExpressions(updater: Updater<IMap<number, CanvasExpression>>): State,
     updateNextExprId(updater: Updater<number>): State,
-    updateCanvasDefinitions(updater: Updater<Immutable.Map<string, CanvasPoint>>): State,
-    updateDefinitions(updater: Updater<Immutable.Map<string, ?UserExpression>>): State,
-    updatePendingResults(updater: Updater<Immutable.Map<number, PendingResult>>): State,
-    updateActiveDrags(updater: Updater<Immutable.Map<number, DragData>>): State,
-    updateHighlightedExprs(updater: Updater<Immutable.Set<ExprPath>>): State,
-    updateHighlightedEmptyBodies(updater: Updater<Immutable.Set<ExprPath>>): State,
+    updateCanvasDefinitions(updater: Updater<IMap<string, CanvasPoint>>): State,
+    updateDefinitions(updater: Updater<IMap<string, ?UserExpression>>): State,
+    updatePendingResults(updater: Updater<IMap<number, PendingResult>>): State,
+    updateActiveDrags(updater: Updater<IMap<number, DragData>>): State,
+    updateHighlightedExprs(updater: Updater<ISet<ExprPath>>): State,
+    updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State,
     toJS(): any,
     serialize(): any,
 };
 
-export const newState = (canvasExpressions: Immutable.Map<number, CanvasExpression>, nextExprId: number, canvasDefinitions: Immutable.Map<string, CanvasPoint>, definitions: Immutable.Map<string, ?UserExpression>, pendingResults: Immutable.Map<number, PendingResult>, activeDrags: Immutable.Map<number, DragData>, highlightedExprs: Immutable.Set<ExprPath>, highlightedEmptyBodies: Immutable.Set<ExprPath>): State => (new StateImpl({
+export const newState = (canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State => (new StateImpl({
     canvasExpressions,
     nextExprId,
     canvasDefinitions,
@@ -594,20 +593,20 @@ export const newPendingResult = (expr: UserExpression, sourceExprId: number): Pe
 const DisplayStateImpl = buildValueClass('DisplayState', ['screenExpressions', 'screenDefinitions', 'measureRequests']);
 
 export type DisplayState = {
-    screenExpressions: Immutable.List<ScreenExpression>,
-    screenDefinitions: Immutable.List<ScreenDefinition>,
-    measureRequests: Immutable.List<MeasureRequest>,
-    withScreenExpressions(screenExpressions: Immutable.List<ScreenExpression>): DisplayState,
-    withScreenDefinitions(screenDefinitions: Immutable.List<ScreenDefinition>): DisplayState,
-    withMeasureRequests(measureRequests: Immutable.List<MeasureRequest>): DisplayState,
-    updateScreenExpressions(updater: Updater<Immutable.List<ScreenExpression>>): DisplayState,
-    updateScreenDefinitions(updater: Updater<Immutable.List<ScreenDefinition>>): DisplayState,
-    updateMeasureRequests(updater: Updater<Immutable.List<MeasureRequest>>): DisplayState,
+    screenExpressions: IList<ScreenExpression>,
+    screenDefinitions: IList<ScreenDefinition>,
+    measureRequests: IList<MeasureRequest>,
+    withScreenExpressions(screenExpressions: IList<ScreenExpression>): DisplayState,
+    withScreenDefinitions(screenDefinitions: IList<ScreenDefinition>): DisplayState,
+    withMeasureRequests(measureRequests: IList<MeasureRequest>): DisplayState,
+    updateScreenExpressions(updater: Updater<IList<ScreenExpression>>): DisplayState,
+    updateScreenDefinitions(updater: Updater<IList<ScreenDefinition>>): DisplayState,
+    updateMeasureRequests(updater: Updater<IList<MeasureRequest>>): DisplayState,
     toJS(): any,
     serialize(): any,
 };
 
-export const newDisplayState = (screenExpressions: Immutable.List<ScreenExpression>, screenDefinitions: Immutable.List<ScreenDefinition>, measureRequests: Immutable.List<MeasureRequest>): DisplayState => (new DisplayStateImpl({
+export const newDisplayState = (screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState => (new DisplayStateImpl({
     screenExpressions,
     screenDefinitions,
     measureRequests,
@@ -894,16 +893,16 @@ const ExprPathImpl = buildValueClass('ExprPath', ['container', 'pathSteps']);
 
 export type ExprPath = {
     container: ExprContainer,
-    pathSteps: Immutable.List<PathComponent>,
+    pathSteps: IList<PathComponent>,
     withContainer(container: ExprContainer): ExprPath,
-    withPathSteps(pathSteps: Immutable.List<PathComponent>): ExprPath,
+    withPathSteps(pathSteps: IList<PathComponent>): ExprPath,
     updateContainer(updater: Updater<ExprContainer>): ExprPath,
-    updatePathSteps(updater: Updater<Immutable.List<PathComponent>>): ExprPath,
+    updatePathSteps(updater: Updater<IList<PathComponent>>): ExprPath,
     toJS(): any,
     serialize(): any,
 };
 
-export const newExprPath = (container: ExprContainer, pathSteps: Immutable.List<PathComponent>): ExprPath => (new ExprPathImpl({
+export const newExprPath = (container: ExprContainer, pathSteps: IList<PathComponent>): ExprPath => (new ExprPathImpl({
     container,
     pathSteps,
 }));

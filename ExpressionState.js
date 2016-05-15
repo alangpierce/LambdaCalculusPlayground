@@ -2,8 +2,6 @@
  * @flow
  */
 
-import * as Immutable from 'immutable';
-
 import type {
     CanvasExpression,
     ExprContainer,
@@ -12,6 +10,7 @@ import type {
     State
 } from './types'
 import * as t from './types'
+import {IList} from './types-collections'
 
 export const addExpression = (state: State, canvasExpr: CanvasExpression):
         State => {
@@ -62,8 +61,7 @@ type DecomposeResult = {
  * removed child.
  */
 export const decomposeExpression = (
-        expr: UserExpression, path: Immutable.List<PathComponent>):
-        DecomposeResult => {
+        expr: UserExpression, path: IList<PathComponent>): DecomposeResult => {
     let extracted = null;
     const original = transformAtPath(expr, path, (expr) => {
         if (expr.type === 'userLambda' && expr.body) {
@@ -86,7 +84,7 @@ export const decomposeExpression = (
 
 export const insertAsArg = (
         targetExpr: UserExpression, newArgExpr: UserExpression,
-        path: Immutable.List<PathComponent>): UserExpression => {
+        path: IList<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) =>
         t.newUserFuncCall(expr, newArgExpr)
     );
@@ -94,7 +92,7 @@ export const insertAsArg = (
 
 export const insertAsBody = (
         targetExpr: UserExpression, newBodyExpr: UserExpression,
-        path: Immutable.List<PathComponent>): UserExpression => {
+        path: IList<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) => {
         if (expr.type !== 'userLambda' || expr.body) {
             throw new Error('Invalid expression to insert body into.');
@@ -111,7 +109,7 @@ export const insertAsBody = (
  * Throws an exception if the path was invalid.
  */
 const transformAtPath = (
-        expr: UserExpression, path: Immutable.List<PathComponent>,
+        expr: UserExpression, path: IList<PathComponent>,
         transform: Transform<UserExpression>): UserExpression => {
     if (path.size === 0) {
         return transform(expr);

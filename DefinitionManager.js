@@ -4,14 +4,13 @@
  * @flow
  */
 
-import * as Immutable from 'immutable'
+import type {Expression, UserExpression} from './types';
+import * as t from './types';
+import {IMap} from './types-collections';
 
-import type {Expression, UserExpression} from './types'
-import * as t from './types'
-
-let definitions: Immutable.Map<string, Expression> = new Immutable.Map();
+let definitions: IMap<string, Expression> = IMap.make();
 // TODO: Handle multiple definitions mapping to the same thing.
-let namesByDef: Immutable.Map<Expression, string> = new Immutable.Map();
+let namesByDef: IMap<Expression, string> = IMap.make();
 
 /**
  * Create a definition. Currently, the definition must only use existing valid
