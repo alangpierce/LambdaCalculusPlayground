@@ -27,11 +27,11 @@ const makeExpression = (exprString: string) => {
 
 const listExpressions = () => {
     const state = store.getState();
-    state.canvasExpressions.forEach((canvasExpression, exprId) => {
+    for (let [exprId, canvasExpression] of state.canvasExpressions) {
         const {expr, pos: {canvasX, canvasY}} = canvasExpression;
         console.log(
             `Expr ${exprId} at (${canvasX}, ${canvasY}): ${formatExpr(expr)}`);
-    });
+    }
 };
 
 // Only run when we're running in Chrome. We detect this by checking if we're in
@@ -48,13 +48,13 @@ if (window.messageHandlers !== undefined) {
         ViewTracker,
     };
 
-    Object.keys(newGlobals).forEach((name) => {
+    for (const name of Object.keys(newGlobals)) {
         if (window[name] === undefined) {
             window[name] = newGlobals[name];
         } else {
             console.error(`The debug global ${name} was already defined!`);
         }
-    });
+    }
 
     // Also tack them on DebugGlobals, which makes them a little easier to
     // discover.

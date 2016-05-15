@@ -189,7 +189,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
             const fingers = Immutable.Set(lastTouches.keys())
                 .union(newTouches.keys());
-            fingers.forEach((fingerId) => {
+            for (const fingerId of fingers) {
                 const beforePoint = lastTouches.get(fingerId);
                 const afterPoint = newTouches.get(fingerId);
                 if (beforePoint && afterPoint) {
@@ -199,8 +199,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 } else if (beforePoint) {
                     store.dispatch(t.newFingerUp(fingerId, beforePoint));
                 }
-            });
-
+            }
             lastTouches = newTouches;
         };
 
