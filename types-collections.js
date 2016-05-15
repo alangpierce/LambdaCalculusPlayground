@@ -3,6 +3,7 @@
  */
 import * as Immutable from 'immutable'
 
+import Iterable from './iterable'
 import {Lens, makeLens} from './types-lib'
 import type {Updater} from './types-lib'
 
@@ -10,10 +11,11 @@ import type {Updater} from './types-lib'
  * Immutable map class based on Immutable.Map, but with some extra features like
  * type-safe lenses.
  */
-export class IMap<K, V> {
+export class IMap<K, V> extends Iterable<[K, V]> {
     backingMap: Immutable.Map<K, V>;
 
     constructor(backingMap: Immutable.Map<K, V>) {
+        super();
         this.backingMap = backingMap;
     }
 
@@ -41,6 +43,10 @@ export class IMap<K, V> {
             IMapLens<K, V, Result> {
         return new IMapLens(this, replace);
     }
+    
+    iterator(): Iterator<[K, V]> {
+        return (this.backingMap: any)[Symbol.iterator]();
+    }
 }
 
 export class IMapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
@@ -51,10 +57,11 @@ export class IMapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
     }
 }
 
-export class IList<T> {
+export class IList<T> extends Iterable<T> {
     backingList: Immutable.List<T>;
 
     constructor(backingList: Immutable.List<T>) {
+        super();
         this.backingList = backingList;
     }
 
@@ -82,6 +89,10 @@ export class IList<T> {
             IListLens<T, Result> {
         return new IListLens(this, replace);
     }
+
+    iterator(): Iterator<T> {
+        return (this.backingList: any)[Symbol.iterator]();
+    }
 }
 
 export class IListLens<T, Result> extends Lens<IList<T>, Result> {
@@ -89,5 +100,30 @@ export class IListLens<T, Result> extends Lens<IList<T>, Result> {
         const replaceChild = newChildVal =>
             this.replace(this.value.set(index, newChildVal));
         return makeLens(this.value.get(index), replaceChild);
+    }
+}
+
+export class ISet<T> extends Iterable<T> {
+    backingSet: Immutable.Set<T>;
+
+    constructor(backingSet: Immutable.Set<T>) {
+        super();
+        this.backingSet = backingSet;
+    }
+
+    static make<K, V>(): ISet<T> {
+        return new ISet(Reflect.construct(Immutable.Set, arguments));
+    }
+
+    add(value: T): ISet<T> {
+        return new ISet(this.backingSet.add(value));
+    }
+
+    has(value: T): boolean {
+        return this.backingSet.has(value);
+    }
+
+    iterator(): Iterator<T> {
+        return (this.backingSet: any)[Symbol.iterator]();
     }
 }

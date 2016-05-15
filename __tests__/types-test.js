@@ -63,10 +63,14 @@ describe('types', () => {
         const map2 = map.lens().atKey('x').update(x => x + 1);
         expect(map2.get('x')).toEqual(6);
 
-        const list = IList.make([2, 8, 3]);
+        const list = IList.make([2, 8, 4]);
         expect(list.get(1)).toEqual(8);
         const list2 = list.lens().atIndex(1).update(val => val + 3);
         expect(list2.get(1)).toEqual(11);
+
+        for (const val of list) {
+            expect(val % 2).toEqual(0);
+        }
     });
 
     it('transforms objects using lenses', () => {

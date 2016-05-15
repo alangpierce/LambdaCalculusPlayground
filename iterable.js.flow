@@ -1,0 +1,10 @@
+/**
+ * We need use a declaration with @@iterator becuase Flow doesn't support
+ * symbols yet:
+ * http://stackoverflow.com/questions/31942617/how-to-implement-symbol-iterator
+ *
+ * @flow
+ */
+declare export default class Iterable<T> {
+    @@iterator(): Iterator<T>;
+}
