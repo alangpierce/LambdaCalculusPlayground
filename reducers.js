@@ -64,9 +64,8 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                     defs.set(defName, defs.get(defName)));
         },
         moveExpression: ({exprId, pos}) => {
-            return state.updateCanvasExpressions((exprs) =>
-                exprs.update(exprId, (canvasExpr) =>
-                    canvasExpr.withPos(pos)));
+            return state
+                .lens().canvasExpressions().atKey(exprId).pos().replace(pos);
         },
         decomposeExpressionAction: ({path: {container, pathSteps}, targetPos}) => {
             let extracted = null;
@@ -114,9 +113,8 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             // is triggered.
             const pendingResultId = state.nextExprId;
             return state
-                .updatePendingResults(pending =>
-                    pending.set(pendingResultId,
-                        t.PendingResult.make(evaluatedExpr, exprId)))
+                .lens().pendingResults().atKey(pendingResultId).
+                    replace(t.PendingResult.make(evaluatedExpr, exprId))
                 .withNextExprId(pendingResultId + 1);
         },
         placePendingResult: ({exprId, width}) => {

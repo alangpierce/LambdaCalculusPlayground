@@ -30,7 +30,7 @@ export class Lens<T, Result> {
 
 export const makeLens = function<T, Result>(
         value: T, replace: (t: T) => Result): Lens<T, Result> {
-    if (typeof value.makeLens === 'function') {
+    if (value != null && typeof value.makeLens === 'function') {
         return value.makeLens(replace);
     }
     return new Lens(value, replace);

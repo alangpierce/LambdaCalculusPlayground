@@ -41,6 +41,10 @@ export class IMap<K, V> extends Iterable<[K, V]> {
         return this.backingMap.keys();
     }
 
+    hasKey(key: K): boolean {
+        return this.backingMap.has(key);
+    }
+
     delete(key: K): IMap<K, V> {
         return new IMap(this.backingMap.delete(key));
     }
@@ -64,6 +68,9 @@ export class MapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
         const replaceChild = newChildVal =>
             this.replace(this.value.set(key, newChildVal));
         return makeLens(this.value.get(key), replaceChild);
+    }
+    deleteKey(key: K): Result {
+        return this.replace(this.value.delete(key));
     }
 }
 

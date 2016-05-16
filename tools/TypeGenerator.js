@@ -137,7 +137,7 @@ ${genLines((f, t) => `${f}(): ${lensType(t, 'Result')};`)}\
                 collectedMapLensTypes.add(valueType);
                 return `${valueType}MapLens<${keyType}, ${resultType}>`;
             } else {
-                return `ListLens<${keyType}, ${valueType}, ${resultType}>`;
+                return `MapLens<${keyType}, ${valueType}, ${resultType}>`;
             }
         }
         const listType = listTypeParam(currentType);
@@ -217,6 +217,7 @@ ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName}
             result += `
 declare export class ${typeName}MapLens<K, Result> extends Lens<IMap<K, ${typeName}>, Result> {
     atKey(key: K): ${typeName}Lens<Result>;
+    deleteKey(key: K): Result;
 }
 `;
         }

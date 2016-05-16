@@ -20,7 +20,7 @@ const main = () => {
         if (err) {
             console.log('Error: ' + err);
         } else {
-            console.log('Wrote types file!');
+            console.log('Wrote flow types file!');
         }
     });
 

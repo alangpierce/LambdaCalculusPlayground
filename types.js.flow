@@ -43,7 +43,7 @@ declare export class StateLens<Result> extends Lens<State, Result> {
     canvasExpressions(): CanvasExpressionMapLens<number, Result>;
     nextExprId(): Lens<number, Result>;
     canvasDefinitions(): CanvasPointMapLens<string, Result>;
-    definitions(): ListLens<string, ?UserExpression, Result>;
+    definitions(): MapLens<string, ?UserExpression, Result>;
     pendingResults(): PendingResultMapLens<number, Result>;
     activeDrags(): DragDataMapLens<number, Result>;
     highlightedExprs(): Lens<ISet<ExprPath>, Result>;
@@ -973,18 +973,22 @@ export type ViewKeyVisitor<T> = {
 
 declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {
     atKey(key: K): CanvasExpressionLens<Result>;
+    deleteKey(key: K): Result;
 }
 
 declare export class CanvasPointMapLens<K, Result> extends Lens<IMap<K, CanvasPoint>, Result> {
     atKey(key: K): CanvasPointLens<Result>;
+    deleteKey(key: K): Result;
 }
 
 declare export class PendingResultMapLens<K, Result> extends Lens<IMap<K, PendingResult>, Result> {
     atKey(key: K): PendingResultLens<Result>;
+    deleteKey(key: K): Result;
 }
 
 declare export class DragDataMapLens<K, Result> extends Lens<IMap<K, DragData>, Result> {
     atKey(key: K): DragDataLens<Result>;
+    deleteKey(key: K): Result;
 }
 
 declare export class ScreenExpressionListLens<Result> extends Lens<IList<ScreenExpression>, Result> {

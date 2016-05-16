@@ -56,6 +56,8 @@ describe('types', () => {
         expect(map.get('x')).toEqual(5);
         const map2 = map.lens().atKey('x').update(x => x + 1);
         expect(map2.get('x')).toEqual(6);
+        const map3 = map2.lens().deleteKey('x');
+        expect(map3.hasKey('x')).toEqual(false);
 
         const list = IList.make([2, 8, 4]);
         expect(list.get(1)).toEqual(8);
