@@ -45,13 +45,13 @@ export class IMap<K, V> extends Iterable<[K, V]> {
         return new IMap(this.backingMap.delete(key));
     }
 
-    lens(): IMapLens<K, V, IMap<K, V>> {
+    lens(): MapLens<K, V, IMap<K, V>> {
         return this.makeLens((newMap) => newMap);
     }
 
     makeLens<Result>(replace: (map: IMap<K, V>) => Result):
-            IMapLens<K, V, Result> {
-        return new IMapLens(this, replace);
+            MapLens<K, V, Result> {
+        return new MapLens(this, replace);
     }
     
     iterator(): Iterator<[K, V]> {
@@ -59,7 +59,7 @@ export class IMap<K, V> extends Iterable<[K, V]> {
     }
 }
 
-export class IMapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
+export class MapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
     atKey(key: K): Lens<V, Result> {
         const replaceChild = newChildVal =>
             this.replace(this.value.set(key, newChildVal));
@@ -109,13 +109,13 @@ export class IList<T> extends Iterable<T> {
         return this.backingList.get(index);
     }
 
-    lens(): IListLens<T, IList<T>> {
+    lens(): ListLens<T, IList<T>> {
         return this.makeLens((newList) => newList);
     }
 
     makeLens<Result>(replace: (list: IList<T>) => Result):
-            IListLens<T, Result> {
-        return new IListLens(this, replace);
+            ListLens<T, Result> {
+        return new ListLens(this, replace);
     }
 
     iterator(): Iterator<T> {
@@ -123,7 +123,7 @@ export class IList<T> extends Iterable<T> {
     }
 }
 
-export class IListLens<T, Result> extends Lens<IList<T>, Result> {
+export class ListLens<T, Result> extends Lens<IList<T>, Result> {
     atIndex(index: number): Lens<T, Result> {
         const replaceChild = newChildVal =>
             this.replace(this.value.set(index, newChildVal));

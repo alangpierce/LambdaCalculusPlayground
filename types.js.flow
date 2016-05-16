@@ -4,8 +4,8 @@
  * @flow
  */
  
-import {IList, IMap, ISet} from './types-collections'
-import {buildUnionCaseClass, buildValueClass} from './types-lib'
+import {IList, IMap, ISet, ListLens, MapLens} from './types-collections'
+import {Lens} from './types-lib'
 import type {Updater} from './types-lib'
 
 declare export class State {
@@ -34,8 +34,20 @@ declare export class State {
     updateActiveDrags(updater: Updater<IMap<number, DragData>>): State;
     updateHighlightedExprs(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State;
+    lens(): StateLens<State>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class StateLens<Result> extends Lens<State, Result> {
+    canvasExpressions(): CanvasExpressionMapLens<number, Result>;
+    nextExprId(): Lens<number, Result>;
+    canvasDefinitions(): CanvasPointMapLens<string, Result>;
+    definitions(): ListLens<string, ?UserExpression, Result>;
+    pendingResults(): PendingResultMapLens<number, Result>;
+    activeDrags(): DragDataMapLens<number, Result>;
+    highlightedExprs(): Lens<ISet<ExprPath>, Result>;
+    highlightedEmptyBodies(): Lens<ISet<ExprPath>, Result>;
 }
 
 declare export class Reset {
@@ -413,8 +425,14 @@ declare export class CanvasExpression {
     withPos(pos: CanvasPoint): CanvasExpression;
     updateExpr(updater: Updater<UserExpression>): CanvasExpression;
     updatePos(updater: Updater<CanvasPoint>): CanvasExpression;
+    lens(): CanvasExpressionLens<CanvasExpression>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class CanvasExpressionLens<Result> extends Lens<CanvasExpression, Result> {
+    expr(): Lens<UserExpression, Result>;
+    pos(): CanvasPointLens<Result>;
 }
 
 declare export class PendingResult {
@@ -425,8 +443,14 @@ declare export class PendingResult {
     withSourceExprId(sourceExprId: number): PendingResult;
     updateExpr(updater: Updater<UserExpression>): PendingResult;
     updateSourceExprId(updater: Updater<number>): PendingResult;
+    lens(): PendingResultLens<PendingResult>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class PendingResultLens<Result> extends Lens<PendingResult, Result> {
+    expr(): Lens<UserExpression, Result>;
+    sourceExprId(): Lens<number, Result>;
 }
 
 declare export class DisplayState {
@@ -440,8 +464,15 @@ declare export class DisplayState {
     updateScreenExpressions(updater: Updater<IList<ScreenExpression>>): DisplayState;
     updateScreenDefinitions(updater: Updater<IList<ScreenDefinition>>): DisplayState;
     updateMeasureRequests(updater: Updater<IList<MeasureRequest>>): DisplayState;
+    lens(): DisplayStateLens<DisplayState>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class DisplayStateLens<Result> extends Lens<DisplayState, Result> {
+    screenExpressions(): ScreenExpressionListLens<Result>;
+    screenDefinitions(): ScreenDefinitionListLens<Result>;
+    measureRequests(): MeasureRequestListLens<Result>;
 }
 
 declare export class MeasureRequest {
@@ -452,8 +483,14 @@ declare export class MeasureRequest {
     withResultHandler(resultHandler: (width: number, height: number) => void): MeasureRequest;
     updateExpr(updater: Updater<DisplayExpression>): MeasureRequest;
     updateResultHandler(updater: Updater<(width: number, height: number) => void>): MeasureRequest;
+    lens(): MeasureRequestLens<MeasureRequest>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class MeasureRequestLens<Result> extends Lens<MeasureRequest, Result> {
+    expr(): Lens<DisplayExpression, Result>;
+    resultHandler(): Lens<(width: number, height: number) => void, Result>;
 }
 
 declare export class ScreenDefinition {
@@ -473,8 +510,17 @@ declare export class ScreenDefinition {
     updatePos(updater: Updater<ScreenPoint>): ScreenDefinition;
     updateKey(updater: Updater<string>): ScreenDefinition;
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition;
+    lens(): ScreenDefinitionLens<ScreenDefinition>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class ScreenDefinitionLens<Result> extends Lens<ScreenDefinition, Result> {
+    defName(): Lens<string, Result>;
+    expr(): Lens<?DisplayExpression, Result>;
+    pos(): ScreenPointLens<Result>;
+    key(): Lens<string, Result>;
+    isDragging(): Lens<boolean, Result>;
 }
 
 declare export class ScreenExpression {
@@ -494,8 +540,17 @@ declare export class ScreenExpression {
     updateKey(updater: Updater<string>): ScreenExpression;
     updateIsDragging(updater: Updater<boolean>): ScreenExpression;
     updateExecuteHandler(updater: Updater<?() => void>): ScreenExpression;
+    lens(): ScreenExpressionLens<ScreenExpression>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class ScreenExpressionLens<Result> extends Lens<ScreenExpression, Result> {
+    expr(): Lens<DisplayExpression, Result>;
+    pos(): ScreenPointLens<Result>;
+    key(): Lens<string, Result>;
+    isDragging(): Lens<boolean, Result>;
+    executeHandler(): Lens<?() => void, Result>;
 }
 
 declare export class DisplayLambda {
@@ -598,8 +653,14 @@ declare export class CanvasPoint {
     withCanvasY(canvasY: number): CanvasPoint;
     updateCanvasX(updater: Updater<number>): CanvasPoint;
     updateCanvasY(updater: Updater<number>): CanvasPoint;
+    lens(): CanvasPointLens<CanvasPoint>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class CanvasPointLens<Result> extends Lens<CanvasPoint, Result> {
+    canvasX(): Lens<number, Result>;
+    canvasY(): Lens<number, Result>;
 }
 
 declare export class PointDifference {
@@ -610,8 +671,14 @@ declare export class PointDifference {
     withDy(dy: number): PointDifference;
     updateDx(updater: Updater<number>): PointDifference;
     updateDy(updater: Updater<number>): PointDifference;
+    lens(): PointDifferenceLens<PointDifference>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class PointDifferenceLens<Result> extends Lens<PointDifference, Result> {
+    dx(): Lens<number, Result>;
+    dy(): Lens<number, Result>;
 }
 
 declare export class ScreenPoint {
@@ -622,8 +689,14 @@ declare export class ScreenPoint {
     withScreenY(screenY: number): ScreenPoint;
     updateScreenX(updater: Updater<number>): ScreenPoint;
     updateScreenY(updater: Updater<number>): ScreenPoint;
+    lens(): ScreenPointLens<ScreenPoint>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class ScreenPointLens<Result> extends Lens<ScreenPoint, Result> {
+    screenX(): Lens<number, Result>;
+    screenY(): Lens<number, Result>;
 }
 
 declare export class ScreenRect {
@@ -634,8 +707,14 @@ declare export class ScreenRect {
     withBottomRight(bottomRight: ScreenPoint): ScreenRect;
     updateTopLeft(updater: Updater<ScreenPoint>): ScreenRect;
     updateBottomRight(updater: Updater<ScreenPoint>): ScreenRect;
+    lens(): ScreenRectLens<ScreenRect>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class ScreenRectLens<Result> extends Lens<ScreenRect, Result> {
+    topLeft(): ScreenPointLens<Result>;
+    bottomRight(): ScreenPointLens<Result>;
 }
 
 export type PathComponent = 'func' | 'arg' | 'body';
@@ -648,8 +727,14 @@ declare export class ExprPath {
     withPathSteps(pathSteps: IList<PathComponent>): ExprPath;
     updateContainer(updater: Updater<ExprContainer>): ExprPath;
     updatePathSteps(updater: Updater<IList<PathComponent>>): ExprPath;
+    lens(): ExprPathLens<ExprPath>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class ExprPathLens<Result> extends Lens<ExprPath, Result> {
+    container(): Lens<ExprContainer, Result>;
+    pathSteps(): ListLens<PathComponent, Result>;
 }
 
 declare export class ExprIdContainer {
@@ -763,8 +848,15 @@ declare export class DragData {
     updateUserExpr(updater: Updater<UserExpression>): DragData;
     updateGrabOffset(updater: Updater<PointDifference>): DragData;
     updateScreenRect(updater: Updater<ScreenRect>): DragData;
+    lens(): DragDataLens<DragData>;
     toJS(): any;
     serialize(): any;
+}
+
+declare export class DragDataLens<Result> extends Lens<DragData, Result> {
+    userExpr(): Lens<UserExpression, Result>;
+    grabOffset(): PointDifferenceLens<Result>;
+    screenRect(): ScreenRectLens<Result>;
 }
 
 declare export class AddToTopLevelResult {
@@ -879,3 +971,30 @@ export type ViewKeyVisitor<T> = {
     definitionKey(definitionKey: DefinitionKey): T,
 }
 
+declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {
+    atKey(key: K): CanvasExpressionLens<Result>;
+}
+
+declare export class CanvasPointMapLens<K, Result> extends Lens<IMap<K, CanvasPoint>, Result> {
+    atKey(key: K): CanvasPointLens<Result>;
+}
+
+declare export class PendingResultMapLens<K, Result> extends Lens<IMap<K, PendingResult>, Result> {
+    atKey(key: K): PendingResultLens<Result>;
+}
+
+declare export class DragDataMapLens<K, Result> extends Lens<IMap<K, DragData>, Result> {
+    atKey(key: K): DragDataLens<Result>;
+}
+
+declare export class ScreenExpressionListLens<Result> extends Lens<IList<ScreenExpression>, Result> {
+    atIndex(index: number): ScreenExpressionLens<Result>;
+}
+
+declare export class ScreenDefinitionListLens<Result> extends Lens<IList<ScreenDefinition>, Result> {
+    atIndex(index: number): ScreenDefinitionLens<Result>;
+}
+
+declare export class MeasureRequestListLens<Result> extends Lens<IList<MeasureRequest>, Result> {
+    atIndex(index: number): MeasureRequestLens<Result>;
+}
