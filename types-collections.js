@@ -61,6 +61,18 @@ export class IMap<K, V> extends Iterable<[K, V]> {
     iterator(): Iterator<[K, V]> {
         return (this.backingMap: any)[Symbol.iterator]();
     }
+
+    equals(other: IMap<K, V>): boolean {
+        return this.backingMap.equals((other.backingMap: any));
+    }
+
+    hashCode(): number {
+        return this.backingMap.hashCode();
+    }
+
+    toString(): string {
+        return this.backingMap.toString();
+    }
 }
 
 export class MapLens<K, V, Result> extends Lens<IMap<K, V>, Result> {
@@ -128,6 +140,18 @@ export class IList<T> extends Iterable<T> {
     iterator(): Iterator<T> {
         return (this.backingList: any)[Symbol.iterator]();
     }
+
+    equals(other: IList<T>): boolean {
+        return this.backingList.equals((other.backingList: any));
+    }
+
+    hashCode(): number {
+        return this.backingList.hashCode();
+    }
+
+    toString(): string {
+        return this.backingList.toString();
+    }
 }
 
 export class ListLens<T, Result> extends Lens<IList<T>, Result> {
@@ -166,5 +190,17 @@ export class ISet<T> extends Iterable<T> {
 
     iterator(): Iterator<T> {
         return (this.backingSet: any)[Symbol.iterator]();
+    }
+
+    equals(other: ISet<T>): boolean {
+        return this.backingSet.equals((other.backingSet: any));
+    }
+
+    hashCode(): number {
+        return this.backingSet.hashCode();
+    }
+
+    toString(): string {
+        return this.backingSet.toString();
     }
 }

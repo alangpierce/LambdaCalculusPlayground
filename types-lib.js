@@ -61,6 +61,8 @@ export const buildValueClass = (
 
     class ValueClass {
         constructor(fields) {
+            // Attach the class name for easier debugging.
+            (this: any).className = className;
             for (const fieldName of fieldNames) {
                 (this: any)[fieldName] = fields[fieldName];
             }
@@ -97,6 +99,9 @@ export const buildValueClass = (
         hashCode() {
             return Immutable.Map(this).hashCode();
         }
+        toString() {
+            return Immutable.Map(this).toString();
+        }
     }
     for (const name of fieldNames) {
         (ValueClass: any).prototype[withName(name)] = function(newVal) {
@@ -124,10 +129,10 @@ export const buildUnionCaseClass = (
     defaults.type = undefined;
     class UnionCaseClass {
         constructor(fields) {
+            (this: any).type = fields.type;
             for (const fieldName of fieldNames) {
                 (this: any)[fieldName] = fields[fieldName];
             }
-            (this: any).type = fields.type;
         }
         static make(...args) {
             const constructorArg = {};
@@ -159,6 +164,9 @@ export const buildUnionCaseClass = (
         }
         hashCode() {
             return Immutable.Map(this).hashCode();
+        }
+        toString() {
+            return Immutable.Map(this).toString();
         }
     }
     for (const name of fieldNames) {
