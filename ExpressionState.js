@@ -11,6 +11,7 @@ import type {
 } from './types'
 import * as t from './types'
 import {IList} from './types-collections'
+import type {Updater} from './types-lib'
 
 export const addExpression = (state: State, canvasExpr: CanvasExpression):
         State => {
@@ -20,32 +21,20 @@ export const addExpression = (state: State, canvasExpr: CanvasExpression):
         .withNextExprId(nextExprId + 1);
 };
 
-type Transform<T> = (t: T) => T;
-
-export const modifyExpression = (state: State, exprId: number,
-                                 transform: Transform<CanvasExpression>):
-        State => {
-    return state.updateCanvasExpressions((exprs) =>
-        exprs.update(exprId, transform)
-    );
-};
-
 export const updateExprContainer = (
         state: State, container: ExprContainer,
-        transform: Transform<UserExpression>): State => {
+        updater: Updater<UserExpression>): State => {
     return container.match({
         exprIdContainer: ({exprId}) =>
-            state.updateCanvasExpressions((canvasExprs) =>
-                canvasExprs.update(exprId, (canvasExpr) =>
-                    canvasExpr.updateExpr(transform))),
+            state.lens()
+                .canvasExpressions().atKey(exprId).expr().update(updater),
         definitionContainer: ({defName}) =>
-            state.updateDefinitions((definitions) =>
-                definitions.update(defName, (def) => {
-                    if (def == null) {
-                        throw new Error('Cannot update an empty definition.');
-                    }
-                    return transform(def);
-                })),
+            state.lens().definitions().atKey(defName).update((def) => {
+                if (def == null) {
+                    throw new Error('Cannot update an empty definition.');
+                }
+                return updater(def);
+            }),
     });
 };
 
@@ -110,17 +99,17 @@ export const insertAsBody = (
  */
 const transformAtPath = (
         expr: UserExpression, path: IList<PathComponent>,
-        transform: Transform<UserExpression>): UserExpression => {
+        updater: Updater<UserExpression>): UserExpression => {
     if (path.size === 0) {
-        return transform(expr);
+        return updater(expr);
     }
     return updateChild(expr, path.get(0), (child) => {
-        return transformAtPath(child, path.slice(1), transform);
+        return transformAtPath(child, path.slice(1), updater);
     });
 };
 
 const updateChild = (expr: UserExpression, step: PathComponent,
-                     updater: Transform<UserExpression>): UserExpression => {
+                     updater: Updater<UserExpression>): UserExpression => {
     if (step === 'func' && expr instanceof t.UserFuncCall) {
         return expr.updateFunc(updater);
     } else if (step === 'arg' && expr instanceof t.UserFuncCall) {
