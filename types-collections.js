@@ -22,7 +22,7 @@ export class IMap<K, V> extends Iterable<[K, V]> {
     }
 
     static make<K, V>(...args): IMap<K, V> {
-        return new IMap(Reflect.construct(Immutable.Map, args));
+        return new IMap(new Immutable.Map(...args));
     }
 
     set(key: K, value: V): IMap<K, V> {
@@ -85,7 +85,7 @@ export class IList<T> extends Iterable<T> {
     }
 
     static make<T>(...args): IList<T> {
-        return new IList(Reflect.construct(Immutable.List, args));
+        return new IList(new Immutable.List(...args));
     }
 
     set(index: number, value: T): IList<T> {
@@ -149,7 +149,7 @@ export class ISet<T> extends Iterable<T> {
     }
 
     static make<K, V>(...args): ISet<T> {
-        return new ISet(Reflect.construct(Immutable.Set, args));
+        return new ISet(new Immutable.Set(...args));
     }
 
     add(value: T): ISet<T> {
