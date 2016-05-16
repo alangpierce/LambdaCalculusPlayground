@@ -113,7 +113,6 @@ ${genLines((f, t) => `${f}: ${t};`)}\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${typeName};`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${typeName};`)}\
     lens(): ${lensType(typeName, typeName)};
-    toJS(): any;
     serialize(): any;
 }
 
@@ -205,7 +204,6 @@ ${genLines((f, t) => `${f}: ${t};`)}\
 ${genLines((f, t) => `with${upperName(f)}(${f}: ${t}): ${caseName};`)}\
 ${genLines((f, t) => `update${upperName(f)}(updater: Updater<${t}>): ${caseName};`)}\
     match<T>(visitor: ${unionName}Visitor<T>): T;
-    toJS(): any;
     serialize(): any;
 }
 `;

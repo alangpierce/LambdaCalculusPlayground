@@ -94,14 +94,14 @@ describe('reducers', () => {
     });
 
     const assertExpression = (exprId, exprString, canvasX, canvasY) => {
-        expect(store.getState().canvasExpressions.get(exprId).toJS()).toEqual(
+        expect(store.getState().canvasExpressions.get(exprId).serialize()).toEqual(
             CanvasExpression.make(parseExpr(exprString),
-                CanvasPoint.make(canvasX, canvasY)).toJS());
+                CanvasPoint.make(canvasX, canvasY)).serialize());
     };
 
     const assertPendingExpression = (exprId, exprString, canvasX, canvasY) => {
-        expect(store.getState().pendingResults.get(exprId).toJS()).toEqual(
-            t.PendingResult.make(parseExpr(exprString), 0).toJS());
+        expect(store.getState().pendingResults.get(exprId).serialize()).toEqual(
+            t.PendingResult.make(parseExpr(exprString), 0).serialize());
     };
 
     const makeIdPath = (exprId, steps) => {

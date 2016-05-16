@@ -70,6 +70,6 @@ describe('parseExpr', () => {
     });
 
     const expectExprsEqual = (expr1, expr2) => {
-        expect(expr1.toJS()).toEqual(expr2.toJS());
+        expect(expr1.serialize()).toEqual(expr2.serialize());
     }
 });

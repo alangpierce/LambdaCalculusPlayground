@@ -36,6 +36,14 @@ export const makeLens = function<T, Result>(
     return new Lens(value, replace);
 };
 
+const withName = (name) => {
+    return 'with' + name[0].toUpperCase() + name.slice(1);
+};
+
+const updateName = (name) => {
+    return 'update' + name[0].toUpperCase() + name.slice(1);
+};
+
 /**
  * Construct a class with properly-named fields.
  */
@@ -46,16 +54,17 @@ export const buildValueClass = (
     for (const name of fieldNames) {
         customLensPrototype[name] = function() {
             const replaceChild = newChildVal =>
-                this.replace(this.value.set(name, newChildVal));
+                this.replace(this.value[withName(name)](newChildVal));
             return makeLens(this.value[name], replaceChild);
         };
     }
 
-    const defaults: any = {};
-    for (const name of fieldNames) {
-        defaults[name] = undefined;
-    }
-    class ValueClass extends Immutable.Record(defaults) {
+    class ValueClass {
+        constructor(fields) {
+            for (const fieldName of fieldNames) {
+                (this: any)[fieldName] = fields[fieldName];
+            }
+        }
         static make(...args) {
             const constructorArg = {};
             for (let i = 0; i < fieldNames.length; i++) {
@@ -67,7 +76,7 @@ export const buildValueClass = (
             const result = {};
             result.__SERIALIZED_CLASS = className;
             for (const name of fieldNames) {
-                result[name] = serialize(this[name]);
+                result[name] = serialize((this: any)[name]);
             }
             return result;
         }
@@ -77,14 +86,29 @@ export const buildValueClass = (
         makeLens(replace) {
             return new CustomLens(this, replace);
         }
+        equals(other) {
+            for (const name of fieldNames) {
+                if (!Immutable.is((this: any)[name], other[name])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        hashCode() {
+            return Immutable.Map(this).hashCode();
+        }
     }
     for (const name of fieldNames) {
-        const upperName = name[0].toUpperCase() + name.slice(1);
-        ValueClass.prototype['with' + upperName] = function(newVal) {
-            return this.set(name, newVal);
+        (ValueClass: any).prototype[withName(name)] = function(newVal) {
+            const newArgs = {};
+            for (const copyName of fieldNames) {
+                newArgs[copyName] = this[copyName];
+            }
+            newArgs[name] = newVal;
+            return new ValueClass(newArgs);
         };
-        ValueClass.prototype['update' + upperName] = function(updater) {
-            return this.set(name, updater(this[name]));
+        (ValueClass: any).prototype[updateName(name)] = function(updater) {
+            return this[withName(name)](updater(this[name]));
         };
     }
     registeredConstructors[className] = ValueClass;
@@ -98,7 +122,13 @@ export const buildUnionCaseClass = (
         defaults[name] = undefined;
     }
     defaults.type = undefined;
-    class UnionCaseClass extends Immutable.Record(defaults) {
+    class UnionCaseClass {
+        constructor(fields) {
+            for (const fieldName of fieldNames) {
+                (this: any)[fieldName] = fields[fieldName];
+            }
+            (this: any).type = fields.type;
+        }
         static make(...args) {
             const constructorArg = {};
             constructorArg.type = caseName;
@@ -114,19 +144,35 @@ export const buildUnionCaseClass = (
             const result = {};
             result.__SERIALIZED_CLASS = caseName;
             for (const name of fieldNames) {
-                result[name] = serialize(this[name]);
+                result[name] = serialize((this: any)[name]);
             }
-            result.type = this.type;
+            result.type = (this: any).type;
             return result;
+        }
+        equals(other) {
+            for (const name of fieldNames) {
+                if (!Immutable.is((this: any)[name], other[name])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        hashCode() {
+            return Immutable.Map(this).hashCode();
         }
     }
     for (const name of fieldNames) {
-        const upperName = name[0].toUpperCase() + name.slice(1);
-        UnionCaseClass.prototype['with' + upperName] = function(newVal) {
-            return this.set(name, newVal);
+        (UnionCaseClass: any).prototype[withName(name)] = function(newVal) {
+            const newArgs = {};
+            for (const copyName of fieldNames) {
+                newArgs[copyName] = this[copyName];
+            }
+            newArgs.type = this.type;
+            newArgs[name] = newVal;
+            return new UnionCaseClass(newArgs);
         };
-        UnionCaseClass.prototype['update' + upperName] = function(updater) {
-            return this.set(name, updater(this[name]));
+        (UnionCaseClass: any).prototype[updateName(name)] = function(updater) {
+            return this[withName(name)](updater(this[name]));
         };
     }
     registeredConstructors[caseName] = UnionCaseClass;
