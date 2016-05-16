@@ -89,6 +89,9 @@ export const buildValueClass = (
             return new CustomLens(this, replace);
         }
         equals(other) {
+            if (!(other instanceof ValueClass)) {
+                return false;
+            }
             for (const name of fieldNames) {
                 if (!Immutable.is((this: any)[name], other[name])) {
                     return false;
@@ -155,6 +158,12 @@ export const buildUnionCaseClass = (
             return result;
         }
         equals(other) {
+            if (!(other instanceof UnionCaseClass)) {
+                return false;
+            }
+            if (!Immutable.is((this: any).type, other.type)) {
+                return false;
+            }
             for (const name of fieldNames) {
                 if (!Immutable.is((this: any)[name], other[name])) {
                     return false;
