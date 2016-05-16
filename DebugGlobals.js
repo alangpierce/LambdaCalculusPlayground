@@ -20,8 +20,8 @@ import * as t from './types'
 const makeExpression = (exprString: string) => {
     const userExpr = parseExpr(exprString);
     const canvasExpr =
-        t.newCanvasExpression(userExpr, t.newCanvasPoint(100, 100));
-    store.dispatch(t.newAddExpression(canvasExpr));
+        t.CanvasExpression.make(userExpr, t.CanvasPoint.make(100, 100));
+    store.dispatch(t.AddExpression.make(canvasExpr));
 };
 
 const listExpressions = () => {

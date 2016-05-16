@@ -8,12 +8,12 @@
  */
 
 import {
-    newUserLambda,
-    newUserFuncCall,
-    newUserVariable,
-    newUserReference
+    UserFuncCall,
+    UserLambda,
+    UserReference,
+    UserVariable,
 } from './types'
-import type {UserExpression} from './types'
+import type {UserExpression} from './types';
 
 export const parseExpr = (str: string): UserExpression => {
     // Allow redundant whitespace.
@@ -31,7 +31,7 @@ export const parseExpr = (str: string): UserExpression => {
         } else {
             body = parseExpr(bodyStr);
         }
-        return newUserLambda(varName, body);
+        return UserLambda.make(varName, body);
     } else if (str.endsWith(")")) {
         let level = 1;
         let index = str.length - 1;
@@ -46,14 +46,14 @@ export const parseExpr = (str: string): UserExpression => {
         // Now index is the index of the open-paren character.
         const funcStr = str.substring(0, index);
         const argStr = str.substring(index + 1, str.length - 1);
-        return newUserFuncCall(
+        return UserFuncCall.make(
             parseExpr(funcStr), parseExpr(argStr));
     } else if (str === str.toUpperCase()) {
         assertNoBrackets(str);
-        return newUserReference(str);
+        return UserReference.make(str);
     } else {
         assertNoBrackets(str);
-        return newUserVariable(str);
+        return UserVariable.make(str);
     }
 };
 

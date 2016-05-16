@@ -11,27 +11,27 @@ describe('parseExpr', () => {
     it('parses basic lambdas', () => {
         expectExprsEqual(
             parseExpr('L x[x]'),
-            t.newUserLambda('x', t.newUserVariable('x')));
+            t.UserLambda.make('x', t.UserVariable.make('x')));
     });
 
     it('handles ref capitalization', () => {
         expectExprsEqual(
             parseExpr('FOO'),
-            t.newUserReference('FOO'));
+            t.UserReference.make('FOO'));
     });
 
     it('parses function calls', () => {
         expectExprsEqual(
             parseExpr('L x[L y[x(y(y))]]'),
-            t.newUserLambda(
+            t.UserLambda.make(
                 'x',
-                t.newUserLambda(
+                t.UserLambda.make(
                     'y',
-                    t.newUserFuncCall(
-                        t.newUserVariable('x'),
-                        t.newUserFuncCall(
-                            t.newUserVariable('y'),
-                            t.newUserVariable('y')
+                    t.UserFuncCall.make(
+                        t.UserVariable.make('x'),
+                        t.UserFuncCall.make(
+                            t.UserVariable.make('y'),
+                            t.UserVariable.make('y')
                         )
                     )
                 )
@@ -41,14 +41,14 @@ describe('parseExpr', () => {
     it('treats symbols as references', () => {
         expectExprsEqual(
             parseExpr('L x[+(x)(y)]'),
-            t.newUserLambda(
+            t.UserLambda.make(
                 'x',
-                t.newUserFuncCall(
-                    t.newUserFuncCall(
-                        t.newUserReference('+'),
-                        t.newUserVariable('x')
+                t.UserFuncCall.make(
+                    t.UserFuncCall.make(
+                        t.UserReference.make('+'),
+                        t.UserVariable.make('x')
                     ),
-                    t.newUserVariable('y')
+                    t.UserVariable.make('y')
                 )
             ));
     });
@@ -60,11 +60,11 @@ describe('parseExpr', () => {
     it('allows internal whitespace', () => {
         expectExprsEqual(
             parseExpr(' L   x[   x(y  )]  '),
-            t.newUserLambda(
+            t.UserLambda.make(
                 'x',
-                t.newUserFuncCall(
-                    t.newUserVariable('x'),
-                    t.newUserVariable('y'),
+                t.UserFuncCall.make(
+                    t.UserVariable.make('x'),
+                    t.UserVariable.make('y'),
                 )
             ));
     });

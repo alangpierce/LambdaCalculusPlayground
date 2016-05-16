@@ -21,7 +21,7 @@ import {canStepUserExpr} from './UserExpressionEvaluator'
 
 const executeHandler = (exprId) => {
     return () => {
-        store.dispatch(t.newEvaluateExpression(exprId));
+        store.dispatch(t.EvaluateExpression.make(exprId));
     };
 };
 
@@ -36,7 +36,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             highlightedEmptyBodies);
         const isDragging = false;
         const isExecutable = canStepUserExpr(canvasExpr.expr);
-        screenExpressions.push(t.newScreenExpression(
+        screenExpressions.push(t.ScreenExpression.make(
             displayExpr,
             canvasPtToScreenPt(canvasExpr.pos),
             'expr' + exprId,
@@ -50,7 +50,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
         const executeHandler = null;
-        screenExpressions.push(t.newScreenExpression(
+        screenExpressions.push(t.ScreenExpression.make(
             displayExpr,
             dragData.screenRect.topLeft,
             'drag' + fingerId,
@@ -69,7 +69,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             displayExpr = buildDisplayExpression(
                 userExpr, rootPath, highlightedExprs, highlightedEmptyBodies);
         }
-        screenDefinitions.push(t.newScreenDefinition(
+        screenDefinitions.push(t.ScreenDefinition.make(
             defName,
             displayExpr,
             canvasPtToScreenPt(canvasPoint),
@@ -82,15 +82,15 @@ const generateDisplayState = (state: State): DisplayState =>  {
     for (let [exprId, pendingResult] of state.pendingResults) {
         const displayExpr = buildDisplayExpression(
             pendingResult.expr, null, highlightedExprs, highlightedEmptyBodies);
-        measureRequests.push(t.newMeasureRequest(
+        measureRequests.push(t.MeasureRequest.make(
             displayExpr,
             (width, height) => {
-                store.dispatch(t.newPlacePendingResult(exprId, width, height));
+                store.dispatch(t.PlacePendingResult.make(exprId, width, height));
             }
         ))
     }
 
-    return t.newDisplayState(
+    return t.DisplayState.make(
         IList.make(screenExpressions),
         IList.make(screenDefinitions),
         IList.make(measureRequests));
@@ -105,21 +105,21 @@ const buildDisplayExpression = (
         highlightedExprs: ISet<ExprPath>,
         highlightedEmptyBodies: ISet<ExprPath>): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
-        const exprKey = path && t.newExpressionKey(path);
+        const exprKey = path && t.ExpressionKey.make(path);
         const shouldHighlight = path != null && highlightedExprs.has(path);
         return expr.match({
             userLambda: ({varName, body}) => {
-                const varKey = path && t.newLambdaVarKey(path);
-                const emptyBodyKey = path && t.newEmptyBodyKey(path);
+                const varKey = path && t.LambdaVarKey.make(path);
+                const emptyBodyKey = path && t.EmptyBodyKey.make(path);
                 if (body) {
                     const displayBody = rec(body, path && step(path, 'body'));
-                    return t.newDisplayLambda(
+                    return t.DisplayLambda.make(
                         exprKey, shouldHighlight, varKey, null, false, varName,
                         displayBody);
                 } else {
                     const highlightBody = path != null &&
                         highlightedEmptyBodies.has(path);
-                    return t.newDisplayLambda(
+                    return t.DisplayLambda.make(
                         exprKey, shouldHighlight, varKey, emptyBodyKey,
                         highlightBody, varName, null);
                 }
@@ -127,14 +127,14 @@ const buildDisplayExpression = (
             userFuncCall: ({func, arg}) => {
                 const displayFunc = rec(func, path && step(path, 'func'));
                 const displayArg = rec(arg, path && step(path, 'arg'));
-                return t.newDisplayFuncCall(
+                return t.DisplayFuncCall.make(
                     exprKey, shouldHighlight, displayFunc, displayArg);
             },
             userVariable: ({varName}) => {
-                return t.newDisplayVariable(exprKey, shouldHighlight, varName);
+                return t.DisplayVariable.make(exprKey, shouldHighlight, varName);
             },
             userReference: ({defName}) => {
-                return t.newDisplayReference(exprKey, shouldHighlight, defName);
+                return t.DisplayReference.make(exprKey, shouldHighlight, defName);
             },
         });
     };

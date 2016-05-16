@@ -26,7 +26,7 @@ import {screenPtToCanvasPt} from './PointConversion'
 import {deserialize} from './types-lib'
 import {getPositionOnScreen} from './ViewTracker';
 
-const initialState: State = t.newState(
+const initialState: State = t.State.make(
     IMap.make(),
     0,
     IMap.make(),
@@ -79,7 +79,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 throw new Error('Expected extracted to be set.');
             }
             state = addExpression(
-                state, t.newCanvasExpression(extracted, targetPos));
+                state, t.CanvasExpression.make(extracted, targetPos));
             return state;
         },
         insertAsArg: ({argExprId, path: {container, pathSteps}}) => {
@@ -116,7 +116,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             return state
                 .updatePendingResults(pending =>
                     pending.set(pendingResultId,
-                        t.newPendingResult(evaluatedExpr, exprId)))
+                        t.PendingResult.make(evaluatedExpr, exprId)))
                 .withNextExprId(pendingResultId + 1);
         },
         placePendingResult: ({exprId, width}) => {
@@ -128,7 +128,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             const resultPos = computeResultPos(sourceExprId, width);
             state = state.updatePendingResults(pending =>
                 pending.delete(exprId));
-            return addExpression(state, t.newCanvasExpression(expr, resultPos));
+            return addExpression(state, t.CanvasExpression.make(expr, resultPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
@@ -139,7 +139,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                         .updateCanvasExpressions(exprs => exprs.delete(exprId))
                         .updateActiveDrags((drags) =>
                             drags.set(fingerId,
-                                t.newDragData(expr, offset, screenRect)));
+                                t.DragData.make(expr, offset, screenRect)));
                 },
                 decomposeExpression: ({exprPath, offset, screenRect}) => {
                     let extracted;
@@ -151,12 +151,12 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                     return state
                         .updateActiveDrags(drags =>
                             drags.set(fingerId,
-                                t.newDragData(extracted, offset, screenRect)));
+                                t.DragData.make(extracted, offset, screenRect)));
                 },
                 createExpression: ({expr, offset, screenRect}) => {
                     return state.updateActiveDrags(drags =>
                         drags.set(fingerId,
-                            t.newDragData(expr, offset, screenRect)));
+                            t.DragData.make(expr, offset, screenRect)));
                 },
                 startPan: () => {
                     // TODO
@@ -190,7 +190,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 addToTopLevelResult: ({expr, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);
                     return addExpression(state,
-                        t.newCanvasExpression(expr, canvasPos));
+                        t.CanvasExpression.make(expr, canvasPos));
                 },
                 insertAsBodyResult: ({lambdaPath: {container, pathSteps}, expr}) =>
                     updateExprContainer(state, container, targetExpr =>
@@ -212,13 +212,13 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
 
 const computeResultPos = (sourceExprId: number, width: number):
         CanvasPoint => {
-    const sourceExprKey = t.newExpressionKey(emptyIdPath(sourceExprId));
+    const sourceExprKey = t.ExpressionKey.make(emptyIdPath(sourceExprId));
     const sourceRect = getPositionOnScreen(sourceExprKey);
     if (sourceRect == null) {
-        return t.newCanvasPoint(100, 100);
+        return t.CanvasPoint.make(100, 100);
     }
     const midPoint = (sourceRect.topLeft.screenX + sourceRect.bottomRight.screenX) / 2;
-    return t.newCanvasPoint(
+    return t.CanvasPoint.make(
         midPoint - (width / 2),
         sourceRect.bottomRight.screenY + 15,
     )

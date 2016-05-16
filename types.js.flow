@@ -9,6 +9,7 @@ import {buildUnionCaseClass, buildValueClass} from './types-lib'
 import type {Updater} from './types-lib'
 
 declare export class State {
+    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State;
     canvasExpressions: IMap<number, CanvasExpression>;
     nextExprId: number;
     canvasDefinitions: IMap<string, CanvasPoint>;
@@ -35,31 +36,18 @@ declare export class State {
     updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State;
     toJS(): any;
     serialize(): any;
-};
-
-export const newState = (canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State => (new State({
-    canvasExpressions,
-    nextExprId,
-    canvasDefinitions,
-    definitions,
-    pendingResults,
-    activeDrags,
-    highlightedExprs,
-    highlightedEmptyBodies,
-}));
+}
 
 declare export class Reset {
+    static make(): Reset;
     type: 'reset';
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newReset = (): Reset => (new Reset({
-    type: 'reset',
-}));
+}
 
 declare export class AddExpression {
+    static make(canvasExpr: CanvasExpression): AddExpression;
     type: 'addExpression';
     canvasExpr: CanvasExpression;
     withCanvasExpr(canvasExpr: CanvasExpression): AddExpression;
@@ -67,14 +55,10 @@ declare export class AddExpression {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newAddExpression = (canvasExpr: CanvasExpression): AddExpression => (new AddExpression({
-    type: 'addExpression',
-    canvasExpr,
-}));
+}
 
 declare export class PlaceDefinition {
+    static make(defName: string, screenPos: ScreenPoint): PlaceDefinition;
     type: 'placeDefinition';
     defName: string;
     screenPos: ScreenPoint;
@@ -85,15 +69,10 @@ declare export class PlaceDefinition {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newPlaceDefinition = (defName: string, screenPos: ScreenPoint): PlaceDefinition => (new PlaceDefinition({
-    type: 'placeDefinition',
-    defName,
-    screenPos,
-}));
+}
 
 declare export class MoveExpression {
+    static make(exprId: number, pos: CanvasPoint): MoveExpression;
     type: 'moveExpression';
     exprId: number;
     pos: CanvasPoint;
@@ -104,15 +83,10 @@ declare export class MoveExpression {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newMoveExpression = (exprId: number, pos: CanvasPoint): MoveExpression => (new MoveExpression({
-    type: 'moveExpression',
-    exprId,
-    pos,
-}));
+}
 
 declare export class DecomposeExpressionAction {
+    static make(path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction;
     type: 'decomposeExpressionAction';
     path: ExprPath;
     targetPos: CanvasPoint;
@@ -123,15 +97,10 @@ declare export class DecomposeExpressionAction {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDecomposeExpressionAction = (path: ExprPath, targetPos: CanvasPoint): DecomposeExpressionAction => (new DecomposeExpressionAction({
-    type: 'decomposeExpressionAction',
-    path,
-    targetPos,
-}));
+}
 
 declare export class InsertAsArg {
+    static make(argExprId: number, path: ExprPath): InsertAsArg;
     type: 'insertAsArg';
     argExprId: number;
     path: ExprPath;
@@ -142,15 +111,10 @@ declare export class InsertAsArg {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newInsertAsArg = (argExprId: number, path: ExprPath): InsertAsArg => (new InsertAsArg({
-    type: 'insertAsArg',
-    argExprId,
-    path,
-}));
+}
 
 declare export class InsertAsBody {
+    static make(bodyExprId: number, path: ExprPath): InsertAsBody;
     type: 'insertAsBody';
     bodyExprId: number;
     path: ExprPath;
@@ -161,15 +125,10 @@ declare export class InsertAsBody {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newInsertAsBody = (bodyExprId: number, path: ExprPath): InsertAsBody => (new InsertAsBody({
-    type: 'insertAsBody',
-    bodyExprId,
-    path,
-}));
+}
 
 declare export class EvaluateExpression {
+    static make(exprId: number): EvaluateExpression;
     type: 'evaluateExpression';
     exprId: number;
     withExprId(exprId: number): EvaluateExpression;
@@ -177,14 +136,10 @@ declare export class EvaluateExpression {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvaluateExpression = (exprId: number): EvaluateExpression => (new EvaluateExpression({
-    type: 'evaluateExpression',
-    exprId,
-}));
+}
 
 declare export class PlacePendingResult {
+    static make(exprId: number, width: number, height: number): PlacePendingResult;
     type: 'placePendingResult';
     exprId: number;
     width: number;
@@ -198,16 +153,10 @@ declare export class PlacePendingResult {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newPlacePendingResult = (exprId: number, width: number, height: number): PlacePendingResult => (new PlacePendingResult({
-    type: 'placePendingResult',
-    exprId,
-    width,
-    height,
-}));
+}
 
 declare export class FingerDown {
+    static make(fingerId: number, screenPos: ScreenPoint): FingerDown;
     type: 'fingerDown';
     fingerId: number;
     screenPos: ScreenPoint;
@@ -218,15 +167,10 @@ declare export class FingerDown {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newFingerDown = (fingerId: number, screenPos: ScreenPoint): FingerDown => (new FingerDown({
-    type: 'fingerDown',
-    fingerId,
-    screenPos,
-}));
+}
 
 declare export class FingerMove {
+    static make(fingerId: number, screenPos: ScreenPoint): FingerMove;
     type: 'fingerMove';
     fingerId: number;
     screenPos: ScreenPoint;
@@ -237,15 +181,10 @@ declare export class FingerMove {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newFingerMove = (fingerId: number, screenPos: ScreenPoint): FingerMove => (new FingerMove({
-    type: 'fingerMove',
-    fingerId,
-    screenPos,
-}));
+}
 
 declare export class FingerUp {
+    static make(fingerId: number, screenPos: ScreenPoint): FingerUp;
     type: 'fingerUp';
     fingerId: number;
     screenPos: ScreenPoint;
@@ -256,13 +195,7 @@ declare export class FingerUp {
     match<T>(visitor: ActionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newFingerUp = (fingerId: number, screenPos: ScreenPoint): FingerUp => (new FingerUp({
-    type: 'fingerUp',
-    fingerId,
-    screenPos,
-}));
+}
 
 export type Action = Reset | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
@@ -282,6 +215,7 @@ export type ActionVisitor<T> = {
 }
 
 declare export class Lambda {
+    static make(varName: string, body: Expression): Lambda;
     type: 'lambda';
     varName: string;
     body: Expression;
@@ -292,15 +226,10 @@ declare export class Lambda {
     match<T>(visitor: ExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newLambda = (varName: string, body: Expression): Lambda => (new Lambda({
-    type: 'lambda',
-    varName,
-    body,
-}));
+}
 
 declare export class FuncCall {
+    static make(func: Expression, arg: Expression): FuncCall;
     type: 'funcCall';
     func: Expression;
     arg: Expression;
@@ -311,15 +240,10 @@ declare export class FuncCall {
     match<T>(visitor: ExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newFuncCall = (func: Expression, arg: Expression): FuncCall => (new FuncCall({
-    type: 'funcCall',
-    func,
-    arg,
-}));
+}
 
 declare export class Variable {
+    static make(varName: string): Variable;
     type: 'variable';
     varName: string;
     withVarName(varName: string): Variable;
@@ -327,12 +251,7 @@ declare export class Variable {
     match<T>(visitor: ExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newVariable = (varName: string): Variable => (new Variable({
-    type: 'variable',
-    varName,
-}));
+}
 
 export type Expression = Lambda | FuncCall | Variable;
 
@@ -351,6 +270,7 @@ export type Slot = {
 export type VarMarker = number;
 
 declare export class EvalLambda {
+    static make(varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda;
     type: 'evalLambda';
     varMarker: VarMarker;
     originalVarName: string;
@@ -364,16 +284,10 @@ declare export class EvalLambda {
     match<T>(visitor: EvalExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvalLambda = (varMarker: VarMarker, originalVarName: string, body: EvalExpression): EvalLambda => (new EvalLambda({
-    type: 'evalLambda',
-    varMarker,
-    originalVarName,
-    body,
-}));
+}
 
 declare export class EvalFuncCall {
+    static make(func: EvalExpression, arg: EvalExpression): EvalFuncCall;
     type: 'evalFuncCall';
     func: EvalExpression;
     arg: EvalExpression;
@@ -384,15 +298,10 @@ declare export class EvalFuncCall {
     match<T>(visitor: EvalExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvalFuncCall = (func: EvalExpression, arg: EvalExpression): EvalFuncCall => (new EvalFuncCall({
-    type: 'evalFuncCall',
-    func,
-    arg,
-}));
+}
 
 declare export class EvalBoundVariable {
+    static make(slot: Slot): EvalBoundVariable;
     type: 'evalBoundVariable';
     slot: Slot;
     withSlot(slot: Slot): EvalBoundVariable;
@@ -400,14 +309,10 @@ declare export class EvalBoundVariable {
     match<T>(visitor: EvalExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvalBoundVariable = (slot: Slot): EvalBoundVariable => (new EvalBoundVariable({
-    type: 'evalBoundVariable',
-    slot,
-}));
+}
 
 declare export class EvalUnboundVariable {
+    static make(varMarker: VarMarker, originalVarName: string): EvalUnboundVariable;
     type: 'evalUnboundVariable';
     varMarker: VarMarker;
     originalVarName: string;
@@ -418,15 +323,10 @@ declare export class EvalUnboundVariable {
     match<T>(visitor: EvalExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvalUnboundVariable = (varMarker: VarMarker, originalVarName: string): EvalUnboundVariable => (new EvalUnboundVariable({
-    type: 'evalUnboundVariable',
-    varMarker,
-    originalVarName,
-}));
+}
 
 declare export class EvalFreeVariable {
+    static make(varName: string): EvalFreeVariable;
     type: 'evalFreeVariable';
     varName: string;
     withVarName(varName: string): EvalFreeVariable;
@@ -434,12 +334,7 @@ declare export class EvalFreeVariable {
     match<T>(visitor: EvalExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEvalFreeVariable = (varName: string): EvalFreeVariable => (new EvalFreeVariable({
-    type: 'evalFreeVariable',
-    varName,
-}));
+}
 
 export type EvalExpression = EvalLambda | EvalFuncCall | EvalBoundVariable | EvalUnboundVariable | EvalFreeVariable;
 
@@ -452,6 +347,7 @@ export type EvalExpressionVisitor<T> = {
 }
 
 declare export class UserLambda {
+    static make(varName: string, body: ?UserExpression): UserLambda;
     type: 'userLambda';
     varName: string;
     body: ?UserExpression;
@@ -462,15 +358,10 @@ declare export class UserLambda {
     match<T>(visitor: UserExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newUserLambda = (varName: string, body: ?UserExpression): UserLambda => (new UserLambda({
-    type: 'userLambda',
-    varName,
-    body,
-}));
+}
 
 declare export class UserFuncCall {
+    static make(func: UserExpression, arg: UserExpression): UserFuncCall;
     type: 'userFuncCall';
     func: UserExpression;
     arg: UserExpression;
@@ -481,15 +372,10 @@ declare export class UserFuncCall {
     match<T>(visitor: UserExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newUserFuncCall = (func: UserExpression, arg: UserExpression): UserFuncCall => (new UserFuncCall({
-    type: 'userFuncCall',
-    func,
-    arg,
-}));
+}
 
 declare export class UserVariable {
+    static make(varName: string): UserVariable;
     type: 'userVariable';
     varName: string;
     withVarName(varName: string): UserVariable;
@@ -497,14 +383,10 @@ declare export class UserVariable {
     match<T>(visitor: UserExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newUserVariable = (varName: string): UserVariable => (new UserVariable({
-    type: 'userVariable',
-    varName,
-}));
+}
 
 declare export class UserReference {
+    static make(defName: string): UserReference;
     type: 'userReference';
     defName: string;
     withDefName(defName: string): UserReference;
@@ -512,12 +394,7 @@ declare export class UserReference {
     match<T>(visitor: UserExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newUserReference = (defName: string): UserReference => (new UserReference({
-    type: 'userReference',
-    defName,
-}));
+}
 
 export type UserExpression = UserLambda | UserFuncCall | UserVariable | UserReference;
 
@@ -529,6 +406,7 @@ export type UserExpressionVisitor<T> = {
 }
 
 declare export class CanvasExpression {
+    static make(expr: UserExpression, pos: CanvasPoint): CanvasExpression;
     expr: UserExpression;
     pos: CanvasPoint;
     withExpr(expr: UserExpression): CanvasExpression;
@@ -537,14 +415,10 @@ declare export class CanvasExpression {
     updatePos(updater: Updater<CanvasPoint>): CanvasExpression;
     toJS(): any;
     serialize(): any;
-};
-
-export const newCanvasExpression = (expr: UserExpression, pos: CanvasPoint): CanvasExpression => (new CanvasExpression({
-    expr,
-    pos,
-}));
+}
 
 declare export class PendingResult {
+    static make(expr: UserExpression, sourceExprId: number): PendingResult;
     expr: UserExpression;
     sourceExprId: number;
     withExpr(expr: UserExpression): PendingResult;
@@ -553,14 +427,10 @@ declare export class PendingResult {
     updateSourceExprId(updater: Updater<number>): PendingResult;
     toJS(): any;
     serialize(): any;
-};
-
-export const newPendingResult = (expr: UserExpression, sourceExprId: number): PendingResult => (new PendingResult({
-    expr,
-    sourceExprId,
-}));
+}
 
 declare export class DisplayState {
+    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState;
     screenExpressions: IList<ScreenExpression>;
     screenDefinitions: IList<ScreenDefinition>;
     measureRequests: IList<MeasureRequest>;
@@ -572,15 +442,10 @@ declare export class DisplayState {
     updateMeasureRequests(updater: Updater<IList<MeasureRequest>>): DisplayState;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDisplayState = (screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState => (new DisplayState({
-    screenExpressions,
-    screenDefinitions,
-    measureRequests,
-}));
+}
 
 declare export class MeasureRequest {
+    static make(expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest;
     expr: DisplayExpression;
     resultHandler: (width: number, height: number) => void;
     withExpr(expr: DisplayExpression): MeasureRequest;
@@ -589,14 +454,10 @@ declare export class MeasureRequest {
     updateResultHandler(updater: Updater<(width: number, height: number) => void>): MeasureRequest;
     toJS(): any;
     serialize(): any;
-};
-
-export const newMeasureRequest = (expr: DisplayExpression, resultHandler: (width: number, height: number) => void): MeasureRequest => (new MeasureRequest({
-    expr,
-    resultHandler,
-}));
+}
 
 declare export class ScreenDefinition {
+    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition;
     defName: string;
     expr: ?DisplayExpression;
     pos: ScreenPoint;
@@ -614,17 +475,10 @@ declare export class ScreenDefinition {
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition;
     toJS(): any;
     serialize(): any;
-};
-
-export const newScreenDefinition = (defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition => (new ScreenDefinition({
-    defName,
-    expr,
-    pos,
-    key,
-    isDragging,
-}));
+}
 
 declare export class ScreenExpression {
+    static make(expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression;
     expr: DisplayExpression;
     pos: ScreenPoint;
     key: string;
@@ -642,17 +496,10 @@ declare export class ScreenExpression {
     updateExecuteHandler(updater: Updater<?() => void>): ScreenExpression;
     toJS(): any;
     serialize(): any;
-};
-
-export const newScreenExpression = (expr: DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean, executeHandler: ?() => void): ScreenExpression => (new ScreenExpression({
-    expr,
-    pos,
-    key,
-    isDragging,
-    executeHandler,
-}));
+}
 
 declare export class DisplayLambda {
+    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda;
     type: 'displayLambda';
     exprKey: ?ExpressionKey;
     shouldHighlight: boolean;
@@ -678,20 +525,10 @@ declare export class DisplayLambda {
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDisplayLambda = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda => (new DisplayLambda({
-    type: 'displayLambda',
-    exprKey,
-    shouldHighlight,
-    varKey,
-    emptyBodyKey,
-    shouldHighlightEmptyBody,
-    varName,
-    body,
-}));
+}
 
 declare export class DisplayFuncCall {
+    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall;
     type: 'displayFuncCall';
     exprKey: ?ExpressionKey;
     shouldHighlight: boolean;
@@ -708,17 +545,10 @@ declare export class DisplayFuncCall {
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDisplayFuncCall = (exprKey: ?ExpressionKey, shouldHighlight: boolean, func: DisplayExpression, arg: DisplayExpression): DisplayFuncCall => (new DisplayFuncCall({
-    type: 'displayFuncCall',
-    exprKey,
-    shouldHighlight,
-    func,
-    arg,
-}));
+}
 
 declare export class DisplayVariable {
+    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable;
     type: 'displayVariable';
     exprKey: ?ExpressionKey;
     shouldHighlight: boolean;
@@ -732,16 +562,10 @@ declare export class DisplayVariable {
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDisplayVariable = (exprKey: ?ExpressionKey, shouldHighlight: boolean, varName: string): DisplayVariable => (new DisplayVariable({
-    type: 'displayVariable',
-    exprKey,
-    shouldHighlight,
-    varName,
-}));
+}
 
 declare export class DisplayReference {
+    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference;
     type: 'displayReference';
     exprKey: ?ExpressionKey;
     shouldHighlight: boolean;
@@ -755,14 +579,7 @@ declare export class DisplayReference {
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDisplayReference = (exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference => (new DisplayReference({
-    type: 'displayReference',
-    exprKey,
-    shouldHighlight,
-    defName,
-}));
+}
 
 export type DisplayExpression = DisplayLambda | DisplayFuncCall | DisplayVariable | DisplayReference;
 
@@ -774,6 +591,7 @@ export type DisplayExpressionVisitor<T> = {
 }
 
 declare export class CanvasPoint {
+    static make(canvasX: number, canvasY: number): CanvasPoint;
     canvasX: number;
     canvasY: number;
     withCanvasX(canvasX: number): CanvasPoint;
@@ -782,14 +600,10 @@ declare export class CanvasPoint {
     updateCanvasY(updater: Updater<number>): CanvasPoint;
     toJS(): any;
     serialize(): any;
-};
-
-export const newCanvasPoint = (canvasX: number, canvasY: number): CanvasPoint => (new CanvasPoint({
-    canvasX,
-    canvasY,
-}));
+}
 
 declare export class PointDifference {
+    static make(dx: number, dy: number): PointDifference;
     dx: number;
     dy: number;
     withDx(dx: number): PointDifference;
@@ -798,14 +612,10 @@ declare export class PointDifference {
     updateDy(updater: Updater<number>): PointDifference;
     toJS(): any;
     serialize(): any;
-};
-
-export const newPointDifference = (dx: number, dy: number): PointDifference => (new PointDifference({
-    dx,
-    dy,
-}));
+}
 
 declare export class ScreenPoint {
+    static make(screenX: number, screenY: number): ScreenPoint;
     screenX: number;
     screenY: number;
     withScreenX(screenX: number): ScreenPoint;
@@ -814,14 +624,10 @@ declare export class ScreenPoint {
     updateScreenY(updater: Updater<number>): ScreenPoint;
     toJS(): any;
     serialize(): any;
-};
-
-export const newScreenPoint = (screenX: number, screenY: number): ScreenPoint => (new ScreenPoint({
-    screenX,
-    screenY,
-}));
+}
 
 declare export class ScreenRect {
+    static make(topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect;
     topLeft: ScreenPoint;
     bottomRight: ScreenPoint;
     withTopLeft(topLeft: ScreenPoint): ScreenRect;
@@ -830,16 +636,12 @@ declare export class ScreenRect {
     updateBottomRight(updater: Updater<ScreenPoint>): ScreenRect;
     toJS(): any;
     serialize(): any;
-};
-
-export const newScreenRect = (topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect => (new ScreenRect({
-    topLeft,
-    bottomRight,
-}));
+}
 
 export type PathComponent = 'func' | 'arg' | 'body';
 
 declare export class ExprPath {
+    static make(container: ExprContainer, pathSteps: IList<PathComponent>): ExprPath;
     container: ExprContainer;
     pathSteps: IList<PathComponent>;
     withContainer(container: ExprContainer): ExprPath;
@@ -848,14 +650,10 @@ declare export class ExprPath {
     updatePathSteps(updater: Updater<IList<PathComponent>>): ExprPath;
     toJS(): any;
     serialize(): any;
-};
-
-export const newExprPath = (container: ExprContainer, pathSteps: IList<PathComponent>): ExprPath => (new ExprPath({
-    container,
-    pathSteps,
-}));
+}
 
 declare export class ExprIdContainer {
+    static make(exprId: number): ExprIdContainer;
     type: 'exprIdContainer';
     exprId: number;
     withExprId(exprId: number): ExprIdContainer;
@@ -863,14 +661,10 @@ declare export class ExprIdContainer {
     match<T>(visitor: ExprContainerVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newExprIdContainer = (exprId: number): ExprIdContainer => (new ExprIdContainer({
-    type: 'exprIdContainer',
-    exprId,
-}));
+}
 
 declare export class DefinitionContainer {
+    static make(defName: string): DefinitionContainer;
     type: 'definitionContainer';
     defName: string;
     withDefName(defName: string): DefinitionContainer;
@@ -878,12 +672,7 @@ declare export class DefinitionContainer {
     match<T>(visitor: ExprContainerVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDefinitionContainer = (defName: string): DefinitionContainer => (new DefinitionContainer({
-    type: 'definitionContainer',
-    defName,
-}));
+}
 
 export type ExprContainer = ExprIdContainer | DefinitionContainer;
 
@@ -893,6 +682,7 @@ export type ExprContainerVisitor<T> = {
 }
 
 declare export class PickUpExpression {
+    static make(exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression;
     type: 'pickUpExpression';
     exprId: number;
     offset: PointDifference;
@@ -906,16 +696,10 @@ declare export class PickUpExpression {
     match<T>(visitor: DragResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newPickUpExpression = (exprId: number, offset: PointDifference, screenRect: ScreenRect): PickUpExpression => (new PickUpExpression({
-    type: 'pickUpExpression',
-    exprId,
-    offset,
-    screenRect,
-}));
+}
 
 declare export class DecomposeExpression {
+    static make(exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression;
     type: 'decomposeExpression';
     exprPath: ExprPath;
     offset: PointDifference;
@@ -929,16 +713,10 @@ declare export class DecomposeExpression {
     match<T>(visitor: DragResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDecomposeExpression = (exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression => (new DecomposeExpression({
-    type: 'decomposeExpression',
-    exprPath,
-    offset,
-    screenRect,
-}));
+}
 
 declare export class CreateExpression {
+    static make(expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression;
     type: 'createExpression';
     expr: UserExpression;
     offset: PointDifference;
@@ -952,16 +730,10 @@ declare export class CreateExpression {
     match<T>(visitor: DragResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newCreateExpression = (expr: UserExpression, offset: PointDifference, screenRect: ScreenRect): CreateExpression => (new CreateExpression({
-    type: 'createExpression',
-    expr,
-    offset,
-    screenRect,
-}));
+}
 
 declare export class StartPan {
+    static make(startPos: ScreenPoint): StartPan;
     type: 'startPan';
     startPos: ScreenPoint;
     withStartPos(startPos: ScreenPoint): StartPan;
@@ -969,12 +741,7 @@ declare export class StartPan {
     match<T>(visitor: DragResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newStartPan = (startPos: ScreenPoint): StartPan => (new StartPan({
-    type: 'startPan',
-    startPos,
-}));
+}
 
 export type DragResult = PickUpExpression | DecomposeExpression | CreateExpression | StartPan;
 
@@ -986,6 +753,7 @@ export type DragResultVisitor<T> = {
 }
 
 declare export class DragData {
+    static make(userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData;
     userExpr: UserExpression;
     grabOffset: PointDifference;
     screenRect: ScreenRect;
@@ -997,15 +765,10 @@ declare export class DragData {
     updateScreenRect(updater: Updater<ScreenRect>): DragData;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDragData = (userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData => (new DragData({
-    userExpr,
-    grabOffset,
-    screenRect,
-}));
+}
 
 declare export class AddToTopLevelResult {
+    static make(expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult;
     type: 'addToTopLevelResult';
     expr: UserExpression;
     screenPos: ScreenPoint;
@@ -1016,15 +779,10 @@ declare export class AddToTopLevelResult {
     match<T>(visitor: DropResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newAddToTopLevelResult = (expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult => (new AddToTopLevelResult({
-    type: 'addToTopLevelResult',
-    expr,
-    screenPos,
-}));
+}
 
 declare export class InsertAsBodyResult {
+    static make(lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult;
     type: 'insertAsBodyResult';
     lambdaPath: ExprPath;
     expr: UserExpression;
@@ -1035,15 +793,10 @@ declare export class InsertAsBodyResult {
     match<T>(visitor: DropResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newInsertAsBodyResult = (lambdaPath: ExprPath, expr: UserExpression): InsertAsBodyResult => (new InsertAsBodyResult({
-    type: 'insertAsBodyResult',
-    lambdaPath,
-    expr,
-}));
+}
 
 declare export class InsertAsArgResult {
+    static make(path: ExprPath, expr: UserExpression): InsertAsArgResult;
     type: 'insertAsArgResult';
     path: ExprPath;
     expr: UserExpression;
@@ -1054,24 +807,15 @@ declare export class InsertAsArgResult {
     match<T>(visitor: DropResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newInsertAsArgResult = (path: ExprPath, expr: UserExpression): InsertAsArgResult => (new InsertAsArgResult({
-    type: 'insertAsArgResult',
-    path,
-    expr,
-}));
+}
 
 declare export class RemoveResult {
+    static make(): RemoveResult;
     type: 'removeResult';
     match<T>(visitor: DropResultVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newRemoveResult = (): RemoveResult => (new RemoveResult({
-    type: 'removeResult',
-}));
+}
 
 export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult | RemoveResult;
 
@@ -1083,6 +827,7 @@ export type DropResultVisitor<T> = {
 }
 
 declare export class ExpressionKey {
+    static make(exprPath: ExprPath): ExpressionKey;
     type: 'expressionKey';
     exprPath: ExprPath;
     withExprPath(exprPath: ExprPath): ExpressionKey;
@@ -1090,14 +835,10 @@ declare export class ExpressionKey {
     match<T>(visitor: ViewKeyVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newExpressionKey = (exprPath: ExprPath): ExpressionKey => (new ExpressionKey({
-    type: 'expressionKey',
-    exprPath,
-}));
+}
 
 declare export class EmptyBodyKey {
+    static make(lambdaPath: ExprPath): EmptyBodyKey;
     type: 'emptyBodyKey';
     lambdaPath: ExprPath;
     withLambdaPath(lambdaPath: ExprPath): EmptyBodyKey;
@@ -1105,14 +846,10 @@ declare export class EmptyBodyKey {
     match<T>(visitor: ViewKeyVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newEmptyBodyKey = (lambdaPath: ExprPath): EmptyBodyKey => (new EmptyBodyKey({
-    type: 'emptyBodyKey',
-    lambdaPath,
-}));
+}
 
 declare export class LambdaVarKey {
+    static make(lambdaPath: ExprPath): LambdaVarKey;
     type: 'lambdaVarKey';
     lambdaPath: ExprPath;
     withLambdaPath(lambdaPath: ExprPath): LambdaVarKey;
@@ -1120,14 +857,10 @@ declare export class LambdaVarKey {
     match<T>(visitor: ViewKeyVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newLambdaVarKey = (lambdaPath: ExprPath): LambdaVarKey => (new LambdaVarKey({
-    type: 'lambdaVarKey',
-    lambdaPath,
-}));
+}
 
 declare export class DefinitionKey {
+    static make(defName: string): DefinitionKey;
     type: 'definitionKey';
     defName: string;
     withDefName(defName: string): DefinitionKey;
@@ -1135,12 +868,7 @@ declare export class DefinitionKey {
     match<T>(visitor: ViewKeyVisitor<T>): T;
     toJS(): any;
     serialize(): any;
-};
-
-export const newDefinitionKey = (defName: string): DefinitionKey => (new DefinitionKey({
-    type: 'definitionKey',
-    defName,
-}));
+}
 
 export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey;
 

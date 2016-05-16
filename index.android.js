@@ -22,11 +22,6 @@ import generateDisplayState from './generateDisplayState'
 import SimpleComponent from './SimpleComponent'
 import StatelessComponent from './StatelessComponent'
 import store from './store'
-import {
-    newCanvasPoint,
-    newUserLambda,
-    newCanvasExpression,
-} from './types'
 import * as t from './types'
 
 import type {
@@ -164,16 +159,16 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
     componentWillMount() {
         DeviceEventEmitter.addListener('createLambda', (varName) => {
-            store.dispatch(t.newAddExpression(
-                newCanvasExpression(
-                    newUserLambda(varName, null),
-                    newCanvasPoint(100, 100))
+            store.dispatch(t.AddExpression.make(
+                t.CanvasExpression.make(
+                    t.UserLambda.make(varName, null),
+                    t.CanvasPoint.make(100, 100))
             ));
         });
         DeviceEventEmitter.addListener('createDefinition', (defName) => {
-            store.dispatch(t.newPlaceDefinition(
+            store.dispatch(t.PlaceDefinition.make(
                 defName,
-                t.newScreenPoint(100, 100),
+                t.ScreenPoint.make(100, 100),
             ));
         });
         this._responderMethods = this.getResponderMethods();
@@ -183,7 +178,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         let lastTouches: IMap<number, ScreenPoint> = IMap.make();
         const processEvent = ({nativeEvent: {touches}}) => {
             const newTouches = new IMap(touches.map((touch) =>
-                [touch.identifier, t.newScreenPoint(touch.pageX, touch.pageY)]
+                [touch.identifier, t.ScreenPoint.make(touch.pageX, touch.pageY)]
             ));
 
             const fingers = ISet.make(lastTouches.keys())
@@ -192,11 +187,11 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 const beforePoint = lastTouches.get(fingerId);
                 const afterPoint = newTouches.get(fingerId);
                 if (beforePoint && afterPoint) {
-                    store.dispatch(t.newFingerMove(fingerId, afterPoint));
+                    store.dispatch(t.FingerMove.make(fingerId, afterPoint));
                 } else if (afterPoint) {
-                    store.dispatch(t.newFingerDown(fingerId, afterPoint));
+                    store.dispatch(t.FingerDown.make(fingerId, afterPoint));
                 } else if (beforePoint) {
-                    store.dispatch(t.newFingerUp(fingerId, beforePoint));
+                    store.dispatch(t.FingerUp.make(fingerId, beforePoint));
                 }
             }
             lastTouches = newTouches;

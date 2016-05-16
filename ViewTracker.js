@@ -48,9 +48,9 @@ setInterval(() => {
             if (!nodeMap.get(exprPath)) {
                 return;
             }
-            viewMap = viewMap.set(exprPath, t.newScreenRect(
-                t.newScreenPoint(pageX, pageY),
-                t.newScreenPoint(pageX + width, pageY + height)
+            viewMap = viewMap.set(exprPath, t.ScreenRect.make(
+                t.ScreenPoint.make(pageX, pageY),
+                t.ScreenPoint.make(pageX + width, pageY + height)
             ));
         })
     });

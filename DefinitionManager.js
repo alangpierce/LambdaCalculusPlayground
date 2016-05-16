@@ -50,7 +50,7 @@ export const expandUserExpr = (userExpr: UserExpression): ?Expression => {
             if (!bodyExpr) {
                 return null;
             }
-            return t.newLambda(varName, bodyExpr);
+            return t.Lambda.make(varName, bodyExpr);
         },
         userFuncCall: ({func, arg}) => {
             const funcExpr = expandUserExpr(func);
@@ -61,9 +61,9 @@ export const expandUserExpr = (userExpr: UserExpression): ?Expression => {
             if (!argExpr) {
                 return null;
             }
-            return t.newFuncCall(funcExpr, argExpr);
+            return t.FuncCall.make(funcExpr, argExpr);
         },
-        userVariable: ({varName}) => t.newVariable(varName),
+        userVariable: ({varName}) => t.Variable.make(varName),
         // This returns null if the definition isn't valid.
         userReference: ({defName}) => definitions.get(defName)
     });

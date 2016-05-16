@@ -23,14 +23,14 @@ import type {
 export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
     const yieldExpressionPickUps = function* () {
         for (let [exprId] of state.canvasExpressions) {
-            const viewKey = t.newExpressionKey(emptyIdPath(exprId));
+            const viewKey = t.ExpressionKey.make(emptyIdPath(exprId));
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
                 continue;
             }
             if (ptInRect(point, screenRect)) {
                 yield [
-                    t.newPickUpExpression(
+                    t.PickUpExpression.make(
                         exprId, ptMinusPt(point, screenRect.topLeft), screenRect),
                     0,
                 ];
@@ -46,7 +46,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (lastStep !== 'body' && lastStep !== 'arg') {
                 continue;
             }
-            const viewKey = t.newExpressionKey(path);
+            const viewKey = t.ExpressionKey.make(path);
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
                 continue;
@@ -54,7 +54,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (ptInRect(point, screenRect)) {
                 const parentPath = path.updatePathSteps((steps) => steps.pop());
                 yield [
-                    t.newDecomposeExpression(
+                    t.DecomposeExpression.make(
                         parentPath, ptMinusPt(point, screenRect.topLeft),
                         screenRect),
                     path.pathSteps.size,
@@ -68,15 +68,15 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!(expr instanceof t.UserLambda)) {
                 continue;
             }
-            const viewKey = t.newLambdaVarKey(path);
+            const viewKey = t.LambdaVarKey.make(path);
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
                 continue;
             }
             if (ptInRect(point, screenRect)) {
                 yield [
-                    t.newCreateExpression(
-                        t.newUserVariable(expr.varName),
+                    t.CreateExpression.make(
+                        t.UserVariable.make(expr.varName),
                         ptMinusPt(point, screenRect.topLeft),
                         screenRect),
                     path.pathSteps.size + 1,
@@ -94,7 +94,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
     };
 
     let bestPriority = -1;
-    let bestResult = t.newStartPan(point);
+    let bestResult = t.StartPan.make(point);
     for (let [dragResult, priority] of yieldDragCandidates(state)) {
         if (priority > bestPriority) {
             bestResult = dragResult;
@@ -124,9 +124,9 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
             if (expr.type !== 'userLambda' || expr.body) {
                 continue;
             }
-            if (intersectsWithView(t.newEmptyBodyKey(path))) {
+            if (intersectsWithView(t.EmptyBodyKey.make(path))) {
                 yield [
-                    t.newInsertAsBodyResult(path, dragData.userExpr),
+                    t.InsertAsBodyResult.make(path, dragData.userExpr),
                     // The lambda body should show up as above the lambda.
                     path.pathSteps.size + 1,
                 ];
@@ -136,9 +136,9 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
 
     const yieldFuncCallDrops = function* () {
         for (let [path, _] of yieldAllExpressions(state)) {
-            if (intersectsWithRightSide(t.newExpressionKey(path))) {
+            if (intersectsWithRightSide(t.ExpressionKey.make(path))) {
                 yield [
-                    t.newInsertAsArgResult(path, dragData.userExpr),
+                    t.InsertAsArgResult.make(path, dragData.userExpr),
                     path.pathSteps.size,
                 ];
             }
@@ -153,9 +153,9 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
             if (expr.type !== 'userLambda') {
                 continue;
             }
-            if (intersectsWithView(t.newLambdaVarKey(path))) {
+            if (intersectsWithView(t.LambdaVarKey.make(path))) {
                 yield [
-                    t.newRemoveResult(),
+                    t.RemoveResult.make(),
                     path.pathSteps.size + 1,
                 ];
             }
@@ -171,7 +171,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     };
 
     let bestPriority = -1;
-    let bestResult = t.newAddToTopLevelResult(
+    let bestResult = t.AddToTopLevelResult.make(
         dragData.userExpr, dragData.screenRect.topLeft);
     for (let [dropResult, priority] of yieldDropCandidates(state)) {
         if (priority > bestPriority) {

@@ -58,7 +58,7 @@ const evaluateRec = (
                 if (containsOnlyFreeVars(func, freeMarkers)) {
                     arg = evaluateRec(arg, freeMarkers, topLevel);
                 }
-                return t.newEvalFuncCall(func, arg);
+                return t.EvalFuncCall.make(func, arg);
             }
 
         },
@@ -86,13 +86,13 @@ const bindVariable = (varMarker: VarMarker, slot: Slot, expr: EvalExpression):
             }
             return lambda.withBody(bindVariable(varMarker, slot, lambda.body));
         },
-        evalFuncCall: ({func, arg}) => t.newEvalFuncCall(
+        evalFuncCall: ({func, arg}) => t.EvalFuncCall.make(
             bindVariable(varMarker, slot, func),
             bindVariable(varMarker, slot, arg)),
         evalBoundVariable: (boundVariable) => {
             if (containsUsage(varMarker, boundVariable.slot.expr)) {
-                return t.newEvalFuncCall(
-                    t.newEvalLambda(
+                return t.EvalFuncCall.make(
+                    t.EvalLambda.make(
                         varMarker, slot.originalVarName, boundVariable),
                     slot.expr,
                 );
@@ -104,7 +104,7 @@ const bindVariable = (varMarker: VarMarker, slot: Slot, expr: EvalExpression):
             if (unboundVariable.varMarker != varMarker) {
                 return unboundVariable;
             }
-            return t.newEvalBoundVariable(slot);
+            return t.EvalBoundVariable.make(slot);
         },
         evalFreeVariable: (freeVariable) => freeVariable,
     });
@@ -144,16 +144,16 @@ const compile = (context: Context, expr: Expression): EvalExpression => {
         lambda: ({varName, body}) => {
             const marker = newMarker();
             const newContext = context.set(varName, marker);
-            return t.newEvalLambda(marker, varName, compile(newContext, body));
+            return t.EvalLambda.make(marker, varName, compile(newContext, body));
         },
         funcCall: ({func, arg}) =>
-            t.newEvalFuncCall(compile(context, func), compile(context, arg)),
+            t.EvalFuncCall.make(compile(context, func), compile(context, arg)),
         variable: ({varName}) => {
             const marker = context.get(varName);
             if (marker !== null && marker !== undefined) {
-                return t.newEvalUnboundVariable(marker, varName);
+                return t.EvalUnboundVariable.make(marker, varName);
             } else {
-                return t.newEvalFreeVariable(varName);
+                return t.EvalFreeVariable.make(varName);
             }
         },
     })
@@ -178,9 +178,9 @@ const assignNames = (
                 varName = varName + "'";
             }
             const newNamesByMarker = namesByMarker.set(varMarker, varName);
-            return t.newLambda(varName, assignNames(body, newNamesByMarker));
+            return t.Lambda.make(varName, assignNames(body, newNamesByMarker));
         },
-        evalFuncCall: ({func, arg}) => t.newFuncCall(
+        evalFuncCall: ({func, arg}) => t.FuncCall.make(
             assignNames(func, namesByMarker),
             assignNames(arg, namesByMarker)),
         evalBoundVariable: () => {
@@ -193,9 +193,9 @@ const assignNames = (
                 throw new Error(
                     'All unbound variables must be assigned names.');
             }
-            return t.newVariable(varName);
+            return t.Variable.make(varName);
         },
-        evalFreeVariable: ({varName}) => t.newVariable(varName),
+        evalFreeVariable: ({varName}) => t.Variable.make(varName),
     });
 };
 

@@ -86,7 +86,7 @@ export const insertAsArg = (
         targetExpr: UserExpression, newArgExpr: UserExpression,
         path: IList<PathComponent>): UserExpression => {
     return transformAtPath(targetExpr, path, (expr) =>
-        t.newUserFuncCall(expr, newArgExpr)
+        t.UserFuncCall.make(expr, newArgExpr)
     );
 };
 
