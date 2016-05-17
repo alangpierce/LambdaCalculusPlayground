@@ -88,6 +88,7 @@ type DropResult = {
         addToTopLevelResult(addToTopLevelResult: AddToTopLevelResult): T,
         insertAsBodyResult(insertAsBodyResult: InsertAsBodyResult): T,
         insertAsArgResult(insertAsArgResult: InsertAsArgResult): T,
+        insertAsDefinitionResult(insertAsDefinitionResult: InsertAsDefinitionResult): T,
         removeResult(removeResult: RemoveResult): T,
     }): T,
 };
@@ -98,6 +99,7 @@ type ViewKey = {
         emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
         lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
         definitionKey(definitionKey: DefinitionKey): T,
+        definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
     }): T,
 };
 

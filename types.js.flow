@@ -9,7 +9,7 @@ import {Lens} from './types-lib'
 import type {Updater} from './types-lib'
 
 declare export class State {
-    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>): State;
+    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>): State;
     canvasExpressions: IMap<number, CanvasExpression>;
     nextExprId: number;
     canvasDefinitions: IMap<string, CanvasPoint>;
@@ -18,6 +18,7 @@ declare export class State {
     activeDrags: IMap<number, DragData>;
     highlightedExprs: ISet<ExprPath>;
     highlightedEmptyBodies: ISet<ExprPath>;
+    highlightedDefinitionBodies: ISet<string>;
     withCanvasExpressions(canvasExpressions: IMap<number, CanvasExpression>): State;
     withNextExprId(nextExprId: number): State;
     withCanvasDefinitions(canvasDefinitions: IMap<string, CanvasPoint>): State;
@@ -26,6 +27,7 @@ declare export class State {
     withActiveDrags(activeDrags: IMap<number, DragData>): State;
     withHighlightedExprs(highlightedExprs: ISet<ExprPath>): State;
     withHighlightedEmptyBodies(highlightedEmptyBodies: ISet<ExprPath>): State;
+    withHighlightedDefinitionBodies(highlightedDefinitionBodies: ISet<string>): State;
     updateCanvasExpressions(updater: Updater<IMap<number, CanvasExpression>>): State;
     updateNextExprId(updater: Updater<number>): State;
     updateCanvasDefinitions(updater: Updater<IMap<string, CanvasPoint>>): State;
@@ -34,6 +36,7 @@ declare export class State {
     updateActiveDrags(updater: Updater<IMap<number, DragData>>): State;
     updateHighlightedExprs(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State;
+    updateHighlightedDefinitionBodies(updater: Updater<ISet<string>>): State;
     lens(): StateLens<State>;
     serialize(): any;
 }
@@ -47,6 +50,7 @@ declare export class StateLens<Result> extends Lens<State, Result> {
     activeDrags(): DragDataMapLens<number, Result>;
     highlightedExprs(): Lens<ISet<ExprPath>, Result>;
     highlightedEmptyBodies(): Lens<ISet<ExprPath>, Result>;
+    highlightedDefinitionBodies(): Lens<ISet<string>, Result>;
 }
 
 declare export class Reset {
@@ -465,23 +469,29 @@ declare export class MeasureRequestLens<Result> extends Lens<MeasureRequest, Res
 }
 
 declare export class ScreenDefinition {
-    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, defKey: ?DefinitionKey, key: string, isDragging: boolean): ScreenDefinition;
+    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, defKey: ?DefinitionKey, emptyBodyKey: ?DefinitionEmptyBodyKey, shouldHighlightEmptyBody: boolean, key: string, isDragging: boolean): ScreenDefinition;
     defName: string;
     expr: ?DisplayExpression;
     pos: ScreenPoint;
     defKey: ?DefinitionKey;
+    emptyBodyKey: ?DefinitionEmptyBodyKey;
+    shouldHighlightEmptyBody: boolean;
     key: string;
     isDragging: boolean;
     withDefName(defName: string): ScreenDefinition;
     withExpr(expr: ?DisplayExpression): ScreenDefinition;
     withPos(pos: ScreenPoint): ScreenDefinition;
     withDefKey(defKey: ?DefinitionKey): ScreenDefinition;
+    withEmptyBodyKey(emptyBodyKey: ?DefinitionEmptyBodyKey): ScreenDefinition;
+    withShouldHighlightEmptyBody(shouldHighlightEmptyBody: boolean): ScreenDefinition;
     withKey(key: string): ScreenDefinition;
     withIsDragging(isDragging: boolean): ScreenDefinition;
     updateDefName(updater: Updater<string>): ScreenDefinition;
     updateExpr(updater: Updater<?DisplayExpression>): ScreenDefinition;
     updatePos(updater: Updater<ScreenPoint>): ScreenDefinition;
     updateDefKey(updater: Updater<?DefinitionKey>): ScreenDefinition;
+    updateEmptyBodyKey(updater: Updater<?DefinitionEmptyBodyKey>): ScreenDefinition;
+    updateShouldHighlightEmptyBody(updater: Updater<boolean>): ScreenDefinition;
     updateKey(updater: Updater<string>): ScreenDefinition;
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition;
     lens(): ScreenDefinitionLens<ScreenDefinition>;
@@ -493,6 +503,8 @@ declare export class ScreenDefinitionLens<Result> extends Lens<ScreenDefinition,
     expr(): Lens<?DisplayExpression, Result>;
     pos(): ScreenPointLens<Result>;
     defKey(): Lens<?DefinitionKey, Result>;
+    emptyBodyKey(): Lens<?DefinitionEmptyBodyKey, Result>;
+    shouldHighlightEmptyBody(): Lens<boolean, Result>;
     key(): Lens<string, Result>;
     isDragging(): Lens<boolean, Result>;
 }
@@ -899,6 +911,19 @@ declare export class InsertAsArgResult {
     serialize(): any;
 }
 
+declare export class InsertAsDefinitionResult {
+    static make(defName: string, expr: UserExpression): InsertAsDefinitionResult;
+    type: 'insertAsDefinitionResult';
+    defName: string;
+    expr: UserExpression;
+    withDefName(defName: string): InsertAsDefinitionResult;
+    withExpr(expr: UserExpression): InsertAsDefinitionResult;
+    updateDefName(updater: Updater<string>): InsertAsDefinitionResult;
+    updateExpr(updater: Updater<UserExpression>): InsertAsDefinitionResult;
+    match<T>(visitor: DropResultVisitor<T>): T;
+    serialize(): any;
+}
+
 declare export class RemoveResult {
     static make(): RemoveResult;
     type: 'removeResult';
@@ -906,12 +931,13 @@ declare export class RemoveResult {
     serialize(): any;
 }
 
-export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult | RemoveResult;
+export type DropResult = AddToTopLevelResult | InsertAsBodyResult | InsertAsArgResult | InsertAsDefinitionResult | RemoveResult;
 
 export type DropResultVisitor<T> = {
     addToTopLevelResult(addToTopLevelResult: AddToTopLevelResult): T,
     insertAsBodyResult(insertAsBodyResult: InsertAsBodyResult): T,
     insertAsArgResult(insertAsArgResult: InsertAsArgResult): T,
+    insertAsDefinitionResult(insertAsDefinitionResult: InsertAsDefinitionResult): T,
     removeResult(removeResult: RemoveResult): T,
 }
 
@@ -955,13 +981,24 @@ declare export class DefinitionKey {
     serialize(): any;
 }
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey;
+declare export class DefinitionEmptyBodyKey {
+    static make(defName: string): DefinitionEmptyBodyKey;
+    type: 'definitionEmptyBodyKey';
+    defName: string;
+    withDefName(defName: string): DefinitionEmptyBodyKey;
+    updateDefName(updater: Updater<string>): DefinitionEmptyBodyKey;
+    match<T>(visitor: ViewKeyVisitor<T>): T;
+    serialize(): any;
+}
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionEmptyBodyKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey(expressionKey: ExpressionKey): T,
     emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
     lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
     definitionKey(definitionKey: DefinitionKey): T,
+    definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
 }
 
 declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {

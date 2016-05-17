@@ -3,7 +3,7 @@
  */
 import {buildUnionCaseClass, buildValueClass} from './types-lib'
 
-export const State = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies']);
+export const State = buildValueClass('State', ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies']);
 export const Reset = buildUnionCaseClass('reset', []);
 export const AddExpression = buildUnionCaseClass('addExpression', ['canvasExpr']);
 export const PlaceDefinition = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
@@ -32,7 +32,7 @@ export const CanvasExpression = buildValueClass('CanvasExpression', ['expr', 'po
 export const PendingResult = buildValueClass('PendingResult', ['expr', 'sourceExprId']);
 export const DisplayState = buildValueClass('DisplayState', ['screenExpressions', 'screenDefinitions', 'measureRequests']);
 export const MeasureRequest = buildValueClass('MeasureRequest', ['expr', 'resultHandler']);
-export const ScreenDefinition = buildValueClass('ScreenDefinition', ['defName', 'expr', 'pos', 'defKey', 'key', 'isDragging']);
+export const ScreenDefinition = buildValueClass('ScreenDefinition', ['defName', 'expr', 'pos', 'defKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'key', 'isDragging']);
 export const ScreenExpression = buildValueClass('ScreenExpression', ['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
 export const DisplayLambda = buildUnionCaseClass('displayLambda', ['exprKey', 'shouldHighlight', 'varKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'varName', 'body']);
 export const DisplayFuncCall = buildUnionCaseClass('displayFuncCall', ['exprKey', 'shouldHighlight', 'func', 'arg']);
@@ -56,8 +56,10 @@ export const DraggedDefinition = buildUnionCaseClass('draggedDefinition', ['defN
 export const AddToTopLevelResult = buildUnionCaseClass('addToTopLevelResult', ['payload', 'screenPos']);
 export const InsertAsBodyResult = buildUnionCaseClass('insertAsBodyResult', ['lambdaPath', 'expr']);
 export const InsertAsArgResult = buildUnionCaseClass('insertAsArgResult', ['path', 'expr']);
+export const InsertAsDefinitionResult = buildUnionCaseClass('insertAsDefinitionResult', ['defName', 'expr']);
 export const RemoveResult = buildUnionCaseClass('removeResult', []);
 export const ExpressionKey = buildUnionCaseClass('expressionKey', ['exprPath']);
 export const EmptyBodyKey = buildUnionCaseClass('emptyBodyKey', ['lambdaPath']);
 export const LambdaVarKey = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);
 export const DefinitionKey = buildUnionCaseClass('definitionKey', ['defName']);
+export const DefinitionEmptyBodyKey = buildUnionCaseClass('definitionEmptyBodyKey', ['defName']);

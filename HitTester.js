@@ -142,12 +142,12 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     };
 
     const yieldLambdaDrops = function* () {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (expr.type !== 'userLambda' || expr.body) {
                 continue;
-            }
-            if (!(dragPayload instanceof DraggedExpression)) {
-                return;
             }
             if (intersectsWithView(t.EmptyBodyKey.make(path))) {
                 yield [
@@ -193,12 +193,31 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
     };
 
+    const yieldDefinitionBodyDrops = function* () {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
+        for (let [defName] of state.canvasDefinitions) {
+            // Can't drop into an already-defined definition.
+            if (state.definitions.get(defName)) {
+                continue;
+            }
+            if (intersectsWithView(t.DefinitionEmptyBodyKey.make(defName))) {
+                yield [
+                    t.InsertAsDefinitionResult.make(defName, dragPayload.userExpr),
+                    1,
+                ];
+            }
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
         yield* yieldLambdaDrops();
         yield* yieldFuncCallDrops();
         yield* yieldParamDeleteDrops();
+        yield* yieldDefinitionBodyDrops();
     };
 
     let bestPriority = -1;

@@ -31,7 +31,9 @@ const executeHandler = (exprId) => {
 const generateDisplayState = (state: State): DisplayState =>  {
     const screenExpressions: Array<ScreenExpression> = [];
     const screenDefinitions: Array<ScreenDefinition> = [];
-    const {highlightedExprs, highlightedEmptyBodies} = state;
+    const {
+        highlightedExprs, highlightedEmptyBodies, highlightedDefinitionBodies
+    } = state;
     
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
         const rootPath = emptyIdPath(exprId);
@@ -77,7 +79,9 @@ const generateDisplayState = (state: State): DisplayState =>  {
                     defName,
                     displayExpr,
                     dragData.screenRect.topLeft,
-                    t.DefinitionKey.make(defName),
+                    null,
+                    null,
+                    false,
                     'dragDef' + fingerId,
                     isDragging,
                 ))
@@ -94,11 +98,14 @@ const generateDisplayState = (state: State): DisplayState =>  {
             displayExpr = buildDisplayExpression(
                 userExpr, rootPath, highlightedExprs, highlightedEmptyBodies);
         }
+        const shouldHighlightEmptyBody = highlightedDefinitionBodies.has(defName);
         screenDefinitions.push(t.ScreenDefinition.make(
             defName,
             displayExpr,
             canvasPtToScreenPt(canvasPoint),
             t.DefinitionKey.make(defName),
+            userExpr ? null : t.DefinitionEmptyBodyKey.make(defName),
+            shouldHighlightEmptyBody,
             'def' + defName,
             isDragging,
         ))

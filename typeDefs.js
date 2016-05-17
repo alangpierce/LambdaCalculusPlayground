@@ -17,6 +17,9 @@ export default typeDefs = {
             highlightedExprs: 'ISet<ExprPath>',
             // Set of lambda expressions where the body should be highlighted.
             highlightedEmptyBodies: 'ISet<ExprPath>',
+            // Set of definition names where the definition body should be
+            // highlighted.
+            highlightedDefinitionBodies: 'ISet<string>',
         },
     },
     Action: {
@@ -195,6 +198,8 @@ export default typeDefs = {
             expr: '?DisplayExpression',
             pos: 'ScreenPoint',
             defKey: '?DefinitionKey',
+            emptyBodyKey: '?DefinitionEmptyBodyKey',
+            shouldHighlightEmptyBody: 'boolean',
             // A long-lived expression key to use as the React key.
             key: 'string',
             isDragging: 'boolean',
@@ -360,6 +365,10 @@ export default typeDefs = {
                 path: 'ExprPath',
                 expr: 'UserExpression',
             },
+            InsertAsDefinitionResult: {
+                defName: 'string',
+                expr: 'UserExpression',
+            },
             RemoveResult: {},
         },
     },
@@ -380,6 +389,9 @@ export default typeDefs = {
                 lambdaPath: 'ExprPath',
             },
             DefinitionKey: {
+                defName: 'string',
+            },
+            DefinitionEmptyBodyKey: {
                 defName: 'string',
             }
         }

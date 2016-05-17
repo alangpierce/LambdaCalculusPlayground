@@ -34,7 +34,9 @@ const initialState: State = t.State.make(
     IMap.make(),
     IMap.make(),
     ISet.make(),
-    ISet.make());
+    ISet.make(),
+    ISet.make(),
+);
 
 // TODO: Consider adding a top-level try/catch.
 const playgroundApp = (state: State = initialState, rawAction: any): State => {
@@ -214,6 +216,8 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                     updateExprContainer(state, container, targetExpr =>
                         insertAsArg(targetExpr, expr, pathSteps)
                     ),
+                insertAsDefinitionResult: ({defName, expr}) =>
+                    state.lens().definitions().atKey(defName).replace(expr),
                 removeResult: () => {
                     // Do nothing; we've already removed the expression.
                     return state;
@@ -241,6 +245,7 @@ const computeResultPos = (sourceExprId: number, width: number):
 const computeHighlights = (state: State): State => {
     const exprPaths = [];
     const emptyBodyPaths = [];
+    const definitions = [];
     for (let [_, dragData] of state.activeDrags) {
         resolveDrop(state, dragData).match({
             addToTopLevelResult: () => {},
@@ -248,12 +253,14 @@ const computeHighlights = (state: State): State => {
                 emptyBodyPaths.push(lambdaPath)
             },
             insertAsArgResult: ({path}) => {exprPaths.push(path)},
+            insertAsDefinitionResult: ({defName}) => {definitions.push(defName)},
             removeResult: () => {},
         });
     }
     return state
         .withHighlightedExprs(ISet.make(exprPaths))
-        .withHighlightedEmptyBodies(ISet.make(emptyBodyPaths));
+        .withHighlightedEmptyBodies(ISet.make(emptyBodyPaths))
+        .withHighlightedDefinitionBodies(ISet.make(definitions));
 };
 
 export default playgroundApp;
