@@ -137,6 +137,14 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                                 t.DraggedExpression.make(expr),
                                 offset, screenRect));
                 },
+                pickUpDefinition: ({defName, offset, screenRect}) => {
+                    return state
+                        .lens().canvasDefinitions().deleteKey(defName)
+                        .lens().activeDrags().atKey(fingerId).replace(
+                            t.DragData.make(
+                                t.DraggedDefinition.make(defName),
+                                offset, screenRect));
+                },
                 decomposeExpression: ({exprPath, offset, screenRect}) => {
                     let extracted;
                     state = updateExprContainer(state, exprPath.container, expr => {

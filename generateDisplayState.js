@@ -30,6 +30,7 @@ const executeHandler = (exprId) => {
 
 const generateDisplayState = (state: State): DisplayState =>  {
     const screenExpressions: Array<ScreenExpression> = [];
+    const screenDefinitions: Array<ScreenDefinition> = [];
     const {highlightedExprs, highlightedEmptyBodies} = state;
     
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
@@ -50,24 +51,40 @@ const generateDisplayState = (state: State): DisplayState =>  {
 
     for (let [fingerId, dragData] of state.activeDrags) {
         const payload = dragData.payload;
-        // TODO: Handle displaying dragged definitions.
-        if (!(payload instanceof DraggedExpression)) {
-            continue;
-        }
-        const displayExpr = buildDisplayExpression(
-            payload.userExpr, null, highlightedExprs, highlightedEmptyBodies);
-        const isDragging = true;
-        const executeHandler = null;
-        screenExpressions.push(t.ScreenExpression.make(
-            displayExpr,
-            dragData.screenRect.topLeft,
-            'drag' + fingerId,
-            isDragging,
-            executeHandler,
-        ));
+        payload.match({
+            draggedExpression: ({userExpr}) => {
+                const displayExpr = buildDisplayExpression(
+                    userExpr, null, highlightedExprs, highlightedEmptyBodies);
+                const isDragging = true;
+                const executeHandler = null;
+                screenExpressions.push(t.ScreenExpression.make(
+                    displayExpr,
+                    dragData.screenRect.topLeft,
+                    'dragExpr' + fingerId,
+                    isDragging,
+                    executeHandler,
+                ));
+            },
+            draggedDefinition: ({defName}) => {
+                const userExpr = state.definitions.get(defName);
+                const isDragging = true;
+                let displayExpr = null;
+                if (userExpr != null) {
+                    displayExpr = buildDisplayExpression(
+                        userExpr, null, highlightedExprs, highlightedEmptyBodies);
+                }
+                screenDefinitions.push(t.ScreenDefinition.make(
+                    defName,
+                    displayExpr,
+                    dragData.screenRect.topLeft,
+                    t.DefinitionKey.make(defName),
+                    'dragDef' + fingerId,
+                    isDragging,
+                ))
+            }
+        });
     }
 
-    const screenDefinitions: Array<ScreenDefinition> = [];
     for (let [defName, canvasPoint] of state.canvasDefinitions) {
         const userExpr = state.definitions.get(defName);
         const isDragging = false;
@@ -81,6 +98,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             defName,
             displayExpr,
             canvasPtToScreenPt(canvasPoint),
+            t.DefinitionKey.make(defName),
             'def' + defName,
             isDragging,
         ))

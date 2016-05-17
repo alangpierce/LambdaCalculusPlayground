@@ -69,6 +69,7 @@ type ExprContainer = {
 type DragResult = {
     match<T>(visitor: {
         pickUpExpression(pickUpExpression: PickUpExpression): T,
+        pickUpDefinition(pickUpDefinition: PickUpDefinition): T,
         decomposeExpression(decomposeExpression: DecomposeExpression): T,
         createExpression(createExpression: CreateExpression): T,
         startPan(startPan: StartPan): T,

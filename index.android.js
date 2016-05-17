@@ -105,7 +105,7 @@ type TopLevelDefinitionPropTypes = {
 class TopLevelDefinition extends StatelessComponent<TopLevelDefinitionPropTypes> {
     render() {
         const {
-            defName, expr, pos: {screenX, screenY}, isDragging
+            defName, expr, pos: {screenX, screenY}, defKey, isDragging
         } = this.props.screenDef;
         const transform: Array<any> = [
             {translateX: screenX},
@@ -122,7 +122,7 @@ class TopLevelDefinition extends StatelessComponent<TopLevelDefinitionPropTypes>
             position: 'absolute',
             transform,
         }}>
-            <Definition defName={defName} expr={expr} />
+            <Definition defName={defName} defKey={defKey} expr={expr} />
         </View>;
     }
 }

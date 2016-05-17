@@ -465,20 +465,23 @@ declare export class MeasureRequestLens<Result> extends Lens<MeasureRequest, Res
 }
 
 declare export class ScreenDefinition {
-    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, key: string, isDragging: boolean): ScreenDefinition;
+    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, defKey: ?DefinitionKey, key: string, isDragging: boolean): ScreenDefinition;
     defName: string;
     expr: ?DisplayExpression;
     pos: ScreenPoint;
+    defKey: ?DefinitionKey;
     key: string;
     isDragging: boolean;
     withDefName(defName: string): ScreenDefinition;
     withExpr(expr: ?DisplayExpression): ScreenDefinition;
     withPos(pos: ScreenPoint): ScreenDefinition;
+    withDefKey(defKey: ?DefinitionKey): ScreenDefinition;
     withKey(key: string): ScreenDefinition;
     withIsDragging(isDragging: boolean): ScreenDefinition;
     updateDefName(updater: Updater<string>): ScreenDefinition;
     updateExpr(updater: Updater<?DisplayExpression>): ScreenDefinition;
     updatePos(updater: Updater<ScreenPoint>): ScreenDefinition;
+    updateDefKey(updater: Updater<?DefinitionKey>): ScreenDefinition;
     updateKey(updater: Updater<string>): ScreenDefinition;
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition;
     lens(): ScreenDefinitionLens<ScreenDefinition>;
@@ -489,6 +492,7 @@ declare export class ScreenDefinitionLens<Result> extends Lens<ScreenDefinition,
     defName(): Lens<string, Result>;
     expr(): Lens<?DisplayExpression, Result>;
     pos(): ScreenPointLens<Result>;
+    defKey(): Lens<?DefinitionKey, Result>;
     key(): Lens<string, Result>;
     isDragging(): Lens<boolean, Result>;
 }
@@ -740,6 +744,22 @@ declare export class PickUpExpression {
     serialize(): any;
 }
 
+declare export class PickUpDefinition {
+    static make(defName: string, offset: PointDifference, screenRect: ScreenRect): PickUpDefinition;
+    type: 'pickUpDefinition';
+    defName: string;
+    offset: PointDifference;
+    screenRect: ScreenRect;
+    withDefName(defName: string): PickUpDefinition;
+    withOffset(offset: PointDifference): PickUpDefinition;
+    withScreenRect(screenRect: ScreenRect): PickUpDefinition;
+    updateDefName(updater: Updater<string>): PickUpDefinition;
+    updateOffset(updater: Updater<PointDifference>): PickUpDefinition;
+    updateScreenRect(updater: Updater<ScreenRect>): PickUpDefinition;
+    match<T>(visitor: DragResultVisitor<T>): T;
+    serialize(): any;
+}
+
 declare export class DecomposeExpression {
     static make(exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression;
     type: 'decomposeExpression';
@@ -782,10 +802,11 @@ declare export class StartPan {
     serialize(): any;
 }
 
-export type DragResult = PickUpExpression | DecomposeExpression | CreateExpression | StartPan;
+export type DragResult = PickUpExpression | PickUpDefinition | DecomposeExpression | CreateExpression | StartPan;
 
 export type DragResultVisitor<T> = {
     pickUpExpression(pickUpExpression: PickUpExpression): T,
+    pickUpDefinition(pickUpDefinition: PickUpDefinition): T,
     decomposeExpression(decomposeExpression: DecomposeExpression): T,
     createExpression(createExpression: CreateExpression): T,
     startPan(startPan: StartPan): T,

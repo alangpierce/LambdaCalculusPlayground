@@ -16,6 +16,7 @@ import StatelessComponent from './StatelessComponent'
 import {TrackedText, TrackedView} from './TrackedViews'
 
 import type {
+    DefinitionKey,
     DisplayExpression,
     DisplayLambda,
     DisplayFuncCall,
@@ -31,18 +32,19 @@ type AssetId = number;
 
 type DefinitionPropTypes = {
     defName: string,
+    defKey: ?DefinitionKey,
     expr: ?DisplayExpression,
 }
 export class Definition extends StatelessComponent<DefinitionPropTypes> {
     render() {
-        const {defName, expr} = this.props;
+        const {defName, defKey, expr} = this.props;
         let exprElement;
         if (expr != null) {
             exprElement = <Expression expr={expr} />;
         } else {
             exprElement = <EmptyBody viewKey={null} shouldHighlight={false} />;
         }
-        return <ExprContainer viewKey={null}
+        return <ExprContainer viewKey={defKey}
                               shouldHighlight={false}>
             <ExprText>{defName}</ExprText>
             <ExprText>:=</ExprText>

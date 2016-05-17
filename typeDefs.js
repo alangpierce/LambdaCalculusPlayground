@@ -194,6 +194,7 @@ export default typeDefs = {
             defName: 'string',
             expr: '?DisplayExpression',
             pos: 'ScreenPoint',
+            defKey: '?DefinitionKey',
             // A long-lived expression key to use as the React key.
             key: 'string',
             isDragging: 'boolean',
@@ -298,6 +299,11 @@ export default typeDefs = {
         cases: {
             PickUpExpression: {
                 exprId: 'number',
+                offset: 'PointDifference',
+                screenRect: 'ScreenRect',
+            },
+            PickUpDefinition: {
+                defName: 'string',
                 offset: 'PointDifference',
                 screenRect: 'ScreenRect',
             },
