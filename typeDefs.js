@@ -198,6 +198,7 @@ export default typeDefs = {
             expr: '?DisplayExpression',
             pos: 'ScreenPoint',
             defKey: '?DefinitionKey',
+            refKey: '?DefinitionRefKey',
             emptyBodyKey: '?DefinitionEmptyBodyKey',
             shouldHighlightEmptyBody: 'boolean',
             // A long-lived expression key to use as the React key.
@@ -394,6 +395,9 @@ export default typeDefs = {
                 lambdaPath: 'ExprPath',
             },
             DefinitionKey: {
+                defName: 'string',
+            },
+            DefinitionRefKey: {
                 defName: 'string',
             },
             DefinitionEmptyBodyKey: {

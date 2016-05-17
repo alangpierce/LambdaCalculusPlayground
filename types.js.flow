@@ -469,11 +469,12 @@ declare export class MeasureRequestLens<Result> extends Lens<MeasureRequest, Res
 }
 
 declare export class ScreenDefinition {
-    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, defKey: ?DefinitionKey, emptyBodyKey: ?DefinitionEmptyBodyKey, shouldHighlightEmptyBody: boolean, key: string, isDragging: boolean): ScreenDefinition;
+    static make(defName: string, expr: ?DisplayExpression, pos: ScreenPoint, defKey: ?DefinitionKey, refKey: ?DefinitionRefKey, emptyBodyKey: ?DefinitionEmptyBodyKey, shouldHighlightEmptyBody: boolean, key: string, isDragging: boolean): ScreenDefinition;
     defName: string;
     expr: ?DisplayExpression;
     pos: ScreenPoint;
     defKey: ?DefinitionKey;
+    refKey: ?DefinitionRefKey;
     emptyBodyKey: ?DefinitionEmptyBodyKey;
     shouldHighlightEmptyBody: boolean;
     key: string;
@@ -482,6 +483,7 @@ declare export class ScreenDefinition {
     withExpr(expr: ?DisplayExpression): ScreenDefinition;
     withPos(pos: ScreenPoint): ScreenDefinition;
     withDefKey(defKey: ?DefinitionKey): ScreenDefinition;
+    withRefKey(refKey: ?DefinitionRefKey): ScreenDefinition;
     withEmptyBodyKey(emptyBodyKey: ?DefinitionEmptyBodyKey): ScreenDefinition;
     withShouldHighlightEmptyBody(shouldHighlightEmptyBody: boolean): ScreenDefinition;
     withKey(key: string): ScreenDefinition;
@@ -490,6 +492,7 @@ declare export class ScreenDefinition {
     updateExpr(updater: Updater<?DisplayExpression>): ScreenDefinition;
     updatePos(updater: Updater<ScreenPoint>): ScreenDefinition;
     updateDefKey(updater: Updater<?DefinitionKey>): ScreenDefinition;
+    updateRefKey(updater: Updater<?DefinitionRefKey>): ScreenDefinition;
     updateEmptyBodyKey(updater: Updater<?DefinitionEmptyBodyKey>): ScreenDefinition;
     updateShouldHighlightEmptyBody(updater: Updater<boolean>): ScreenDefinition;
     updateKey(updater: Updater<string>): ScreenDefinition;
@@ -503,6 +506,7 @@ declare export class ScreenDefinitionLens<Result> extends Lens<ScreenDefinition,
     expr(): Lens<?DisplayExpression, Result>;
     pos(): ScreenPointLens<Result>;
     defKey(): Lens<?DefinitionKey, Result>;
+    refKey(): Lens<?DefinitionRefKey, Result>;
     emptyBodyKey(): Lens<?DefinitionEmptyBodyKey, Result>;
     shouldHighlightEmptyBody(): Lens<boolean, Result>;
     key(): Lens<string, Result>;
@@ -998,6 +1002,16 @@ declare export class DefinitionKey {
     serialize(): any;
 }
 
+declare export class DefinitionRefKey {
+    static make(defName: string): DefinitionRefKey;
+    type: 'definitionRefKey';
+    defName: string;
+    withDefName(defName: string): DefinitionRefKey;
+    updateDefName(updater: Updater<string>): DefinitionRefKey;
+    match<T>(visitor: ViewKeyVisitor<T>): T;
+    serialize(): any;
+}
+
 declare export class DefinitionEmptyBodyKey {
     static make(defName: string): DefinitionEmptyBodyKey;
     type: 'definitionEmptyBodyKey';
@@ -1008,13 +1022,14 @@ declare export class DefinitionEmptyBodyKey {
     serialize(): any;
 }
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionEmptyBodyKey;
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey(expressionKey: ExpressionKey): T,
     emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
     lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
     definitionKey(definitionKey: DefinitionKey): T,
+    definitionRefKey(definitionRefKey: DefinitionRefKey): T,
     definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
 }
 

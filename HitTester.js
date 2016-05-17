@@ -104,6 +104,25 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         }
     };
 
+    const yieldReferenceGenerators = function* () {
+        for (let [defName] of state.canvasDefinitions) {
+            const viewKey = t.DefinitionRefKey.make(defName);
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (ptInRect(point, screenRect)) {
+                yield [
+                    t.CreateExpression.make(
+                        t.UserReference.make(defName),
+                        ptMinusPt(point, screenRect.topLeft),
+                        screenRect),
+                    1,
+                ];
+            }
+        }
+    };
+
     const yieldLambdaVarGenerators = function* () {
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (!(expr instanceof t.UserLambda)) {
@@ -133,6 +152,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         yield* yieldDefinitionPickUps();
         yield* yieldDefinitionExtracts();
         yield* yieldExpressionDecomposes();
+        yield* yieldReferenceGenerators();
         yield* yieldLambdaVarGenerators();
     };
 

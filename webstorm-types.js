@@ -100,6 +100,7 @@ type ViewKey = {
         emptyBodyKey(emptyBodyKey: EmptyBodyKey): T,
         lambdaVarKey(lambdaVarKey: LambdaVarKey): T,
         definitionKey(definitionKey: DefinitionKey): T,
+        definitionRefKey(definitionRefKey: DefinitionRefKey): T,
         definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
     }): T,
 };
