@@ -1,6 +1,8 @@
 const exec = require('child_process').exec;
 
-exec('./node_modules/.bin/flow --json', (error, stdout, stderr) => {
+// Use 10MB buffer to avoid truncating the JSON.
+exec('./node_modules/.bin/flow --json',
+        {maxBuffer: 10000*1024}, (error, stdout, stderr) => {
     if (!stdout && stderr) {
         console.log('Flow process gave error:');
         console.log(stderr);
