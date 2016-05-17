@@ -312,6 +312,11 @@ export default typeDefs = {
                 offset: 'PointDifference',
                 screenRect: 'ScreenRect',
             },
+            ExtractDefinition: {
+                defName: 'string',
+                offset: 'PointDifference',
+                screenRect: 'ScreenRect',
+            },
             DecomposeExpression: {
                 exprPath: 'ExprPath',
                 offset: 'PointDifference',

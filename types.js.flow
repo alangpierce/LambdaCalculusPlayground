@@ -772,6 +772,22 @@ declare export class PickUpDefinition {
     serialize(): any;
 }
 
+declare export class ExtractDefinition {
+    static make(defName: string, offset: PointDifference, screenRect: ScreenRect): ExtractDefinition;
+    type: 'extractDefinition';
+    defName: string;
+    offset: PointDifference;
+    screenRect: ScreenRect;
+    withDefName(defName: string): ExtractDefinition;
+    withOffset(offset: PointDifference): ExtractDefinition;
+    withScreenRect(screenRect: ScreenRect): ExtractDefinition;
+    updateDefName(updater: Updater<string>): ExtractDefinition;
+    updateOffset(updater: Updater<PointDifference>): ExtractDefinition;
+    updateScreenRect(updater: Updater<ScreenRect>): ExtractDefinition;
+    match<T>(visitor: DragResultVisitor<T>): T;
+    serialize(): any;
+}
+
 declare export class DecomposeExpression {
     static make(exprPath: ExprPath, offset: PointDifference, screenRect: ScreenRect): DecomposeExpression;
     type: 'decomposeExpression';
@@ -814,11 +830,12 @@ declare export class StartPan {
     serialize(): any;
 }
 
-export type DragResult = PickUpExpression | PickUpDefinition | DecomposeExpression | CreateExpression | StartPan;
+export type DragResult = PickUpExpression | PickUpDefinition | ExtractDefinition | DecomposeExpression | CreateExpression | StartPan;
 
 export type DragResultVisitor<T> = {
     pickUpExpression(pickUpExpression: PickUpExpression): T,
     pickUpDefinition(pickUpDefinition: PickUpDefinition): T,
+    extractDefinition(extractDefinition: ExtractDefinition): T,
     decomposeExpression(decomposeExpression: DecomposeExpression): T,
     createExpression(createExpression: CreateExpression): T,
     startPan(startPan: StartPan): T,

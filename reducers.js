@@ -147,6 +147,18 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                                 t.DraggedDefinition.make(defName),
                                 offset, screenRect));
                 },
+                extractDefinition: ({defName, offset, screenRect}) => {
+                    const expr = state.definitions.get(defName);
+                    if (expr == null) {
+                        throw new Error('Expected expression to extract.');
+                    }
+                    return state
+                        .lens().definitions().atKey(defName).replace(null)
+                        .lens().activeDrags().atKey(fingerId).replace(
+                            t.DragData.make(
+                                t.DraggedExpression.make(expr),
+                                offset, screenRect));
+                },
                 decomposeExpression: ({exprPath, offset, screenRect}) => {
                     let extracted;
                     state = updateExprContainer(state, exprPath.container, expr => {

@@ -58,6 +58,27 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         }
     };
 
+    const yieldDefinitionExtracts = function* () {
+        for (let [defName] of state.canvasDefinitions) {
+            if (!state.definitions.get(defName)) {
+                continue;
+            }
+            console.log("considering " + defName);
+            const viewKey = t.ExpressionKey.make(emptyDefinitionPath(defName));
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (ptInRect(point, screenRect)) {
+                yield [
+                    t.ExtractDefinition.make(
+                        defName, ptMinusPt(point, screenRect.topLeft), screenRect),
+                    1,
+                ];
+            }
+        }
+    };
+
     const yieldExpressionDecomposes = function* () {
         for (let [path, _] of yieldAllExpressions(state)) {
             // You can only decompose an expression that is a lambda body or a
@@ -110,6 +131,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         Generator<[DragResult, number], void, void> {
         yield* yieldExpressionPickUps();
         yield* yieldDefinitionPickUps();
+        yield* yieldDefinitionExtracts();
         yield* yieldExpressionDecomposes();
         yield* yieldLambdaVarGenerators();
     };

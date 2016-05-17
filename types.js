@@ -47,6 +47,7 @@ export const ExprIdContainer = buildUnionCaseClass('exprIdContainer', ['exprId']
 export const DefinitionContainer = buildUnionCaseClass('definitionContainer', ['defName']);
 export const PickUpExpression = buildUnionCaseClass('pickUpExpression', ['exprId', 'offset', 'screenRect']);
 export const PickUpDefinition = buildUnionCaseClass('pickUpDefinition', ['defName', 'offset', 'screenRect']);
+export const ExtractDefinition = buildUnionCaseClass('extractDefinition', ['defName', 'offset', 'screenRect']);
 export const DecomposeExpression = buildUnionCaseClass('decomposeExpression', ['exprPath', 'offset', 'screenRect']);
 export const CreateExpression = buildUnionCaseClass('createExpression', ['expr', 'offset', 'screenRect']);
 export const StartPan = buildUnionCaseClass('startPan', ['startPos']);
