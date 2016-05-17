@@ -16,6 +16,9 @@ import type {
     UserExpression,
     ViewKey,
 } from './types';
+import {
+    DraggedExpression
+} from './types';
 
 /**
  * Given a click on the screen, figure out what expression it is under, if any.
@@ -109,6 +112,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
  * dropped. This is useful both to perform the drop and to do highlighting.
  */
 export const resolveDrop = (state: State, dragData: DragData): DropResult => {
+    const dragPayload = dragData.payload;
     const intersectsWithView = (key: ViewKey): bool => {
         const rect = getPositionOnScreen(key);
         return !!rect && rectsOverlap(dragData.screenRect, rect);
@@ -124,9 +128,12 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
             if (expr.type !== 'userLambda' || expr.body) {
                 continue;
             }
+            if (!(dragPayload instanceof DraggedExpression)) {
+                return;
+            }
             if (intersectsWithView(t.EmptyBodyKey.make(path))) {
                 yield [
-                    t.InsertAsBodyResult.make(path, dragData.userExpr),
+                    t.InsertAsBodyResult.make(path, dragPayload.userExpr),
                     // The lambda body should show up as above the lambda.
                     path.pathSteps.size + 1,
                 ];
@@ -135,10 +142,13 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     };
 
     const yieldFuncCallDrops = function* () {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
         for (let [path, _] of yieldAllExpressions(state)) {
             if (intersectsWithRightSide(t.ExpressionKey.make(path))) {
                 yield [
-                    t.InsertAsArgResult.make(path, dragData.userExpr),
+                    t.InsertAsArgResult.make(path, dragPayload.userExpr),
                     path.pathSteps.size,
                 ];
             }
@@ -146,7 +156,10 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     };
 
     const yieldParamDeleteDrops = function* () {
-        if (dragData.userExpr.type !== 'userVariable') {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
+        if (dragPayload.userExpr.type !== 'userVariable') {
             return;
         }
         for (let [path, expr] of yieldAllExpressions(state)) {
@@ -172,7 +185,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
 
     let bestPriority = -1;
     let bestResult = t.AddToTopLevelResult.make(
-        dragData.userExpr, dragData.screenRect.topLeft);
+        dragPayload, dragData.screenRect.topLeft);
     for (let [dropResult, priority] of yieldDropCandidates(state)) {
         if (priority > bestPriority) {
             bestResult = dropResult;

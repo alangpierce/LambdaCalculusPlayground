@@ -133,7 +133,9 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                     return state
                         .lens().canvasExpressions().deleteKey(exprId)
                         .lens().activeDrags().atKey(fingerId).replace(
-                            t.DragData.make(expr, offset, screenRect));
+                            t.DragData.make(
+                                t.DraggedExpression.make(expr),
+                                offset, screenRect));
                 },
                 decomposeExpression: ({exprPath, offset, screenRect}) => {
                     let extracted;
@@ -146,12 +148,16 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                         throw new Error('Expected extracted to be set.');
                     }
                     return state.lens().activeDrags().atKey(fingerId).replace(
-                        t.DragData.make(extracted, offset, screenRect));
+                        t.DragData.make(
+                            t.DraggedExpression.make(extracted),
+                            offset, screenRect));
                 },
                 createExpression: ({expr, offset, screenRect}) => {
                     return state.updateActiveDrags(drags =>
                         drags.set(fingerId,
-                            t.DragData.make(expr, offset, screenRect)));
+                            t.DragData.make(
+                                t.DraggedExpression.make(expr),
+                                offset, screenRect)));
                 },
                 startPan: () => {
                     // TODO
@@ -169,9 +175,8 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             const oldGrabPoint = ptPlusDiff(screenRect.topLeft, grabOffset);
             const shiftAmount = ptMinusPt(screenPos, oldGrabPoint);
             const newScreenRect = rectPlusDiff(screenRect, shiftAmount);
-            state = state.updateActiveDrags((drags) =>
-                drags.update(fingerId, (dragData) =>
-                    dragData.withScreenRect(newScreenRect)));
+            state = state.lens().activeDrags().atKey(fingerId).screenRect()
+                .replace(newScreenRect);
             return computeHighlights(state);
         },
         fingerUp: ({fingerId, screenPos}) => {
@@ -182,10 +187,16 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             const dropResult = resolveDrop(state, dragData, screenPos);
             state = state.lens().activeDrags().deleteKey(fingerId);
             state = dropResult.match({
-                addToTopLevelResult: ({expr, screenPos}) => {
+                addToTopLevelResult: ({payload, screenPos}) => {
                     const canvasPos = screenPtToCanvasPt(screenPos);
-                    return addExpression(state,
-                        t.CanvasExpression.make(expr, canvasPos));
+                    return payload.match({
+                        draggedExpression: ({userExpr}) =>
+                            addExpression(state,
+                                t.CanvasExpression.make(userExpr, canvasPos)),
+                        draggedDefinition: ({defName}) =>
+                            state.lens().canvasDefinitions().atKey(defName)
+                                .replace(canvasPos),
+                    });
                 },
                 insertAsBodyResult: ({lambdaPath: {container, pathSteps}, expr}) =>
                     updateExprContainer(state, container, targetExpr =>

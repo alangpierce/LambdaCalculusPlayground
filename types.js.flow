@@ -792,14 +792,14 @@ export type DragResultVisitor<T> = {
 }
 
 declare export class DragData {
-    static make(userExpr: UserExpression, grabOffset: PointDifference, screenRect: ScreenRect): DragData;
-    userExpr: UserExpression;
+    static make(payload: DragPayload, grabOffset: PointDifference, screenRect: ScreenRect): DragData;
+    payload: DragPayload;
     grabOffset: PointDifference;
     screenRect: ScreenRect;
-    withUserExpr(userExpr: UserExpression): DragData;
+    withPayload(payload: DragPayload): DragData;
     withGrabOffset(grabOffset: PointDifference): DragData;
     withScreenRect(screenRect: ScreenRect): DragData;
-    updateUserExpr(updater: Updater<UserExpression>): DragData;
+    updatePayload(updater: Updater<DragPayload>): DragData;
     updateGrabOffset(updater: Updater<PointDifference>): DragData;
     updateScreenRect(updater: Updater<ScreenRect>): DragData;
     lens(): DragDataLens<DragData>;
@@ -807,19 +807,46 @@ declare export class DragData {
 }
 
 declare export class DragDataLens<Result> extends Lens<DragData, Result> {
-    userExpr(): Lens<UserExpression, Result>;
+    payload(): Lens<DragPayload, Result>;
     grabOffset(): PointDifferenceLens<Result>;
     screenRect(): ScreenRectLens<Result>;
 }
 
+declare export class DraggedExpression {
+    static make(userExpr: UserExpression): DraggedExpression;
+    type: 'draggedExpression';
+    userExpr: UserExpression;
+    withUserExpr(userExpr: UserExpression): DraggedExpression;
+    updateUserExpr(updater: Updater<UserExpression>): DraggedExpression;
+    match<T>(visitor: DragPayloadVisitor<T>): T;
+    serialize(): any;
+}
+
+declare export class DraggedDefinition {
+    static make(defName: string): DraggedDefinition;
+    type: 'draggedDefinition';
+    defName: string;
+    withDefName(defName: string): DraggedDefinition;
+    updateDefName(updater: Updater<string>): DraggedDefinition;
+    match<T>(visitor: DragPayloadVisitor<T>): T;
+    serialize(): any;
+}
+
+export type DragPayload = DraggedExpression | DraggedDefinition;
+
+export type DragPayloadVisitor<T> = {
+    draggedExpression(draggedExpression: DraggedExpression): T,
+    draggedDefinition(draggedDefinition: DraggedDefinition): T,
+}
+
 declare export class AddToTopLevelResult {
-    static make(expr: UserExpression, screenPos: ScreenPoint): AddToTopLevelResult;
+    static make(payload: DragPayload, screenPos: ScreenPoint): AddToTopLevelResult;
     type: 'addToTopLevelResult';
-    expr: UserExpression;
+    payload: DragPayload;
     screenPos: ScreenPoint;
-    withExpr(expr: UserExpression): AddToTopLevelResult;
+    withPayload(payload: DragPayload): AddToTopLevelResult;
     withScreenPos(screenPos: ScreenPoint): AddToTopLevelResult;
-    updateExpr(updater: Updater<UserExpression>): AddToTopLevelResult;
+    updatePayload(updater: Updater<DragPayload>): AddToTopLevelResult;
     updateScreenPos(updater: Updater<ScreenPoint>): AddToTopLevelResult;
     match<T>(visitor: DropResultVisitor<T>): T;
     serialize(): any;

@@ -319,7 +319,7 @@ export default typeDefs = {
     DragData: {
         type: 'struct',
         fields: {
-            userExpr: 'UserExpression',
+            payload: 'DragPayload',
             // The coordinates of the grab position relative to the top-left of
             // the screen rectangle.
             grabOffset: 'PointDifference',
@@ -327,12 +327,23 @@ export default typeDefs = {
             screenRect: 'ScreenRect',
         },
     },
+    DragPayload: {
+        type: 'union',
+        cases: {
+            DraggedExpression: {
+                userExpr: 'UserExpression',
+            },
+            DraggedDefinition: {
+                defName: 'string',
+            },
+        },
+    },
     // The action performed when dropping.
     DropResult: {
         type: 'union',
         cases: {
             AddToTopLevelResult: {
-                expr: 'UserExpression',
+                payload: 'DragPayload',
                 screenPos: 'ScreenPoint',
             },
             InsertAsBodyResult: {

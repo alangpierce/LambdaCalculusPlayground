@@ -16,6 +16,9 @@ import type {
     State,
     UserExpression,
 } from './types'
+import {
+    DraggedExpression
+} from './types'
 import {IList, ISet} from './types-collections'
 import {canStepUserExpr} from './UserExpressionEvaluator'
 
@@ -46,8 +49,13 @@ const generateDisplayState = (state: State): DisplayState =>  {
     }
 
     for (let [fingerId, dragData] of state.activeDrags) {
+        const payload = dragData.payload;
+        // TODO: Handle displaying dragged definitions.
+        if (!(payload instanceof DraggedExpression)) {
+            continue;
+        }
         const displayExpr = buildDisplayExpression(
-            dragData.userExpr, null, highlightedExprs, highlightedEmptyBodies);
+            payload.userExpr, null, highlightedExprs, highlightedEmptyBodies);
         const isDragging = true;
         const executeHandler = null;
         screenExpressions.push(t.ScreenExpression.make(

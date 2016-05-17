@@ -75,6 +75,13 @@ type DragResult = {
     }): T,
 };
 
+type DragPayload = {
+    match<T>(visitor: {
+        draggedExpression(draggedExpression: DraggedExpression): T,
+        draggedDefinition(draggedDefinition: DraggedDefinition): T,
+    }): T,
+};
+
 type DropResult = {
     match<T>(visitor: {
         addToTopLevelResult(addToTopLevelResult: AddToTopLevelResult): T,
