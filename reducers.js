@@ -3,7 +3,9 @@
  */
 
 import {emptyIdPath} from './ExprPaths';
-import {evaluateUserExpr, canStepUserExpr} from './UserExpressionEvaluator';
+import {
+    canStepUserExpr, evaluateUserExpr, expandAllDefinitions
+} from './UserExpressionEvaluator';
 import type {
     Action,
     CanvasExpression,
@@ -99,11 +101,12 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             return state;
         },
         evaluateExpression: ({exprId}) => {
+            const definitions = expandAllDefinitions(state.definitions);
             const existingExpr = exprWithId(exprId);
-            if (!canStepUserExpr(existingExpr.expr)) {
+            if (!canStepUserExpr(definitions, existingExpr.expr)) {
                 return state;
             }
-            const evaluatedExpr = evaluateUserExpr(existingExpr.expr);
+            const evaluatedExpr = evaluateUserExpr(definitions, existingExpr.expr);
             if (!evaluatedExpr) {
                 return state;
             }

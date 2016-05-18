@@ -20,7 +20,7 @@ import {
     DraggedExpression
 } from './types'
 import {IList, ISet} from './types-collections'
-import {canStepUserExpr} from './UserExpressionEvaluator'
+import {canStepUserExpr, expandAllDefinitions} from './UserExpressionEvaluator'
 
 const executeHandler = (exprId) => {
     return () => {
@@ -34,14 +34,16 @@ const generateDisplayState = (state: State): DisplayState =>  {
     const {
         highlightedExprs, highlightedEmptyBodies, highlightedDefinitionBodies
     } = state;
-    
+
+    const definitions = expandAllDefinitions(state.definitions);
+
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
         const rootPath = emptyIdPath(exprId);
         const displayExpr = buildDisplayExpression(
             canvasExpr.expr, rootPath, highlightedExprs,
             highlightedEmptyBodies);
         const isDragging = false;
-        const isExecutable = canStepUserExpr(canvasExpr.expr);
+        const isExecutable = canStepUserExpr(definitions, canvasExpr.expr);
         screenExpressions.push(t.ScreenExpression.make(
             displayExpr,
             canvasPtToScreenPt(canvasExpr.pos),

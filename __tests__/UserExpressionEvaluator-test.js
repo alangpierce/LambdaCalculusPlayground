@@ -4,9 +4,16 @@
 
 jest.disableAutomock();
 
-import {evaluateUserExpr} from '../UserExpressionEvaluator'
-import {parseExpr, formatExpr} from '../ExpressionStr'
-import * as DefinitionManager from '../DefinitionManager'
+import {parseExpr, formatExpr} from '../ExpressionStr';
+import {IMap} from '../types-collections';
+import {evaluateUserExpr, expandAllDefinitions} from '../UserExpressionEvaluator';
+import type {Definitions, UserDefinitions} from '../UserExpressionEvaluator';
+
+let userDefinitions: UserDefinitions = IMap.make();
+let definitions: Definitions = IMap.make();
+const define = (defName, exprString) => {
+    userDefinitions = userDefinitions.set(defName, parseExpr(exprString));
+};
 
 describe('evaluateUserExpression', () => {
     beforeEach(() => {
@@ -48,6 +55,8 @@ describe('evaluateUserExpression', () => {
         define('FACTREC',
             'L f[L n[ISZERO(n)(1)(*(n)(f(PRED(n))))]]');
         define('FACT', 'Y(FACTREC)');
+
+        definitions = expandAllDefinitions(userDefinitions);
     });
 
     it('can evaluate booleans', () => {
@@ -88,14 +97,11 @@ describe('evaluateUserExpression', () => {
         assertResult("L y'[y(y')]", 'L x[L y[x(y)]](y)');
     });
 
-    const define = (defName: string, exprString: string) => {
-        DefinitionManager.define(defName, parseExpr(exprString));
-    };
-
     const assertResult = (expectedResultStr: string, exprStr: string) => {
         // Make sure result is in canonical form.
         expectedResultStr = formatExpr(parseExpr(expectedResultStr));
-        expect(formatExpr(notNull(evaluateUserExpr(parseExpr(exprStr)))))
+        expect(formatExpr(notNull(
+                evaluateUserExpr(definitions, parseExpr(exprStr)))))
             .toEqual(expectedResultStr);
     };
 
