@@ -23,6 +23,20 @@ const createTrackedView = (ViewComponent: any) => class TrackedComponent extends
         }
     }
 
+    componentWillUpdate(nextProps: any) {
+        const {viewKey} = this.props;
+        if (viewKey && !viewKey.equals(nextProps.viewKey)) {
+            unregisterView(viewKey, this.refs.viewRef);
+        }
+    }
+
+    componentDidUpdate(prevProps: any) {
+        const {viewKey} = this.props;
+        if (viewKey && !viewKey.equals(prevProps.viewKey)) {
+            registerView(viewKey, this.refs.viewRef);
+        }
+    }
+
     componentWillUnmount() {
         const {viewKey} = this.props;
         if (viewKey) {
