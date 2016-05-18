@@ -98,7 +98,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                     t.DecomposeExpression.make(
                         parentPath, ptMinusPt(point, screenRect.topLeft),
                         screenRect),
-                    path.pathSteps.size,
+                    pathDepth(path),
                 ];
             }
         }
@@ -139,7 +139,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                         t.UserVariable.make(expr.varName),
                         ptMinusPt(point, screenRect.topLeft),
                         screenRect),
-                    path.pathSteps.size + 1,
+                    pathDepth(path) + 1,
                 ];
             }
         }
@@ -195,7 +195,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
                 yield [
                     t.InsertAsBodyResult.make(path, dragPayload.userExpr),
                     // The lambda body should show up as above the lambda.
-                    path.pathSteps.size + 1,
+                    pathDepth(path) + 1,
                 ];
             }
         }
@@ -209,7 +209,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
             if (intersectsWithRightSide(t.ExpressionKey.make(path))) {
                 yield [
                     t.InsertAsArgResult.make(path, dragPayload.userExpr),
-                    path.pathSteps.size,
+                    pathDepth(path),
                 ];
             }
         }
@@ -229,7 +229,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
             if (intersectsWithView(t.LambdaVarKey.make(path))) {
                 yield [
                     t.RemoveResult.make(),
-                    path.pathSteps.size + 1,
+                    pathDepth(path) + 1,
                 ];
             }
         }
@@ -253,6 +253,23 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
     };
 
+    const yieldReferenceDeleteDrops = function* () {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
+        if (dragPayload.userExpr.type !== 'userReference') {
+            return;
+        }
+        for (let [defName] of state.canvasDefinitions) {
+            if (intersectsWithView(t.DefinitionRefKey.make(defName))) {
+                yield [
+                    t.RemoveResult.make(),
+                    1,
+                ];
+            }
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
@@ -260,6 +277,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         yield* yieldFuncCallDrops();
         yield* yieldParamDeleteDrops();
         yield* yieldDefinitionBodyDrops();
+        yield* yieldReferenceDeleteDrops();
     };
 
     let bestPriority = -1;
@@ -303,4 +321,12 @@ const yieldExpressions = function* (expr: UserExpression, path: ExprPath):
         userVariable: function* () {},
         userReference: function* () {},
     })
+};
+
+const pathDepth = (path: ExprPath): number => {
+    const initialDepth = path.container.match({
+        exprIdContainer: () => 0,
+        definitionContainer: () => 1,
+    });
+    return path.pathSteps.size + initialDepth;
 };

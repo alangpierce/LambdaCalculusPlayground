@@ -105,7 +105,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             displayExpr,
             canvasPtToScreenPt(canvasPoint),
             t.DefinitionKey.make(defName),
-            userExpr ? null : t.DefinitionRefKey.make(defName),
+            t.DefinitionRefKey.make(defName),
             userExpr ? null : t.DefinitionEmptyBodyKey.make(defName),
             shouldHighlightEmptyBody,
             'def' + defName,
