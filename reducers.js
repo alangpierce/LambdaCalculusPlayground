@@ -22,7 +22,6 @@ import {
     insertAsBody,
     updateExprContainer,
 } from './ExpressionState'
-import {ptMinusPt, ptPlusDiff, rectPlusDiff} from './Geometry'
 import {resolveDrop, resolveTouch} from './HitTester'
 import {screenPtToCanvasPt} from './PointConversion'
 import {deserialize} from './types-lib'
@@ -197,9 +196,9 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 return state;
             }
             const {grabOffset, screenRect} = dragData;
-            const oldGrabPoint = ptPlusDiff(screenRect.topLeft, grabOffset);
-            const shiftAmount = ptMinusPt(screenPos, oldGrabPoint);
-            const newScreenRect = rectPlusDiff(screenRect, shiftAmount);
+            const oldGrabPoint = screenRect.topLeft.plusDiff(grabOffset);
+            const shiftAmount = screenPos.minus(oldGrabPoint);
+            const newScreenRect = screenRect.plusDiff(shiftAmount);
             state = state.lens().activeDrags().atKey(fingerId).screenRect()
                 .replace(newScreenRect);
             return computeHighlights(state);

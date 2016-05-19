@@ -264,6 +264,7 @@ export default typeDefs = {
     },
     ScreenPoint: {
         type: 'struct',
+        mixinClass: 'ScreenPointMixin',
         fields: {
             screenX: 'number',
             screenY: 'number',
@@ -271,6 +272,7 @@ export default typeDefs = {
     },
     ScreenRect: {
         type: 'struct',
+        mixinClass: 'ScreenRectMixin',
         fields: {
             topLeft: 'ScreenPoint',
             bottomRight: 'ScreenPoint',

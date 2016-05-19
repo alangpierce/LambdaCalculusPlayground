@@ -3,7 +3,6 @@
  */
 import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths';
 import {getPositionOnScreen} from './ViewTracker';
-import {ptInRect, ptMinusPt, rectsOverlap, rightSide} from './Geometry';
 
 import * as t from './types';
 import type {
@@ -31,10 +30,10 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 yield [
                     t.PickUpExpression.make(
-                        exprId, ptMinusPt(point, screenRect.topLeft), screenRect),
+                        exprId, point.minus(screenRect.topLeft), screenRect),
                     0,
                 ];
             }
@@ -48,10 +47,10 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 yield [
                     t.PickUpDefinition.make(
-                        defName, ptMinusPt(point, screenRect.topLeft), screenRect),
+                        defName, point.minus(screenRect.topLeft), screenRect),
                     0,
                 ];
             }
@@ -69,10 +68,10 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 yield [
                     t.ExtractDefinition.make(
-                        defName, ptMinusPt(point, screenRect.topLeft), screenRect),
+                        defName, point.minus(screenRect.topLeft), screenRect),
                     1,
                 ];
             }
@@ -92,11 +91,11 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 const parentPath = path.updatePathSteps((steps) => steps.pop());
                 yield [
                     t.DecomposeExpression.make(
-                        parentPath, ptMinusPt(point, screenRect.topLeft),
+                        parentPath, point.minus(screenRect.topLeft),
                         screenRect),
                     pathDepth(path),
                 ];
@@ -111,11 +110,11 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 yield [
                     t.CreateExpression.make(
                         t.UserReference.make(defName),
-                        ptMinusPt(point, screenRect.topLeft),
+                        point.minus(screenRect.topLeft),
                         screenRect),
                     1,
                 ];
@@ -133,11 +132,11 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!screenRect) {
                 continue;
             }
-            if (ptInRect(point, screenRect)) {
+            if (screenRect.containsPoint(point)) {
                 yield [
                     t.CreateExpression.make(
                         t.UserVariable.make(expr.varName),
-                        ptMinusPt(point, screenRect.topLeft),
+                        point.minus(screenRect.topLeft),
                         screenRect),
                     pathDepth(path) + 1,
                 ];
@@ -175,12 +174,12 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     const dragPayload = dragData.payload;
     const intersectsWithView = (key: ViewKey): bool => {
         const rect = getPositionOnScreen(key);
-        return !!rect && rectsOverlap(dragData.screenRect, rect);
+        return !!rect && dragData.screenRect.overlapsWith(rect);
     };
 
     const intersectsWithRightSide = (key: ViewKey): bool => {
         const rect = getPositionOnScreen(key);
-        return !!rect && rectsOverlap(dragData.screenRect, rightSide(rect));
+        return !!rect && dragData.screenRect.overlapsWith(rect.rightSide());
     };
 
     const yieldLambdaDrops = function* () {

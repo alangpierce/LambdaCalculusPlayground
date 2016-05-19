@@ -48,7 +48,8 @@ const updateName = (name) => {
  * Construct a class with properly-named fields.
  */
 export const buildValueClass = (
-        className: string, fieldNames: Array<string>): any => {
+        className: string, mixinClass: any,
+        fieldNames: Array<string>): any => {
     class CustomLens extends Lens {}
     const customLensPrototype: any = CustomLens.prototype;
     for (const name of fieldNames) {
@@ -106,8 +107,9 @@ export const buildValueClass = (
             return Immutable.Map(this).toString();
         }
     }
+    const valuePrototype = (ValueClass: any).prototype;
     for (const name of fieldNames) {
-        (ValueClass: any).prototype[withName(name)] = function(newVal) {
+        valuePrototype[withName(name)] = function(newVal) {
             const newArgs = {};
             for (const copyName of fieldNames) {
                 newArgs[copyName] = this[copyName];
@@ -115,10 +117,20 @@ export const buildValueClass = (
             newArgs[name] = newVal;
             return new ValueClass(newArgs);
         };
-        (ValueClass: any).prototype[updateName(name)] = function(updater) {
+        valuePrototype[updateName(name)] = function(updater) {
             return this[withName(name)](updater(this[name]));
         };
     }
+    if (mixinClass) {
+        for (const methodName of
+                Object.getOwnPropertyNames(mixinClass.prototype)) {
+            if (methodName === 'constructor') {
+                continue;
+            }
+            valuePrototype[methodName] = mixinClass.prototype[methodName];
+        }
+    }
+
     registeredConstructors[className] = ValueClass;
     return ValueClass;
 };

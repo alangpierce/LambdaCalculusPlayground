@@ -4,9 +4,14 @@
  * @flow
  */
  
-import {IList, IMap, ISet, ListLens, MapLens} from './types-collections'
-import {Lens} from './types-lib'
-import type {Updater} from './types-lib'
+import {IList, IMap, ISet, ListLens, MapLens} from './types-collections';
+import {Lens} from './types-lib';
+import type {Updater} from './types-lib';
+
+import {
+    ScreenPointMixin,
+    ScreenRectMixin,
+} from './types-mixins';
 
 declare export class State {
     static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>): State;
@@ -664,7 +669,7 @@ declare export class PointDifferenceLens<Result> extends Lens<PointDifference, R
     dy(): Lens<number, Result>;
 }
 
-declare export class ScreenPoint {
+declare export class ScreenPoint extends ScreenPointMixin {
     static make(screenX: number, screenY: number): ScreenPoint;
     screenX: number;
     screenY: number;
@@ -681,7 +686,7 @@ declare export class ScreenPointLens<Result> extends Lens<ScreenPoint, Result> {
     screenY(): Lens<number, Result>;
 }
 
-declare export class ScreenRect {
+declare export class ScreenRect extends ScreenRectMixin {
     static make(topLeft: ScreenPoint, bottomRight: ScreenPoint): ScreenRect;
     topLeft: ScreenPoint;
     bottomRight: ScreenPoint;
