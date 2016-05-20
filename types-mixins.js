@@ -7,43 +7,40 @@ import type {
     ScreenRect
 } from './types'
 import {PointDifference} from './types';
+import {
+    ScreenRectMixinTemplate,
+    ScreenPointMixinTemplate
+} from './types-mixin-templates';
 
-export class ScreenRectMixin {
+export class ScreenRectMixin extends ScreenRectMixinTemplate {
     containsPoint(point: ScreenPoint): boolean {
-        const self: ScreenRect = (this: any);
-        return point.onBottomRight(self.topLeft) &&
-            self.bottomRight.onBottomRight(point);
+        return point.onBottomRight(this.topLeft) &&
+            this.bottomRight.onBottomRight(point);
     }
     overlapsWith(other: ScreenRect): boolean {
-        const self: ScreenRect = (this: any);
-        return self.bottomRight.onBottomRight(other.topLeft) &&
-                other.bottomRight.onBottomRight(self.topLeft);
+        return this.bottomRight.onBottomRight(other.topLeft) &&
+                other.bottomRight.onBottomRight(this.topLeft);
     }
     rightSide(): ScreenRect {
-        const self: ScreenRect = (this: any);
-        return self.lens().topLeft().screenX().replace(self.bottomRight.screenX);
+        return this.lens().topLeft().screenX().replace(this.bottomRight.screenX);
     }
     plusDiff(diff: PointDifference): ScreenRect {
-        const self: ScreenRect = (this: any);
-        return self
+        return this
             .updateTopLeft(topLeft => topLeft.plusDiff(diff))
             .updateBottomRight(bottomRight => bottomRight.plusDiff(diff));
     }
 }
 
-export class ScreenPointMixin {
+export class ScreenPointMixin extends ScreenPointMixinTemplate {
     onBottomRight(other: ScreenPoint): boolean {
-        const self: ScreenPoint = (this: any);
-        return self.screenX >= other.screenX && self.screenY >= other.screenY;
+        return this.screenX >= other.screenX && this.screenY >= other.screenY;
     }
     minus(other: ScreenPoint): PointDifference {
-        const self: ScreenPoint = (this: any);
         return PointDifference.make(
-            self.screenX - other.screenX, self.screenY - other.screenY);
+            this.screenX - other.screenX, this.screenY - other.screenY);
     }
     plusDiff(diff: PointDifference): ScreenPoint {
-        const self: ScreenPoint = (this: any);
-        return self
+        return this
             .updateScreenX(x => x + diff.dx)
             .updateScreenY(y => y + diff.dy);
     }

@@ -2,7 +2,13 @@
 
 import fs from 'fs'
 
-import {generateTypes, generateFlowTypes, generateWebstormTypes} from './TypeGenerator'
+import {
+    generateTypes,
+    generateFlowTypes,
+    generateWebstormTypes,
+    generateMixinTemplates,
+    generateFlowMixinTemplates
+} from './TypeGenerator'
 import typeDefs from '../typeDefs'
 
 const main = () => {
@@ -30,6 +36,24 @@ const main = () => {
             console.log('Error writing webstorm file: ' + err);
         } else {
             console.log('Wrote WebStorm types file!');
+        }
+    });
+
+    const mixinTemplatesStr = generateMixinTemplates(typeDefs);
+    fs.writeFile(__dirname + '/../types-mixin-templates.js', mixinTemplatesStr, (err) => {
+        if (err) {
+            console.log('Error writing mixin templates file: ' + err);
+        } else {
+            console.log('Wrote mixin templates file!');
+        }
+    });
+
+    const flowMixinTemplatesStr = generateFlowMixinTemplates(typeDefs);
+    fs.writeFile(__dirname + '/../types-mixin-templates.js.flow', flowMixinTemplatesStr, (err) => {
+        if (err) {
+            console.log('Error writing flow mixin templates file: ' + err);
+        } else {
+            console.log('Wrote flow mixin templates file!');
         }
     });
 };
