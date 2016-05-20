@@ -611,16 +611,19 @@ declare export class DisplayVariable {
 }
 
 declare export class DisplayReference {
-    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, defName: string): DisplayReference;
+    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, shouldShowError: boolean, defName: string): DisplayReference;
     type: 'displayReference';
     exprKey: ?ExpressionKey;
     shouldHighlight: boolean;
+    shouldShowError: boolean;
     defName: string;
     withExprKey(exprKey: ?ExpressionKey): DisplayReference;
     withShouldHighlight(shouldHighlight: boolean): DisplayReference;
+    withShouldShowError(shouldShowError: boolean): DisplayReference;
     withDefName(defName: string): DisplayReference;
     updateExprKey(updater: Updater<?ExpressionKey>): DisplayReference;
     updateShouldHighlight(updater: Updater<boolean>): DisplayReference;
+    updateShouldShowError(updater: Updater<boolean>): DisplayReference;
     updateDefName(updater: Updater<string>): DisplayReference;
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
     serialize(): any;

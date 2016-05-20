@@ -9,6 +9,7 @@ import * as t from './types'
 import type {
     DisplayExpression,
     DisplayState,
+    Expression,
     ExprPath,
     MeasureRequest,
     ScreenDefinition,
@@ -16,10 +17,7 @@ import type {
     State,
     UserExpression,
 } from './types'
-import {
-    DraggedExpression
-} from './types'
-import {IList, ISet} from './types-collections'
+import {IList, IMap, ISet} from './types-collections'
 import {canStepUserExpr, expandAllDefinitions} from './UserExpressionEvaluator'
 
 const executeHandler = (exprId) => {
@@ -41,7 +39,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         const rootPath = emptyIdPath(exprId);
         const displayExpr = buildDisplayExpression(
             canvasExpr.expr, rootPath, highlightedExprs,
-            highlightedEmptyBodies);
+            highlightedEmptyBodies, definitions);
         const isDragging = false;
         const isExecutable = canStepUserExpr(definitions, canvasExpr.expr);
         screenExpressions.push(t.ScreenExpression.make(
@@ -58,7 +56,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
         payload.match({
             draggedExpression: ({userExpr}) => {
                 const displayExpr = buildDisplayExpression(
-                    userExpr, null, highlightedExprs, highlightedEmptyBodies);
+                    userExpr, null, highlightedExprs, highlightedEmptyBodies,
+                    definitions);
                 const isDragging = true;
                 const executeHandler = null;
                 screenExpressions.push(t.ScreenExpression.make(
@@ -75,7 +74,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
                 let displayExpr = null;
                 if (userExpr != null) {
                     displayExpr = buildDisplayExpression(
-                        userExpr, null, highlightedExprs, highlightedEmptyBodies);
+                        userExpr, null, highlightedExprs,
+                        highlightedEmptyBodies, definitions);
                 }
                 screenDefinitions.push(t.ScreenDefinition.make(
                     defName,
@@ -99,7 +99,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
         if (userExpr != null) {
             const rootPath = emptyDefinitionPath(defName);
             displayExpr = buildDisplayExpression(
-                userExpr, rootPath, highlightedExprs, highlightedEmptyBodies);
+                userExpr, rootPath, highlightedExprs, highlightedEmptyBodies,
+                definitions);
         }
         const shouldHighlightEmptyBody = highlightedDefinitionBodies.has(defName);
         screenDefinitions.push(t.ScreenDefinition.make(
@@ -118,7 +119,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
     const measureRequests: Array<MeasureRequest> = [];
     for (let [exprId, pendingResult] of state.pendingResults) {
         const displayExpr = buildDisplayExpression(
-            pendingResult.expr, null, highlightedExprs, highlightedEmptyBodies);
+            pendingResult.expr, null, highlightedExprs, highlightedEmptyBodies,
+            definitions);
         measureRequests.push(t.MeasureRequest.make(
             displayExpr,
             (width, height) => {
@@ -140,7 +142,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
 const buildDisplayExpression = (
         userExpr: UserExpression, rootPath: ?ExprPath,
         highlightedExprs: ISet<ExprPath>,
-        highlightedEmptyBodies: ISet<ExprPath>): DisplayExpression => {
+        highlightedEmptyBodies: ISet<ExprPath>,
+        definitions: IMap<string, ?Expression>): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
         const exprKey = path && t.ExpressionKey.make(path);
         const shouldHighlight = path != null && highlightedExprs.has(path);
@@ -171,7 +174,10 @@ const buildDisplayExpression = (
                 return t.DisplayVariable.make(exprKey, shouldHighlight, varName);
             },
             userReference: ({defName}) => {
-                return t.DisplayReference.make(exprKey, shouldHighlight, defName);
+                const shouldShowError = !definitions.get(defName);
+                return t.DisplayReference.make(
+                    exprKey, shouldHighlight, shouldShowError, defName
+                );
             },
         });
     };

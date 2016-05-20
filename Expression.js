@@ -139,9 +139,12 @@ type ReferencePropTypes = {
 }
 class Reference extends StatelessComponent<ReferencePropTypes> {
     render() {
-        const {exprKey, shouldHighlight, defName} = this.props.expr;
+        const {
+            exprKey, shouldHighlight, shouldShowError, defName,
+        } = this.props.expr;
         return <ExprContainer viewKey={exprKey}
-                              shouldHighlight={shouldHighlight}>
+                              shouldHighlight={shouldHighlight}
+                              shouldShowError={shouldShowError}>
             <ExprText>{defName}</ExprText>
         </ExprContainer>
     }
@@ -151,11 +154,20 @@ type ExprContainerPropTypes = {
     children: any,
     viewKey: ?ViewKey,
     shouldHighlight: boolean,
+    shouldShowError: ?boolean,
 }
 class ExprContainer extends StatelessComponent<ExprContainerPropTypes> {
     render() {
-        const {children, viewKey, shouldHighlight} = this.props;
-        const backgroundColor = shouldHighlight ? '#30EA30' : 'white';
+        const {
+            children, viewKey, shouldHighlight, shouldShowError
+        } = this.props;
+        let backgroundColor = 'white';
+        if (shouldShowError) {
+            backgroundColor = '#FFAAAA';
+        }
+        if (shouldHighlight) {
+            backgroundColor = '#30EA30';
+        }
         return <TrackedView viewKey={viewKey} style={{
             flexDirection: 'row',
             backgroundColor,

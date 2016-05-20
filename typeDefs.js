@@ -244,6 +244,7 @@ export default typeDefs = {
             DisplayReference: {
                 exprKey: '?ExpressionKey',
                 shouldHighlight: 'boolean',
+                shouldShowError: 'boolean',
                 defName: 'string',
             }
         },
