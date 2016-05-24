@@ -42,8 +42,8 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
         activity.getWindowManager().getDefaultDisplay().getSize(screenSize);
 
         RelativeLayout.LayoutParams layoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, screenSize.y / 2);
-        layoutParams.topMargin = screenSize.y / 2;
+                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, screenSize.y * 4 / 5);
+        layoutParams.topMargin = screenSize.y / 5;
         reactRootView.setLayoutParams(layoutParams);
         reactRootView.setBackgroundColor(Color.GRAY);
         canvasRoot.addView(reactRootView);

@@ -15,14 +15,15 @@ import React, {
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
 
-import './DebugGlobals'
-import ExecuteButton from './ExecuteButton'
-import {Definition, Expression} from './Expression'
-import generateDisplayState from './generateDisplayState'
-import SimpleComponent from './SimpleComponent'
-import StatelessComponent from './StatelessComponent'
-import store from './store'
-import * as t from './types'
+import './DebugGlobals';
+import ExecuteButton from './ExecuteButton';
+import {Definition, Expression} from './Expression';
+import generateDisplayState from './generateDisplayState';
+import Palette from './Palette';
+import SimpleComponent from './SimpleComponent';
+import StatelessComponent from './StatelessComponent';
+import store from './store';
+import * as t from './types';
 
 import type {
     DisplayState,
@@ -235,13 +236,15 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 key={screenDef.key}
             />
         );
+
         return <View {...this._responderMethods} style={{
-            backgroundColor: 'gray',
-            flex: 1,
-        }}>
+                backgroundColor: 'gray',
+                flex: 1,
+            }}>
             {measureHandlers}
             {exprNodes}
             {definitionNodes}
+            <Palette />
         </View>;
     }
 }
