@@ -63,7 +63,6 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             if (!state.definitions.get(defName)) {
                 continue;
             }
-            console.log("considering " + defName);
             const viewKey = t.ExpressionKey.make(emptyDefinitionPath(defName));
             const screenRect = getPositionOnScreen(viewKey);
             if (!screenRect) {
