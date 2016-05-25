@@ -102,6 +102,7 @@ type ViewKey = {
         definitionKey(definitionKey: DefinitionKey): T,
         definitionRefKey(definitionRefKey: DefinitionRefKey): T,
         definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
+        paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
     }): T,
 };
 

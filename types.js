@@ -66,3 +66,4 @@ export const LambdaVarKey = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);
 export const DefinitionKey = buildUnionCaseClass('definitionKey', ['defName']);
 export const DefinitionRefKey = buildUnionCaseClass('definitionRefKey', ['defName']);
 export const DefinitionEmptyBodyKey = buildUnionCaseClass('definitionEmptyBodyKey', ['defName']);
+export const PaletteLambdaKey = buildUnionCaseClass('paletteLambdaKey', ['varName']);

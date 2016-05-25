@@ -548,23 +548,23 @@ declare export class ScreenExpressionLens<Result> extends Lens<ScreenExpression,
 }
 
 declare export class DisplayLambda {
-    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda;
+    static make(exprKey: ?ViewKey, shouldHighlight: boolean, varKey: ?LambdaVarKey, emptyBodyKey: ?EmptyBodyKey, shouldHighlightEmptyBody: boolean, varName: string, body: ?DisplayExpression): DisplayLambda;
     type: 'displayLambda';
-    exprKey: ?ExpressionKey;
+    exprKey: ?ViewKey;
     shouldHighlight: boolean;
     varKey: ?LambdaVarKey;
     emptyBodyKey: ?EmptyBodyKey;
     shouldHighlightEmptyBody: boolean;
     varName: string;
     body: ?DisplayExpression;
-    withExprKey(exprKey: ?ExpressionKey): DisplayLambda;
+    withExprKey(exprKey: ?ViewKey): DisplayLambda;
     withShouldHighlight(shouldHighlight: boolean): DisplayLambda;
     withVarKey(varKey: ?LambdaVarKey): DisplayLambda;
     withEmptyBodyKey(emptyBodyKey: ?EmptyBodyKey): DisplayLambda;
     withShouldHighlightEmptyBody(shouldHighlightEmptyBody: boolean): DisplayLambda;
     withVarName(varName: string): DisplayLambda;
     withBody(body: ?DisplayExpression): DisplayLambda;
-    updateExprKey(updater: Updater<?ExpressionKey>): DisplayLambda;
+    updateExprKey(updater: Updater<?ViewKey>): DisplayLambda;
     updateShouldHighlight(updater: Updater<boolean>): DisplayLambda;
     updateVarKey(updater: Updater<?LambdaVarKey>): DisplayLambda;
     updateEmptyBodyKey(updater: Updater<?EmptyBodyKey>): DisplayLambda;
@@ -1030,7 +1030,17 @@ declare export class DefinitionEmptyBodyKey {
     serialize(): any;
 }
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey;
+declare export class PaletteLambdaKey {
+    static make(varName: string): PaletteLambdaKey;
+    type: 'paletteLambdaKey';
+    varName: string;
+    withVarName(varName: string): PaletteLambdaKey;
+    updateVarName(updater: Updater<string>): PaletteLambdaKey;
+    match<T>(visitor: ViewKeyVisitor<T>): T;
+    serialize(): any;
+}
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey | PaletteLambdaKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey(expressionKey: ExpressionKey): T,
@@ -1039,6 +1049,7 @@ export type ViewKeyVisitor<T> = {
     definitionKey(definitionKey: DefinitionKey): T,
     definitionRefKey(definitionRefKey: DefinitionRefKey): T,
     definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
+    paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
 }
 
 declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {

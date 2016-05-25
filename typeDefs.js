@@ -222,7 +222,7 @@ export default typeDefs = {
         type: 'union',
         cases: {
             DisplayLambda: {
-                exprKey: '?ExpressionKey',
+                exprKey: '?ViewKey',
                 shouldHighlight: 'boolean',
                 varKey: '?LambdaVarKey',
                 emptyBodyKey: '?EmptyBodyKey',
@@ -405,6 +405,9 @@ export default typeDefs = {
             },
             DefinitionEmptyBodyKey: {
                 defName: 'string',
+            },
+            PaletteLambdaKey: {
+                varName: 'string',
             }
         }
     }
