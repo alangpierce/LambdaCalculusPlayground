@@ -178,6 +178,12 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 t.ScreenPoint.make(100, 100),
             ));
         });
+        DeviceEventEmitter.addListener('toggleLambdaPalette', () => {
+            store.dispatch(t.ToggleLambdaPalette.make());
+        });
+        DeviceEventEmitter.addListener('toggleDefinitionPalette', () => {
+            store.dispatch(t.ToggleDefinitionPalette.make());
+        });
         this._responderMethods = this.getResponderMethods();
     }
 

@@ -154,10 +154,12 @@ public class PlaygroundFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_lambda_palette) {
-            paletteDrawerManager.toggleLambdaPalette();
+//            paletteDrawerManager.toggleLambdaPalette();
+            reactNativeManager.toggleLambdaPalette();
             return true;
         } else if (item.getItemId() == R.id.action_definition_palette) {
-            paletteDrawerManager.toggleDefinitionPalette();
+//            paletteDrawerManager.toggleDefinitionPalette();
+            reactNativeManager.toggleDefinitionPalette();
             return true;
         } else if (item.getItemId() == R.id.action_delete_definition) {
             expressionCreator.promptDeleteDefinition();

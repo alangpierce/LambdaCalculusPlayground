@@ -19,4 +19,7 @@ public interface ReactNativeManager {
      * Place a lambda with the given name in a nice place on the React Native canvas.
      */
     void createDefinition(String defName);
+
+    void toggleLambdaPalette();
+    void toggleDefinitionPalette();
 }

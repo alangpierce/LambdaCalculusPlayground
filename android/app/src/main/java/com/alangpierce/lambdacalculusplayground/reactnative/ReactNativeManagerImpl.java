@@ -14,6 +14,8 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
 import com.facebook.react.shell.MainReactPackage;
 
+import javax.annotation.Nullable;
+
 public class ReactNativeManagerImpl implements ReactNativeManager {
     private final RelativeLayout canvasRoot;
     private final Activity activity;
@@ -71,21 +73,30 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
 
     @Override
     public void createLambda(String varName) {
-        ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
-        if (reactContext != null) {
-            RCTDeviceEventEmitter eventEmitter =
-                    reactContext.getJSModule(RCTDeviceEventEmitter.class);
-            eventEmitter.emit("createLambda", varName);
-        }
+        emit("createLambda", varName);
     }
 
     @Override
     public void createDefinition(String defName) {
+        emit("createDefinition", defName);
+    }
+
+    @Override
+    public void toggleLambdaPalette() {
+        emit("toggleLambdaPalette", null);
+    }
+
+    @Override
+    public void toggleDefinitionPalette() {
+        emit("toggleDefinitionPalette", null);
+    }
+
+    private void emit(String eventName, @Nullable Object data) {
         ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
         if (reactContext != null) {
             RCTDeviceEventEmitter eventEmitter =
                     reactContext.getJSModule(RCTDeviceEventEmitter.class);
-            eventEmitter.emit("createDefinition", defName);
+            eventEmitter.emit(eventName, data);
         }
     }
 }
