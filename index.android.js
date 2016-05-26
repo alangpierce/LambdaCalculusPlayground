@@ -85,7 +85,6 @@ class TopLevelExpression
                 ],
             }}/>
         }
-
         return <View>
             <View
                 onLayout={this.handleLayout.bind(this)}
@@ -218,7 +217,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
     render() {
         const {
-            screenExpressions, screenDefinitions, measureRequests
+            screenExpressions, screenDefinitions, paletteState, measureRequests
         } = this.props.displayState;
         const measureHandlers = measureRequests.map((measureRequest, i) =>
             <MeasureHandler
@@ -244,7 +243,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             {measureHandlers}
             {exprNodes}
             {definitionNodes}
-            <Palette />
+            <Palette displayState={paletteState} />
         </View>;
     }
 }

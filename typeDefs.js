@@ -20,6 +20,7 @@ export default typeDefs = {
             // Set of definition names where the definition body should be
             // highlighted.
             highlightedDefinitionBodies: 'ISet<string>',
+            paletteState: "'none' | 'lambda' | 'definition'",
         },
     },
     Action: {
@@ -29,6 +30,8 @@ export default typeDefs = {
              * Clear the state. Useful for testing.
              */
             Reset: {},
+            ToggleLambdaPalette: {},
+            ToggleDefinitionPalette: {},
             /**
              * Create a new expression at the given position.
              */
@@ -181,7 +184,16 @@ export default typeDefs = {
         fields: {
             screenExpressions: 'IList<ScreenExpression>',
             screenDefinitions: 'IList<ScreenDefinition>',
+            paletteState: 'PaletteDisplayState',
             measureRequests: 'IList<MeasureRequest>',
+        },
+    },
+    PaletteDisplayState: {
+        type: 'struct',
+        fields: {
+            activePalette: "'none' | 'lambda' | 'definition'",
+            lambdas: 'IList<string>',
+            definitions: 'IList<string>',
         },
     },
     MeasureRequest: {
@@ -242,7 +254,7 @@ export default typeDefs = {
                 varName: 'string',
             },
             DisplayReference: {
-                exprKey: '?ExpressionKey',
+                exprKey: '?ViewKey',
                 shouldHighlight: 'boolean',
                 shouldShowError: 'boolean',
                 defName: 'string',
@@ -408,7 +420,10 @@ export default typeDefs = {
             },
             PaletteLambdaKey: {
                 varName: 'string',
-            }
+            },
+            PaletteReferenceKey: {
+                defName: 'string',
+            },
         }
     }
 };

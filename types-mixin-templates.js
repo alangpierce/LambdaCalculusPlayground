@@ -11,6 +11,7 @@ export const StateMixinTemplate = class {};
 export const CanvasExpressionMixinTemplate = class {};
 export const PendingResultMixinTemplate = class {};
 export const DisplayStateMixinTemplate = class {};
+export const PaletteDisplayStateMixinTemplate = class {};
 export const MeasureRequestMixinTemplate = class {};
 export const ScreenDefinitionMixinTemplate = class {};
 export const ScreenExpressionMixinTemplate = class {};

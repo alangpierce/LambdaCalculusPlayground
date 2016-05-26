@@ -9,6 +9,8 @@
 type Action = {
     match<T>(visitor: {
         reset(reset: Reset): T,
+        toggleLambdaPalette(toggleLambdaPalette: ToggleLambdaPalette): T,
+        toggleDefinitionPalette(toggleDefinitionPalette: ToggleDefinitionPalette): T,
         addExpression(addExpression: AddExpression): T,
         placeDefinition(placeDefinition: PlaceDefinition): T,
         moveExpression(moveExpression: MoveExpression): T,
@@ -103,6 +105,7 @@ type ViewKey = {
         definitionRefKey(definitionRefKey: DefinitionRefKey): T,
         definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
         paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
+        paletteReferenceKey(paletteReferenceKey: PaletteReferenceKey): T,
     }): T,
 };
 

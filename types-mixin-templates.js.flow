@@ -9,6 +9,7 @@ import {
     CanvasExpression
     PendingResult
     DisplayState
+    PaletteDisplayState
     MeasureRequest
     ScreenDefinition
     ScreenExpression
@@ -24,6 +25,7 @@ export class StateMixinTemplate extends State {}
 export class CanvasExpressionMixinTemplate extends CanvasExpression {}
 export class PendingResultMixinTemplate extends PendingResult {}
 export class DisplayStateMixinTemplate extends DisplayState {}
+export class PaletteDisplayStateMixinTemplate extends PaletteDisplayState {}
 export class MeasureRequestMixinTemplate extends MeasureRequest {}
 export class ScreenDefinitionMixinTemplate extends ScreenDefinition {}
 export class ScreenExpressionMixinTemplate extends ScreenExpression {}

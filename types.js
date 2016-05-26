@@ -4,8 +4,10 @@
 import {buildUnionCaseClass, buildValueClass} from './types-lib';
 import * as mixins from './types-mixins';
 
-export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies']);
+export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'paletteState']);
 export const Reset = buildUnionCaseClass('reset', []);
+export const ToggleLambdaPalette = buildUnionCaseClass('toggleLambdaPalette', []);
+export const ToggleDefinitionPalette = buildUnionCaseClass('toggleDefinitionPalette', []);
 export const AddExpression = buildUnionCaseClass('addExpression', ['canvasExpr']);
 export const PlaceDefinition = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
 export const MoveExpression = buildUnionCaseClass('moveExpression', ['exprId', 'pos']);
@@ -31,7 +33,8 @@ export const UserVariable = buildUnionCaseClass('userVariable', ['varName']);
 export const UserReference = buildUnionCaseClass('userReference', ['defName']);
 export const CanvasExpression = buildValueClass('CanvasExpression', null, ['expr', 'pos']);
 export const PendingResult = buildValueClass('PendingResult', null, ['expr', 'sourceExprId']);
-export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'measureRequests']);
+export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'paletteState', 'measureRequests']);
+export const PaletteDisplayState = buildValueClass('PaletteDisplayState', null, ['activePalette', 'lambdas', 'definitions']);
 export const MeasureRequest = buildValueClass('MeasureRequest', null, ['expr', 'resultHandler']);
 export const ScreenDefinition = buildValueClass('ScreenDefinition', null, ['defName', 'expr', 'pos', 'defKey', 'refKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'key', 'isDragging']);
 export const ScreenExpression = buildValueClass('ScreenExpression', null, ['expr', 'pos', 'key', 'isDragging', 'executeHandler']);
@@ -67,3 +70,4 @@ export const DefinitionKey = buildUnionCaseClass('definitionKey', ['defName']);
 export const DefinitionRefKey = buildUnionCaseClass('definitionRefKey', ['defName']);
 export const DefinitionEmptyBodyKey = buildUnionCaseClass('definitionEmptyBodyKey', ['defName']);
 export const PaletteLambdaKey = buildUnionCaseClass('paletteLambdaKey', ['varName']);
+export const PaletteReferenceKey = buildUnionCaseClass('paletteReferenceKey', ['defName']);

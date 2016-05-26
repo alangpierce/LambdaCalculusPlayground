@@ -37,6 +37,7 @@ const initialState: State = t.State.make(
     ISet.make(),
     ISet.make(),
     ISet.make(),
+    'lambda',
 );
 
 // TODO: Consider adding a top-level try/catch.
@@ -58,6 +59,10 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
     return action.match({
         reset: () => initialState,
         addExpression: ({canvasExpr}) => addExpression(state, canvasExpr),
+        toggleLambdaPalette: () => state.updatePaletteState(
+            (s) => s === 'lambda' ? 'none' : 'lambda'),
+        toggleDefinitionPalette: () => state.updatePaletteState(
+            (s) => s === 'definition' ? 'none' : 'definition'),
         placeDefinition: ({defName, screenPos}) => {
             return state
                 .lens().canvasDefinitions().atKey(defName).replace(

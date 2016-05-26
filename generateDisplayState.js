@@ -2,6 +2,7 @@
  * @flow
  */
 
+import {PALLETE_VAR_NAMES} from './constants';
 import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths'
 import {canvasPtToScreenPt} from './PointConversion'
 import store from './store'
@@ -129,9 +130,17 @@ const generateDisplayState = (state: State): DisplayState =>  {
         ))
     }
 
+    const paletteLambdas = IList.make(PALLETE_VAR_NAMES);
+    const paletteDefNames = IList.make(state.definitions.keys()).sort();
+
     return t.DisplayState.make(
         IList.make(screenExpressions),
         IList.make(screenDefinitions),
+        t.PaletteDisplayState.make(
+            state.paletteState,
+            paletteLambdas,
+            paletteDefNames,
+        ),
         IList.make(measureRequests));
 };
 

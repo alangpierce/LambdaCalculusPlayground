@@ -128,6 +128,10 @@ export class IList<T> extends Iterable<T> {
         return this.backingList.get(index);
     }
 
+    sort(): IList<T> {
+        return new IList(this.backingList.sort());
+    }
+
     lens(): ListLens<T, IList<T>> {
         return this.makeLens((newList) => newList);
     }

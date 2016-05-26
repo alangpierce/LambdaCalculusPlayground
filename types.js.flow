@@ -14,7 +14,7 @@ import {
 } from './types-mixins';
 
 declare export class State {
-    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>): State;
+    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>, paletteState: 'none' | 'lambda' | 'definition'): State;
     canvasExpressions: IMap<number, CanvasExpression>;
     nextExprId: number;
     canvasDefinitions: IMap<string, CanvasPoint>;
@@ -24,6 +24,7 @@ declare export class State {
     highlightedExprs: ISet<ExprPath>;
     highlightedEmptyBodies: ISet<ExprPath>;
     highlightedDefinitionBodies: ISet<string>;
+    paletteState: 'none' | 'lambda' | 'definition';
     withCanvasExpressions(canvasExpressions: IMap<number, CanvasExpression>): State;
     withNextExprId(nextExprId: number): State;
     withCanvasDefinitions(canvasDefinitions: IMap<string, CanvasPoint>): State;
@@ -33,6 +34,7 @@ declare export class State {
     withHighlightedExprs(highlightedExprs: ISet<ExprPath>): State;
     withHighlightedEmptyBodies(highlightedEmptyBodies: ISet<ExprPath>): State;
     withHighlightedDefinitionBodies(highlightedDefinitionBodies: ISet<string>): State;
+    withPaletteState(paletteState: 'none' | 'lambda' | 'definition'): State;
     updateCanvasExpressions(updater: Updater<IMap<number, CanvasExpression>>): State;
     updateNextExprId(updater: Updater<number>): State;
     updateCanvasDefinitions(updater: Updater<IMap<string, CanvasPoint>>): State;
@@ -42,6 +44,7 @@ declare export class State {
     updateHighlightedExprs(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedDefinitionBodies(updater: Updater<ISet<string>>): State;
+    updatePaletteState(updater: Updater<'none' | 'lambda' | 'definition'>): State;
     lens(): StateLens<State>;
     serialize(): any;
 }
@@ -56,11 +59,26 @@ declare export class StateLens<Result> extends Lens<State, Result> {
     highlightedExprs(): Lens<ISet<ExprPath>, Result>;
     highlightedEmptyBodies(): Lens<ISet<ExprPath>, Result>;
     highlightedDefinitionBodies(): Lens<ISet<string>, Result>;
+    paletteState(): Lens<'none' | 'lambda' | 'definition', Result>;
 }
 
 declare export class Reset {
     static make(): Reset;
     type: 'reset';
+    match<T>(visitor: ActionVisitor<T>): T;
+    serialize(): any;
+}
+
+declare export class ToggleLambdaPalette {
+    static make(): ToggleLambdaPalette;
+    type: 'toggleLambdaPalette';
+    match<T>(visitor: ActionVisitor<T>): T;
+    serialize(): any;
+}
+
+declare export class ToggleDefinitionPalette {
+    static make(): ToggleDefinitionPalette;
+    type: 'toggleDefinitionPalette';
     match<T>(visitor: ActionVisitor<T>): T;
     serialize(): any;
 }
@@ -205,10 +223,12 @@ declare export class FingerUp {
     serialize(): any;
 }
 
-export type Action = Reset | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
+export type Action = Reset | ToggleLambdaPalette | ToggleDefinitionPalette | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset(reset: Reset): T,
+    toggleLambdaPalette(toggleLambdaPalette: ToggleLambdaPalette): T,
+    toggleDefinitionPalette(toggleDefinitionPalette: ToggleDefinitionPalette): T,
     addExpression(addExpression: AddExpression): T,
     placeDefinition(placeDefinition: PlaceDefinition): T,
     moveExpression(moveExpression: MoveExpression): T,
@@ -436,15 +456,18 @@ declare export class PendingResultLens<Result> extends Lens<PendingResult, Resul
 }
 
 declare export class DisplayState {
-    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, measureRequests: IList<MeasureRequest>): DisplayState;
+    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, paletteState: PaletteDisplayState, measureRequests: IList<MeasureRequest>): DisplayState;
     screenExpressions: IList<ScreenExpression>;
     screenDefinitions: IList<ScreenDefinition>;
+    paletteState: PaletteDisplayState;
     measureRequests: IList<MeasureRequest>;
     withScreenExpressions(screenExpressions: IList<ScreenExpression>): DisplayState;
     withScreenDefinitions(screenDefinitions: IList<ScreenDefinition>): DisplayState;
+    withPaletteState(paletteState: PaletteDisplayState): DisplayState;
     withMeasureRequests(measureRequests: IList<MeasureRequest>): DisplayState;
     updateScreenExpressions(updater: Updater<IList<ScreenExpression>>): DisplayState;
     updateScreenDefinitions(updater: Updater<IList<ScreenDefinition>>): DisplayState;
+    updatePaletteState(updater: Updater<PaletteDisplayState>): DisplayState;
     updateMeasureRequests(updater: Updater<IList<MeasureRequest>>): DisplayState;
     lens(): DisplayStateLens<DisplayState>;
     serialize(): any;
@@ -453,7 +476,29 @@ declare export class DisplayState {
 declare export class DisplayStateLens<Result> extends Lens<DisplayState, Result> {
     screenExpressions(): ScreenExpressionListLens<Result>;
     screenDefinitions(): ScreenDefinitionListLens<Result>;
+    paletteState(): PaletteDisplayStateLens<Result>;
     measureRequests(): MeasureRequestListLens<Result>;
+}
+
+declare export class PaletteDisplayState {
+    static make(activePalette: 'none' | 'lambda' | 'definition', lambdas: IList<string>, definitions: IList<string>): PaletteDisplayState;
+    activePalette: 'none' | 'lambda' | 'definition';
+    lambdas: IList<string>;
+    definitions: IList<string>;
+    withActivePalette(activePalette: 'none' | 'lambda' | 'definition'): PaletteDisplayState;
+    withLambdas(lambdas: IList<string>): PaletteDisplayState;
+    withDefinitions(definitions: IList<string>): PaletteDisplayState;
+    updateActivePalette(updater: Updater<'none' | 'lambda' | 'definition'>): PaletteDisplayState;
+    updateLambdas(updater: Updater<IList<string>>): PaletteDisplayState;
+    updateDefinitions(updater: Updater<IList<string>>): PaletteDisplayState;
+    lens(): PaletteDisplayStateLens<PaletteDisplayState>;
+    serialize(): any;
+}
+
+declare export class PaletteDisplayStateLens<Result> extends Lens<PaletteDisplayState, Result> {
+    activePalette(): Lens<'none' | 'lambda' | 'definition', Result>;
+    lambdas(): ListLens<string, Result>;
+    definitions(): ListLens<string, Result>;
 }
 
 declare export class MeasureRequest {
@@ -611,17 +656,17 @@ declare export class DisplayVariable {
 }
 
 declare export class DisplayReference {
-    static make(exprKey: ?ExpressionKey, shouldHighlight: boolean, shouldShowError: boolean, defName: string): DisplayReference;
+    static make(exprKey: ?ViewKey, shouldHighlight: boolean, shouldShowError: boolean, defName: string): DisplayReference;
     type: 'displayReference';
-    exprKey: ?ExpressionKey;
+    exprKey: ?ViewKey;
     shouldHighlight: boolean;
     shouldShowError: boolean;
     defName: string;
-    withExprKey(exprKey: ?ExpressionKey): DisplayReference;
+    withExprKey(exprKey: ?ViewKey): DisplayReference;
     withShouldHighlight(shouldHighlight: boolean): DisplayReference;
     withShouldShowError(shouldShowError: boolean): DisplayReference;
     withDefName(defName: string): DisplayReference;
-    updateExprKey(updater: Updater<?ExpressionKey>): DisplayReference;
+    updateExprKey(updater: Updater<?ViewKey>): DisplayReference;
     updateShouldHighlight(updater: Updater<boolean>): DisplayReference;
     updateShouldShowError(updater: Updater<boolean>): DisplayReference;
     updateDefName(updater: Updater<string>): DisplayReference;
@@ -1040,7 +1085,17 @@ declare export class PaletteLambdaKey {
     serialize(): any;
 }
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey | PaletteLambdaKey;
+declare export class PaletteReferenceKey {
+    static make(defName: string): PaletteReferenceKey;
+    type: 'paletteReferenceKey';
+    defName: string;
+    withDefName(defName: string): PaletteReferenceKey;
+    updateDefName(updater: Updater<string>): PaletteReferenceKey;
+    match<T>(visitor: ViewKeyVisitor<T>): T;
+    serialize(): any;
+}
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey | PaletteLambdaKey | PaletteReferenceKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey(expressionKey: ExpressionKey): T,
@@ -1050,6 +1105,7 @@ export type ViewKeyVisitor<T> = {
     definitionRefKey(definitionRefKey: DefinitionRefKey): T,
     definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
     paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
+    paletteReferenceKey(paletteReferenceKey: PaletteReferenceKey): T,
 }
 
 declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {
