@@ -4,6 +4,7 @@
 
 import React, {
     DrawerLayoutAndroid,
+    Text,
     View,
 } from 'react-native';
 
@@ -25,7 +26,7 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
         let viewContents;
         if (activePalette === 'lambda') {
             viewContents = lambdas.map(varName =>
-                <View style={{margin: 10}}>
+                <View key={`lambda-${varName}`} style={{margin: 10}}>
                     <Expression expr={t.DisplayLambda.make(
                         t.PaletteLambdaKey.make(varName),
                         false,
@@ -38,8 +39,17 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
                 </View>
             );
         } else {
-            viewContents = definitions.map(defName =>
-                <View style={{margin: 10}}>
+            viewContents = [<Text key='definitionText' style={{
+                fontSize: 24,
+                margin: 16,
+                color: 'black',
+                fontWeight: 'bold',
+                textDecorationLine: 'underline',
+            }}>
+                Definitions
+            </Text>];
+            viewContents.push(definitions.map(defName =>
+                <View key={`def-${defName}`} style={{margin: 10}}>
                     <Expression expr={t.DisplayReference.make(
                         t.PaletteReferenceKey.make(defName),
                         false,
@@ -47,7 +57,7 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
                         defName,
                     )}/>
                 </View>
-            );
+            ));
         }
 
         return <View style={{
