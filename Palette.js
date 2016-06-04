@@ -2,7 +2,8 @@
  * @flow
  */
 
-import React, {
+import React from 'react';
+import {
     DrawerLayoutAndroid,
     Text,
     View,

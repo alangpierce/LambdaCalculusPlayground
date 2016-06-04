@@ -2,7 +2,8 @@
  * @flow
  */
 
-import React, {
+import React from 'react';
+import {
     Component,
     Text,
     View,

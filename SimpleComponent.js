@@ -4,7 +4,7 @@
  *
  * @flow
  */
-import React from 'react-native'
+import React from 'react'
 
 export default class SimpleComponent<Props, State>
         extends React.Component<Props, Props, State> {

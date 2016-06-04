@@ -1,7 +1,8 @@
 /**
  * @flow
  */
-import React, {
+import React from 'react';
+import {
     Text,
     TouchableWithoutFeedback,
     View,

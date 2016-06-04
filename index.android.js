@@ -5,7 +5,9 @@
  */
 'use strict';
 
-import React, {
+import React from 'react';
+import {
+    AppRegistry,
     DeviceEventEmitter,
     Image,
     NativeModules,
@@ -268,4 +270,4 @@ class PlaygroundCanvas extends SimpleComponent<{}, {}> {
     }
 }
 
-React.AppRegistry.registerComponent('PlaygroundCanvas', () => PlaygroundCanvas);
+AppRegistry.registerComponent('PlaygroundCanvas', () => PlaygroundCanvas);

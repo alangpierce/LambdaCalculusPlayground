@@ -7,7 +7,7 @@
  *
  * @flow
  */
-import React from 'react-native'
+import React from 'react';
 
 export default class StatelessComponent<Props>
         extends React.Component<Props, Props, {}> {
