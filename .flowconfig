@@ -2,7 +2,8 @@
 
 .*/node_modules/react-native/Libraries/.*.android.js
 .*/node_modules/react-native/Libraries/CustomComponents/Navigator/Navigation/NavigationRouteStack.js
-.*/node_modules/react-native/node_modules/fbjs/lib/Deferred.js.flow
+.*/node_modules/react-native/Libraries/CustomComponents/NavigationExperimental/NavigationHeaderTitle.js
+.*/node_modules/react-native/Libraries/ReactIOS/YellowBox.js
 
 # Ignores added by React Native below.
 
@@ -18,6 +19,7 @@
 # anything that react-native relies on
 .*/node_modules/fbjs/lib/Map.js
 .*/node_modules/fbjs/lib/fetch.js
+.*/node_modules/fbjs/lib/fetchWithRetries.js
 .*/node_modules/fbjs/lib/ExecutionEnvironment.js
 .*/node_modules/fbjs/lib/ErrorUtils.js
 
@@ -74,6 +76,7 @@
 node_modules/react-native/Libraries/react-native/react-native-interface.js
 node_modules/react-native/flow/
 __tests__/jest-interface.js
+flow-workarounds.js
 
 [options]
 module.system=haste
@@ -95,4 +98,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-3]\\|1[0-9]\\|[0-9
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
 [version]
-0.23.0
+0.26.0
