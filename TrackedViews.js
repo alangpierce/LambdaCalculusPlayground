@@ -2,9 +2,10 @@
  * @flow
  */
 
-import React from 'react';
+import React, {
+    Component
+} from 'react';
 import {
-    Component,
     Text,
     View,
 } from 'react-native';
