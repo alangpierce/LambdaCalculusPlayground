@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Lambda Calculus Playground</string>
     <string name="action_lambda_palette">Lambda Palette</string>
     <string name="action_definition_palette">Definition Palette</string>
     <string name="action_delete_definition">Delete definition</string>

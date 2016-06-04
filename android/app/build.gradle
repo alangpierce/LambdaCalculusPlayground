@@ -33,10 +33,13 @@ android {
     }
     buildTypes {
         debug {
+            applicationIdSuffix '.debug'
+            resValue 'string', 'app_name', 'LCP Debug'
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
+            resValue 'string', 'app_name', 'Lambda Calculus Playground'
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
