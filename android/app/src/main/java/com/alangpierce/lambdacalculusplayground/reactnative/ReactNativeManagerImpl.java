@@ -41,14 +41,9 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
                 .build();
         reactRootView.startReactApplication(reactInstanceManager, "PlaygroundCanvas", null);
 
-        Point screenSize = new Point();
-        activity.getWindowManager().getDefaultDisplay().getSize(screenSize);
-
         RelativeLayout.LayoutParams layoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, screenSize.y * 4 / 5);
-        layoutParams.topMargin = screenSize.y / 5;
+                new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         reactRootView.setLayoutParams(layoutParams);
-        reactRootView.setBackgroundColor(Color.GRAY);
         canvasRoot.addView(reactRootView);
     }
 

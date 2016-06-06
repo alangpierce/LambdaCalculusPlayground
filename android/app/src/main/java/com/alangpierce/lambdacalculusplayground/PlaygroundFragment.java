@@ -1,10 +1,7 @@
 package com.alangpierce.lambdacalculusplayground;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragActionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
@@ -36,13 +32,10 @@ public class PlaygroundFragment extends Fragment {
 
     private AppState appState = new AppStateImpl();
 
-    @Bind(R.id.playground_toolbar) Toolbar toolbar;
-
     @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
     @Inject PaletteDrawerManager paletteDrawerManager;
     @Inject DragManager dragManager;
-    @Inject DragActionManager dragActionManager;
     @Inject DefinitionManager definitionManager;
     @Inject ReactNativeManager reactNativeManager;
 
@@ -86,8 +79,6 @@ public class PlaygroundFragment extends Fragment {
                 inflater.inflate(R.layout.fragment_playground, container, false);
         ButterKnife.bind(this, root);
 
-        activity.setSupportActionBar(toolbar);
-
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
                 .playgroundModule(PlaygroundModule.create(activity, appState, root))
                 .build();
@@ -98,7 +89,6 @@ public class PlaygroundFragment extends Fragment {
         // definitions, so that errors will be reported correctly.
         definitionManager.invalidateDefinitions();
         canvasManager.renderInitialData();
-        dragActionManager.initDropTargets(dragManager);
 
         boolean isFirstTime = savedInstanceState == null;
         paletteDrawerManager.onCreateView(isFirstTime);

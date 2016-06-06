@@ -240,7 +240,11 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
             style={{
             elevation: 4,
             height: 56,
-            backgroundColor: '#e9eaed'
+            backgroundColor: '#e9eaed',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
         }}
         />
     }
@@ -335,7 +339,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         );
 
         return <View {...this._responderMethods} style={{
-                backgroundColor: 'gray',
+                backgroundColor: '#AAAAAA',
                 flex: 1,
             }}>
             <Toolbar />

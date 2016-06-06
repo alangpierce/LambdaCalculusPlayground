@@ -66,6 +66,8 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
             position: 'absolute',
             right: 0,
             alignItems: 'center',
+            // TODO: Don't duplicate this constant.
+            top: 56,
         }}>
             {viewContents}
         </View>;
