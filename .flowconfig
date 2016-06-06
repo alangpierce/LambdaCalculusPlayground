@@ -4,6 +4,7 @@
 .*/node_modules/react-native/Libraries/CustomComponents/Navigator/Navigation/NavigationRouteStack.js
 .*/node_modules/react-native/Libraries/CustomComponents/NavigationExperimental/NavigationHeaderTitle.js
 .*/node_modules/react-native/Libraries/ReactIOS/YellowBox.js
+.*/node_modules/react-native/Libraries/ReactNative/ReactNativeAttributePayload.js
 
 # Ignores added by React Native below.
 
