@@ -6,10 +6,10 @@ import {
     Text,
     TouchableWithoutFeedback,
     View,
-} from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import StatelessComponent from './StatelessComponent'
+import StatelessComponent from './StatelessComponent';
 
 /**
  * Custom-built FAB since none of the existing FABs seem to work the way I want.
@@ -34,7 +34,7 @@ class ExecuteButton extends StatelessComponent<ExecuteButtonPropTypes> {
                 justifyContent: 'center',
                 ...this.props.style,
             }}>
-                <Icon name="play-arrow" size={24} color="white" />
+                <Icon name='play-arrow' size={24} color='white' />
             </View>
         </TouchableWithoutFeedback>;
     }
