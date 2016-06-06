@@ -95,14 +95,14 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         }
 
         reactNativeManager.createDefinition(defName);
-        try {
-            boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
-            if (alreadyOnCanvas) {
-                Toast.makeText(context, R.string.showing_definition, Toast.LENGTH_SHORT).show();
-            }
-        } catch (ExpressionTooBigException e) {
-            Toast.makeText(context, R.string.bad_def_too_big, Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            boolean alreadyOnCanvas = canvasManager.placeDefinition(defName, newExpressionPoint());
+//            if (alreadyOnCanvas) {
+//                Toast.makeText(context, R.string.showing_definition, Toast.LENGTH_SHORT).show();
+//            }
+//        } catch (ExpressionTooBigException e) {
+//            Toast.makeText(context, R.string.bad_def_too_big, Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void validateDefinitionName(String defName) throws InvalidNameException {
@@ -151,10 +151,10 @@ public class ExpressionCreatorImpl implements ExpressionCreator {
         }
 
         reactNativeManager.createLambda(varName);
-        ScreenPoint screenPoint = pointConverter.toScreenPoint(newExpressionPoint());
-        UserLambda expression = UserLambda.create(varName, null);
-        canvasManager.createNewExpression(
-                expression, screenPoint, false /* placeAbovePalette */);
+//        ScreenPoint screenPoint = pointConverter.toScreenPoint(newExpressionPoint());
+//        UserLambda expression = UserLambda.create(varName, null);
+//        canvasManager.createNewExpression(
+//                expression, screenPoint, false /* placeAbovePalette */);
     }
 
     private void validateVariableName(String varName) throws InvalidNameException {
