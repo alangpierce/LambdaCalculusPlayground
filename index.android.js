@@ -10,6 +10,7 @@ import {
     AppRegistry,
     DeviceEventEmitter,
     Image,
+    Linking,
     NativeModules,
     PanResponder,
     Text,
@@ -185,6 +186,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         });
         DeviceEventEmitter.addListener('toggleDefinitionPalette', () => {
             store.dispatch(t.ToggleDefinitionPalette.make());
+        });
+        DeviceEventEmitter.addListener('viewDemoVideo', () => {
+            // TODO: Show the video in the app itself instead of going to YouTube.
+            Linking.openURL('https://www.youtube.com/watch?v=0OzpqDDniDs');
         });
         this._responderMethods = this.getResponderMethods();
     }

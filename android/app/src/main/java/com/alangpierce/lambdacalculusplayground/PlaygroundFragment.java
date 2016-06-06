@@ -171,9 +171,7 @@ public class PlaygroundFragment extends Fragment {
             canvasManager.handleAutomaticNumbersChanged();
             return true;
         } else if (item.getItemId() == R.id.action_view_demo_video) {
-            // TODO: Show the video in the app itself instead of going to YouTube.
-            startActivity(
-                    new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.demo_video_url))));
+            reactNativeManager.viewDemoVideo();
             return true;
         } else if (item.getItemId() == R.id.action_show_dev_options) {
             reactNativeManager.showDevOptionsDialog();

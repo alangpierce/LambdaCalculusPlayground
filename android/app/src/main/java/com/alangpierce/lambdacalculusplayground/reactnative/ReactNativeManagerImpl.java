@@ -91,6 +91,11 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
         emit("toggleDefinitionPalette", null);
     }
 
+    @Override
+    public void viewDemoVideo() {
+        emit("viewDemoVideo", null);
+    }
+
     private void emit(String eventName, @Nullable Object data) {
         ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
         if (reactContext != null) {

@@ -22,4 +22,5 @@ public interface ReactNativeManager {
 
     void toggleLambdaPalette();
     void toggleDefinitionPalette();
+    void viewDemoVideo();
 }
