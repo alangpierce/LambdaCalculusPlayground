@@ -35,6 +35,7 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
+                .addPackage(new PlaygroundPackage(this))
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
@@ -63,12 +64,12 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
 
     @Override
     public void showDevOptionsDialog() {
-        reactInstanceManager.showDevOptionsDialog();
+        activity.runOnUiThread(() -> reactInstanceManager.showDevOptionsDialog());
     }
 
     @Override
     public void reloadJs() {
-        reactInstanceManager.getDevSupportManager().handleReloadJS();
+        activity.runOnUiThread(() -> reactInstanceManager.getDevSupportManager().handleReloadJS());
     }
 
     @Override

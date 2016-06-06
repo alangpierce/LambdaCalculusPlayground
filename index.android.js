@@ -14,6 +14,7 @@ import {
     NativeModules,
     PanResponder,
     Text,
+    ToolbarAndroid,
     View,
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
@@ -160,10 +161,94 @@ class MeasureHandler extends StatelessComponent<MeasureHandlerPropTypes> {
     }
 }
 
+type ToolbarProps = {
+    recognizeNumbers: boolean,
+}
+class Toolbar extends StatelessComponent<ToolbarProps> {
+    constructor() {
+        super();
+    }
+
+    static actions = [
+        {
+            title: 'Lambda palette',
+            onPress() {
+                store.dispatch(t.ToggleLambdaPalette.make());
+            }
+        },
+        {
+            title: 'Definition palette',
+            onPress() {
+                store.dispatch(t.ToggleDefinitionPalette.make());
+            }
+        },
+        {
+            title: 'Delete definition',
+            onPress() {
+                // TODO.
+            }
+        },
+        {
+            title: 'Automatically recognize numbers',
+            onPress() {
+                // TODO.
+            }
+        },
+        {
+            title: 'View demo video',
+            onPress() {
+                // TODO: Show the video in the app itself instead of going to
+                // YouTube.
+                Linking.openURL('https://www.youtube.com/watch?v=0OzpqDDniDs');
+            }
+        },
+        {
+            title: 'Create lambda',
+            onPress() {
+                // TODO.
+            }
+        },
+        {
+            title: 'Create definition',
+            onPress() {
+                // TODO.
+            }
+        },
+        {
+            title: 'Dev: Show options',
+            onPress() {
+                NativeModules.DeveloperSupportModule.showDevOptionsDialog();
+            }
+        },
+        {
+            title: 'Dev: Refresh JS',
+            onPress() {
+                NativeModules.DeveloperSupportModule.reloadJs();
+            }
+        },
+    ];
+
+    handleActionSelected(position) {
+        Toolbar.actions[position].onPress();
+    }
+
+    render() {
+        return <ToolbarAndroid
+            title="Lambda Calculus Playground"
+            actions={Toolbar.actions}
+            onActionSelected={this.handleActionSelected.bind(this)}
+            style={{
+            elevation: 4,
+            height: 56,
+            backgroundColor: '#e9eaed'
+        }}
+        />
+    }
+};
+
 type PlaygroundCanvasProps = {
     displayState: DisplayState,
 };
-
 class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     _responderMethods: any;
 
@@ -253,6 +338,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 backgroundColor: 'gray',
                 flex: 1,
             }}>
+            <Toolbar />
             {measureHandlers}
             {exprNodes}
             {definitionNodes}
