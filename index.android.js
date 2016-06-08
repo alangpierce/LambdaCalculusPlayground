@@ -18,6 +18,7 @@ import {
     View,
 } from 'react-native';
 import {connect, Provider} from 'react-redux';
+import DialogAndroid from 'react-native-dialogs';
 
 import './DebugGlobals';
 import ExecuteButton from './ExecuteButton';
@@ -47,8 +48,7 @@ type TopLevelExpressionState = {
         height: number,
     }
 }
-class TopLevelExpression
-        extends SimpleComponent<TopLevelExpressionPropTypes, TopLevelExpressionState> {
+class TopLevelExpression extends SimpleComponent<TopLevelExpressionPropTypes, TopLevelExpressionState> {
     constructor(props) {
         super(props);
         this.state = {
@@ -87,7 +87,7 @@ class TopLevelExpression
                     {translateX: screenX + width - 20 + 8},
                     {translateY: screenY + height - 20 + 8},
                 ],
-            }}/>
+            }} />
         }
         return <View>
             <View
@@ -185,7 +185,16 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
         {
             title: 'Delete definition',
             onPress() {
-                // TODO.
+                const dialog = new DialogAndroid();
+                dialog.set({
+                    title: 'Choose a definition to delete',
+                    items: ['A', 'B'],
+                    itemsCallback: (index, item) => {
+                        console.log("TODO: delete item " + item);
+                    },
+                    negativeText: 'Cancel'
+                });
+                dialog.show();
             }
         },
         {
@@ -248,7 +257,8 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
         }}
         />
     }
-};
+}
+;
 
 type PlaygroundCanvasProps = {
     displayState: DisplayState,

@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
 import com.alangpierce.lambdacalculusplayground.BuildConfig;
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
@@ -35,6 +36,7 @@ public class ReactNativeManagerImpl implements ReactNativeManager {
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
+                .addPackage(new ReactNativeDialogsPackage())
                 .addPackage(new PlaygroundPackage(this))
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
