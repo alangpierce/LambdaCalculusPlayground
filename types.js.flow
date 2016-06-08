@@ -456,19 +456,22 @@ declare export class PendingResultLens<Result> extends Lens<PendingResult, Resul
 }
 
 declare export class DisplayState {
-    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, paletteState: PaletteDisplayState, measureRequests: IList<MeasureRequest>): DisplayState;
+    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, paletteState: PaletteDisplayState, measureRequests: IList<MeasureRequest>, definitionNames: IList<string>): DisplayState;
     screenExpressions: IList<ScreenExpression>;
     screenDefinitions: IList<ScreenDefinition>;
     paletteState: PaletteDisplayState;
     measureRequests: IList<MeasureRequest>;
+    definitionNames: IList<string>;
     withScreenExpressions(screenExpressions: IList<ScreenExpression>): DisplayState;
     withScreenDefinitions(screenDefinitions: IList<ScreenDefinition>): DisplayState;
     withPaletteState(paletteState: PaletteDisplayState): DisplayState;
     withMeasureRequests(measureRequests: IList<MeasureRequest>): DisplayState;
+    withDefinitionNames(definitionNames: IList<string>): DisplayState;
     updateScreenExpressions(updater: Updater<IList<ScreenExpression>>): DisplayState;
     updateScreenDefinitions(updater: Updater<IList<ScreenDefinition>>): DisplayState;
     updatePaletteState(updater: Updater<PaletteDisplayState>): DisplayState;
     updateMeasureRequests(updater: Updater<IList<MeasureRequest>>): DisplayState;
+    updateDefinitionNames(updater: Updater<IList<string>>): DisplayState;
     lens(): DisplayStateLens<DisplayState>;
     serialize(): any;
 }
@@ -478,6 +481,7 @@ declare export class DisplayStateLens<Result> extends Lens<DisplayState, Result>
     screenDefinitions(): ScreenDefinitionListLens<Result>;
     paletteState(): PaletteDisplayStateLens<Result>;
     measureRequests(): MeasureRequestListLens<Result>;
+    definitionNames(): ListLens<string, Result>;
 }
 
 declare export class PaletteDisplayState {

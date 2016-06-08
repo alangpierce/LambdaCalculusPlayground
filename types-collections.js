@@ -128,6 +128,10 @@ export class IList<T> extends Iterable<T> {
         return this.backingList.get(index);
     }
 
+    toArray(): Array<T> {
+        return this.backingList.toArray();
+    }
+
     sort(): IList<T> {
         return new IList(this.backingList.sort());
     }

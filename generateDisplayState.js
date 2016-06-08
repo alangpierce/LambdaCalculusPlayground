@@ -34,6 +34,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         highlightedExprs, highlightedEmptyBodies, highlightedDefinitionBodies
     } = state;
 
+    const definitionNames = IList.make(state.definitions.keys()).sort();
     const definitions = expandAllDefinitions(state.definitions);
 
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
@@ -141,7 +142,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
             paletteLambdas,
             paletteDefNames,
         ),
-        IList.make(measureRequests));
+        IList.make(measureRequests),
+        definitionNames);
 };
 
 /**

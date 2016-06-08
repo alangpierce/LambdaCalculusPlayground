@@ -28,6 +28,7 @@ import Palette from './Palette';
 import SimpleComponent from './SimpleComponent';
 import StatelessComponent from './StatelessComponent';
 import store from './store';
+import {IList} from './types-collections';
 import * as t from './types';
 
 import type {
@@ -162,89 +163,93 @@ class MeasureHandler extends StatelessComponent<MeasureHandlerPropTypes> {
 }
 
 type ToolbarProps = {
+    definitionNames: IList<string>,
     recognizeNumbers: boolean,
 }
 class Toolbar extends StatelessComponent<ToolbarProps> {
+    actions: Array<any>;
+
     constructor() {
         super();
+        this.actions = [
+            {
+                title: 'Lambda palette',
+                onPress() {
+                    store.dispatch(t.ToggleLambdaPalette.make());
+                }
+            },
+            {
+                title: 'Definition palette',
+                onPress() {
+                    store.dispatch(t.ToggleDefinitionPalette.make());
+                }
+            },
+            {
+                title: 'Delete definition',
+                onPress: this.handleDeleteDefinition.bind(this),
+            },
+            {
+                title: 'Automatically recognize numbers',
+                onPress() {
+                    // TODO.
+                }
+            },
+            {
+                title: 'View demo video',
+                onPress() {
+                    // TODO: Show the video in the app itself instead of going to
+                    // YouTube.
+                    Linking.openURL('https://www.youtube.com/watch?v=0OzpqDDniDs');
+                }
+            },
+            {
+                title: 'Create lambda',
+                onPress() {
+                    // TODO.
+                }
+            },
+            {
+                title: 'Create definition',
+                onPress() {
+                    // TODO.
+                }
+            },
+            {
+                title: 'Dev: Show options',
+                onPress() {
+                    NativeModules.DeveloperSupportModule.showDevOptionsDialog();
+                }
+            },
+            {
+                title: 'Dev: Refresh JS',
+                onPress() {
+                    NativeModules.DeveloperSupportModule.reloadJs();
+                }
+            },
+        ];
     }
 
-    static actions = [
-        {
-            title: 'Lambda palette',
-            onPress() {
-                store.dispatch(t.ToggleLambdaPalette.make());
-            }
-        },
-        {
-            title: 'Definition palette',
-            onPress() {
-                store.dispatch(t.ToggleDefinitionPalette.make());
-            }
-        },
-        {
-            title: 'Delete definition',
-            onPress() {
-                const dialog = new DialogAndroid();
-                dialog.set({
-                    title: 'Choose a definition to delete',
-                    items: ['A', 'B'],
-                    itemsCallback: (index, item) => {
-                        console.log("TODO: delete item " + item);
-                    },
-                    negativeText: 'Cancel'
-                });
-                dialog.show();
-            }
-        },
-        {
-            title: 'Automatically recognize numbers',
-            onPress() {
-                // TODO.
-            }
-        },
-        {
-            title: 'View demo video',
-            onPress() {
-                // TODO: Show the video in the app itself instead of going to
-                // YouTube.
-                Linking.openURL('https://www.youtube.com/watch?v=0OzpqDDniDs');
-            }
-        },
-        {
-            title: 'Create lambda',
-            onPress() {
-                // TODO.
-            }
-        },
-        {
-            title: 'Create definition',
-            onPress() {
-                // TODO.
-            }
-        },
-        {
-            title: 'Dev: Show options',
-            onPress() {
-                NativeModules.DeveloperSupportModule.showDevOptionsDialog();
-            }
-        },
-        {
-            title: 'Dev: Refresh JS',
-            onPress() {
-                NativeModules.DeveloperSupportModule.reloadJs();
-            }
-        },
-    ];
-
     handleActionSelected(position) {
-        Toolbar.actions[position].onPress();
+        this.actions[position].onPress();
+    }
+
+    handleDeleteDefinition() {
+        const dialog = new DialogAndroid();
+        dialog.set({
+            title: 'Choose a definition to delete',
+            items: this.props.definitionNames.toArray(),
+            itemsCallback: (index, item) => {
+                console.log("TODO: delete item " + item);
+            },
+            negativeText: 'Cancel'
+        });
+        dialog.show();
     }
 
     render() {
         return <ToolbarAndroid
             title="Lambda Calculus Playground"
-            actions={Toolbar.actions}
+            actions={this.actions}
             onActionSelected={this.handleActionSelected.bind(this)}
             style={{
             elevation: 4,
@@ -258,7 +263,6 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
         />
     }
 }
-;
 
 type PlaygroundCanvasProps = {
     displayState: DisplayState,
@@ -329,7 +333,8 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
     render() {
         const {
-            screenExpressions, screenDefinitions, paletteState, measureRequests
+            screenExpressions, screenDefinitions, paletteState, measureRequests,
+            definitionNames,
         } = this.props.displayState;
         const measureHandlers = measureRequests.map((measureRequest, i) =>
             <MeasureHandler
@@ -352,7 +357,9 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
                 backgroundColor: '#AAAAAA',
                 flex: 1,
             }}>
-            <Toolbar />
+            <Toolbar
+                definitionNames={definitionNames}
+            />
             {measureHandlers}
             {exprNodes}
             {definitionNodes}

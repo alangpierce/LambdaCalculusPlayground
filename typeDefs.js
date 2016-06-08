@@ -186,6 +186,8 @@ export default typeDefs = {
             screenDefinitions: 'IList<ScreenDefinition>',
             paletteState: 'PaletteDisplayState',
             measureRequests: 'IList<MeasureRequest>',
+            // Sorted array of all definition names.
+            definitionNames: 'IList<string>',
         },
     },
     PaletteDisplayState: {
