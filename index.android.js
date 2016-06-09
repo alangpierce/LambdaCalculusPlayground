@@ -204,15 +204,11 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
             },
             {
                 title: 'Create lambda',
-                onPress() {
-                    // TODO.
-                }
+                onPress: this.handleCreateLambda.bind(this),
             },
             {
                 title: 'Create definition',
-                onPress() {
-                    // TODO.
-                }
+                onPress: this.handleCreateDefinition.bind(this),
             },
             {
                 title: 'Dev: Show options',
@@ -242,6 +238,47 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
                 store.dispatch(t.DeleteDefinition.make(item));
             },
             negativeText: 'Cancel'
+        });
+        dialog.show();
+    }
+    
+    handleCreateLambda() {
+        const dialog = new DialogAndroid();
+        dialog.set({
+            title: 'Choose a variable name',
+            positiveText: 'OK',
+            negativeText: 'Cancel',
+            input: {
+                allowEmptyInput: false,
+                callback: (varName) => {
+                    // TODO: Validate name.
+                    store.dispatch(t.AddExpression.make(
+                        t.CanvasExpression.make(
+                            t.UserLambda.make(varName, null),
+                            t.CanvasPoint.make(100, 100))
+                    ));
+                },
+            }
+        });
+        dialog.show();
+    }
+    
+    handleCreateDefinition() {
+        const dialog = new DialogAndroid();
+        dialog.set({
+            title: 'Create or show definition',
+            positiveText: 'OK',
+            negativeText: 'Cancel',
+            input: {
+                allowEmptyInput: false,
+                callback: (defName) => {
+                    // TODO: Validate name.
+                    store.dispatch(t.PlaceDefinition.make(
+                        defName,
+                        t.ScreenPoint.make(100, 100),
+                    ));
+                },
+            }
         });
         dialog.show();
     }
