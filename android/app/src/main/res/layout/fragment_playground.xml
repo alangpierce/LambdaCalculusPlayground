@@ -95,39 +95,4 @@
 
     </RelativeLayout>
 
-    <!-- The buttons should be 56dp with a margin of 24dp between them. However, old devices put
-         extra padding on FABs, so we do positioning using a fixed-size LinearLayout rather than
-         margins. -->
-    <LinearLayout
-        android:id="@+id/fab_container"
-        android:layout_width="184dp"
-        android:layout_height="104dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        >
-
-        <com.alangpierce.lambdacalculusplayground.view.TouchAwareFab
-            android:id="@+id/create_lambda_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:color="@color/execute_button_background"
-            android:src="@drawable/ic_action_lambda"
-            android:tint="@color/execute_button_foreground"
-            app:backgroundTint="@color/execute_button_background"
-            app:useCompatPadding="true"/>
-
-        <com.alangpierce.lambdacalculusplayground.view.TouchAwareFab
-            android:id="@+id/create_definition_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:color="@color/execute_button_background"
-            android:src="@drawable/def_symbol"
-            android:tint="@color/execute_button_foreground"
-            app:backgroundTint="@color/execute_button_background"
-            app:useCompatPadding="true"/>
-    </LinearLayout>
-
 </RelativeLayout>

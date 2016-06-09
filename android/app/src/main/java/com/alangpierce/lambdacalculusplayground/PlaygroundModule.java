@@ -60,7 +60,6 @@ public class PlaygroundModule {
     @Bind(R.id.lambda_palette_linear_layout) LinearLayout lambdaPaletteLinearLayout;
     @Bind(R.id.definition_palette_linear_layout) LinearLayout definitionPaletteLinearLayout;
     @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
-    @Bind(R.id.fab_container) View fabContainer;
 
     private PlaygroundModule(Activity activity, AppState appState) {
         this.activity = activity;
@@ -113,8 +112,7 @@ public class PlaygroundModule {
             @Lambda PaletteView lambdaPaletteView, @Definition PaletteView definitionPaletteView) {
         return new PaletteDrawerManagerImpl(
                 lambdaPaletteView, definitionPaletteView, lambdaPaletteDrawerRoot,
-                lambdaPaletteDrawer, definitionPaletteDrawerRoot, definitionPaletteDrawer,
-                fabContainer);
+                lambdaPaletteDrawer, definitionPaletteDrawerRoot, definitionPaletteDrawer);
     }
 
     @Qualifier @interface Lambda {}

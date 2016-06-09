@@ -308,29 +308,6 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     _responderMethods: any;
 
     componentWillMount() {
-        DeviceEventEmitter.addListener('createLambda', (varName) => {
-            store.dispatch(t.AddExpression.make(
-                t.CanvasExpression.make(
-                    t.UserLambda.make(varName, null),
-                    t.CanvasPoint.make(100, 100))
-            ));
-        });
-        DeviceEventEmitter.addListener('createDefinition', (defName) => {
-            store.dispatch(t.PlaceDefinition.make(
-                defName,
-                t.ScreenPoint.make(100, 100),
-            ));
-        });
-        DeviceEventEmitter.addListener('toggleLambdaPalette', () => {
-            store.dispatch(t.ToggleLambdaPalette.make());
-        });
-        DeviceEventEmitter.addListener('toggleDefinitionPalette', () => {
-            store.dispatch(t.ToggleDefinitionPalette.make());
-        });
-        DeviceEventEmitter.addListener('viewDemoVideo', () => {
-            // TODO: Show the video in the app itself instead of going to YouTube.
-            Linking.openURL('https://www.youtube.com/watch?v=0OzpqDDniDs');
-        });
         this._responderMethods = this.getResponderMethods();
     }
 

@@ -120,16 +120,6 @@ public class PlaygroundFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
     }
 
-    @OnClick(R.id.create_lambda_button)
-    public void createLambdaClick() {
-        expressionCreator.promptCreateLambda();
-    }
-
-    @OnClick(R.id.create_definition_button)
-    public void createDefinitionClick() {
-        expressionCreator.promptCreateDefinition();
-    }
-
     @Override
     public void onDestroyView() {
         paletteDrawerManager.onDestroyView();

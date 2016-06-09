@@ -22,8 +22,6 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
     private final DrawerLayout definitionPaletteDrawerRoot;
     private final ScrollView definitionPaletteDrawer;
 
-    private final View fabContainer;
-
     // Keep track of the position of both drawers, since the drawer class doesn't expose these
     // directly. The FABs should be at the min of these two positions on the screen.
     private float lambdaPaletteOffsetPixels = 0;
@@ -47,15 +45,13 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
             PaletteView lambdaPaletteView,
             PaletteView definitionPaletteView,
             DrawerLayout lambdaPaletteDrawerRoot, ScrollView lambdaPaletteDrawer,
-            DrawerLayout definitionPaletteDrawerRoot, ScrollView definitionPaletteDrawer,
-            View fabContainer) {
+            DrawerLayout definitionPaletteDrawerRoot, ScrollView definitionPaletteDrawer) {
         this.lambdaPaletteView = lambdaPaletteView;
         this.definitionPaletteView = definitionPaletteView;
         this.lambdaPaletteDrawerRoot = lambdaPaletteDrawerRoot;
         this.lambdaPaletteDrawer = lambdaPaletteDrawer;
         this.definitionPaletteDrawerRoot = definitionPaletteDrawerRoot;
         this.definitionPaletteDrawer = definitionPaletteDrawer;
-        this.fabContainer = fabContainer;
     }
 
     @Override
@@ -64,14 +60,12 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 lambdaPaletteOffsetPixels = drawerView.getWidth() * slideOffset;
-                repositionFabs();
             }
         });
         definitionPaletteDrawerRoot.addDrawerListener(new SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 definitionPaletteOffsetPixels = drawerView.getWidth() * slideOffset;
-                repositionFabs();
             }
         });
 
@@ -114,12 +108,6 @@ public class PaletteDrawerManagerImpl implements PaletteDrawerManager {
             definitionPaletteOffsetPixels = definitionPaletteDrawer.getMeasuredWidth();
             targetState = State.DEFINITION_OPEN;
         }
-        repositionFabs();
-    }
-
-    private void repositionFabs() {
-        fabContainer.setTranslationX(
-                Math.min(-lambdaPaletteOffsetPixels, -definitionPaletteOffsetPixels));
     }
 
     @Override
