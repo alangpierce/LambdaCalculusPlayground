@@ -13,6 +13,7 @@ import {Expression} from './Expression';
 import SimpleComponent from './SimpleComponent';
 import * as t from './types';
 import {PaletteDisplayState} from './types';
+import {TOOLBAR_HEIGHT} from './toolbar';
 
 
 type PalettePropTypes = {
@@ -36,7 +37,7 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
                         false,
                         varName,
                         null,
-                    )}/>
+                    )} />
                 </View>
             );
         } else {
@@ -56,7 +57,7 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
                         false,
                         false,
                         defName,
-                    )}/>
+                    )} />
                 </View>
             ));
         }
@@ -66,8 +67,7 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
             position: 'absolute',
             right: 0,
             alignItems: 'center',
-            // TODO: Don't duplicate this constant.
-            top: 56,
+            top: TOOLBAR_HEIGHT,
         }}>
             {viewContents}
         </View>;
