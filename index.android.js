@@ -239,7 +239,7 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
             title: 'Choose a definition to delete',
             items: this.props.definitionNames.toArray(),
             itemsCallback: (index, item) => {
-                console.log("TODO: delete item " + item);
+                store.dispatch(t.DeleteDefinition.make(item));
             },
             negativeText: 'Cancel'
         });

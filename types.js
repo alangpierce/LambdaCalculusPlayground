@@ -10,6 +10,7 @@ export const ToggleLambdaPalette = buildUnionCaseClass('toggleLambdaPalette', []
 export const ToggleDefinitionPalette = buildUnionCaseClass('toggleDefinitionPalette', []);
 export const AddExpression = buildUnionCaseClass('addExpression', ['canvasExpr']);
 export const PlaceDefinition = buildUnionCaseClass('placeDefinition', ['defName', 'screenPos']);
+export const DeleteDefinition = buildUnionCaseClass('deleteDefinition', ['defName']);
 export const MoveExpression = buildUnionCaseClass('moveExpression', ['exprId', 'pos']);
 export const DecomposeExpressionAction = buildUnionCaseClass('decomposeExpressionAction', ['path', 'targetPos']);
 export const InsertAsArg = buildUnionCaseClass('insertAsArg', ['argExprId', 'path']);

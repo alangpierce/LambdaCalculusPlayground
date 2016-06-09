@@ -38,10 +38,16 @@ export default typeDefs = {
             AddExpression: {
                 canvasExpr: 'CanvasExpression',
             },
-            // Create the given definition, or
+            // Create the given definition, or add it and move it to the given
+            // place on the screen.
             PlaceDefinition: {
                 defName: 'string',
                 screenPos: 'ScreenPoint',
+            },
+            // Remvoe the definition both from the screen and from the saved
+            // list of definitions.
+            DeleteDefinition: {
+                defName: 'string',
             },
             /**
              * Move the existing expression on the canvas to a new point.

@@ -106,6 +106,16 @@ declare export class PlaceDefinition {
     serialize(): any;
 }
 
+declare export class DeleteDefinition {
+    static make(defName: string): DeleteDefinition;
+    type: 'deleteDefinition';
+    defName: string;
+    withDefName(defName: string): DeleteDefinition;
+    updateDefName(updater: Updater<string>): DeleteDefinition;
+    match<T>(visitor: ActionVisitor<T>): T;
+    serialize(): any;
+}
+
 declare export class MoveExpression {
     static make(exprId: number, pos: CanvasPoint): MoveExpression;
     type: 'moveExpression';
@@ -223,7 +233,7 @@ declare export class FingerUp {
     serialize(): any;
 }
 
-export type Action = Reset | ToggleLambdaPalette | ToggleDefinitionPalette | AddExpression | PlaceDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
+export type Action = Reset | ToggleLambdaPalette | ToggleDefinitionPalette | AddExpression | PlaceDefinition | DeleteDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
 
 export type ActionVisitor<T> = {
     reset(reset: Reset): T,
@@ -231,6 +241,7 @@ export type ActionVisitor<T> = {
     toggleDefinitionPalette(toggleDefinitionPalette: ToggleDefinitionPalette): T,
     addExpression(addExpression: AddExpression): T,
     placeDefinition(placeDefinition: PlaceDefinition): T,
+    deleteDefinition(deleteDefinition: DeleteDefinition): T,
     moveExpression(moveExpression: MoveExpression): T,
     decomposeExpressionAction(decomposeExpressionAction: DecomposeExpressionAction): T,
     insertAsArg(insertAsArg: InsertAsArg): T,

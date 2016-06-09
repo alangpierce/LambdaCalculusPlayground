@@ -13,6 +13,7 @@ type Action = {
         toggleDefinitionPalette(toggleDefinitionPalette: ToggleDefinitionPalette): T,
         addExpression(addExpression: AddExpression): T,
         placeDefinition(placeDefinition: PlaceDefinition): T,
+        deleteDefinition(deleteDefinition: DeleteDefinition): T,
         moveExpression(moveExpression: MoveExpression): T,
         decomposeExpressionAction(decomposeExpressionAction: DecomposeExpressionAction): T,
         insertAsArg(insertAsArg: InsertAsArg): T,

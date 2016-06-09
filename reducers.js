@@ -70,6 +70,9 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 // Create an entry for the definition, which may be null.
                 .lens().definitions().atKey(defName).update((def) => def);
         },
+        deleteDefinition: ({defName}) =>
+            state.lens().definitions().deleteKey(defName)
+                .lens().canvasDefinitions().deleteKey(defName),
         moveExpression: ({exprId, pos}) => {
             return state
                 .lens().canvasExpressions().atKey(exprId).pos().replace(pos);
