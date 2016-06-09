@@ -271,6 +271,7 @@ class Toolbar extends StatelessComponent<ToolbarProps> {
             negativeText: 'Cancel',
             input: {
                 allowEmptyInput: false,
+                type: 0x00001000, // InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
                 callback: (defName) => {
                     // TODO: Validate name.
                     store.dispatch(t.PlaceDefinition.make(
