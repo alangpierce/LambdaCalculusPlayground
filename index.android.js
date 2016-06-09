@@ -20,6 +20,7 @@ import {
 import {connect, Provider} from 'react-redux';
 
 import './DebugGlobals';
+import DeleteBar from './DeleteBar';
 import ExecuteButton from './ExecuteButton';
 import {Definition, Expression} from './Expression';
 import generateDisplayState from './generateDisplayState';
@@ -208,7 +209,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
     render() {
         const {
             screenExpressions, screenDefinitions, paletteState, measureRequests,
-            definitionNames,
+            definitionNames, isDragging, isDraggingExpression,
         } = this.props.displayState;
         const measureHandlers = measureRequests.map((measureRequest, i) =>
             <MeasureHandler
@@ -227,13 +228,18 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             />
         );
 
+        let toolbar;
+        if (isDragging) {
+            toolbar = <DeleteBar isDraggingExpression={isDraggingExpression} />;
+        } else {
+            toolbar = <Toolbar definitionNames={definitionNames} />;
+        }
+
         return <View {...this._responderMethods} style={{
                 backgroundColor: '#AAAAAA',
                 flex: 1,
             }}>
-            <Toolbar
-                definitionNames={definitionNames}
-            />
+            {toolbar}
             {measureHandlers}
             {exprNodes}
             {definitionNodes}

@@ -45,6 +45,10 @@ export class IMap<K, V> extends Iterable<[K, V]> {
         return this.backingMap.has(key);
     }
 
+    isEmpty(): boolean {
+        return this.backingMap.isEmpty();
+    }
+
     delete(key: K): IMap<K, V> {
         return new IMap(this.backingMap.delete(key));
     }

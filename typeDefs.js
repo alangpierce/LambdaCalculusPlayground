@@ -194,6 +194,12 @@ export default typeDefs = {
             measureRequests: 'IList<MeasureRequest>',
             // Sorted array of all definition names.
             definitionNames: 'IList<string>',
+            // Whether any drag is happening.
+            isDragging: 'boolean',
+            // Whether any of the dragged expressions are expressions. If only
+            // definitions are being dragged, then the delete bar shows "hide"
+            // rather than "remove".
+            isDraggingExpression: 'boolean',
         },
     },
     PaletteDisplayState: {

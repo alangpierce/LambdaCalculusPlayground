@@ -134,6 +134,16 @@ const generateDisplayState = (state: State): DisplayState =>  {
     const paletteLambdas = IList.make(PALLETE_VAR_NAMES);
     const paletteDefNames = IList.make(state.definitions.keys()).sort();
 
+    let isDragging = false;
+    let isDraggingExpression = false;
+
+    for (const [_, dragData] of state.activeDrags) {
+        isDragging = true;
+        isDraggingExpression = (
+            isDraggingExpression ||
+            dragData.payload instanceof t.DraggedExpression);
+    }
+
     return t.DisplayState.make(
         IList.make(screenExpressions),
         IList.make(screenDefinitions),
@@ -143,7 +153,10 @@ const generateDisplayState = (state: State): DisplayState =>  {
             paletteDefNames,
         ),
         IList.make(measureRequests),
-        definitionNames);
+        definitionNames,
+        isDragging,
+        isDraggingExpression,
+    );
 };
 
 /**
