@@ -163,6 +163,25 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         }
     };
 
+    const yieldPaletteReferenceGenerators = function*() {
+        for (const defName of state.definitions.keys()) {
+            const viewKey = t.PaletteReferenceKey.make(defName);
+            const screenRect = getPositionOnScreen(viewKey);
+            if (!screenRect) {
+                continue;
+            }
+            if (screenRect.containsPoint(point)) {
+                yield [
+                    t.CreateExpression.make(
+                        t.UserReference.make(defName, null),
+                        point.minus(screenRect.topLeft),
+                        screenRect),
+                    2,
+                ];
+            }
+        }
+    };
+
     // Yields the drag result and priority.
     const yieldDragCandidates = function* ():
         Generator<[DragResult, number], void, void> {
@@ -173,6 +192,7 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
         yield* yieldReferenceGenerators();
         yield* yieldLambdaVarGenerators();
         yield* yieldPaletteLambdaGenerators();
+        yield* yieldPaletteReferenceGenerators();
     };
 
     let bestPriority = -1;
@@ -306,6 +326,23 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
     };
 
+    const yieldPaletteReferenceDeleteDrops = function*() {
+        if (!(dragPayload instanceof DraggedExpression)) {
+            return;
+        }
+        if (dragPayload.userExpr.type !== 'userReference') {
+            return;
+        }
+        for (const defName of state.definitions.keys()) {
+            if (intersectsWithView(t.PaletteReferenceKey.make(defName))) {
+                yield [
+                    t.RemoveResult.make(),
+                    2,
+                ];
+            }
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
@@ -315,6 +352,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         yield* yieldDefinitionBodyDrops();
         yield* yieldReferenceDeleteDrops();
         yield* yieldPaletteLambdaDeleteDrops();
+        yield* yieldPaletteReferenceDeleteDrops();
     };
 
     let bestPriority = -1;

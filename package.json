@@ -7,6 +7,7 @@
     "start": "node_modules/react-native/packager/packager.sh",
     "test": "jest",
     "flow": "flow",
+    "reflow": "flow stop; flow",
     "check": "flow; jest;:",
     "gen-types": "babel-node tools/generateTypesCli.js",
     "android": "adb reverse tcp:8081 tcp:8081; react-native run-android --open=\"`pwd`/tools/RunServer.app\"",
