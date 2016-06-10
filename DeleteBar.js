@@ -17,16 +17,17 @@ import {TrackedView} from './TrackedViews';
 import * as t from './types';
 
 type DeleteBarProps = {
+    isDeleteBarHighlighted: boolean,
     isDraggingExpression: boolean,
 }
 export default class DeleteBar extends StatelessComponent<DeleteBarProps> {
     render() {
-        const {isDraggingExpression} = this.props;
+        const {isDeleteBarHighlighted, isDraggingExpression} = this.props;
         const text = isDraggingExpression ? 'Remove' : 'Hide';
         return <TrackedView
             viewKey={t.DeleteBarKey.make()}
             style={{
-                backgroundColor: '#888888',
+                backgroundColor: isDeleteBarHighlighted ? '#AA0000' : '#888888',
                 position: 'absolute',
                 left: 0,
                 right: 0,

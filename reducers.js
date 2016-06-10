@@ -37,6 +37,7 @@ const initialState: State = t.State.make(
     ISet.make(),
     ISet.make(),
     ISet.make(),
+    false,
     'lambda',
 );
 
@@ -244,6 +245,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                     // Do nothing; we've already removed the expression.
                     return state;
                 },
+                removeWithDeleteBarResult: () => state,
             });
             return computeHighlights(state);
         },
@@ -268,6 +270,7 @@ const computeHighlights = (state: State): State => {
     const exprPaths = [];
     const emptyBodyPaths = [];
     const definitions = [];
+    let isDeleteBarHighlighted = false;
     for (let [_, dragData] of state.activeDrags) {
         resolveDrop(state, dragData).match({
             addToTopLevelResult: () => {},
@@ -277,9 +280,13 @@ const computeHighlights = (state: State): State => {
             insertAsArgResult: ({path}) => {exprPaths.push(path)},
             insertAsDefinitionResult: ({defName}) => {definitions.push(defName)},
             removeResult: () => {},
+            removeWithDeleteBarResult: () => {
+                isDeleteBarHighlighted = true;
+            },
         });
     }
     return state
+        .withIsDeleteBarHighlighted(isDeleteBarHighlighted)
         .withHighlightedExprs(ISet.make(exprPaths))
         .withHighlightedEmptyBodies(ISet.make(emptyBodyPaths))
         .withHighlightedDefinitionBodies(ISet.make(definitions));

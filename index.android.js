@@ -210,6 +210,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         const {
             screenExpressions, screenDefinitions, paletteState, measureRequests,
             definitionNames, isDragging, isDraggingExpression,
+            isDeleteBarHighlighted,
         } = this.props.displayState;
         const measureHandlers = measureRequests.map((measureRequest, i) =>
             <MeasureHandler
@@ -230,7 +231,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
 
         let toolbar;
         if (isDragging) {
-            toolbar = <DeleteBar isDraggingExpression={isDraggingExpression} />;
+            toolbar = <DeleteBar
+                isDeleteBarHighlighted={isDeleteBarHighlighted}
+                isDraggingExpression={isDraggingExpression}
+            />;
         } else {
             toolbar = <Toolbar definitionNames={definitionNames} />;
         }

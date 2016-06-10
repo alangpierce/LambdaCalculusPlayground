@@ -94,6 +94,7 @@ type DropResult = {
         insertAsArgResult(insertAsArgResult: InsertAsArgResult): T,
         insertAsDefinitionResult(insertAsDefinitionResult: InsertAsDefinitionResult): T,
         removeResult(removeResult: RemoveResult): T,
+        removeWithDeleteBarResult(removeWithDeleteBarResult: RemoveWithDeleteBarResult): T,
     }): T,
 };
 

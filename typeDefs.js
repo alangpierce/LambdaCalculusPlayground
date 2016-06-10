@@ -20,6 +20,7 @@ export default typeDefs = {
             // Set of definition names where the definition body should be
             // highlighted.
             highlightedDefinitionBodies: 'ISet<string>',
+            isDeleteBarHighlighted: 'boolean',
             paletteState: "'none' | 'lambda' | 'definition'",
         },
     },
@@ -200,6 +201,7 @@ export default typeDefs = {
             // definitions are being dragged, then the delete bar shows "hide"
             // rather than "remove".
             isDraggingExpression: 'boolean',
+            isDeleteBarHighlighted: 'boolean',
         },
     },
     PaletteDisplayState: {
@@ -405,6 +407,7 @@ export default typeDefs = {
                 expr: 'UserExpression',
             },
             RemoveResult: {},
+            RemoveWithDeleteBarResult: {},
         },
     },
     // An identifier that can be used for any view in the dragging and dropping

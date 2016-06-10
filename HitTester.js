@@ -346,7 +346,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
     const yieldDeleteBarDrop = function*() {
         if (intersectsWithView(t.DeleteBarKey.make())) {
             yield [
-                t.RemoveResult.make(),
+                t.RemoveWithDeleteBarResult.make(),
                 1,
             ]
         }

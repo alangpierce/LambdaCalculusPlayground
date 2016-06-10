@@ -4,7 +4,7 @@
 import {buildUnionCaseClass, buildValueClass} from './types-lib';
 import * as mixins from './types-mixins';
 
-export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'paletteState']);
+export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'isDeleteBarHighlighted', 'paletteState']);
 export const Reset = buildUnionCaseClass('reset', []);
 export const ToggleLambdaPalette = buildUnionCaseClass('toggleLambdaPalette', []);
 export const ToggleDefinitionPalette = buildUnionCaseClass('toggleDefinitionPalette', []);
@@ -34,7 +34,7 @@ export const UserVariable = buildUnionCaseClass('userVariable', ['varName']);
 export const UserReference = buildUnionCaseClass('userReference', ['defName']);
 export const CanvasExpression = buildValueClass('CanvasExpression', null, ['expr', 'pos']);
 export const PendingResult = buildValueClass('PendingResult', null, ['expr', 'sourceExprId']);
-export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'paletteState', 'measureRequests', 'definitionNames', 'isDragging', 'isDraggingExpression']);
+export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'paletteState', 'measureRequests', 'definitionNames', 'isDragging', 'isDraggingExpression', 'isDeleteBarHighlighted']);
 export const PaletteDisplayState = buildValueClass('PaletteDisplayState', null, ['activePalette', 'lambdas', 'definitions']);
 export const MeasureRequest = buildValueClass('MeasureRequest', null, ['expr', 'resultHandler']);
 export const ScreenDefinition = buildValueClass('ScreenDefinition', null, ['defName', 'expr', 'pos', 'defKey', 'refKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'key', 'isDragging']);
@@ -64,6 +64,7 @@ export const InsertAsBodyResult = buildUnionCaseClass('insertAsBodyResult', ['la
 export const InsertAsArgResult = buildUnionCaseClass('insertAsArgResult', ['path', 'expr']);
 export const InsertAsDefinitionResult = buildUnionCaseClass('insertAsDefinitionResult', ['defName', 'expr']);
 export const RemoveResult = buildUnionCaseClass('removeResult', []);
+export const RemoveWithDeleteBarResult = buildUnionCaseClass('removeWithDeleteBarResult', []);
 export const ExpressionKey = buildUnionCaseClass('expressionKey', ['exprPath']);
 export const EmptyBodyKey = buildUnionCaseClass('emptyBodyKey', ['lambdaPath']);
 export const LambdaVarKey = buildUnionCaseClass('lambdaVarKey', ['lambdaPath']);

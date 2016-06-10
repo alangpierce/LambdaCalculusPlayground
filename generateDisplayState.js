@@ -156,6 +156,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         definitionNames,
         isDragging,
         isDraggingExpression,
+        state.isDeleteBarHighlighted,
     );
 };
 
