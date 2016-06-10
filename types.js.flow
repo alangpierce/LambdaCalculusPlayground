@@ -1118,7 +1118,14 @@ declare export class PaletteReferenceKey {
     serialize(): any;
 }
 
-export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey | PaletteLambdaKey | PaletteReferenceKey;
+declare export class DeleteBarKey {
+    static make(): DeleteBarKey;
+    type: 'deleteBarKey';
+    match<T>(visitor: ViewKeyVisitor<T>): T;
+    serialize(): any;
+}
+
+export type ViewKey = ExpressionKey | EmptyBodyKey | LambdaVarKey | DefinitionKey | DefinitionRefKey | DefinitionEmptyBodyKey | PaletteLambdaKey | PaletteReferenceKey | DeleteBarKey;
 
 export type ViewKeyVisitor<T> = {
     expressionKey(expressionKey: ExpressionKey): T,
@@ -1129,6 +1136,7 @@ export type ViewKeyVisitor<T> = {
     definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
     paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
     paletteReferenceKey(paletteReferenceKey: PaletteReferenceKey): T,
+    deleteBarKey(deleteBarKey: DeleteBarKey): T,
 }
 
 declare export class CanvasExpressionMapLens<K, Result> extends Lens<IMap<K, CanvasExpression>, Result> {

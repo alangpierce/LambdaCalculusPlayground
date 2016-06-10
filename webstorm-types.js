@@ -107,6 +107,7 @@ type ViewKey = {
         definitionEmptyBodyKey(definitionEmptyBodyKey: DefinitionEmptyBodyKey): T,
         paletteLambdaKey(paletteLambdaKey: PaletteLambdaKey): T,
         paletteReferenceKey(paletteReferenceKey: PaletteReferenceKey): T,
+        deleteBarKey(deleteBarKey: DeleteBarKey): T,
     }): T,
 };
 

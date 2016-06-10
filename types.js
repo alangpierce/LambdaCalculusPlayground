@@ -72,3 +72,4 @@ export const DefinitionRefKey = buildUnionCaseClass('definitionRefKey', ['defNam
 export const DefinitionEmptyBodyKey = buildUnionCaseClass('definitionEmptyBodyKey', ['defName']);
 export const PaletteLambdaKey = buildUnionCaseClass('paletteLambdaKey', ['varName']);
 export const PaletteReferenceKey = buildUnionCaseClass('paletteReferenceKey', ['defName']);
+export const DeleteBarKey = buildUnionCaseClass('deleteBarKey', []);

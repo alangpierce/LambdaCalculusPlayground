@@ -438,6 +438,7 @@ export default typeDefs = {
             PaletteReferenceKey: {
                 defName: 'string',
             },
+            DeleteBarKey: {},
         }
     }
 };

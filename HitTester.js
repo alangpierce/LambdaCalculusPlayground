@@ -343,6 +343,15 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
     };
 
+    const yieldDeleteBarDrop = function*() {
+        if (intersectsWithView(t.DeleteBarKey.make())) {
+            yield [
+                t.RemoveResult.make(),
+                1,
+            ]
+        }
+    };
+
     // Yields the drop result and priority.
     const yieldDropCandidates = function* ():
         Generator<[DropResult, number], void, void> {
@@ -353,6 +362,7 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         yield* yieldReferenceDeleteDrops();
         yield* yieldPaletteLambdaDeleteDrops();
         yield* yieldPaletteReferenceDeleteDrops();
+        yield* yieldDeleteBarDrop();
     };
 
     let bestPriority = -1;
