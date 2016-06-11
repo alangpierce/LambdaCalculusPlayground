@@ -3,11 +3,16 @@
  */
 
 import type {
-    ScreenPoint,
     ScreenRect
 } from './types'
-import {PointDifference} from './types';
 import {
+    CanvasPoint,
+    PointDifference,
+    ScreenPoint
+} from './types';
+import {
+    CanvasPointMixinTemplate,
+    PointDifferenceMixinTemplate,
     ScreenRectMixinTemplate,
     ScreenPointMixinTemplate
 } from './types-mixin-templates';
@@ -43,5 +48,36 @@ export class ScreenPointMixin extends ScreenPointMixinTemplate {
         return this
             .updateScreenX(x => x + diff.dx)
             .updateScreenY(y => y + diff.dy);
+    }
+    /**
+     * Reinterpret the screen point as a difference from the screen origin.
+     */
+    asDiff(): PointDifference {
+        return PointDifference.make(this.screenX, this.screenY);
+    }
+}
+
+export class CanvasPointMixin extends CanvasPointMixinTemplate {
+    plusDiff(diff: PointDifference): CanvasPoint {
+        return CanvasPoint.make(
+            this.canvasX + diff.dx, this.canvasY + diff.dy);
+    }
+    minus(other: CanvasPoint): PointDifference {
+        return PointDifference.make(
+            this.canvasX - other.canvasX, this.canvasY - other.canvasY);
+    }
+    minusDiff(diff: PointDifference): CanvasPoint {
+        return CanvasPoint.make(
+            this.canvasX - diff.dx, this.canvasY - diff.dy);
+    }
+}
+
+export class PointDifferenceMixin extends PointDifferenceMixinTemplate {
+    /**
+     * Reinterpret the point difference as a screen point (i.e. a difference
+     * from the screen origin).
+     */
+    asScreenPoint(): ScreenPoint {
+        return ScreenPoint.make(this.dx, this.dy);
     }
 }

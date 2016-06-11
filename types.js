@@ -4,7 +4,7 @@
 import {buildUnionCaseClass, buildValueClass} from './types-lib';
 import * as mixins from './types-mixins';
 
-export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'isDeleteBarHighlighted', 'paletteState']);
+export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'activePan', 'panOffset', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'isDeleteBarHighlighted', 'paletteState']);
 export const Reset = buildUnionCaseClass('reset', []);
 export const ToggleLambdaPalette = buildUnionCaseClass('toggleLambdaPalette', []);
 export const ToggleDefinitionPalette = buildUnionCaseClass('toggleDefinitionPalette', []);
@@ -43,8 +43,8 @@ export const DisplayLambda = buildUnionCaseClass('displayLambda', ['exprKey', 's
 export const DisplayFuncCall = buildUnionCaseClass('displayFuncCall', ['exprKey', 'shouldHighlight', 'func', 'arg']);
 export const DisplayVariable = buildUnionCaseClass('displayVariable', ['exprKey', 'shouldHighlight', 'varName']);
 export const DisplayReference = buildUnionCaseClass('displayReference', ['exprKey', 'shouldHighlight', 'shouldShowError', 'defName']);
-export const CanvasPoint = buildValueClass('CanvasPoint', null, ['canvasX', 'canvasY']);
-export const PointDifference = buildValueClass('PointDifference', null, ['dx', 'dy']);
+export const CanvasPoint = buildValueClass('CanvasPoint', mixins.CanvasPointMixin, ['canvasX', 'canvasY']);
+export const PointDifference = buildValueClass('PointDifference', mixins.PointDifferenceMixin, ['dx', 'dy']);
 export const ScreenPoint = buildValueClass('ScreenPoint', mixins.ScreenPointMixin, ['screenX', 'screenY']);
 export const ScreenRect = buildValueClass('ScreenRect', mixins.ScreenRectMixin, ['topLeft', 'bottomRight']);
 export const ExprPath = buildValueClass('ExprPath', null, ['container', 'pathSteps']);

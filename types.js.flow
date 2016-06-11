@@ -9,18 +9,22 @@ import {Lens} from './types-lib';
 import type {Updater} from './types-lib';
 
 import {
+    CanvasPointMixin,
+    PointDifferenceMixin,
     ScreenPointMixin,
     ScreenRectMixin,
 } from './types-mixins';
 
 declare export class State {
-    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>, isDeleteBarHighlighted: boolean, paletteState: 'none' | 'lambda' | 'definition'): State;
+    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, activePan: IMap<number, CanvasPoint>, panOffset: CanvasPoint, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>, isDeleteBarHighlighted: boolean, paletteState: 'none' | 'lambda' | 'definition'): State;
     canvasExpressions: IMap<number, CanvasExpression>;
     nextExprId: number;
     canvasDefinitions: IMap<string, CanvasPoint>;
     definitions: IMap<string, ?UserExpression>;
     pendingResults: IMap<number, PendingResult>;
     activeDrags: IMap<number, DragData>;
+    activePan: IMap<number, CanvasPoint>;
+    panOffset: CanvasPoint;
     highlightedExprs: ISet<ExprPath>;
     highlightedEmptyBodies: ISet<ExprPath>;
     highlightedDefinitionBodies: ISet<string>;
@@ -32,6 +36,8 @@ declare export class State {
     withDefinitions(definitions: IMap<string, ?UserExpression>): State;
     withPendingResults(pendingResults: IMap<number, PendingResult>): State;
     withActiveDrags(activeDrags: IMap<number, DragData>): State;
+    withActivePan(activePan: IMap<number, CanvasPoint>): State;
+    withPanOffset(panOffset: CanvasPoint): State;
     withHighlightedExprs(highlightedExprs: ISet<ExprPath>): State;
     withHighlightedEmptyBodies(highlightedEmptyBodies: ISet<ExprPath>): State;
     withHighlightedDefinitionBodies(highlightedDefinitionBodies: ISet<string>): State;
@@ -43,6 +49,8 @@ declare export class State {
     updateDefinitions(updater: Updater<IMap<string, ?UserExpression>>): State;
     updatePendingResults(updater: Updater<IMap<number, PendingResult>>): State;
     updateActiveDrags(updater: Updater<IMap<number, DragData>>): State;
+    updateActivePan(updater: Updater<IMap<number, CanvasPoint>>): State;
+    updatePanOffset(updater: Updater<CanvasPoint>): State;
     updateHighlightedExprs(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedEmptyBodies(updater: Updater<ISet<ExprPath>>): State;
     updateHighlightedDefinitionBodies(updater: Updater<ISet<string>>): State;
@@ -59,6 +67,8 @@ declare export class StateLens<Result> extends Lens<State, Result> {
     definitions(): MapLens<string, ?UserExpression, Result>;
     pendingResults(): PendingResultMapLens<number, Result>;
     activeDrags(): DragDataMapLens<number, Result>;
+    activePan(): CanvasPointMapLens<number, Result>;
+    panOffset(): CanvasPointLens<Result>;
     highlightedExprs(): Lens<ISet<ExprPath>, Result>;
     highlightedEmptyBodies(): Lens<ISet<ExprPath>, Result>;
     highlightedDefinitionBodies(): Lens<ISet<string>, Result>;
@@ -714,7 +724,7 @@ export type DisplayExpressionVisitor<T> = {
     displayReference(displayReference: DisplayReference): T,
 }
 
-declare export class CanvasPoint {
+declare export class CanvasPoint extends CanvasPointMixin {
     static make(canvasX: number, canvasY: number): CanvasPoint;
     canvasX: number;
     canvasY: number;
@@ -731,7 +741,7 @@ declare export class CanvasPointLens<Result> extends Lens<CanvasPoint, Result> {
     canvasY(): Lens<number, Result>;
 }
 
-declare export class PointDifference {
+declare export class PointDifference extends PointDifferenceMixin {
     static make(dx: number, dy: number): PointDifference;
     dx: number;
     dy: number;

@@ -46,7 +46,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         const isExecutable = canStepUserExpr(definitions, canvasExpr.expr);
         screenExpressions.push(t.ScreenExpression.make(
             displayExpr,
-            canvasPtToScreenPt(canvasExpr.pos),
+            canvasPtToScreenPt(state, canvasExpr.pos),
             'expr' + exprId,
             isDragging,
             isExecutable ? executeHandler(exprId) : null,
@@ -108,7 +108,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         screenDefinitions.push(t.ScreenDefinition.make(
             defName,
             displayExpr,
-            canvasPtToScreenPt(canvasPoint),
+            canvasPtToScreenPt(state, canvasPoint),
             t.DefinitionKey.make(defName),
             t.DefinitionRefKey.make(defName),
             userExpr ? null : t.DefinitionEmptyBodyKey.make(defName),

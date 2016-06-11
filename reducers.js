@@ -34,6 +34,8 @@ const initialState: State = t.State.make(
     IMap.make(),
     IMap.make(),
     IMap.make(),
+    IMap.make(),
+    t.CanvasPoint.make(0, 0),
     ISet.make(),
     ISet.make(),
     ISet.make(),
@@ -67,7 +69,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
         placeDefinition: ({defName, screenPos}) => {
             return state
                 .lens().canvasDefinitions().atKey(defName).replace(
-                    screenPtToCanvasPt(screenPos))
+                    screenPtToCanvasPt(state, screenPos))
                 // Create an entry for the definition, which may be null.
                 .lens().definitions().atKey(defName).update((def) => def);
         },
@@ -193,13 +195,23 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                                 offset, screenRect)));
                 },
                 startPan: () => {
-                    // TODO
-                    return state;
+                    if (state.activePan.isEmpty()) {
+                        const canvasGrabPoint = screenPtToCanvasPt(state, screenPos);
+                        return state.lens()
+                            .activePan().atKey(fingerId).replace(canvasGrabPoint);
+                    } else {
+                        return state;
+                    }
                 },
             });
             return computeHighlights(state);
         },
         fingerMove: ({fingerId, screenPos}) => {
+            if (state.activePan.hasKey(fingerId)) {
+                const grabCanvasPos = state.activePan.get(fingerId);
+                return state.withPanOffset(
+                    grabCanvasPos.minusDiff(screenPos.asDiff()));
+            }
             const dragData: ?DragData = state.activeDrags.get(fingerId);
             if (!dragData) {
                 return state;
@@ -213,6 +225,9 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             return computeHighlights(state);
         },
         fingerUp: ({fingerId, screenPos}) => {
+            if (state.activePan.hasKey(fingerId)) {
+                return state.lens().activePan().deleteKey(fingerId);
+            }
             const dragData: ?DragData = state.activeDrags.get(fingerId);
             if (!dragData) {
                 return state;
@@ -221,7 +236,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             state = state.lens().activeDrags().deleteKey(fingerId);
             state = dropResult.match({
                 addToTopLevelResult: ({payload, screenPos}) => {
-                    const canvasPos = screenPtToCanvasPt(screenPos);
+                    const canvasPos = screenPtToCanvasPt(state, screenPos);
                     return payload.match({
                         draggedExpression: ({userExpr}) =>
                             addExpression(state,

@@ -14,6 +14,11 @@ export default typeDefs = {
             pendingResults: 'IMap<number, PendingResult>',
             // Map from finger ID to expression ID.
             activeDrags: 'IMap<number, DragData>',
+            // Map from finger ID to the point where the canvas is being held.
+            // For now, the map has at most one finger ID.
+            activePan: 'IMap<number, CanvasPoint>',
+            // The canvas position of the screen origin.
+            panOffset: 'CanvasPoint',
             highlightedExprs: 'ISet<ExprPath>',
             // Set of lambda expressions where the body should be highlighted.
             highlightedEmptyBodies: 'ISet<ExprPath>',
@@ -279,6 +284,7 @@ export default typeDefs = {
     },
     CanvasPoint: {
         type: 'struct',
+        mixinClass: 'CanvasPointMixin',
         fields: {
             canvasX: 'number',
             canvasY: 'number',
@@ -286,6 +292,7 @@ export default typeDefs = {
     },
     PointDifference: {
         type: 'struct',
+        mixinClass: 'PointDifferenceMixin',
         fields: {
             dx: 'number',
             dy: 'number',
