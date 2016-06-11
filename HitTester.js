@@ -313,7 +313,8 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
-        if (dragPayload.userExpr.type !== 'userLambda') {
+        const {userExpr} = dragPayload;
+        if (userExpr.type !== 'userLambda' || userExpr.body != null) {
             return;
         }
         for (const varName of PALLETE_VAR_NAMES) {
