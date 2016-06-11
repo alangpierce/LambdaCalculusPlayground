@@ -11,7 +11,8 @@ import type {
     CanvasExpression,
     CanvasPoint,
     DragData,
-    State
+    ScreenPoint,
+    State,
 } from './types'
 import * as t from './types'
 import {IMap, ISet} from './types-collections'
@@ -136,9 +137,10 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 return state;
             }
             const {expr, sourceExprId} = pendingResult;
-            const resultPos = computeResultPos(sourceExprId, width);
+            const resultScreenPos = computeResultPos(sourceExprId, width);
+            const resultCanvasPos = screenPtToCanvasPt(state, resultScreenPos);
             state = state.lens().pendingResults().deleteKey(exprId);
-            return addExpression(state, t.CanvasExpression.make(expr, resultPos));
+            return addExpression(state, t.CanvasExpression.make(expr, resultCanvasPos));
         },
         fingerDown: ({fingerId, screenPos}) => {
             const dragResult = resolveTouch(state, screenPos);
@@ -268,14 +270,14 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
 };
 
 const computeResultPos = (sourceExprId: number, width: number):
-        CanvasPoint => {
+        ScreenPoint => {
     const sourceExprKey = t.ExpressionKey.make(emptyIdPath(sourceExprId));
     const sourceRect = getPositionOnScreen(sourceExprKey);
     if (sourceRect == null) {
         return t.CanvasPoint.make(100, 100);
     }
     const midPoint = (sourceRect.topLeft.screenX + sourceRect.bottomRight.screenX) / 2;
-    return t.CanvasPoint.make(
+    return t.ScreenPoint.make(
         midPoint - (width / 2),
         sourceRect.bottomRight.screenY + 15,
     )
