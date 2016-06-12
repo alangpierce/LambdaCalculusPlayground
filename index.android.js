@@ -20,6 +20,8 @@ import {
 import {connect, Provider} from 'react-redux';
 
 import './DebugGlobals';
+
+import CreateButtons from './CreateButtons';
 import DeleteBar from './DeleteBar';
 import ExecuteButton from './ExecuteButton';
 import {Definition, Expression} from './Expression';
@@ -248,6 +250,7 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
             {exprNodes}
             {definitionNodes}
             <Palette displayState={paletteState} />
+            <CreateButtons />
         </View>;
     }
 }
