@@ -28,8 +28,6 @@ import type {
     ViewKey,
 } from './types'
 
-import * as t from './types'
-
 // This is the type returned by RelativeImageStub.
 type AssetId = number;
 
@@ -58,7 +56,12 @@ export class Definition extends StatelessComponent<DefinitionPropTypes> {
         return <ExprContainer viewKey={defKey}
                               shouldHighlight={false}>
             <ExprText viewKey={refKey}>{defName}</ExprText>
-            <ExprText>:=</ExprText>
+            <Image
+                source={require('./img/definition.png')}
+                style={{
+                    margin: 8,
+                }}
+            />
             {exprElement}
         </ExprContainer>;
     }
