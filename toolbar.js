@@ -36,12 +36,16 @@ export class Toolbar extends StatelessComponent<ToolbarProps> {
         this.actions = [
             {
                 title: 'Lambda palette',
+                icon: require('./img/lambda.png'),
+                show: 'always',
                 onPress() {
                     store.dispatch(t.ToggleLambdaPalette.make());
                 }
             },
             {
                 title: 'Definition palette',
+                icon: require('./img/definition.png'),
+                show: 'always',
                 onPress() {
                     store.dispatch(t.ToggleDefinitionPalette.make());
                 }
@@ -151,15 +155,16 @@ export class Toolbar extends StatelessComponent<ToolbarProps> {
             title="Lambda Calculus Playground"
             actions={this.actions}
             onActionSelected={this.handleActionSelected.bind(this)}
+            onStartShouldSetResponderCapture={() => true}
             style={{
-            elevation: 4,
-            height: TOOLBAR_HEIGHT,
-            backgroundColor: '#e9eaed',
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-        }}
+                elevation: 4,
+                height: TOOLBAR_HEIGHT,
+                backgroundColor: '#e9eaed',
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+            }}
         />
     }
 }
