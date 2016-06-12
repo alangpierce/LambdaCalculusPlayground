@@ -2,6 +2,7 @@
 import subprocess
 import os
 import os.path
+import shutil
 import sys
 
 
@@ -20,6 +21,10 @@ def main():
                 png_path = os.path.join('img', base + suffix + '.png')
                 print 'Generating %s' % png_path
                 subprocess.call(['svgexport', svg_path, png_path, size])
+        elif file.endswith('.png'):
+            src_path = os.path.join('img_src', file)
+            shutil.copy(src_path, './img/')
+
     print 'Done!'
 
 if __name__ == '__main__':
