@@ -31,6 +31,7 @@ class FloatingActionButton extends StatelessComponent<ExecuteButtonPropTypes> {
                 height: 56,
                 backgroundColor: '#00AA00',
                 borderRadius: 28,
+                elevation: 6,
                 alignItems: 'center',
                 justifyContent: 'center',
                 ...this.props.style,

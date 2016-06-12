@@ -5,6 +5,7 @@
 import React from 'react';
 import {
     DrawerLayoutAndroid,
+    ScrollView,
     Text,
     View,
 } from 'react-native';
@@ -62,14 +63,23 @@ export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
             ));
         }
 
-        return <View style={{
-            backgroundColor: '#E6CEA3',
-            position: 'absolute',
-            right: 0,
-            alignItems: 'center',
-            top: TOOLBAR_HEIGHT,
-        }}>
+        return <ScrollView
+            onStartShouldSetResponder={() => {
+                console.log('got here');
+                return true;
+            }}
+            style={{
+                backgroundColor: '#E6CEA3',
+                position: 'absolute',
+                right: 0,
+                top: TOOLBAR_HEIGHT,
+                bottom: 0,
+            }}
+            contentContainerStyle={{
+                alignItems: 'center',
+            }}
+        >
             {viewContents}
-        </View>;
+        </ScrollView>;
     }
 }
