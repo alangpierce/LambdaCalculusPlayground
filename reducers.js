@@ -42,6 +42,7 @@ const initialState: State = t.State.make(
     ISet.make(),
     false,
     'lambda',
+    false,
 );
 
 // TODO: Consider adding a top-level try/catch.
@@ -266,6 +267,8 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             });
             return computeHighlights(state);
         },
+        toggleAutomaticNumbers: () =>
+            state.lens().isAutomaticNumbersEnabled().update((enabled) => !enabled),
     });
 };
 

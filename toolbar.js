@@ -19,15 +19,15 @@ import {IList} from './types-collections';
 export const TOOLBAR_HEIGHT = 56;
 
 type ToolbarProps = {
+    isAutomaticNumbersEnabled: boolean,
     definitionNames: IList<string>,
-    recognizeNumbers: boolean,
 }
 export class Toolbar extends StatelessComponent<ToolbarProps> {
     actions: Array<any>;
 
-    constructor() {
-        super();
-        this.actions = [
+    getActions() {
+        const {isAutomaticNumbersEnabled} = this.props;
+        return [
             {
                 title: 'Lambda palette',
                 icon: require('./img/lambda.png'),
@@ -49,9 +49,10 @@ export class Toolbar extends StatelessComponent<ToolbarProps> {
                 onPress: this.handleDeleteDefinition.bind(this),
             },
             {
-                title: 'Automatically recognize numbers',
+                title: `Automatically recognize numbers: ${
+                    isAutomaticNumbersEnabled ? 'ON' : 'OFF'}`,
                 onPress() {
-                    // TODO.
+                    store.dispatch(t.ToggleAutomaticNumbers.make());
                 }
             },
             {
@@ -78,7 +79,7 @@ export class Toolbar extends StatelessComponent<ToolbarProps> {
     }
 
     handleActionSelected(position: number) {
-        this.actions[position].onPress();
+        this.getActions()[position].onPress();
     }
 
     handleDeleteDefinition() {
@@ -97,7 +98,7 @@ export class Toolbar extends StatelessComponent<ToolbarProps> {
     render() {
         return <ToolbarAndroid
             title="Lambda Calculus Playground"
-            actions={this.actions}
+            actions={this.getActions()}
             onActionSelected={this.handleActionSelected.bind(this)}
             onStartShouldSetResponderCapture={() => true}
             style={{

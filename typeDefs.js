@@ -27,6 +27,7 @@ export default typeDefs = {
             highlightedDefinitionBodies: 'ISet<string>',
             isDeleteBarHighlighted: 'boolean',
             paletteState: "'none' | 'lambda' | 'definition'",
+            isAutomaticNumbersEnabled: 'boolean',
         },
     },
     Action: {
@@ -101,6 +102,7 @@ export default typeDefs = {
                 fingerId: 'number',
                 screenPos: 'ScreenPoint',
             },
+            ToggleAutomaticNumbers: {},
         },
     },
     Expression: {
@@ -207,6 +209,7 @@ export default typeDefs = {
             // rather than "remove".
             isDraggingExpression: 'boolean',
             isDeleteBarHighlighted: 'boolean',
+            isAutomaticNumbersEnabled: 'boolean',
         },
     },
     PaletteDisplayState: {

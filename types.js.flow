@@ -16,7 +16,7 @@ import {
 } from './types-mixins';
 
 declare export class State {
-    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, activePan: IMap<number, CanvasPoint>, panOffset: CanvasPoint, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>, isDeleteBarHighlighted: boolean, paletteState: 'none' | 'lambda' | 'definition'): State;
+    static make(canvasExpressions: IMap<number, CanvasExpression>, nextExprId: number, canvasDefinitions: IMap<string, CanvasPoint>, definitions: IMap<string, ?UserExpression>, pendingResults: IMap<number, PendingResult>, activeDrags: IMap<number, DragData>, activePan: IMap<number, CanvasPoint>, panOffset: CanvasPoint, highlightedExprs: ISet<ExprPath>, highlightedEmptyBodies: ISet<ExprPath>, highlightedDefinitionBodies: ISet<string>, isDeleteBarHighlighted: boolean, paletteState: 'none' | 'lambda' | 'definition', isAutomaticNumbersEnabled: boolean): State;
     canvasExpressions: IMap<number, CanvasExpression>;
     nextExprId: number;
     canvasDefinitions: IMap<string, CanvasPoint>;
@@ -30,6 +30,7 @@ declare export class State {
     highlightedDefinitionBodies: ISet<string>;
     isDeleteBarHighlighted: boolean;
     paletteState: 'none' | 'lambda' | 'definition';
+    isAutomaticNumbersEnabled: boolean;
     withCanvasExpressions(canvasExpressions: IMap<number, CanvasExpression>): State;
     withNextExprId(nextExprId: number): State;
     withCanvasDefinitions(canvasDefinitions: IMap<string, CanvasPoint>): State;
@@ -43,6 +44,7 @@ declare export class State {
     withHighlightedDefinitionBodies(highlightedDefinitionBodies: ISet<string>): State;
     withIsDeleteBarHighlighted(isDeleteBarHighlighted: boolean): State;
     withPaletteState(paletteState: 'none' | 'lambda' | 'definition'): State;
+    withIsAutomaticNumbersEnabled(isAutomaticNumbersEnabled: boolean): State;
     updateCanvasExpressions(updater: Updater<IMap<number, CanvasExpression>>): State;
     updateNextExprId(updater: Updater<number>): State;
     updateCanvasDefinitions(updater: Updater<IMap<string, CanvasPoint>>): State;
@@ -56,6 +58,7 @@ declare export class State {
     updateHighlightedDefinitionBodies(updater: Updater<ISet<string>>): State;
     updateIsDeleteBarHighlighted(updater: Updater<boolean>): State;
     updatePaletteState(updater: Updater<'none' | 'lambda' | 'definition'>): State;
+    updateIsAutomaticNumbersEnabled(updater: Updater<boolean>): State;
     lens(): StateLens<State>;
     equals(other: any): boolean;
     hashCode(): number;
@@ -77,6 +80,7 @@ declare export class StateLens<Result> extends Lens<State, Result> {
     highlightedDefinitionBodies(): Lens<ISet<string>, Result>;
     isDeleteBarHighlighted(): Lens<boolean, Result>;
     paletteState(): Lens<'none' | 'lambda' | 'definition', Result>;
+    isAutomaticNumbersEnabled(): Lens<boolean, Result>;
 }
 
 declare export class Reset {
@@ -295,7 +299,17 @@ declare export class FingerUp {
     serialize(): any;
 }
 
-export type Action = Reset | ToggleLambdaPalette | ToggleDefinitionPalette | AddExpression | PlaceDefinition | DeleteDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp;
+declare export class ToggleAutomaticNumbers {
+    static make(): ToggleAutomaticNumbers;
+    type: 'toggleAutomaticNumbers';
+    match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
+    serialize(): any;
+}
+
+export type Action = Reset | ToggleLambdaPalette | ToggleDefinitionPalette | AddExpression | PlaceDefinition | DeleteDefinition | MoveExpression | DecomposeExpressionAction | InsertAsArg | InsertAsBody | EvaluateExpression | PlacePendingResult | FingerDown | FingerMove | FingerUp | ToggleAutomaticNumbers;
 
 export type ActionVisitor<T> = {
     reset(reset: Reset): T,
@@ -313,6 +327,7 @@ export type ActionVisitor<T> = {
     fingerDown(fingerDown: FingerDown): T,
     fingerMove(fingerMove: FingerMove): T,
     fingerUp(fingerUp: FingerUp): T,
+    toggleAutomaticNumbers(toggleAutomaticNumbers: ToggleAutomaticNumbers): T,
 }
 
 declare export class Lambda {
@@ -571,7 +586,7 @@ declare export class PendingResultLens<Result> extends Lens<PendingResult, Resul
 }
 
 declare export class DisplayState {
-    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, paletteState: PaletteDisplayState, measureRequests: IList<MeasureRequest>, definitionNames: IList<string>, isDragging: boolean, isDraggingExpression: boolean, isDeleteBarHighlighted: boolean): DisplayState;
+    static make(screenExpressions: IList<ScreenExpression>, screenDefinitions: IList<ScreenDefinition>, paletteState: PaletteDisplayState, measureRequests: IList<MeasureRequest>, definitionNames: IList<string>, isDragging: boolean, isDraggingExpression: boolean, isDeleteBarHighlighted: boolean, isAutomaticNumbersEnabled: boolean): DisplayState;
     screenExpressions: IList<ScreenExpression>;
     screenDefinitions: IList<ScreenDefinition>;
     paletteState: PaletteDisplayState;
@@ -580,6 +595,7 @@ declare export class DisplayState {
     isDragging: boolean;
     isDraggingExpression: boolean;
     isDeleteBarHighlighted: boolean;
+    isAutomaticNumbersEnabled: boolean;
     withScreenExpressions(screenExpressions: IList<ScreenExpression>): DisplayState;
     withScreenDefinitions(screenDefinitions: IList<ScreenDefinition>): DisplayState;
     withPaletteState(paletteState: PaletteDisplayState): DisplayState;
@@ -588,6 +604,7 @@ declare export class DisplayState {
     withIsDragging(isDragging: boolean): DisplayState;
     withIsDraggingExpression(isDraggingExpression: boolean): DisplayState;
     withIsDeleteBarHighlighted(isDeleteBarHighlighted: boolean): DisplayState;
+    withIsAutomaticNumbersEnabled(isAutomaticNumbersEnabled: boolean): DisplayState;
     updateScreenExpressions(updater: Updater<IList<ScreenExpression>>): DisplayState;
     updateScreenDefinitions(updater: Updater<IList<ScreenDefinition>>): DisplayState;
     updatePaletteState(updater: Updater<PaletteDisplayState>): DisplayState;
@@ -596,6 +613,7 @@ declare export class DisplayState {
     updateIsDragging(updater: Updater<boolean>): DisplayState;
     updateIsDraggingExpression(updater: Updater<boolean>): DisplayState;
     updateIsDeleteBarHighlighted(updater: Updater<boolean>): DisplayState;
+    updateIsAutomaticNumbersEnabled(updater: Updater<boolean>): DisplayState;
     lens(): DisplayStateLens<DisplayState>;
     equals(other: any): boolean;
     hashCode(): number;
@@ -612,6 +630,7 @@ declare export class DisplayStateLens<Result> extends Lens<DisplayState, Result>
     isDragging(): Lens<boolean, Result>;
     isDraggingExpression(): Lens<boolean, Result>;
     isDeleteBarHighlighted(): Lens<boolean, Result>;
+    isAutomaticNumbersEnabled(): Lens<boolean, Result>;
 }
 
 declare export class PaletteDisplayState {

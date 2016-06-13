@@ -157,6 +157,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
         isDragging,
         isDraggingExpression,
         state.isDeleteBarHighlighted,
+        state.isAutomaticNumbersEnabled,
     );
 };
 

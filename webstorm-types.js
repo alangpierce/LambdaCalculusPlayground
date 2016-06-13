@@ -23,6 +23,7 @@ type Action = {
         fingerDown(fingerDown: FingerDown): T,
         fingerMove(fingerMove: FingerMove): T,
         fingerUp(fingerUp: FingerUp): T,
+        toggleAutomaticNumbers(toggleAutomaticNumbers: ToggleAutomaticNumbers): T,
     }): T,
 };
 

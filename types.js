@@ -4,7 +4,7 @@
 import {buildUnionCaseClass, buildValueClass} from './types-lib';
 import * as mixins from './types-mixins';
 
-export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'activePan', 'panOffset', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'isDeleteBarHighlighted', 'paletteState']);
+export const State = buildValueClass('State', null, ['canvasExpressions', 'nextExprId', 'canvasDefinitions', 'definitions', 'pendingResults', 'activeDrags', 'activePan', 'panOffset', 'highlightedExprs', 'highlightedEmptyBodies', 'highlightedDefinitionBodies', 'isDeleteBarHighlighted', 'paletteState', 'isAutomaticNumbersEnabled']);
 export const Reset = buildUnionCaseClass('reset', []);
 export const ToggleLambdaPalette = buildUnionCaseClass('toggleLambdaPalette', []);
 export const ToggleDefinitionPalette = buildUnionCaseClass('toggleDefinitionPalette', []);
@@ -20,6 +20,7 @@ export const PlacePendingResult = buildUnionCaseClass('placePendingResult', ['ex
 export const FingerDown = buildUnionCaseClass('fingerDown', ['fingerId', 'screenPos']);
 export const FingerMove = buildUnionCaseClass('fingerMove', ['fingerId', 'screenPos']);
 export const FingerUp = buildUnionCaseClass('fingerUp', ['fingerId', 'screenPos']);
+export const ToggleAutomaticNumbers = buildUnionCaseClass('toggleAutomaticNumbers', []);
 export const Lambda = buildUnionCaseClass('lambda', ['varName', 'body']);
 export const FuncCall = buildUnionCaseClass('funcCall', ['func', 'arg']);
 export const Variable = buildUnionCaseClass('variable', ['varName']);
@@ -34,7 +35,7 @@ export const UserVariable = buildUnionCaseClass('userVariable', ['varName']);
 export const UserReference = buildUnionCaseClass('userReference', ['defName']);
 export const CanvasExpression = buildValueClass('CanvasExpression', null, ['expr', 'pos']);
 export const PendingResult = buildValueClass('PendingResult', null, ['expr', 'sourceExprId']);
-export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'paletteState', 'measureRequests', 'definitionNames', 'isDragging', 'isDraggingExpression', 'isDeleteBarHighlighted']);
+export const DisplayState = buildValueClass('DisplayState', null, ['screenExpressions', 'screenDefinitions', 'paletteState', 'measureRequests', 'definitionNames', 'isDragging', 'isDraggingExpression', 'isDeleteBarHighlighted', 'isAutomaticNumbersEnabled']);
 export const PaletteDisplayState = buildValueClass('PaletteDisplayState', null, ['activePalette', 'lambdas', 'definitions']);
 export const MeasureRequest = buildValueClass('MeasureRequest', null, ['expr', 'resultHandler']);
 export const ScreenDefinition = buildValueClass('ScreenDefinition', null, ['defName', 'expr', 'pos', 'defKey', 'refKey', 'emptyBodyKey', 'shouldHighlightEmptyBody', 'key', 'isDragging']);
