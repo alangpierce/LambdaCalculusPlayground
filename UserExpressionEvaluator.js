@@ -3,6 +3,7 @@
  */
 
 import {evaluate, canStep} from './ExpressionEvaluator';
+import {tryExpressionForNumber, tryResolveToNumber} from './ExpressionNumbers';
 import * as t from './types';
 import type {Expression, UserExpression} from './types';
 import {IMap} from './types-collections';
@@ -12,22 +13,41 @@ export type Definitions = IMap<string, ?Expression>;
 
 // TODO: Do something like dependency injection with the definitions.
 export const evaluateUserExpr = (
-        definitions: Definitions, userExpr: UserExpression): ?UserExpression => {
-    const expr = expandUserExpr((defName) => definitions.get(defName), userExpr);
+        definitions: Definitions, isAutomaticNumbersEnabled: boolean,
+        userExpr: UserExpression): ?UserExpression => {
+    const expr = expandUserExpr(
+        defLookup(definitions, isAutomaticNumbersEnabled), userExpr);
     if (!expr) {
         return null;
     }
     const evaluatedExpr = evaluate(expr);
-    return collapseDefinitions(definitions, evaluatedExpr);
+    return collapseDefinitions(
+        definitions, isAutomaticNumbersEnabled, evaluatedExpr);
 };
 
 export const canStepUserExpr = (
-        definitions: Definitions, userExpr: UserExpression): boolean => {
-    const expr = expandUserExpr((defName) => definitions.get(defName), userExpr);
+        definitions: Definitions, isAutomaticNumbersEnabled: boolean,
+        userExpr: UserExpression): boolean => {
+    const expr = expandUserExpr(
+        defLookup(definitions, isAutomaticNumbersEnabled), userExpr);
     if (!expr) {
         return false;
     }
     return canStep(expr);
+};
+
+export const defLookup = (
+    definitions: Definitions, isAutomaticNumbersEnabled: boolean):
+        (defName: string) => ?Expression => {
+    return (defName) => {
+        if (definitions.hasKey(defName)) {
+            return definitions.get(defName);
+        }
+        if (isAutomaticNumbersEnabled) {
+            return tryExpressionForNumber(defName);
+        }
+        return null;
+    }
 };
 
 /**
@@ -35,7 +55,8 @@ export const canStepUserExpr = (
  * for expressions already defined.
  */
 const collapseDefinitions = (
-        definitions: Definitions, expr: Expression): UserExpression => {
+        definitions: Definitions, isAutomaticNumbersEnabled: boolean,
+        expr: Expression): UserExpression => {
     let reverseDefinitions: IMap<Expression, string> = IMap.make();
     for (let [defName, expr] of definitions) {
         // Currently we require an exact match, including all variable names,
@@ -46,7 +67,10 @@ const collapseDefinitions = (
     }
 
     const rec = (expr: Expression): UserExpression => {
-        const defName = reverseDefinitions.get(expr);
+        let defName = reverseDefinitions.get(expr);
+        if (defName == null && isAutomaticNumbersEnabled) {
+            defName = tryResolveToNumber(expr);
+        }
         if (defName) {
             return t.UserReference.make(defName);
         }
@@ -59,9 +83,14 @@ const collapseDefinitions = (
     return rec(expr);
 };
 
-export const expandAllDefinitions = (userDefs: UserDefinitions): Definitions => {
+export const expandAllDefinitions = (
+        userDefs: UserDefinitions, isAutomaticNumbersEnabled: boolean): Definitions => {
     const resultDefinitions: Map<string, ?Expression> = new Map();
     const memoizedCompute = (defName: string): ?Expression => {
+        if (isAutomaticNumbersEnabled && !userDefs.hasKey(defName)) {
+            return tryExpressionForNumber(defName);
+        }
+
         if (resultDefinitions.has(defName)) {
             return resultDefinitions.get(defName);
         }
@@ -84,7 +113,7 @@ export const expandAllDefinitions = (userDefs: UserDefinitions): Definitions => 
  * need to do cycle detection.
  */
 const expandUserExpr = (
-        lookupDef: (name: string) => ?Expression,
+        lookupDef: (defName: string) => ?Expression,
         userExpr: ?UserExpression): ?Expression => {
     return userExpr && userExpr.match({
         userLambda: ({varName, body}) => {

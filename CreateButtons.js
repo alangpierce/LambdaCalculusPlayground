@@ -33,7 +33,7 @@ export default class CreateButtons extends StatelessComponent<CreateButtonsProps
                 callback: (varName) => {
                     const error = checkDefNameErrors(varName);
                     if (error != null) {
-                        ToastAndroid.show(error, ToastAndroid.LONG);
+                        ToastAndroid.show(error, ToastAndroid.SHORT);
                     } else {
                         store.dispatch(t.AddExpression.make(
                             t.CanvasExpression.make(
@@ -59,7 +59,7 @@ export default class CreateButtons extends StatelessComponent<CreateButtonsProps
                 callback: (defName) => {
                     const error = checkDefNameErrors(defName);
                     if (error != null) {
-                        ToastAndroid.show(error, ToastAndroid.LONG)
+                        ToastAndroid.show(error, ToastAndroid.SHORT)
                     } else {
                         store.dispatch(t.PlaceDefinition.make(
                             defName,
@@ -113,8 +113,8 @@ const checkVarNameErrors = (varName: string): ?string => {
     if (varName.length > 8) {
         return 'Variable names can only be up to 8 letters long.';
     }
-    for (const c of varName) {
-        if (!isLowerCase(c)) {
+    for (let i = 0; i < varName.length; i++) {
+        if (!isLowerCase(varName[i])) {
             return 'Variable names can only contain lower-case letters.';
         }
     }
@@ -129,8 +129,8 @@ const checkDefNameErrors = (defName: string): ?string => {
     if (defName.length > 8) {
         return 'Definition names can only be up to 8 letters long.';
     }
-    for (const c of defName) {
-        if (isLowerCase(c)) {
+    for (let i = 0; i < defName.length; i++) {
+        if (isLowerCase(defName[i])) {
             return 'Definition names can only contain capital letters and symbols.';
         }
     }

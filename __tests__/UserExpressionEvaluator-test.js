@@ -56,7 +56,7 @@ describe('evaluateUserExpression', () => {
             'L f[L n[ISZERO(n)(1)(*(n)(f(PRED(n))))]]');
         define('FACT', 'Y(FACTREC)');
 
-        definitions = expandAllDefinitions(userDefinitions);
+        definitions = expandAllDefinitions(userDefinitions, false);
     });
 
     it('can evaluate booleans', () => {
@@ -101,7 +101,7 @@ describe('evaluateUserExpression', () => {
         // Make sure result is in canonical form.
         expectedResultStr = formatExpr(parseExpr(expectedResultStr));
         expect(formatExpr(notNull(
-                evaluateUserExpr(definitions, parseExpr(exprStr)))))
+                evaluateUserExpr(definitions, false, parseExpr(exprStr)))))
             .toEqual(expectedResultStr);
     };
 

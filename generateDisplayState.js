@@ -3,6 +3,7 @@
  */
 
 import {PALLETE_VAR_NAMES} from './constants';
+import {isNumber} from './ExpressionNumbers';
 import {emptyIdPath, emptyDefinitionPath, step} from './ExprPaths'
 import {canvasPtToScreenPt} from './PointConversion'
 import store from './store'
@@ -31,19 +32,22 @@ const generateDisplayState = (state: State): DisplayState =>  {
     const screenExpressions: Array<ScreenExpression> = [];
     const screenDefinitions: Array<ScreenDefinition> = [];
     const {
-        highlightedExprs, highlightedEmptyBodies, highlightedDefinitionBodies
+        highlightedExprs, highlightedEmptyBodies, highlightedDefinitionBodies,
+        isAutomaticNumbersEnabled,
     } = state;
 
     const definitionNames = IList.make(state.definitions.keys()).sort();
-    const definitions = expandAllDefinitions(state.definitions);
+    const definitions = expandAllDefinitions(
+        state.definitions, state.isAutomaticNumbersEnabled);
 
     for (let [exprId, canvasExpr] of state.canvasExpressions) {
         const rootPath = emptyIdPath(exprId);
         const displayExpr = buildDisplayExpression(
             canvasExpr.expr, rootPath, highlightedExprs,
-            highlightedEmptyBodies, definitions);
+            highlightedEmptyBodies, definitions, isAutomaticNumbersEnabled);
         const isDragging = false;
-        const isExecutable = canStepUserExpr(definitions, canvasExpr.expr);
+        const isExecutable = canStepUserExpr(
+            definitions, state.isAutomaticNumbersEnabled, canvasExpr.expr);
         screenExpressions.push(t.ScreenExpression.make(
             displayExpr,
             canvasPtToScreenPt(state, canvasExpr.pos),
@@ -59,7 +63,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             draggedExpression: ({userExpr}) => {
                 const displayExpr = buildDisplayExpression(
                     userExpr, null, highlightedExprs, highlightedEmptyBodies,
-                    definitions);
+                    definitions, isAutomaticNumbersEnabled);
                 const isDragging = true;
                 const executeHandler = null;
                 screenExpressions.push(t.ScreenExpression.make(
@@ -77,7 +81,8 @@ const generateDisplayState = (state: State): DisplayState =>  {
                 if (userExpr != null) {
                     displayExpr = buildDisplayExpression(
                         userExpr, null, highlightedExprs,
-                        highlightedEmptyBodies, definitions);
+                        highlightedEmptyBodies, definitions,
+                        isAutomaticNumbersEnabled);
                 }
                 screenDefinitions.push(t.ScreenDefinition.make(
                     defName,
@@ -102,7 +107,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
             const rootPath = emptyDefinitionPath(defName);
             displayExpr = buildDisplayExpression(
                 userExpr, rootPath, highlightedExprs, highlightedEmptyBodies,
-                definitions);
+                definitions, isAutomaticNumbersEnabled);
         }
         const shouldHighlightEmptyBody = highlightedDefinitionBodies.has(defName);
         screenDefinitions.push(t.ScreenDefinition.make(
@@ -122,7 +127,7 @@ const generateDisplayState = (state: State): DisplayState =>  {
     for (let [exprId, pendingResult] of state.pendingResults) {
         const displayExpr = buildDisplayExpression(
             pendingResult.expr, null, highlightedExprs, highlightedEmptyBodies,
-            definitions);
+            definitions, isAutomaticNumbersEnabled);
         measureRequests.push(t.MeasureRequest.make(
             displayExpr,
             (width, height) => {
@@ -169,7 +174,8 @@ const buildDisplayExpression = (
         userExpr: UserExpression, rootPath: ?ExprPath,
         highlightedExprs: ISet<ExprPath>,
         highlightedEmptyBodies: ISet<ExprPath>,
-        definitions: IMap<string, ?Expression>): DisplayExpression => {
+        definitions: IMap<string, ?Expression>,
+        isAutomaticNumbersEnabled: boolean): DisplayExpression => {
     const rec = (expr: UserExpression, path: ?ExprPath): DisplayExpression => {
         const exprKey = path && t.ExpressionKey.make(path);
         const shouldHighlight = path != null && highlightedExprs.has(path);
@@ -200,7 +206,8 @@ const buildDisplayExpression = (
                 return t.DisplayVariable.make(exprKey, shouldHighlight, varName);
             },
             userReference: ({defName}) => {
-                const shouldShowError = !definitions.get(defName);
+                const shouldShowError = !definitions.get(defName) &&
+                    !(isAutomaticNumbersEnabled && isNumber(defName));
                 return t.DisplayReference.make(
                     exprKey, shouldHighlight, shouldShowError, defName
                 );

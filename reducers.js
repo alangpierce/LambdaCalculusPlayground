@@ -2,6 +2,10 @@
  * @flow
  */
 
+import {
+    ToastAndroid
+} from 'react-native';
+
 import {emptyIdPath} from './ExprPaths';
 import {
     canStepUserExpr, evaluateUserExpr, expandAllDefinitions
@@ -13,9 +17,11 @@ import type {
     DragData,
     ScreenPoint,
     State,
+    UserExpression,
 } from './types'
 import * as t from './types'
 import {IMap, ISet} from './types-collections'
+import {isGiantNumber, tryUserExpressionForNumber} from './ExpressionNumbers';
 import {
     addExpression,
     decomposeExpression,
@@ -69,11 +75,26 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
         toggleDefinitionPalette: () => state.updatePaletteState(
             (s) => s === 'definition' ? 'none' : 'definition'),
         placeDefinition: ({defName, screenPos}) => {
+            let newDef: ?UserExpression;
+            if (!state.definitions.hasKey(defName) && state.isAutomaticNumbersEnabled) {
+                if (isGiantNumber(defName)) {
+                    ToastAndroid.show(
+                        'That definition is too big to show!.', ToastAndroid.SHORT);
+                    return state;
+                }
+                newDef = tryUserExpressionForNumber(defName);
+            }
+            if (newDef == null) {
+                newDef = state.definitions.get(defName);
+            }
+            if (newDef != null) {
+                ToastAndroid.show('Showing existing definition.', ToastAndroid.SHORT);
+            }
             return state
                 .lens().canvasDefinitions().atKey(defName).replace(
                     screenPtToCanvasPt(state, screenPos))
                 // Create an entry for the definition, which may be null.
-                .lens().definitions().atKey(defName).update((def) => def);
+                .lens().definitions().atKey(defName).replace(newDef);
         },
         deleteDefinition: ({defName}) =>
             state.lens().definitions().deleteKey(defName)
@@ -113,12 +134,15 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             return state;
         },
         evaluateExpression: ({exprId}) => {
-            const definitions = expandAllDefinitions(state.definitions);
+            const definitions = expandAllDefinitions(
+                state.definitions, state.isAutomaticNumbersEnabled);
             const existingExpr = exprWithId(exprId);
-            if (!canStepUserExpr(definitions, existingExpr.expr)) {
+            if (!canStepUserExpr(
+                    definitions, state.isAutomaticNumbersEnabled, existingExpr.expr)) {
                 return state;
             }
-            const evaluatedExpr = evaluateUserExpr(definitions, existingExpr.expr);
+            const evaluatedExpr = evaluateUserExpr(
+                definitions, state.isAutomaticNumbersEnabled, existingExpr.expr);
             if (!evaluatedExpr) {
                 return state;
             }
