@@ -71,6 +71,10 @@ type ExpressionPropTypes = {
     expr: DisplayExpression,
 }
 export class Expression extends StatelessComponent<ExpressionPropTypes> {
+    shouldComponentUpdate(nextProps: ExpressionPropTypes) {
+        return !this.props.expr.equals(nextProps.expr);
+    }
+
     render() {
         const {expr} = this.props;
         return expr.match({

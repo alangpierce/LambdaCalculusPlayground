@@ -174,6 +174,10 @@ class PlaygroundCanvasView extends SimpleComponent<PlaygroundCanvasProps, {}> {
         this._responderMethods = this.getResponderMethods();
     }
 
+    shouldComponentUpdate(nextProps) {
+        return !this.props.displayState.equals(nextProps.displayState);
+    }
+
     getResponderMethods() {
         let lastTouches: IMap<number, ScreenPoint> = IMap.make();
         const processEvent = ({nativeEvent: {touches}}) => {

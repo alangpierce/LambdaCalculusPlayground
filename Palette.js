@@ -21,6 +21,10 @@ type PalettePropTypes = {
     displayState: PaletteDisplayState,
 };
 export default class Palette extends SimpleComponent<PalettePropTypes, {}> {
+    shouldComponentUpdate(nextProps: PalettePropTypes) {
+        return !this.props.displayState.equals(nextProps.displayState);
+    }
+
     render() {
         const {activePalette, lambdas, definitions} = this.props.displayState;
         if (activePalette === 'none') {

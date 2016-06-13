@@ -17,6 +17,9 @@ import * as t from './types';
 type CreateButtonsProps = {
 }
 export default class CreateButtons extends StatelessComponent<CreateButtonsProps> {
+    shouldComponentUpdate() {
+        return false;
+    }
 
     handleCreateLambda() {
         const dialog = new DialogAndroid();

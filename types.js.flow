@@ -57,6 +57,9 @@ declare export class State {
     updateIsDeleteBarHighlighted(updater: Updater<boolean>): State;
     updatePaletteState(updater: Updater<'none' | 'lambda' | 'definition'>): State;
     lens(): StateLens<State>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -80,6 +83,9 @@ declare export class Reset {
     static make(): Reset;
     type: 'reset';
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -87,6 +93,9 @@ declare export class ToggleLambdaPalette {
     static make(): ToggleLambdaPalette;
     type: 'toggleLambdaPalette';
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -94,6 +103,9 @@ declare export class ToggleDefinitionPalette {
     static make(): ToggleDefinitionPalette;
     type: 'toggleDefinitionPalette';
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -104,6 +116,9 @@ declare export class AddExpression {
     withCanvasExpr(canvasExpr: CanvasExpression): AddExpression;
     updateCanvasExpr(updater: Updater<CanvasExpression>): AddExpression;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -117,6 +132,9 @@ declare export class PlaceDefinition {
     updateDefName(updater: Updater<string>): PlaceDefinition;
     updateScreenPos(updater: Updater<ScreenPoint>): PlaceDefinition;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -127,6 +145,9 @@ declare export class DeleteDefinition {
     withDefName(defName: string): DeleteDefinition;
     updateDefName(updater: Updater<string>): DeleteDefinition;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -140,6 +161,9 @@ declare export class MoveExpression {
     updateExprId(updater: Updater<number>): MoveExpression;
     updatePos(updater: Updater<CanvasPoint>): MoveExpression;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -153,6 +177,9 @@ declare export class DecomposeExpressionAction {
     updatePath(updater: Updater<ExprPath>): DecomposeExpressionAction;
     updateTargetPos(updater: Updater<CanvasPoint>): DecomposeExpressionAction;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -166,6 +193,9 @@ declare export class InsertAsArg {
     updateArgExprId(updater: Updater<number>): InsertAsArg;
     updatePath(updater: Updater<ExprPath>): InsertAsArg;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -179,6 +209,9 @@ declare export class InsertAsBody {
     updateBodyExprId(updater: Updater<number>): InsertAsBody;
     updatePath(updater: Updater<ExprPath>): InsertAsBody;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -189,6 +222,9 @@ declare export class EvaluateExpression {
     withExprId(exprId: number): EvaluateExpression;
     updateExprId(updater: Updater<number>): EvaluateExpression;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -205,6 +241,9 @@ declare export class PlacePendingResult {
     updateWidth(updater: Updater<number>): PlacePendingResult;
     updateHeight(updater: Updater<number>): PlacePendingResult;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -218,6 +257,9 @@ declare export class FingerDown {
     updateFingerId(updater: Updater<number>): FingerDown;
     updateScreenPos(updater: Updater<ScreenPoint>): FingerDown;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -231,6 +273,9 @@ declare export class FingerMove {
     updateFingerId(updater: Updater<number>): FingerMove;
     updateScreenPos(updater: Updater<ScreenPoint>): FingerMove;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -244,6 +289,9 @@ declare export class FingerUp {
     updateFingerId(updater: Updater<number>): FingerUp;
     updateScreenPos(updater: Updater<ScreenPoint>): FingerUp;
     match<T>(visitor: ActionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -277,6 +325,9 @@ declare export class Lambda {
     updateVarName(updater: Updater<string>): Lambda;
     updateBody(updater: Updater<Expression>): Lambda;
     match<T>(visitor: ExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -290,6 +341,9 @@ declare export class FuncCall {
     updateFunc(updater: Updater<Expression>): FuncCall;
     updateArg(updater: Updater<Expression>): FuncCall;
     match<T>(visitor: ExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -300,6 +354,9 @@ declare export class Variable {
     withVarName(varName: string): Variable;
     updateVarName(updater: Updater<string>): Variable;
     match<T>(visitor: ExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -332,6 +389,9 @@ declare export class EvalLambda {
     updateOriginalVarName(updater: Updater<string>): EvalLambda;
     updateBody(updater: Updater<EvalExpression>): EvalLambda;
     match<T>(visitor: EvalExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -345,6 +405,9 @@ declare export class EvalFuncCall {
     updateFunc(updater: Updater<EvalExpression>): EvalFuncCall;
     updateArg(updater: Updater<EvalExpression>): EvalFuncCall;
     match<T>(visitor: EvalExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -355,6 +418,9 @@ declare export class EvalBoundVariable {
     withSlot(slot: Slot): EvalBoundVariable;
     updateSlot(updater: Updater<Slot>): EvalBoundVariable;
     match<T>(visitor: EvalExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -368,6 +434,9 @@ declare export class EvalUnboundVariable {
     updateVarMarker(updater: Updater<VarMarker>): EvalUnboundVariable;
     updateOriginalVarName(updater: Updater<string>): EvalUnboundVariable;
     match<T>(visitor: EvalExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -378,6 +447,9 @@ declare export class EvalFreeVariable {
     withVarName(varName: string): EvalFreeVariable;
     updateVarName(updater: Updater<string>): EvalFreeVariable;
     match<T>(visitor: EvalExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -401,6 +473,9 @@ declare export class UserLambda {
     updateVarName(updater: Updater<string>): UserLambda;
     updateBody(updater: Updater<?UserExpression>): UserLambda;
     match<T>(visitor: UserExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -414,6 +489,9 @@ declare export class UserFuncCall {
     updateFunc(updater: Updater<UserExpression>): UserFuncCall;
     updateArg(updater: Updater<UserExpression>): UserFuncCall;
     match<T>(visitor: UserExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -424,6 +502,9 @@ declare export class UserVariable {
     withVarName(varName: string): UserVariable;
     updateVarName(updater: Updater<string>): UserVariable;
     match<T>(visitor: UserExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -434,6 +515,9 @@ declare export class UserReference {
     withDefName(defName: string): UserReference;
     updateDefName(updater: Updater<string>): UserReference;
     match<T>(visitor: UserExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -455,6 +539,9 @@ declare export class CanvasExpression {
     updateExpr(updater: Updater<UserExpression>): CanvasExpression;
     updatePos(updater: Updater<CanvasPoint>): CanvasExpression;
     lens(): CanvasExpressionLens<CanvasExpression>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -472,6 +559,9 @@ declare export class PendingResult {
     updateExpr(updater: Updater<UserExpression>): PendingResult;
     updateSourceExprId(updater: Updater<number>): PendingResult;
     lens(): PendingResultLens<PendingResult>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -507,6 +597,9 @@ declare export class DisplayState {
     updateIsDraggingExpression(updater: Updater<boolean>): DisplayState;
     updateIsDeleteBarHighlighted(updater: Updater<boolean>): DisplayState;
     lens(): DisplayStateLens<DisplayState>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -533,6 +626,9 @@ declare export class PaletteDisplayState {
     updateLambdas(updater: Updater<IList<string>>): PaletteDisplayState;
     updateDefinitions(updater: Updater<IList<string>>): PaletteDisplayState;
     lens(): PaletteDisplayStateLens<PaletteDisplayState>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -551,6 +647,9 @@ declare export class MeasureRequest {
     updateExpr(updater: Updater<DisplayExpression>): MeasureRequest;
     updateResultHandler(updater: Updater<(width: number, height: number) => void>): MeasureRequest;
     lens(): MeasureRequestLens<MeasureRequest>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -589,6 +688,9 @@ declare export class ScreenDefinition {
     updateKey(updater: Updater<string>): ScreenDefinition;
     updateIsDragging(updater: Updater<boolean>): ScreenDefinition;
     lens(): ScreenDefinitionLens<ScreenDefinition>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -622,6 +724,9 @@ declare export class ScreenExpression {
     updateIsDragging(updater: Updater<boolean>): ScreenExpression;
     updateExecuteHandler(updater: Updater<?() => void>): ScreenExpression;
     lens(): ScreenExpressionLens<ScreenExpression>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -658,6 +763,9 @@ declare export class DisplayLambda {
     updateVarName(updater: Updater<string>): DisplayLambda;
     updateBody(updater: Updater<?DisplayExpression>): DisplayLambda;
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -677,6 +785,9 @@ declare export class DisplayFuncCall {
     updateFunc(updater: Updater<DisplayExpression>): DisplayFuncCall;
     updateArg(updater: Updater<DisplayExpression>): DisplayFuncCall;
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -693,6 +804,9 @@ declare export class DisplayVariable {
     updateShouldHighlight(updater: Updater<boolean>): DisplayVariable;
     updateVarName(updater: Updater<string>): DisplayVariable;
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -712,6 +826,9 @@ declare export class DisplayReference {
     updateShouldShowError(updater: Updater<boolean>): DisplayReference;
     updateDefName(updater: Updater<string>): DisplayReference;
     match<T>(visitor: DisplayExpressionVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -733,6 +850,9 @@ declare export class CanvasPoint extends CanvasPointMixin {
     updateCanvasX(updater: Updater<number>): CanvasPoint;
     updateCanvasY(updater: Updater<number>): CanvasPoint;
     lens(): CanvasPointLens<CanvasPoint>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -750,6 +870,9 @@ declare export class PointDifference extends PointDifferenceMixin {
     updateDx(updater: Updater<number>): PointDifference;
     updateDy(updater: Updater<number>): PointDifference;
     lens(): PointDifferenceLens<PointDifference>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -767,6 +890,9 @@ declare export class ScreenPoint extends ScreenPointMixin {
     updateScreenX(updater: Updater<number>): ScreenPoint;
     updateScreenY(updater: Updater<number>): ScreenPoint;
     lens(): ScreenPointLens<ScreenPoint>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -784,6 +910,9 @@ declare export class ScreenRect extends ScreenRectMixin {
     updateTopLeft(updater: Updater<ScreenPoint>): ScreenRect;
     updateBottomRight(updater: Updater<ScreenPoint>): ScreenRect;
     lens(): ScreenRectLens<ScreenRect>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -803,6 +932,9 @@ declare export class ExprPath {
     updateContainer(updater: Updater<ExprContainer>): ExprPath;
     updatePathSteps(updater: Updater<IList<PathComponent>>): ExprPath;
     lens(): ExprPathLens<ExprPath>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -818,6 +950,9 @@ declare export class ExprIdContainer {
     withExprId(exprId: number): ExprIdContainer;
     updateExprId(updater: Updater<number>): ExprIdContainer;
     match<T>(visitor: ExprContainerVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -828,6 +963,9 @@ declare export class DefinitionContainer {
     withDefName(defName: string): DefinitionContainer;
     updateDefName(updater: Updater<string>): DefinitionContainer;
     match<T>(visitor: ExprContainerVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -851,6 +989,9 @@ declare export class PickUpExpression {
     updateOffset(updater: Updater<PointDifference>): PickUpExpression;
     updateScreenRect(updater: Updater<ScreenRect>): PickUpExpression;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -867,6 +1008,9 @@ declare export class PickUpDefinition {
     updateOffset(updater: Updater<PointDifference>): PickUpDefinition;
     updateScreenRect(updater: Updater<ScreenRect>): PickUpDefinition;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -883,6 +1027,9 @@ declare export class ExtractDefinition {
     updateOffset(updater: Updater<PointDifference>): ExtractDefinition;
     updateScreenRect(updater: Updater<ScreenRect>): ExtractDefinition;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -899,6 +1046,9 @@ declare export class DecomposeExpression {
     updateOffset(updater: Updater<PointDifference>): DecomposeExpression;
     updateScreenRect(updater: Updater<ScreenRect>): DecomposeExpression;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -915,6 +1065,9 @@ declare export class CreateExpression {
     updateOffset(updater: Updater<PointDifference>): CreateExpression;
     updateScreenRect(updater: Updater<ScreenRect>): CreateExpression;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -925,6 +1078,9 @@ declare export class StartPan {
     withStartPos(startPos: ScreenPoint): StartPan;
     updateStartPos(updater: Updater<ScreenPoint>): StartPan;
     match<T>(visitor: DragResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -951,6 +1107,9 @@ declare export class DragData {
     updateGrabOffset(updater: Updater<PointDifference>): DragData;
     updateScreenRect(updater: Updater<ScreenRect>): DragData;
     lens(): DragDataLens<DragData>;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -967,6 +1126,9 @@ declare export class DraggedExpression {
     withUserExpr(userExpr: UserExpression): DraggedExpression;
     updateUserExpr(updater: Updater<UserExpression>): DraggedExpression;
     match<T>(visitor: DragPayloadVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -977,6 +1139,9 @@ declare export class DraggedDefinition {
     withDefName(defName: string): DraggedDefinition;
     updateDefName(updater: Updater<string>): DraggedDefinition;
     match<T>(visitor: DragPayloadVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -997,6 +1162,9 @@ declare export class AddToTopLevelResult {
     updatePayload(updater: Updater<DragPayload>): AddToTopLevelResult;
     updateScreenPos(updater: Updater<ScreenPoint>): AddToTopLevelResult;
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1010,6 +1178,9 @@ declare export class InsertAsBodyResult {
     updateLambdaPath(updater: Updater<ExprPath>): InsertAsBodyResult;
     updateExpr(updater: Updater<UserExpression>): InsertAsBodyResult;
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1023,6 +1194,9 @@ declare export class InsertAsArgResult {
     updatePath(updater: Updater<ExprPath>): InsertAsArgResult;
     updateExpr(updater: Updater<UserExpression>): InsertAsArgResult;
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1036,6 +1210,9 @@ declare export class InsertAsDefinitionResult {
     updateDefName(updater: Updater<string>): InsertAsDefinitionResult;
     updateExpr(updater: Updater<UserExpression>): InsertAsDefinitionResult;
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1043,6 +1220,9 @@ declare export class RemoveResult {
     static make(): RemoveResult;
     type: 'removeResult';
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1050,6 +1230,9 @@ declare export class RemoveWithDeleteBarResult {
     static make(): RemoveWithDeleteBarResult;
     type: 'removeWithDeleteBarResult';
     match<T>(visitor: DropResultVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1071,6 +1254,9 @@ declare export class ExpressionKey {
     withExprPath(exprPath: ExprPath): ExpressionKey;
     updateExprPath(updater: Updater<ExprPath>): ExpressionKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1081,6 +1267,9 @@ declare export class EmptyBodyKey {
     withLambdaPath(lambdaPath: ExprPath): EmptyBodyKey;
     updateLambdaPath(updater: Updater<ExprPath>): EmptyBodyKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1091,6 +1280,9 @@ declare export class LambdaVarKey {
     withLambdaPath(lambdaPath: ExprPath): LambdaVarKey;
     updateLambdaPath(updater: Updater<ExprPath>): LambdaVarKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1101,6 +1293,9 @@ declare export class DefinitionKey {
     withDefName(defName: string): DefinitionKey;
     updateDefName(updater: Updater<string>): DefinitionKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1111,6 +1306,9 @@ declare export class DefinitionRefKey {
     withDefName(defName: string): DefinitionRefKey;
     updateDefName(updater: Updater<string>): DefinitionRefKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1121,6 +1319,9 @@ declare export class DefinitionEmptyBodyKey {
     withDefName(defName: string): DefinitionEmptyBodyKey;
     updateDefName(updater: Updater<string>): DefinitionEmptyBodyKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1131,6 +1332,9 @@ declare export class PaletteLambdaKey {
     withVarName(varName: string): PaletteLambdaKey;
     updateVarName(updater: Updater<string>): PaletteLambdaKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1141,6 +1345,9 @@ declare export class PaletteReferenceKey {
     withDefName(defName: string): PaletteReferenceKey;
     updateDefName(updater: Updater<string>): PaletteReferenceKey;
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 
@@ -1148,6 +1355,9 @@ declare export class DeleteBarKey {
     static make(): DeleteBarKey;
     type: 'deleteBarKey';
     match<T>(visitor: ViewKeyVisitor<T>): T;
+    equals(other: any): boolean;
+    hashCode(): number;
+    toString(): string;
     serialize(): any;
 }
 

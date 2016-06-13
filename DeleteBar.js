@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import {
     Text,
 } from 'react-native';
@@ -21,6 +22,10 @@ type DeleteBarProps = {
     isDraggingExpression: boolean,
 }
 export default class DeleteBar extends StatelessComponent<DeleteBarProps> {
+    shouldComponentUpdate(nextProps: DeleteBarProps, nextState: {}) {
+        return shallowCompare(this, nextProps, nextState);
+    }
+
     render() {
         const {isDeleteBarHighlighted, isDraggingExpression} = this.props;
         const text = isDraggingExpression ? 'Remove' : 'Hide';

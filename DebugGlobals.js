@@ -5,7 +5,8 @@
  * @flow
  */
 
-import {NativeModules} from 'react-native'
+import {NativeModules} from 'react-native';
+import Perf from 'react-addons-perf';
 
 import store from './store'
 import {parseExpr, formatExpr} from './ExpressionStr'
@@ -43,6 +44,7 @@ if (window.messageHandlers !== undefined) {
         makeExpression,
         listExpressions,
         generateScreenExpressions,
+        Perf,
         ViewTracker,
     };
 
@@ -62,7 +64,8 @@ if (window.messageHandlers !== undefined) {
     // native code are flushed in a relatively timely manner, so we can run
     // things like redux  from the Chrome console and have them take
     // effect immediately.
-    setInterval(() => {}, 100);
+    setInterval(() => {
+    }, 100);
 
     console.log('Created debug globals.');
 }
