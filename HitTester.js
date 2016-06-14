@@ -24,7 +24,8 @@ import {
  * Given a click on the screen, figure out what expression it is under, if any.
  */
 export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
-    const yieldExpressionPickUps = function* () {
+    const dragCandidates = [];
+    const generateExpressionPickUps = () => {
         for (let [exprId] of state.canvasExpressions) {
             const viewKey = t.ExpressionKey.make(emptyIdPath(exprId));
             const screenRect = getPositionOnScreen(viewKey);
@@ -32,16 +33,16 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.PickUpExpression.make(
                         exprId, point.minus(screenRect.topLeft), screenRect),
                     0,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldDefinitionPickUps = function* () {
+    const generateDefinitionPickUps = () => {
         for (let [defName] of state.canvasDefinitions) {
             const viewKey = t.DefinitionKey.make(defName);
             const screenRect = getPositionOnScreen(viewKey);
@@ -49,16 +50,16 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.PickUpDefinition.make(
                         defName, point.minus(screenRect.topLeft), screenRect),
                     0,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldDefinitionExtracts = function* () {
+    const generateDefinitionExtracts = () => {
         for (let [defName] of state.canvasDefinitions) {
             if (!state.definitions.get(defName)) {
                 continue;
@@ -69,16 +70,16 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.ExtractDefinition.make(
                         defName, point.minus(screenRect.topLeft), screenRect),
                     1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldExpressionDecomposes = function* () {
+    const generateExpressionDecomposes = () => {
         for (let [path, _] of yieldAllExpressions(state)) {
             // You can only decompose an expression that is a lambda body or a
             // function arg.
@@ -93,17 +94,17 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
             }
             if (screenRect.containsPoint(point)) {
                 const parentPath = path.updatePathSteps((steps) => steps.pop());
-                yield [
+                dragCandidates.push([
                     t.DecomposeExpression.make(
                         parentPath, point.minus(screenRect.topLeft),
                         screenRect),
                     pathDepth(path),
-                ];
+                ]);
             }
         }
     };
 
-    const yieldReferenceGenerators = function* () {
+    const generateReferenceGenerators = () => {
         for (let [defName] of state.canvasDefinitions) {
             const viewKey = t.DefinitionRefKey.make(defName);
             const screenRect = getPositionOnScreen(viewKey);
@@ -111,18 +112,18 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.CreateExpression.make(
                         t.UserReference.make(defName),
                         point.minus(screenRect.topLeft),
                         screenRect),
                     1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldLambdaVarGenerators = function* () {
+    const generateLambdaVarGenerators = () => {
         for (let [path, expr] of yieldAllExpressions(state)) {
             if (!(expr instanceof t.UserLambda)) {
                 continue;
@@ -133,18 +134,18 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.CreateExpression.make(
                         t.UserVariable.make(expr.varName),
                         point.minus(screenRect.topLeft),
                         screenRect),
                     pathDepth(path) + 1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldPaletteLambdaGenerators = function*() {
+    const generatePaletteLambdaGenerators = () => {
         for (const varName of PALLETE_VAR_NAMES) {
             const viewKey = t.PaletteLambdaKey.make(varName);
             const screenRect = getPositionOnScreen(viewKey);
@@ -152,18 +153,18 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.CreateExpression.make(
                         t.UserLambda.make(varName, null),
                         point.minus(screenRect.topLeft),
                         screenRect),
                     2,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldPaletteReferenceGenerators = function*() {
+    const generatePaletteReferenceGenerators = () => {
         for (const defName of state.definitions.keys()) {
             const viewKey = t.PaletteReferenceKey.make(defName);
             const screenRect = getPositionOnScreen(viewKey);
@@ -171,33 +172,33 @@ export const resolveTouch = (state: State, point: ScreenPoint): DragResult => {
                 continue;
             }
             if (screenRect.containsPoint(point)) {
-                yield [
+                dragCandidates.push([
                     t.CreateExpression.make(
                         t.UserReference.make(defName, null),
                         point.minus(screenRect.topLeft),
                         screenRect),
                     2,
-                ];
+                ]);
             }
         }
     };
 
-    // Yields the drag result and priority.
-    const yieldDragCandidates = function* ():
-        Generator<[DragResult, number], void, void> {
-        yield* yieldExpressionPickUps();
-        yield* yieldDefinitionPickUps();
-        yield* yieldDefinitionExtracts();
-        yield* yieldExpressionDecomposes();
-        yield* yieldReferenceGenerators();
-        yield* yieldLambdaVarGenerators();
-        yield* yieldPaletteLambdaGenerators();
-        yield* yieldPaletteReferenceGenerators();
+    // generates the drag result and priority.
+    const generateDragCandidates = () => {
+        generateExpressionPickUps();
+        generateDefinitionPickUps();
+        generateDefinitionExtracts();
+        generateExpressionDecomposes();
+        generateReferenceGenerators();
+        generateLambdaVarGenerators();
+        generatePaletteLambdaGenerators();
+        generatePaletteReferenceGenerators();
     };
 
+    generateDragCandidates();
     let bestPriority = -1;
     let bestResult = t.StartPan.make(point);
-    for (let [dragResult, priority] of yieldDragCandidates(state)) {
+    for (let [dragResult, priority] of dragCandidates) {
         if (priority > bestPriority) {
             bestResult = dragResult;
             bestPriority = priority;
@@ -222,7 +223,9 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         return !!rect && dragData.screenRect.overlapsWith(rect.rightSide());
     };
 
-    const yieldLambdaDrops = function* () {
+    const dropCandidates = [];
+
+    const generateLambdaDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -231,30 +234,30 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
                 continue;
             }
             if (intersectsWithView(t.EmptyBodyKey.make(path))) {
-                yield [
+                dropCandidates.push([
                     t.InsertAsBodyResult.make(path, dragPayload.userExpr),
                     // The lambda body should show up as above the lambda.
                     pathDepth(path) + 1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldFuncCallDrops = function* () {
+    const generateFuncCallDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
         for (let [path, _] of yieldAllExpressions(state)) {
             if (intersectsWithRightSide(t.ExpressionKey.make(path))) {
-                yield [
+                dropCandidates.push([
                     t.InsertAsArgResult.make(path, dragPayload.userExpr),
                     pathDepth(path),
-                ];
+                ]);
             }
         }
     };
 
-    const yieldParamDeleteDrops = function* () {
+    const generateParamDeleteDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -266,15 +269,15 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
                 continue;
             }
             if (intersectsWithView(t.LambdaVarKey.make(path))) {
-                yield [
+                dropCandidates.push([
                     t.RemoveResult.make(),
                     pathDepth(path) + 1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldDefinitionBodyDrops = function* () {
+    const generateDefinitionBodyDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -284,15 +287,15 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
                 continue;
             }
             if (intersectsWithView(t.DefinitionEmptyBodyKey.make(defName))) {
-                yield [
+                dropCandidates.push([
                     t.InsertAsDefinitionResult.make(defName, dragPayload.userExpr),
                     1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldReferenceDeleteDrops = function* () {
+    const generateReferenceDeleteDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -301,15 +304,15 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
         for (let [defName] of state.canvasDefinitions) {
             if (intersectsWithView(t.DefinitionRefKey.make(defName))) {
-                yield [
+                dropCandidates.push([
                     t.RemoveResult.make(),
                     1,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldPaletteLambdaDeleteDrops = function*() {
+    const generatePaletteLambdaDeleteDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -319,15 +322,15 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
         for (const varName of PALLETE_VAR_NAMES) {
             if (intersectsWithView(t.PaletteLambdaKey.make(varName))) {
-                yield [
+                dropCandidates.push([
                     t.RemoveResult.make(),
                     2,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldPaletteReferenceDeleteDrops = function*() {
+    const generatePaletteReferenceDeleteDrops = () => {
         if (!(dragPayload instanceof DraggedExpression)) {
             return;
         }
@@ -336,40 +339,39 @@ export const resolveDrop = (state: State, dragData: DragData): DropResult => {
         }
         for (const defName of state.definitions.keys()) {
             if (intersectsWithView(t.PaletteReferenceKey.make(defName))) {
-                yield [
+                dropCandidates.push([
                     t.RemoveResult.make(),
                     2,
-                ];
+                ]);
             }
         }
     };
 
-    const yieldDeleteBarDrop = function*() {
+    const generateDeleteBarDrop = () => {
         if (intersectsWithView(t.DeleteBarKey.make())) {
-            yield [
+            dropCandidates.push([
                 t.RemoveWithDeleteBarResult.make(),
                 1,
-            ]
+            ]);
         }
     };
 
-    // Yields the drop result and priority.
-    const yieldDropCandidates = function* ():
-        Generator<[DropResult, number], void, void> {
-        yield* yieldLambdaDrops();
-        yield* yieldFuncCallDrops();
-        yield* yieldParamDeleteDrops();
-        yield* yieldDefinitionBodyDrops();
-        yield* yieldReferenceDeleteDrops();
-        yield* yieldPaletteLambdaDeleteDrops();
-        yield* yieldPaletteReferenceDeleteDrops();
-        yield* yieldDeleteBarDrop();
+    const generateDropCandidates = () => {
+        generateLambdaDrops();
+        generateFuncCallDrops();
+        generateParamDeleteDrops();
+        generateDefinitionBodyDrops();
+        generateReferenceDeleteDrops();
+        generatePaletteLambdaDeleteDrops();
+        generatePaletteReferenceDeleteDrops();
+        generateDeleteBarDrop();
     };
 
+    generateDropCandidates();
     let bestPriority = -1;
     let bestResult = t.AddToTopLevelResult.make(
         dragPayload, dragData.screenRect.topLeft);
-    for (let [dropResult, priority] of yieldDropCandidates(state)) {
+    for (let [dropResult, priority] of dropCandidates) {
         if (priority > bestPriority) {
             bestResult = dropResult;
             bestPriority = priority;
