@@ -101,16 +101,20 @@ describe('evaluateUserExpression', () => {
         assertError('L x[x(x)](L x[x(x)])');
     });
 
+    it('fails gracefully on timeout', () => {
+        assertError('256(256)(256)');
+    });
+
     const assertResult = (expectedResultStr: string, exprStr: string) => {
         // Make sure result is in canonical form.
         expectedResultStr = formatExpr(parseExpr(expectedResultStr));
         expect(formatExpr(notNull(
-                evaluateUserExpr(definitions, false, parseExpr(exprStr)))))
+                evaluateUserExpr(definitions, true, parseExpr(exprStr)))))
             .toEqual(expectedResultStr);
     };
 
     const assertError = (exprString: string) => {
-        expect(evaluateUserExpr(definitions, false, parseExpr(exprString)))
+        expect(evaluateUserExpr(definitions, true, parseExpr(exprString)))
             .toEqual(null);
     };
 
