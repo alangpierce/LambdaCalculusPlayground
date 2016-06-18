@@ -97,12 +97,21 @@ describe('evaluateUserExpression', () => {
         assertResult("L y'[y(y')]", 'L x[L y[x(y)]](y)');
     });
 
+    it('fails gracefully on stack overflow', () => {
+        assertError('L x[x(x)](L x[x(x)])');
+    });
+
     const assertResult = (expectedResultStr: string, exprStr: string) => {
         // Make sure result is in canonical form.
         expectedResultStr = formatExpr(parseExpr(expectedResultStr));
         expect(formatExpr(notNull(
                 evaluateUserExpr(definitions, false, parseExpr(exprStr)))))
             .toEqual(expectedResultStr);
+    };
+
+    const assertError = (exprString: string) => {
+        expect(evaluateUserExpr(definitions, false, parseExpr(exprString)))
+            .toEqual(null);
     };
 
     const notNull = function<T>(t: ?T): T {

@@ -144,6 +144,7 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
             const evaluatedExpr = evaluateUserExpr(
                 definitions, state.isAutomaticNumbersEnabled, existingExpr.expr);
             if (!evaluatedExpr) {
+                ToastAndroid.show('Evaluation took too long.', ToastAndroid.SHORT);
                 return state;
             }
             // We don't have enough information to place the expression yet,

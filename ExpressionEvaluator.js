@@ -20,11 +20,20 @@ export const canStep = (expr: Expression): boolean => {
     });
 };
 
-// TODO: Run in a web worker or something to avoid infinite loops.
-export const evaluate = (expr: Expression): Expression => {
-    const compiledExpr = compile(IMap.make(), expr);
-    const evaluatedExpr = evaluateRec(compiledExpr, ISet.make(), true);
-    return assignNames(evaluatedExpr, IMap.make());
+/**
+ * Returns the result expression if possible, or null if the evaluation timed
+ * out (or there was any other error). Unfortunately, distinguishing between
+ * stack overflow exceptions and other errors is hard because different runtimes
+ * provide different types of errors.
+ */
+export const evaluate = (expr: Expression): ?Expression => {
+    try {
+        const compiledExpr = compile(IMap.make(), expr);
+        const evaluatedExpr = evaluateRec(compiledExpr, ISet.make(), true);
+        return assignNames(evaluatedExpr, IMap.make());
+    } catch (e) {
+        return null;
+    }
 };
 
 const evaluateRec = (

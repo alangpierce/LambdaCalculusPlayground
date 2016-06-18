@@ -3,6 +3,7 @@
  */
 
 jest.disableAutomock();
+jest.mock('react-native', () => {});
 
 import {formatExpr, parseExpr} from '../ExpressionStr';
 import store from '../store';
@@ -12,7 +13,7 @@ import type {PathComponent} from '../types';
 import {IList} from '../types-collections';
 
 // Just use a normal function lambda for now so that arguments works.
-const list = function(...args): IList<PathComponent> {
+const list = function (...args): IList<PathComponent> {
     return IList.make(args);
 };
 

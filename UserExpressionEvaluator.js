@@ -12,6 +12,12 @@ export type UserDefinitions = IMap<string, ?UserExpression>;
 export type Definitions = IMap<string, ?Expression>;
 
 // TODO: Do something like dependency injection with the definitions.
+/**
+ * Evaluate the given expression. Return null if there was any problem. In
+ * practice, this will only be called with expressions that can be evaluated, so
+ * returning null indicates that the evaluation ran out of time or hit a stack
+ * overflow.
+ */
 export const evaluateUserExpr = (
         definitions: Definitions, isAutomaticNumbersEnabled: boolean,
         userExpr: UserExpression): ?UserExpression => {
@@ -21,6 +27,9 @@ export const evaluateUserExpr = (
         return null;
     }
     const evaluatedExpr = evaluate(expr);
+    if (evaluatedExpr == null) {
+        return null;
+    }
     return collapseDefinitions(
         definitions, isAutomaticNumbersEnabled, evaluatedExpr);
 };
