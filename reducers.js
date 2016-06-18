@@ -8,7 +8,7 @@ import {
 
 import {emptyIdPath} from './ExprPaths';
 import {
-    canStepUserExpr, evaluateUserExpr, expandAllDefinitions
+    canStepUserExpr, evaluateUserExpr, expandAllDefinitions, expressionSize,
 } from './UserExpressionEvaluator';
 import type {
     Action,
@@ -145,6 +145,12 @@ const playgroundApp = (state: State = initialState, rawAction: any): State => {
                 definitions, state.isAutomaticNumbersEnabled, existingExpr.expr);
             if (!evaluatedExpr) {
                 ToastAndroid.show('Evaluation took too long.', ToastAndroid.SHORT);
+                return state;
+            }
+            if (expressionSize(evaluatedExpr) > 30) {
+                ToastAndroid.show(
+                    'The result is too big to fit. Double-check your work!',
+                    ToastAndroid.SHORT);
                 return state;
             }
             // We don't have enough information to place the expression yet,

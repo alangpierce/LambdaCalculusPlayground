@@ -138,3 +138,17 @@ const expandUserExpr = (
         userReference: ({defName}) => lookupDef(defName),
     });
 };
+
+/**
+ * Determine a rough measure of how big an expression is from a user's
+ * perspective. An expression that's too big will be ignored because it's too
+ * unwieldy.
+ */
+export const expressionSize = (expr: UserExpression): number => {
+    return expr.match({
+        userLambda: ({body}) => 1 + (body ? expressionSize(body) : 0),
+        userFuncCall: ({func, arg}) => expressionSize(func) + expressionSize(arg),
+        userVariable: () => 1,
+        userReference: () => 1,
+    });
+};
