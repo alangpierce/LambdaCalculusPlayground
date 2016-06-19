@@ -25,8 +25,6 @@ public class PlaygroundFragment extends Fragment {
         // Required empty public constructor.
     }
 
-    @Inject CanvasManager canvasManager;
-    @Inject ExpressionCreator expressionCreator;
     @Inject ReactNativeManager reactNativeManager;
 
     public static PlaygroundFragment create() {
