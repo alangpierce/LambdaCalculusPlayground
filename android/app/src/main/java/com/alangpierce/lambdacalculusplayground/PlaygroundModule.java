@@ -19,8 +19,6 @@ import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
-import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluator;
-import com.alangpierce.lambdacalculusplayground.evaluator.ExpressionEvaluatorImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -32,8 +30,6 @@ import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluatorImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionCreatorImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRenderer;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionViewRendererImpl;
@@ -176,17 +172,6 @@ public class PlaygroundModule {
         return new DefinitionManagerImpl(appState);
     }
 
-    @Provides @Singleton
-    ExpressionEvaluator provideExpressionEvaluator() {
-        return new ExpressionEvaluatorImpl();
-    }
-
-    @Provides @Singleton
-    UserExpressionEvaluator provideUserExpressionEvaluator(
-            DefinitionManager definitionManager, ExpressionEvaluator expressionEvaluator) {
-        return new UserExpressionEvaluatorImpl(definitionManager, expressionEvaluator);
-    }
-
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
             Context context, LayoutInflater layoutInflater) {
@@ -210,11 +195,9 @@ public class PlaygroundModule {
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
-            UserExpressionEvaluator userExpressionEvaluator, @CanvasRoot RelativeLayout canvasRoot,
-            @AbovePaletteRoot RelativeLayout abovePaletteRoot,
+            @CanvasRoot RelativeLayout canvasRoot, @AbovePaletteRoot RelativeLayout abovePaletteRoot,
             DefinitionManager definitionManager) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, userExpressionEvaluator, canvasRoot, abovePaletteRoot,
-                definitionManager);
+                pointConverter, dragManager, canvasRoot, abovePaletteRoot, definitionManager);
     }
 }

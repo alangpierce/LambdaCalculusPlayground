@@ -11,7 +11,6 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.evaluator.EvaluationFailedException;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
@@ -20,7 +19,6 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
-import com.alangpierce.lambdacalculusplayground.userexpression.UserExpressionEvaluator;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
 import com.google.common.collect.ImmutableList;
 
@@ -37,7 +35,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private final CanvasManager canvasManager;
     private final TopLevelExpressionView view;
     private final PointConverter pointConverter;
-    private final UserExpressionEvaluator userExpressionEvaluator;
 
     private ScreenExpression screenExpression;
     private ExpressionController expressionController;
@@ -49,12 +46,11 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     public TopLevelExpressionControllerImpl(
             CanvasManager canvasManager, TopLevelExpressionView view,
-            PointConverter pointConverter, UserExpressionEvaluator userExpressionEvaluator,
-            ScreenExpression screenExpression, ExpressionController expressionController) {
+            PointConverter pointConverter, ScreenExpression screenExpression,
+            ExpressionController expressionController) {
         this.canvasManager = canvasManager;
         this.view = view;
         this.pointConverter = pointConverter;
-        this.userExpressionEvaluator = userExpressionEvaluator;
         this.screenExpression = screenExpression;
         this.expressionController = expressionController;
     }
@@ -95,7 +91,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
                 newExpressionControllerProvider.produceController();
         UserExpression newExpression = newExpressionController.getExpression();
         screenExpression = ScreenExpression.create(newExpression, screenExpression.canvasPos());
-        boolean isExecutable = userExpressionEvaluator.canStep(newExpression);
+        boolean isExecutable = false;
         DrawableAreaPoint drawableAreaPoint =
                 pointConverter.toDrawableAreaPoint(screenExpression.canvasPos());
         view.attachNewExpression(
@@ -115,20 +111,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     private void handleExecuteClick() {
-        UserExpression newExpr;
-        try {
-            newExpr = userExpressionEvaluator.evaluate(screenExpression.expr());
-        } catch (EvaluationFailedException e) {
-            Context context = view.getNativeView().getContext();
-            Toast.makeText(context, e.getStringRes(), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        TopLevelExpressionController newExpression = canvasManager.createNewExpression(
-                newExpr, view.getScreenPos(), false /* placeAbovePalette */);
-
-        ScreenPoint newScreenPos = computeExecuteResultScreenPos(newExpression);
-        newExpression.getView().setScreenPos(newScreenPos);
-        newExpression.handlePositionChange(newScreenPos);
+        // Do nothing.
     }
 
     private ScreenPoint computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
@@ -161,7 +144,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
 
     @Override
     public void invalidateDefinitions() {
-        view.setIsExecutable(userExpressionEvaluator.canStep(screenExpression.expr()));
+        view.setIsExecutable(false);
         expressionController.invalidateDefinitions();
     }
 
