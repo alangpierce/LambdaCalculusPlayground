@@ -6,7 +6,6 @@ import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -20,7 +19,6 @@ import javax.annotation.Nullable;
 
 public class ExpressionControllerFactoryImpl implements ExpressionControllerFactory {
     private final ExpressionViewRenderer viewRenderer;
-    private final DragObservableGenerator dragObservableGenerator;
     private final PointConverter pointConverter;
     private final RelativeLayout canvasRoot;
     private final RelativeLayout abovePaletteRoot;
@@ -28,12 +26,10 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
-            DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter,
             RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
             CanvasManager canvasManager) {
         this.viewRenderer = viewRenderer;
-        this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
@@ -41,11 +37,10 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     }
 
     public static ExpressionControllerFactoryFactory createFactory(
-            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
+            ExpressionViewRenderer viewRenderer,
             PointConverter pointConverter, RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot) {
         return topLevelExpressionManager -> new ExpressionControllerFactoryImpl(
-                viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
-                topLevelExpressionManager);
+                viewRenderer, pointConverter, canvasRoot, abovePaletteRoot, topLevelExpressionManager);
     }
 
     @Override
@@ -62,8 +57,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             boolean placeAbovePalette) {
         boolean isExecutable = false;
         TopLevelExpressionView topLevelView = TopLevelExpressionView.render(
-                viewRenderer, dragObservableGenerator, pointConverter, canvasRoot, abovePaletteRoot,
-                placeAbovePalette, exprController.getView(), isExecutable);
+                viewRenderer, pointConverter, canvasRoot, abovePaletteRoot, placeAbovePalette,
+                exprController.getView(), isExecutable);
         TopLevelExpressionControllerImpl result =
                 new TopLevelExpressionControllerImpl(topLevelView,
                         pointConverter, screenExpression, exprController);
@@ -81,14 +76,14 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                         bodyController = createController(lambda.body());
                     }
                     LambdaView view = LambdaView.render(
-                            dragObservableGenerator, viewRenderer, lambda.varName(),
+                            viewRenderer, lambda.varName(),
                             bodyController != null ? bodyController.getView() : null);
                     ProducerController producerController = new ProducerController(
                             view.getParameterProducer(),
                             LambdaExpressionController.createProducerParent(
                                     canvasManager, lambda.varName()));
                     SlotController bodySlotController = new SlotController(
-                            canvasManager, view.getBodySlot(), bodyController);
+                            view.getBodySlot(), bodyController);
                     LambdaExpressionController controller = new LambdaExpressionController(
                             view, producerController, bodySlotController, lambda);
                     bodySlotController.setParent(controller.createSlotParent());
@@ -101,7 +96,7 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                     ExpressionController funcController = createController(funcCall.func());
                     ExpressionController argController = createController(funcCall.arg());
 
-                    FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
+                    FuncCallView view = FuncCallView.render(viewRenderer,
                             funcController.getView(), argController.getView());
 
                     FuncCallExpressionController controller =
@@ -128,8 +123,8 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
             ExpressionController funcController, ExpressionController argController) {
         UserFuncCall funcCall = UserFuncCall.create(
                 funcController.getExpression(), argController.getExpression());
-        FuncCallView view = FuncCallView.render(dragObservableGenerator, viewRenderer,
-                funcController.getView(), argController.getView());
+        FuncCallView view = FuncCallView.render(viewRenderer, funcController.getView(),
+                argController.getView());
         FuncCallExpressionController result =
                 new FuncCallExpressionController(canvasManager, view,
                         funcController, argController, funcCall);

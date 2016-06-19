@@ -1,31 +1,21 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.util.TypedValue;
-import android.view.View;
 import android.view.View.MeasureSpec;
 
-import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointDifference;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.view.TopLevelExpressionView;
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
 
 import javax.annotation.Nullable;
 
-import rx.Observable;
 import rx.Subscription;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
     private final TopLevelExpressionView view;
@@ -35,8 +25,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     private ExpressionController expressionController;
     private OnTopLevelChangeCallback onChangeCallback;
 
-    private final Subject<Observable<PointerMotionEvent>, Observable<PointerMotionEvent>>
-            dragActionSubject = PublishSubject.create();
     private @Nullable Subscription dragActionSubscription;
 
     public TopLevelExpressionControllerImpl(TopLevelExpressionView view,
@@ -91,45 +79,12 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
                 newExpressionController.getView(), drawableAreaPoint, isExecutable);
         newExpressionController.setOnChangeCallback(this::handleExprChange);
         this.expressionController = newExpressionController;
-        updateDragActionSubscription();
         onChangeCallback.onChange(this);
-    }
-
-    private void updateDragActionSubscription() {
-        if (dragActionSubscription != null) {
-            dragActionSubscription.unsubscribe();
-            dragActionSubscription = null;
-        }
-        dragActionSubscription = view.getExpressionObservable().subscribe(dragActionSubject);
-    }
-
-    private void handleExecuteClick() {
-        // Do nothing.
-    }
-
-    private ScreenPoint computeExecuteResultScreenPos(TopLevelExpressionController newExpression) {
-        ScreenPoint thisViewPos = view.getScreenPos();
-        int thisViewWidth = view.getNativeView().getWidth();
-        int thisViewHeight = view.getNativeView().getHeight();
-
-        newExpression.getView().getNativeView().measure(
-                MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-        int viewWidth = newExpression.getView().getNativeView().getMeasuredWidth();
-
-        // Shift down by 15dp.
-        int shiftPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 15f,
-                view.getNativeView().getResources().getDisplayMetrics());
-
-        int dx = (thisViewWidth / 2) - (viewWidth / 2);
-        int dy = thisViewHeight + shiftPixels;
-        return thisViewPos.plus(PointDifference.create(dx, dy));
     }
 
     @Override
     public void invalidateDefinitions() {
         view.setIsExecutable(false);
-        expressionController.invalidateDefinitions();
     }
 
     @Override

@@ -8,8 +8,6 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.compat.Compat;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -21,7 +19,6 @@ import com.google.common.base.Preconditions;
 import rx.Observable;
 
 public class TopLevelExpressionView {
-    private final DragObservableGenerator dragObservableGenerator;
     private final PointConverter pointConverter;
 
     // The root view that we use is a bit complicated. In most situations, we use canvasRoot for
@@ -46,12 +43,10 @@ public class TopLevelExpressionView {
     private View executeButton;
     private boolean isExecutable;
 
-    public TopLevelExpressionView(DragObservableGenerator dragObservableGenerator,
-            PointConverter pointConverter, RelativeLayout canvasRoot,
+    public TopLevelExpressionView(PointConverter pointConverter, RelativeLayout canvasRoot,
             RelativeLayout abovePaletteRoot, boolean isAbovePalette, ExpressionView exprView,
             View executeButton,
             boolean isExecutable) {
-        this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
@@ -62,13 +57,13 @@ public class TopLevelExpressionView {
     }
 
     public static TopLevelExpressionView render(
-            ExpressionViewRenderer renderer, DragObservableGenerator dragObservableGenerator,
+            ExpressionViewRenderer renderer,
             PointConverter pointConverter, RelativeLayout canvasRoot,
             RelativeLayout abovePaletteRoot, boolean placeAbovePalette, ExpressionView exprView,
             boolean isExecutable) {
         View executeButton = renderer.makeExecuteButton();
-        return new TopLevelExpressionView(dragObservableGenerator, pointConverter, canvasRoot,
-                abovePaletteRoot, placeAbovePalette, exprView, executeButton, isExecutable);
+        return new TopLevelExpressionView(pointConverter, canvasRoot, abovePaletteRoot,
+                placeAbovePalette, exprView, executeButton, isExecutable);
     }
 
     public ScreenPoint getScreenPos() {
@@ -120,10 +115,6 @@ public class TopLevelExpressionView {
 
     public LinearLayout getNativeView() {
         return exprView.getNativeView();
-    }
-
-    public Observable<? extends Observable<PointerMotionEvent>> getExpressionObservable() {
-        return dragObservableGenerator.getDragObservable(exprView.getNativeView());
     }
 
     public void startDrag() {

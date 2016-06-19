@@ -4,9 +4,6 @@ import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.VariableView;
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
 
 public class VariableExpressionController implements ExpressionController {
     private final VariableView view;
@@ -36,10 +33,5 @@ public class VariableExpressionController implements ExpressionController {
 
     public OnChangeCallback getOnChangeCallback() {
         return onChangeCallback;
-    }
-
-    @Override
-    public void invalidateDefinitions() {
-        // Do nothing; variables can't contain definitions.
     }
 }

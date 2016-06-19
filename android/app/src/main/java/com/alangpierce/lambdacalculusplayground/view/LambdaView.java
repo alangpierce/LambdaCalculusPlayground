@@ -7,8 +7,6 @@ import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.component.ComponentParent;
 import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotView;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.collect.ImmutableList;
@@ -22,22 +20,19 @@ import rx.Observable;
  * state.
  */
 public class LambdaView implements ExpressionView {
-    private final DragObservableGenerator dragObservableGenerator;
-
     private final LinearLayout view;
     private final ProducerView parameterProducerView;
     private final SlotView bodySlotView;
 
-    public LambdaView(DragObservableGenerator dragObservableGenerator, LinearLayout view,
+    public LambdaView(LinearLayout view,
             ProducerView parameterProducerView, SlotView bodySlotView) {
-        this.dragObservableGenerator = dragObservableGenerator;
         this.view = view;
         this.parameterProducerView = parameterProducerView;
         this.bodySlotView = bodySlotView;
     }
 
-    public static LambdaView render(DragObservableGenerator dragObservableGenerator,
-            ExpressionViewRenderer renderer, String varName, @Nullable ExpressionView bodyView) {
+    public static LambdaView render(ExpressionViewRenderer renderer, String varName,
+                                    @Nullable ExpressionView bodyView) {
         View parameterView = renderer.makeTextView(varName);
         View bodyNativeView =
                 bodyView != null ? bodyView.getNativeView() : renderer.makeMissingBodyView();
@@ -48,12 +43,10 @@ public class LambdaView implements ExpressionView {
                         renderer.makeBracketView("["),
                         bodyNativeView,
                         renderer.makeBracketView("]")));
-        ProducerView parameterProducerView =
-                new ProducerView(dragObservableGenerator, parameterView);
-        SlotView bodySlotView = new SlotView(dragObservableGenerator, renderer,
+        ProducerView parameterProducerView = new ProducerView(parameterView);
+        SlotView bodySlotView = new SlotView(renderer,
                 bodyComponentParent(mainView), bodyView, bodyNativeView);
-        return new LambdaView(
-                dragObservableGenerator, mainView, parameterProducerView, bodySlotView);
+        return new LambdaView(mainView, parameterProducerView, bodySlotView);
     }
 
     public static ComponentParent bodyComponentParent(LinearLayout mainView) {
@@ -76,10 +69,6 @@ public class LambdaView implements ExpressionView {
 
     public ProducerView getParameterProducer() {
         return parameterProducerView;
-    }
-
-    public Observable<? extends Observable<PointerMotionEvent>> getWholeExpressionObservable() {
-        return dragObservableGenerator.getDragObservable(view);
     }
 
     @Override

@@ -15,12 +15,6 @@ public interface ExpressionController {
     OnChangeCallback getOnChangeCallback();
 
     /**
-     * Called when definitions have changed, which may affect how we display this expression. In
-     * particular invalid references should be marked as errors.
-     */
-    void invalidateDefinitions();
-
-    /**
      * Callback for expressions to propagate changes, which include changes to the backing model,
      * the display, and the callback hooks.
      *

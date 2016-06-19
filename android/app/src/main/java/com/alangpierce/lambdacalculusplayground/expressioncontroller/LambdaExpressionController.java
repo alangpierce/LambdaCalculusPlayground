@@ -63,11 +63,6 @@ public class LambdaExpressionController implements ExpressionController {
     }
 
     @Override
-    public void invalidateDefinitions() {
-        bodySlotController.invalidateDefinitions();
-    }
-
-    @Override
     public void setOnChangeCallback(OnChangeCallback onChangeCallback) {
         this.onChangeCallback = onChangeCallback;
     }

@@ -4,8 +4,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -18,7 +16,6 @@ import javax.annotation.Nullable;
 import rx.Observable;
 
 public class SlotView {
-    private final DragObservableGenerator dragObservableGenerator;
     private final ExpressionViewRenderer renderer;
 
     private final ComponentParent parent;
@@ -29,22 +26,13 @@ public class SlotView {
     private @Nullable View nativeView;
 
     public SlotView(
-            DragObservableGenerator dragObservableGenerator,
             ExpressionViewRenderer renderer,
             ComponentParent parent,
             @Nullable ExpressionView view, @Nullable View nativeView) {
-        this.dragObservableGenerator = dragObservableGenerator;
         this.renderer = renderer;
         this.parent = parent;
         this.view = view;
         this.nativeView = nativeView;
-    }
-
-    public @Nullable Observable<? extends Observable<PointerMotionEvent>> getObservable() {
-        if (view == null) {
-            return null;
-        }
-        return dragObservableGenerator.getDragObservable(view.getNativeView());
     }
 
     public void detach() {

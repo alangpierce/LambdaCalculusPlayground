@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
-import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
-import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -87,17 +83,6 @@ public class PlaygroundModule {
         return new PointConverterImpl(canvasRoot);
     }
 
-    @Provides @Singleton
-    DragObservableGenerator provideDragObservableGenerator(
-            TouchObservableManager touchObservableManager) {
-        return new DragObservableGeneratorImpl(touchObservableManager);
-    }
-
-    @Provides @Singleton
-    TouchObservableManager provideTouchObservableManager() {
-        return new TouchObservableManagerImpl();
-    }
-
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
             Context context, LayoutInflater layoutInflater) {
@@ -112,10 +97,9 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
-            ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            PointConverter pointConverter, @CanvasRoot RelativeLayout canvasRoot,
-            @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
-        return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, canvasRoot, abovePaletteRoot);
+            ExpressionViewRenderer viewRenderer, PointConverter pointConverter,
+            @CanvasRoot RelativeLayout canvasRoot, @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
+        return ExpressionControllerFactoryImpl.createFactory(viewRenderer, pointConverter,
+                canvasRoot, abovePaletteRoot);
     }
 }

@@ -1,25 +1,12 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
 import com.alangpierce.lambdacalculusplayground.view.FuncCallView;
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import rx.Observable;
-import rx.Subscription;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
 public class FuncCallExpressionController implements ExpressionController {
-    private final CanvasManager canvasManager;
     private final FuncCallView view;
 
     /*
@@ -31,15 +18,10 @@ public class FuncCallExpressionController implements ExpressionController {
     private UserFuncCall userFuncCall;
     private OnChangeCallback onChangeCallback;
 
-    private final Subject<Observable<PointerMotionEvent>,Observable<PointerMotionEvent>>
-            argDragActionSubject = PublishSubject.create();
-    private @Nullable Subscription argDragActionSubscription;
-
     public FuncCallExpressionController(
             CanvasManager canvasManager, FuncCallView view,
             ExpressionController funcController, ExpressionController argController,
             UserFuncCall userFuncCall) {
-        this.canvasManager = canvasManager;
         this.view = view;
         this.funcController = funcController;
         this.argController = argController;
@@ -87,32 +69,9 @@ public class FuncCallExpressionController implements ExpressionController {
         ExpressionController newArgController = newArgControllerProvider.produceController();
         userFuncCall = UserFuncCall.create(userFuncCall.func(), newArgController.getExpression());
         view.attachArg(newArgController.getView());
-        updateDragActionSubscription();
         newArgController.setOnChangeCallback(this::handleArgChange);
         argController = newArgController;
         onChangeCallback.onChange(() -> this);
-    }
-
-    private void updateDragActionSubscription() {
-        if (argDragActionSubscription != null) {
-            argDragActionSubscription.unsubscribe();
-            argDragActionSubscription = null;
-        }
-        argDragActionSubscription = view.getArgObservable().subscribe(argDragActionSubject);
-    }
-
-    private void decommission() {
-        setFuncViewEnabled(true);
-        if (argDragActionSubscription != null) {
-            argDragActionSubscription.unsubscribe();
-        }
-        view.decommission();
-    }
-
-    @Override
-    public void invalidateDefinitions() {
-        funcController.invalidateDefinitions();
-        argController.invalidateDefinitions();
     }
 
     /**

@@ -3,42 +3,31 @@ package com.alangpierce.lambdacalculusplayground.view;
 import android.widget.LinearLayout;
 
 import com.alangpierce.lambdacalculusplayground.R;
-import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
-import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.Views;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import rx.Observable;
-
 public class FuncCallView implements ExpressionView {
-    private final DragObservableGenerator dragObservableGenerator;
-
     private final LinearLayout view;
 
     private ExpressionView funcView;
     private ExpressionView argView;
 
-    public FuncCallView(
-            DragObservableGenerator dragObservableGenerator, LinearLayout view,
-            ExpressionView funcView,
-            ExpressionView argView) {
-        this.dragObservableGenerator = dragObservableGenerator;
+    public FuncCallView(LinearLayout view, ExpressionView funcView, ExpressionView argView) {
         this.view = view;
         this.funcView = funcView;
         this.argView = argView;
     }
 
-    public static FuncCallView render(DragObservableGenerator dragObservableGenerator,
-            ExpressionViewRenderer renderer, ExpressionView funcView, ExpressionView argView) {
+    public static FuncCallView render(ExpressionViewRenderer renderer, ExpressionView funcView, ExpressionView argView) {
         LinearLayout mainView = renderer.makeExpressionViewWithChildren(
                 ImmutableList.of(
                         funcView.getNativeView(),
                         renderer.makeBracketView("("),
                         argView.getNativeView(),
                         renderer.makeBracketView(")")));
-        return new FuncCallView(dragObservableGenerator, mainView, funcView, argView);
+        return new FuncCallView(mainView, funcView, argView);
     }
 
     @Override
@@ -49,10 +38,6 @@ public class FuncCallView implements ExpressionView {
     @Override
     public ScreenPoint getScreenPos() {
         return Views.getScreenPos(view);
-    }
-
-    public Observable<? extends Observable<PointerMotionEvent>> getArgObservable() {
-        return dragObservableGenerator.getDragObservable(argView.getNativeView());
     }
 
     /**
