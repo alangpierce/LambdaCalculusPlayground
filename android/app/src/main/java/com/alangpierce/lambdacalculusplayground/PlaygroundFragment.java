@@ -3,16 +3,9 @@ package com.alangpierce.lambdacalculusplayground;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
-import javax.inject.Inject;
-
-import butterknife.ButterKnife;
 
 /**
  * Top-level fragment. Note that generally this class shouldn't have significant logic; any
@@ -23,7 +16,7 @@ public class PlaygroundFragment extends Fragment {
         // Required empty public constructor.
     }
 
-    @Inject ReactNativeManager reactNativeManager;
+    private ReactNativeManager reactNativeManager;
 
     public static PlaygroundFragment create() {
         Bundle args = new Bundle();
@@ -33,30 +26,14 @@ public class PlaygroundFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        if (savedInstanceState != null) {
-            bundle = savedInstanceState;
-        }
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         MainActivity activity = (MainActivity) getActivity();
-
         RelativeLayout root = (RelativeLayout)
                 inflater.inflate(R.layout.fragment_playground, container, false);
-        ButterKnife.bind(this, root);
-
-        PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(PlaygroundModule.create(activity, root))
-                .build();
-        component.injectPlaygroundFragment(this);
+        RelativeLayout canvasRoot = (RelativeLayout) root.findViewById(R.id.canvas_root);
+        reactNativeManager = new ReactNativeManagerImpl(canvasRoot, activity);
         reactNativeManager.init();
-
         return root;
     }
 
@@ -70,15 +47,5 @@ public class PlaygroundFragment extends Fragment {
     public void onPause() {
         super.onPause();
         reactNativeManager.onPause();
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 }
