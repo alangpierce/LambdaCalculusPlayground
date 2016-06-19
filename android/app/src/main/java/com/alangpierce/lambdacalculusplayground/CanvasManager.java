@@ -7,11 +7,6 @@ import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 public interface CanvasManager {
-    /**
-     * This should be called once when setting up the fragment.
-     */
-    void renderInitialData();
-
     TopLevelExpressionController createNewExpression(
             UserExpression userExpression, ScreenPoint screenPos, boolean placeAbovePalette);
 

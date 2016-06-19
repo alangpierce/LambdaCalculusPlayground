@@ -15,9 +15,7 @@ import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Top-level fragment. Note that generally this class shouldn't have significant logic; any
@@ -28,16 +26,13 @@ public class PlaygroundFragment extends Fragment {
         // Required empty public constructor.
     }
 
-    private AppState appState = new AppStateImpl();
-
     @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
     @Inject DragManager dragManager;
     @Inject ReactNativeManager reactNativeManager;
 
-    public static PlaygroundFragment create(AppState initialState) {
+    public static PlaygroundFragment create() {
         Bundle args = new Bundle();
-        initialState.persistToBundle(args);
         PlaygroundFragment result = new PlaygroundFragment();
         result.setArguments(args);
         return result;
@@ -50,20 +45,7 @@ public class PlaygroundFragment extends Fragment {
         if (savedInstanceState != null) {
             bundle = savedInstanceState;
         }
-        if (bundle != null) {
-            loadFromBundle(bundle);
-        }
         setHasOptionsMenu(true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void loadFromBundle(Bundle bundle) {
-        appState.hydrateFromBundle(bundle);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        appState.persistToBundle(outState);
     }
 
     @Override
@@ -76,14 +58,11 @@ public class PlaygroundFragment extends Fragment {
         ButterKnife.bind(this, root);
 
         PlaygroundComponent component = DaggerPlaygroundComponent.builder()
-                .playgroundModule(PlaygroundModule.create(activity, appState, root))
+                .playgroundModule(PlaygroundModule.create(activity, root))
                 .build();
         component.injectPlaygroundFragment(this);
         reactNativeManager.init();
 
-        canvasManager.renderInitialData();
-
-        boolean isFirstTime = savedInstanceState == null;
         return root;
     }
 
@@ -97,13 +76,6 @@ public class PlaygroundFragment extends Fragment {
     public void onPause() {
         super.onPause();
         reactNativeManager.onPause();
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_enable_numbers);
-        item.setChecked(appState.isAutomaticNumbersEnabled());
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override

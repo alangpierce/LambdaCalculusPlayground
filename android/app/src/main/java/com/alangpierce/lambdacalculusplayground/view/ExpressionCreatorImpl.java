@@ -8,40 +8,29 @@ import android.support.annotation.StringRes;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alangpierce.lambdacalculusplayground.AppState;
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ExpressionCreator;
 import com.alangpierce.lambdacalculusplayground.R;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
-import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
-import com.google.common.collect.Ordering;
-
-import java.util.List;
 
 public class ExpressionCreatorImpl implements ExpressionCreator {
     private final Context context;
     private final LayoutInflater layoutInflater;
     private final CanvasManager canvasManager;
     private final ReactNativeManager reactNativeManager;
-    private final AppState appState;
 
     public ExpressionCreatorImpl(Context context, LayoutInflater layoutInflater,
-            CanvasManager canvasManager, ReactNativeManager reactNativeManager, AppState appState) {
+            CanvasManager canvasManager, ReactNativeManager reactNativeManager) {
         this.context = context;
         this.layoutInflater = layoutInflater;
         this.canvasManager = canvasManager;
         this.reactNativeManager = reactNativeManager;
-        this.appState = appState;
     }
 
     private static class InvalidNameException extends Exception {

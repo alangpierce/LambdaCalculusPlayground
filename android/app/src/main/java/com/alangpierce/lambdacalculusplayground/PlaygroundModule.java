@@ -33,19 +33,17 @@ import dagger.Provides;
 @Module
 public class PlaygroundModule {
     private final Activity activity;
-    private final AppState appState;
 
     // These are all children of the fragment.
     @Bind(R.id.above_palette_root) RelativeLayout abovePaletteRoot;
     @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
 
-    private PlaygroundModule(Activity activity, AppState appState) {
+    private PlaygroundModule(Activity activity) {
         this.activity = activity;
-        this.appState = appState;
     }
 
-    public static PlaygroundModule create(Activity activity, AppState appState, View root) {
-        PlaygroundModule module = new PlaygroundModule(activity, appState);
+    public static PlaygroundModule create(Activity activity, View root) {
+        PlaygroundModule module = new PlaygroundModule(activity);
         ButterKnife.bind(module, root);
         return module;
     }
@@ -76,20 +74,14 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    AppState provideAppState() {
-        return appState;
-    }
-
-    @Provides @Singleton
     ReactNativeManager provideReactNativeManager() {
         return new ReactNativeManagerImpl(canvasRoot, activity);
     }
 
     @Provides
     ExpressionCreator provideExpressionCreator(Context context, LayoutInflater layoutInflater,
-            CanvasManager canvasManager, ReactNativeManager reactNativeManager, AppState appState) {
-        return new ExpressionCreatorImpl(context, layoutInflater, canvasManager, reactNativeManager,
-                appState);
+            CanvasManager canvasManager, ReactNativeManager reactNativeManager) {
+        return new ExpressionCreatorImpl(context, layoutInflater, canvasManager, reactNativeManager);
     }
 
     @Provides @Singleton
@@ -121,10 +113,8 @@ public class PlaygroundModule {
 
     @Provides @Singleton
     CanvasManager provideTopLevelExpressionManager(
-            AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
-            PointConverter pointConverter) {
-        return new CanvasManagerImpl(
-                appState, controllerFactoryFactory, pointConverter);
+            ExpressionControllerFactoryFactory controllerFactoryFactory, PointConverter pointConverter) {
+        return new CanvasManagerImpl(controllerFactoryFactory, pointConverter);
     }
 
     @Provides

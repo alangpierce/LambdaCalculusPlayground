@@ -47,11 +47,10 @@ public class MainActivity extends AppCompatActivity {
                 getLayoutInflater().inflate(R.layout.activity_playground, null /* root */);
         setContentView(layoutView);
         if (savedInstanceState == null) {
-            AppState initialState = new AppStateImpl();
             // TODO: When we move minSdk to API 17, we can probably switch to full fragments. For
             // now, we need to use the support library fragment since it handles
             // onViewStateRestored correctly.
-            Fragment fragment = PlaygroundFragment.create(initialState);
+            Fragment fragment = PlaygroundFragment.create();
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.playground_layout, fragment)
