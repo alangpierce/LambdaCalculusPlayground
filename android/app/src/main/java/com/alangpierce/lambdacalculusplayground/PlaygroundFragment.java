@@ -81,24 +81,4 @@ public class PlaygroundFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_playground, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_view_demo_video) {
-            reactNativeManager.viewDemoVideo();
-            return true;
-        } else if (item.getItemId() == R.id.action_show_dev_options) {
-            reactNativeManager.showDevOptionsDialog();
-            return true;
-        } else if (item.getItemId() == R.id.action_refresh_js) {
-            reactNativeManager.reloadJs();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

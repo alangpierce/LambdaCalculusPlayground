@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
-    <!-- Before API 21, there were no shadows, so draw a simple border to get a similar effect. -->
-    <solid android:color="@color/expression_background" />
-    <stroke android:width="0.5dip" android:color="#a6abae"/>
-</shape>

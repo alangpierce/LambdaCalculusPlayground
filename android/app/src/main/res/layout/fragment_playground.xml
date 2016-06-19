@@ -11,8 +11,7 @@
     <RelativeLayout
         android:id="@+id/canvas_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/canvas">
+        android:layout_height="match_parent">
 
     </RelativeLayout>
 

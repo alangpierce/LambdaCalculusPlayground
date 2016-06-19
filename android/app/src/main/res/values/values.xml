@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="resting_elevation">5dp</dimen>
-    <!-- The amount by which the elevation should increase while an expression is being dragged. -->
-    <dimen name="float_elevation">10dp</dimen>
-</resources>

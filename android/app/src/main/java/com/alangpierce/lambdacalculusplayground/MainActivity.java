@@ -28,18 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String REDBOX_PERMISSION_MESSAGE =
             "Overlay permissions needs to be granted in order for react native apps to run in dev mode";
 
-    static {
-        RxJavaPlugins.getInstance().registerErrorHandler(new RxJavaErrorHandler() {
-            @Override
-            public void handleError(Throwable e) {
-                Log.e(TAG, "Exception thrown from observable.", e);
-            }
-        });
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            Log.e(TAG, "Thread had uncaught exception.", throwable);
-        });
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
