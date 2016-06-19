@@ -4,10 +4,10 @@ import com.facebook.react.bridge.BaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 public class DeveloperSupportModule extends BaseJavaModule {
-    private final ReactNativeManager reactNativeManager;
+    private final DeveloperSupportProvider developerSupportProvider;
 
-    public DeveloperSupportModule(ReactNativeManager reactNativeManager) {
-        this.reactNativeManager = reactNativeManager;
+    public DeveloperSupportModule(DeveloperSupportProvider developerSupportProvider) {
+        this.developerSupportProvider = developerSupportProvider;
     }
 
     @Override
@@ -17,11 +17,11 @@ public class DeveloperSupportModule extends BaseJavaModule {
 
     @ReactMethod
     public void showDevOptionsDialog() {
-        reactNativeManager.showDevOptionsDialog();
+        developerSupportProvider.showDevOptionsDialog();
     }
 
     @ReactMethod
     public void reloadJs() {
-        reactNativeManager.reloadJs();
+        developerSupportProvider.reloadJs();
     }
 }

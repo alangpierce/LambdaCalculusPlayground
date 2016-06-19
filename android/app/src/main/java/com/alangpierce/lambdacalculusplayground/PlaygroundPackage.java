@@ -10,16 +10,16 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 public class PlaygroundPackage implements ReactPackage {
-    private final ReactNativeManager reactNativeManager;
+    private final DeveloperSupportProvider developerSupportProvider;
 
-    public PlaygroundPackage(ReactNativeManager reactNativeManager) {
-        this.reactNativeManager = reactNativeManager;
+    public PlaygroundPackage(DeveloperSupportProvider developerSupportProvider) {
+        this.developerSupportProvider = developerSupportProvider;
     }
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         return ImmutableList.of(
-                new DeveloperSupportModule(reactNativeManager)
+                new DeveloperSupportModule(developerSupportProvider)
         );
     }
 
