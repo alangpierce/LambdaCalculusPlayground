@@ -44,11 +44,21 @@ public class MainActivity extends ReactActivity implements DeveloperSupportProvi
 
     @Override
     public void showDevOptionsDialog() {
-        runOnUiThread(() -> reactInstanceManager.showDevOptionsDialog());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                reactInstanceManager.showDevOptionsDialog();
+            }
+        });
     }
 
     @Override
     public void reloadJs() {
-        runOnUiThread(() -> reactInstanceManager.getDevSupportManager().handleReloadJS());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                reactInstanceManager.getDevSupportManager().handleReloadJS();
+            }
+        });
     }
 }
