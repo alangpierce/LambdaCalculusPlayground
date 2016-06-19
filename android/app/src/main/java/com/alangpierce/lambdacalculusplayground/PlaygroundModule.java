@@ -6,9 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
-import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
-
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
@@ -22,7 +19,6 @@ public class PlaygroundModule {
     private final Activity activity;
 
     // These are all children of the fragment.
-    @Bind(R.id.above_palette_root) RelativeLayout abovePaletteRoot;
     @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
 
     private PlaygroundModule(Activity activity) {
@@ -52,12 +48,6 @@ public class PlaygroundModule {
     @Provides @CanvasRoot
     RelativeLayout provideCanvasRoot() {
         return canvasRoot;
-    }
-
-    @Qualifier @interface AbovePaletteRoot {}
-    @Provides @AbovePaletteRoot
-    RelativeLayout provideAbovePaletteRoot() {
-        return abovePaletteRoot;
     }
 
     @Provides @Singleton

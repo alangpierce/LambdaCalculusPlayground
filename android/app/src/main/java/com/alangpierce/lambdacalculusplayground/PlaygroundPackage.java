@@ -1,4 +1,4 @@
-package com.alangpierce.lambdacalculusplayground.reactnative;
+package com.alangpierce.lambdacalculusplayground;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;

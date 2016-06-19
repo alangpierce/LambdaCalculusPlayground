@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
-
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;

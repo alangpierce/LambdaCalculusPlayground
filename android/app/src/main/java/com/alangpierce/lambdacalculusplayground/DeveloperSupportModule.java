@@ -1,8 +1,6 @@
-package com.alangpierce.lambdacalculusplayground.reactnative;
+package com.alangpierce.lambdacalculusplayground;
 
 import com.facebook.react.bridge.BaseJavaModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 public class DeveloperSupportModule extends BaseJavaModule {

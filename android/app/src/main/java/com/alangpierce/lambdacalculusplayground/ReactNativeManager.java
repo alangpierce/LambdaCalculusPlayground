@@ -1,4 +1,4 @@
-package com.alangpierce.lambdacalculusplayground.reactnative;
+package com.alangpierce.lambdacalculusplayground;
 
 /**
  * Interface to all React Native code.

@@ -16,11 +16,4 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/above_palette_root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </RelativeLayout>
-
 </RelativeLayout>

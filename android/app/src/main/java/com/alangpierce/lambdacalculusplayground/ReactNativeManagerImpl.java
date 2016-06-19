@@ -1,13 +1,10 @@
-package com.alangpierce.lambdacalculusplayground.reactnative;
+package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.Point;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
 import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
-import com.alangpierce.lambdacalculusplayground.BuildConfig;
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
