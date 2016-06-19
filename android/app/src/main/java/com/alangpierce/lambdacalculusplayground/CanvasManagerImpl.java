@@ -11,10 +11,6 @@ import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
@@ -32,9 +28,6 @@ public class CanvasManagerImpl implements CanvasManager {
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final PointConverter pointConverter;
     private final DefinitionManager definitionManager;
-    private final PaletteView lambdaPaletteView;
-    private final PaletteView definitionPaletteView;
-    private final PaletteDrawerManager drawerManager;
     private final UserDefinitionManager userDefinitionManager;
 
     private final Set<TopLevelExpressionController> expressionControllers = new HashSet<>();
@@ -45,17 +38,11 @@ public class CanvasManagerImpl implements CanvasManager {
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter,
             DefinitionManager definitionManager,
-            PaletteView lambdaPaletteView,
-            PaletteView definitionPaletteView,
-            PaletteDrawerManager drawerManager,
             UserDefinitionManager userDefinitionManager) {
         this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
         this.definitionManager = definitionManager;
-        this.lambdaPaletteView = lambdaPaletteView;
-        this.definitionPaletteView = definitionPaletteView;
-        this.drawerManager = drawerManager;
         this.userDefinitionManager = userDefinitionManager;
     }
 
@@ -72,22 +59,6 @@ public class CanvasManagerImpl implements CanvasManager {
             UserExpression definition = appState.getAllDefinitions().get(defName);
             ScreenDefinition screenDefinition = ScreenDefinition.create(defName, definition, point);
             renderDefinition(screenDefinition);
-        }
-        renderPalettes();
-    }
-
-    private void renderPalettes() {
-        for (String varName : ImmutableList.of("x", "y", "t", "f", "b", "s", "z", "n", "m")) {
-            PaletteLambdaController lambdaController =
-                    controllerFactoryFactory.create(this).createPaletteLambdaController(varName);
-            lambdaPaletteView.addChild(lambdaController.getView().getNativeView());
-        }
-
-        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
-        for (String defName : definitionNames) {
-            PaletteReferenceController referenceController =
-                    controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
-            definitionPaletteView.addChild(referenceController.getView().getNativeView());
         }
     }
 
@@ -168,7 +139,6 @@ public class CanvasManagerImpl implements CanvasManager {
             renderDefinition(definition);
             if (!alreadyExisted) {
                 definitionManager.invalidateDefinitions();
-                addDefinitionToPalette(defName);
             }
             // From the user's perspective, it makes sense to say "showing existing definition" any
             // time the definition is nonempty, including when showing the definition for a number.
@@ -183,30 +153,9 @@ public class CanvasManagerImpl implements CanvasManager {
             // This changes the app state to remove the definition from the screen.
             existingController.destroy();
         }
-        // This is a bit scary, but should work: we remove from the palette while the full list of
-        // definitions is still intact. This lets us know which child index we can remove.
-        removeDefinitionFromPalette(defName);
         appState.deleteDefinition(defName);
         definitionManager.invalidateDefinitions();
         invalidateDefinitions();
-    }
-
-    private void addDefinitionToPalette(String defName) {
-        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
-        int defIndex = definitionNames.indexOf(defName);
-
-        PaletteReferenceController referenceController =
-                controllerFactoryFactory.create(this).createPaletteReferenceController(defName);
-        definitionPaletteView.addChild(referenceController.getView().getNativeView(), defIndex);
-        drawerManager.onPaletteContentsChanged();
-    }
-
-    private void removeDefinitionFromPalette(String defName) {
-        List<String> definitionNames = userDefinitionManager.getSortedDefinitionNames();
-        int defIndex = definitionNames.indexOf(defName);
-
-        definitionPaletteView.removeChild(defIndex);
-        drawerManager.onPaletteContentsChanged();
     }
 
     private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {

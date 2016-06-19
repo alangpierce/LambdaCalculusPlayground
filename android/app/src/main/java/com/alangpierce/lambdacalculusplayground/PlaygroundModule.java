@@ -2,12 +2,9 @@ package com.alangpierce.lambdacalculusplayground;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
@@ -23,9 +20,6 @@ import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionC
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManagerImpl;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionCreatorImpl;
@@ -47,12 +41,6 @@ public class PlaygroundModule {
 
     // These are all children of the fragment.
     @Bind(R.id.above_palette_root) RelativeLayout abovePaletteRoot;
-    @Bind(R.id.lambda_palette_drawer_root) DrawerLayout lambdaPaletteDrawerRoot;
-    @Bind(R.id.definition_palette_drawer_root) DrawerLayout definitionPaletteDrawerRoot;
-    @Bind(R.id.lambda_palette_scroll_view) ScrollView lambdaPaletteDrawer;
-    @Bind(R.id.definition_palette_scroll_view) ScrollView definitionPaletteDrawer;
-    @Bind(R.id.lambda_palette_linear_layout) LinearLayout lambdaPaletteLinearLayout;
-    @Bind(R.id.definition_palette_linear_layout) LinearLayout definitionPaletteLinearLayout;
     @Bind(R.id.canvas_root) RelativeLayout canvasRoot;
 
     private PlaygroundModule(Activity activity, AppState appState) {
@@ -99,30 +87,6 @@ public class PlaygroundModule {
     @Provides @Singleton
     ReactNativeManager provideReactNativeManager() {
         return new ReactNativeManagerImpl(canvasRoot, activity);
-    }
-
-    @Provides @Singleton
-    PaletteDrawerManager providePaletteDrawerManager(
-            @Lambda PaletteView lambdaPaletteView, @Definition PaletteView definitionPaletteView) {
-        return new PaletteDrawerManagerImpl(
-                lambdaPaletteView, definitionPaletteView, lambdaPaletteDrawerRoot,
-                lambdaPaletteDrawer, definitionPaletteDrawerRoot, definitionPaletteDrawer);
-    }
-
-    @Qualifier @interface Lambda {}
-    @Qualifier @interface Definition {}
-    @Provides
-    @Lambda
-    PaletteView provideLambdaPaletteView() {
-        return new PaletteView(lambdaPaletteDrawerRoot, lambdaPaletteDrawer,
-                lambdaPaletteLinearLayout);
-    }
-
-    @Provides
-    @Definition
-    PaletteView provideDefinitionPaletteView() {
-        return new PaletteView(definitionPaletteDrawerRoot, definitionPaletteDrawer,
-                definitionPaletteLinearLayout);
     }
 
     @Provides
@@ -174,11 +138,9 @@ public class PlaygroundModule {
     CanvasManager provideTopLevelExpressionManager(
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter, DefinitionManager definitionManager,
-            @Lambda PaletteView lambdaPaletteView, @Definition PaletteView definitionPaletteView,
-            PaletteDrawerManager drawerManager, UserDefinitionManager userDefinitionManager) {
+            UserDefinitionManager userDefinitionManager) {
         return new CanvasManagerImpl(
-                appState, controllerFactoryFactory, pointConverter, definitionManager,
-                lambdaPaletteView, definitionPaletteView, drawerManager, userDefinitionManager);
+                appState, controllerFactoryFactory, pointConverter, definitionManager, userDefinitionManager);
     }
 
     @Provides

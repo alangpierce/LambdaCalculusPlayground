@@ -8,85 +8,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout
-        android:id="@+id/lambda_palette_drawer_root"
+    <RelativeLayout
+        android:id="@+id/canvas_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/canvas">
 
-        <com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout
-            android:id="@+id/definition_palette_drawer_root"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
-            <RelativeLayout
-                android:id="@+id/canvas_root"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/canvas">
-
-            </RelativeLayout>
-
-            <!-- Definition palette navigation drawer. -->
-            <com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView
-                android:id="@+id/definition_palette_scroll_view"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:background="@color/palette"
-                android:elevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <!-- For definitions, we use a title, both to help distinguish the two and to
-                         make the purpose more clear when there are no definitions present. -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:gravity="center"
-                        android:text="@string/definition_palette_title"
-                        android:textColor="@color/definition_palette_title"
-                        android:textSize="24sp"
-                        android:textStyle="bold"/>
-
-                    <LinearLayout
-                        android:id="@+id/definition_palette_linear_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView>
-
-        </com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout>
-
-        <!-- Lambda palette navigation drawer. -->
-        <com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView
-            android:id="@+id/lambda_palette_scroll_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:background="@color/palette"
-            android:elevation="4dp">
-
-            <LinearLayout
-                android:id="@+id/lambda_palette_linear_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            </LinearLayout>
-        </com.alangpierce.lambdacalculusplayground.palette.PaletteScrollView>
-    </com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/above_palette_root"

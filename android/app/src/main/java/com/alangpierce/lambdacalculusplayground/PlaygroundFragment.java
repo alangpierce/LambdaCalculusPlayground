@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 
 import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 
 import javax.inject.Inject;
@@ -34,7 +33,6 @@ public class PlaygroundFragment extends Fragment {
 
     @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
-    @Inject PaletteDrawerManager paletteDrawerManager;
     @Inject DragManager dragManager;
     @Inject DefinitionManager definitionManager;
     @Inject ReactNativeManager reactNativeManager;
@@ -91,7 +89,6 @@ public class PlaygroundFragment extends Fragment {
         canvasManager.renderInitialData();
 
         boolean isFirstTime = savedInstanceState == null;
-        paletteDrawerManager.onCreateView(isFirstTime);
         return root;
     }
 
@@ -116,13 +113,11 @@ public class PlaygroundFragment extends Fragment {
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
-        paletteDrawerManager.onViewStateRestored();
         super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onDestroyView() {
-        paletteDrawerManager.onDestroyView();
         super.onDestroyView();
     }
 

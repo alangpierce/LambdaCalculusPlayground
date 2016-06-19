@@ -18,8 +18,6 @@ import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
-import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
 import com.alangpierce.lambdacalculusplayground.view.DefinitionView;
@@ -179,34 +177,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         for (DropTarget<?> dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
         }
-        return result;
-    }
-
-    @Override
-    public PaletteLambdaController createPaletteLambdaController(String varName) {
-        LambdaView view = LambdaView.render(dragObservableGenerator, viewRenderer, varName, null);
-        ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
-        ProducerControllerParent producerParent = PaletteLambdaController
-                .createProducerParent(canvasManager, varName);
-        ProducerController producerController =
-                new ProducerController(producerView, producerParent);
-        PaletteLambdaController result =
-                new PaletteLambdaController(producerController, view);
-        result.registerCallbacks(dragManager);
-        return result;
-    }
-
-    @Override
-    public PaletteReferenceController createPaletteReferenceController(String defName) {
-        ReferenceView view = ReferenceView.render(viewRenderer, defName);
-        ProducerView producerView = new ProducerView(dragObservableGenerator, view.getNativeView());
-        ProducerControllerParent producerParent = PaletteReferenceController
-                .createProducerParent(canvasManager, defName);
-        ProducerController producerController =
-                new ProducerController(producerView, producerParent);
-        PaletteReferenceController result =
-                new PaletteReferenceController(producerController, view);
-        result.registerCallbacks(dragManager);
         return result;
     }
 
