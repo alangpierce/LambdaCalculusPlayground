@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 
@@ -34,7 +33,6 @@ public class PlaygroundFragment extends Fragment {
     @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
     @Inject DragManager dragManager;
-    @Inject DefinitionManager definitionManager;
     @Inject ReactNativeManager reactNativeManager;
 
     public static PlaygroundFragment create(AppState initialState) {
@@ -83,9 +81,6 @@ public class PlaygroundFragment extends Fragment {
         component.injectPlaygroundFragment(this);
         reactNativeManager.init();
 
-        // Note that we need to invalidate the definitions before placing the expressions and
-        // definitions, so that errors will be reported correctly.
-        definitionManager.invalidateDefinitions();
         canvasManager.renderInitialData();
 
         boolean isFirstTime = savedInstanceState == null;
@@ -128,24 +123,7 @@ public class PlaygroundFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_lambda_palette) {
-//            paletteDrawerManager.toggleLambdaPalette();
-            reactNativeManager.toggleLambdaPalette();
-            return true;
-        } else if (item.getItemId() == R.id.action_definition_palette) {
-//            paletteDrawerManager.toggleDefinitionPalette();
-            reactNativeManager.toggleDefinitionPalette();
-            return true;
-        } else if (item.getItemId() == R.id.action_delete_definition) {
-            expressionCreator.promptDeleteDefinition();
-            return true;
-        } else if (item.getItemId() == R.id.action_enable_numbers) {
-            boolean newIsChecked = !item.isChecked();
-            item.setChecked(newIsChecked);
-            appState.setEnableAutomaticNumbers(newIsChecked);
-            canvasManager.handleAutomaticNumbersChanged();
-            return true;
-        } else if (item.getItemId() == R.id.action_view_demo_video) {
+        if (item.getItemId() == R.id.action_view_demo_video) {
             reactNativeManager.viewDemoVideo();
             return true;
         } else if (item.getItemId() == R.id.action_show_dev_options) {

@@ -1,9 +1,7 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
-import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 
 /**
@@ -33,9 +31,6 @@ public interface ExpressionControllerFactory {
      * have OnChangeCallback set, so it should be set immediately after creation.
      */
     ExpressionController createController(UserExpression userExpression);
-
-    DefinitionController createDefinitionController(ScreenDefinition screenDefinition);
-
 
     /**
      * We need to pass the expression manager in dynamically in order to avoid a circular reference.

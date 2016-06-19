@@ -16,8 +16,7 @@ public abstract class UserLambda implements UserExpression {
     @Override
     public <T> T visit(Visitor<UserLambda, T> lambdaVisitor,
             Visitor<UserFuncCall, T> funcCallVisitor,
-            Visitor<UserVariable, T> variableVisitor,
-            Visitor<UserReference, T> referenceVisitor) {
+            Visitor<UserVariable, T> variableVisitor) {
         return lambdaVisitor.accept(this);
     }
 

@@ -1,14 +1,11 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.MeasureSpec;
-import android.widget.Toast;
 
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
-import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
@@ -180,8 +177,7 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor,
-            Visitor<DefinitionController, T> definitionVisitor) {
+    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor) {
         return expressionVisitor.accept(this);
     }
 

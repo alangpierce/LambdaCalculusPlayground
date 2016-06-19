@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
-import com.alangpierce.lambdacalculusplayground.definition.DefinitionManagerImpl;
-import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManager;
-import com.alangpierce.lambdacalculusplayground.definition.UserDefinitionManagerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
@@ -91,10 +87,9 @@ public class PlaygroundModule {
 
     @Provides
     ExpressionCreator provideExpressionCreator(Context context, LayoutInflater layoutInflater,
-            CanvasManager canvasManager, ReactNativeManager reactNativeManager,
-            PointConverter pointConverter, AppState appState) {
+            CanvasManager canvasManager, ReactNativeManager reactNativeManager, AppState appState) {
         return new ExpressionCreatorImpl(context, layoutInflater, canvasManager, reactNativeManager,
-                pointConverter, appState);
+                appState);
     }
 
     @Provides @Singleton
@@ -118,16 +113,6 @@ public class PlaygroundModule {
         return new DragManagerImpl();
     }
 
-    @Provides @Singleton
-    UserDefinitionManager provideUserDefinitionManager(AppState appState) {
-        return new UserDefinitionManagerImpl(appState);
-    }
-
-    @Provides @Singleton
-    DefinitionManager provideDefinitionManager(AppState appState) {
-        return new DefinitionManagerImpl(appState);
-    }
-
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
             Context context, LayoutInflater layoutInflater) {
@@ -137,19 +122,17 @@ public class PlaygroundModule {
     @Provides @Singleton
     CanvasManager provideTopLevelExpressionManager(
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
-            PointConverter pointConverter, DefinitionManager definitionManager,
-            UserDefinitionManager userDefinitionManager) {
+            PointConverter pointConverter) {
         return new CanvasManagerImpl(
-                appState, controllerFactoryFactory, pointConverter, definitionManager, userDefinitionManager);
+                appState, controllerFactoryFactory, pointConverter);
     }
 
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
-            @CanvasRoot RelativeLayout canvasRoot, @AbovePaletteRoot RelativeLayout abovePaletteRoot,
-            DefinitionManager definitionManager) {
+            @CanvasRoot RelativeLayout canvasRoot, @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, canvasRoot, abovePaletteRoot, definitionManager);
+                pointConverter, dragManager, canvasRoot, abovePaletteRoot);
     }
 }

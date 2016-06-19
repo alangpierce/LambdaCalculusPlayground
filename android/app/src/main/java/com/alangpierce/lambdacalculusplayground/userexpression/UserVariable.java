@@ -13,8 +13,7 @@ public abstract class UserVariable implements UserExpression {
     @Override
     public <T> T visit(Visitor<UserLambda, T> lambdaVisitor,
             Visitor<UserFuncCall, T> funcCallVisitor,
-            Visitor<UserVariable, T> variableVisitor,
-            Visitor<UserReference, T> referenceVisitor) {
+            Visitor<UserVariable, T> variableVisitor) {
         return variableVisitor.accept(this);
     }
 

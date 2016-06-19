@@ -2,16 +2,10 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.ScreenDefinition;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.component.ProducerController;
-import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
-import com.alangpierce.lambdacalculusplayground.component.ProducerView;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
-import com.alangpierce.lambdacalculusplayground.definition.DefinitionManager;
-import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionController;
-import com.alangpierce.lambdacalculusplayground.definitioncontroller.DefinitionControllerImpl;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
@@ -39,15 +33,13 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
     private final RelativeLayout canvasRoot;
     private final RelativeLayout abovePaletteRoot;
     private final CanvasManager canvasManager;
-    private final DefinitionManager definitionManager;
 
     public ExpressionControllerFactoryImpl(
             ExpressionViewRenderer viewRenderer,
             DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter,
             DragManager dragManager, RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot,
-            CanvasManager canvasManager,
-            DefinitionManager definitionManager) {
+            CanvasManager canvasManager) {
         this.viewRenderer = viewRenderer;
         this.dragObservableGenerator = dragObservableGenerator;
         this.pointConverter = pointConverter;
@@ -55,17 +47,15 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         this.canvasRoot = canvasRoot;
         this.abovePaletteRoot = abovePaletteRoot;
         this.canvasManager = canvasManager;
-        this.definitionManager = definitionManager;
     }
 
     public static ExpressionControllerFactoryFactory createFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
             PointConverter pointConverter, DragManager dragManager,
-            RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot, DefinitionManager
-                    definitionManager) {
+            RelativeLayout canvasRoot, RelativeLayout abovePaletteRoot) {
         return topLevelExpressionManager -> new ExpressionControllerFactoryImpl(
                 viewRenderer, dragObservableGenerator, pointConverter, dragManager,
-                canvasRoot, abovePaletteRoot, topLevelExpressionManager, definitionManager);
+                canvasRoot, abovePaletteRoot, topLevelExpressionManager);
     }
 
     @Override
@@ -137,13 +127,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
                 variable -> {
                     VariableView view = VariableView.render(viewRenderer, variable.varName());
                     return new VariableExpressionController(view, variable);
-                },
-                reference -> {
-                    ReferenceView view = ReferenceView.render(viewRenderer, reference.defName());
-                    ReferenceExpressionController refController =
-                            new ReferenceExpressionController(definitionManager, view, reference);
-                    refController.invalidateDefinitions();
-                    return refController;
                 }
         );
         for (DragSource dragSource : result.getDragSources()) {
@@ -176,43 +159,6 @@ public class ExpressionControllerFactoryImpl implements ExpressionControllerFact
         }
         for (DropTarget<?> dropTarget : result.getDropTargets(this::createFuncCall)) {
             dragManager.registerDropTarget(dropTarget);
-        }
-        return result;
-    }
-
-    @Override
-    public DefinitionController createDefinitionController(ScreenDefinition screenDefinition) {
-        UserExpression expression = screenDefinition.expr();
-        ExpressionController expressionController = null;
-        if (expression != null) {
-            expressionController = createController(expression);
-        }
-        DrawableAreaPoint drawableAreaPoint =
-                pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
-        ExpressionView expressionView =
-                expressionController != null ? expressionController.getView() : null;
-        DefinitionView view = DefinitionView.render(
-                dragObservableGenerator, viewRenderer, canvasRoot, screenDefinition.defName(),
-                expressionView, drawableAreaPoint);
-        ProducerController referenceProducerController = new ProducerController(
-                view.getReferenceProducer(),
-                DefinitionControllerImpl.createProducerParent(
-                        canvasManager, screenDefinition.defName()));
-        SlotController expressionSlotController =
-                new SlotController(canvasManager, view.getExpressionSlot(),
-                        expressionController);
-        DefinitionController result = new DefinitionControllerImpl(
-                pointConverter, view, referenceProducerController, expressionSlotController,
-                screenDefinition);
-        expressionSlotController.setParent(result.createSlotParent());
-        for (DragSource dragSource : result.getDragSources()) {
-            dragManager.registerDragSource(dragSource);
-        }
-        for (DropTarget<?> dropTarget : result.getDropTargets()) {
-            dragManager.registerDropTarget(dropTarget);
-        }
-        if (expressionController != null) {
-            expressionController.setOnChangeCallback(expressionSlotController::handleChange);
         }
         return result;
     }
