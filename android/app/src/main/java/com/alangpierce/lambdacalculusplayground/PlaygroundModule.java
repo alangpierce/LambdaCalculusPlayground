@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
-import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
 
@@ -65,10 +63,5 @@ public class PlaygroundModule {
     @Provides @Singleton
     ReactNativeManager provideReactNativeManager() {
         return new ReactNativeManagerImpl(canvasRoot, activity);
-    }
-
-    @Provides @Singleton
-    PointConverter providePointConverter(@CanvasRoot RelativeLayout canvasRoot) {
-        return new PointConverterImpl(canvasRoot);
     }
 }
