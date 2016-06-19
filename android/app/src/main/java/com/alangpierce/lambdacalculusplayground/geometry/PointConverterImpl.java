@@ -2,15 +2,11 @@ package com.alangpierce.lambdacalculusplayground.geometry;
 
 import android.view.View;
 
-import com.alangpierce.lambdacalculusplayground.pan.PanManager;
-
 public class PointConverterImpl implements PointConverter {
     private final View rootView;
-    private final PanManager panManager;
 
-    public PointConverterImpl(View rootView, PanManager panManager) {
+    public PointConverterImpl(View rootView) {
         this.rootView = rootView;
-        this.panManager = panManager;
     }
 
     @Override
@@ -23,7 +19,7 @@ public class PointConverterImpl implements PointConverter {
 
     @Override
     public DrawableAreaPoint toDrawableAreaPoint(CanvasPoint canvasPoint) {
-        PointDifference panOffset = panManager.getPanOffset();
+        PointDifference panOffset = PointDifference.create(0, 0);
         return DrawableAreaPoint.create(
                 canvasPoint.getX() + panOffset.getX(), canvasPoint.getY() + panOffset.getY());
     }
@@ -35,7 +31,7 @@ public class PointConverterImpl implements PointConverter {
 
     @Override
     public CanvasPoint toCanvasPoint(DrawableAreaPoint drawableAreaPoint) {
-        PointDifference panOffset = panManager.getPanOffset();
+        PointDifference panOffset = PointDifference.create(0, 0);
         return CanvasPoint.create(
                 drawableAreaPoint.getX() - panOffset.getX(),
                 drawableAreaPoint.getY() - panOffset.getY());

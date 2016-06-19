@@ -99,13 +99,6 @@ public class DefinitionControllerImpl implements DefinitionController {
     }
 
     @Override
-    public void onPan() {
-        DrawableAreaPoint drawableAreaPoint =
-                pointConverter.toDrawableAreaPoint(screenDefinition.canvasPos());
-        view.setCanvasPos(drawableAreaPoint);
-    }
-
-    @Override
     public void destroy() {
         onChangeCallback.onChange(null);
         view.destroy();

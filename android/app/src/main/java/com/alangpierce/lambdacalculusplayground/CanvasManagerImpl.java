@@ -15,7 +15,6 @@ import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteLambdaController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteReferenceController;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
-import com.alangpierce.lambdacalculusplayground.pan.PanManager;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.google.common.collect.ImmutableList;
 
@@ -32,7 +31,6 @@ public class CanvasManagerImpl implements CanvasManager {
     private final AppState appState;
     private final ExpressionControllerFactoryFactory controllerFactoryFactory;
     private final PointConverter pointConverter;
-    private final PanManager panManager;
     private final DefinitionManager definitionManager;
     private final PaletteView lambdaPaletteView;
     private final PaletteView definitionPaletteView;
@@ -46,7 +44,6 @@ public class CanvasManagerImpl implements CanvasManager {
             AppState appState,
             ExpressionControllerFactoryFactory controllerFactoryFactory,
             PointConverter pointConverter,
-            PanManager panManager,
             DefinitionManager definitionManager,
             PaletteView lambdaPaletteView,
             PaletteView definitionPaletteView,
@@ -55,7 +52,6 @@ public class CanvasManagerImpl implements CanvasManager {
         this.appState = appState;
         this.controllerFactoryFactory = controllerFactoryFactory;
         this.pointConverter = pointConverter;
-        this.panManager = panManager;
         this.definitionManager = definitionManager;
         this.lambdaPaletteView = lambdaPaletteView;
         this.definitionPaletteView = definitionPaletteView;
@@ -65,12 +61,6 @@ public class CanvasManagerImpl implements CanvasManager {
 
     @Override
     public void renderInitialData() {
-        // Note that we need to initialize the pan manager first so that the rest of the code will
-        // correctly get the pan offset.
-        panManager.init(appState.getPanOffset());
-        panManager.registerPanListener(
-                () -> appState.setPanOffset(panManager.getPanOffset()));
-
         for (Entry<Integer, ScreenExpression> entry : appState.expressionsById()) {
             int exprId = entry.getKey();
             ScreenExpression screenExpression = entry.getValue();
@@ -143,13 +133,11 @@ public class CanvasManagerImpl implements CanvasManager {
     private void registerTopLevelExpression(
             int exprId, TopLevelExpressionController controller, CanvasPoint canvasPos) {
         expressionControllers.add(controller);
-        panManager.registerPanListener(controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
                 appState.modifyExpression(exprId, newController.getScreenExpression());
             } else {
                 appState.deleteExpression(exprId);
-                panManager.unregisterPanListener(controller);
                 expressionControllers.remove(controller);
             }
         });
@@ -224,7 +212,6 @@ public class CanvasManagerImpl implements CanvasManager {
     private DefinitionController renderDefinition(ScreenDefinition screenDefinition) {
         DefinitionController controller =
                 controllerFactoryFactory.create(this).createDefinitionController(screenDefinition);
-        panManager.registerPanListener(controller);
         definitionControllers.put(screenDefinition.defName(), controller);
         controller.setOnChangeCallback(newController -> {
             if (newController != null) {
@@ -237,7 +224,6 @@ public class CanvasManagerImpl implements CanvasManager {
             } else {
                 // Hide the definition (but don't actually delete it from the definition manager).
                 appState.removeDefinitionFromScreen(screenDefinition.defName());
-                panManager.unregisterPanListener(controller);
                 definitionControllers.remove(screenDefinition.defName());
             }
         });

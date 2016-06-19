@@ -26,8 +26,6 @@ import com.alangpierce.lambdacalculusplayground.geometry.PointConverterImpl;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManager;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteDrawerManagerImpl;
 import com.alangpierce.lambdacalculusplayground.palette.PaletteView;
-import com.alangpierce.lambdacalculusplayground.pan.PanManager;
-import com.alangpierce.lambdacalculusplayground.pan.PanManagerImpl;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManagerImpl;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionCreatorImpl;
@@ -136,14 +134,8 @@ public class PlaygroundModule {
     }
 
     @Provides @Singleton
-    PanManager providePanManager(@CanvasRoot RelativeLayout canvasRoot,
-            DragObservableGenerator dragObservableGenerator) {
-        return new PanManagerImpl(canvasRoot, dragObservableGenerator);
-    }
-
-    @Provides @Singleton
-    PointConverter providePointConverter(@CanvasRoot RelativeLayout canvasRoot, PanManager panManager) {
-        return new PointConverterImpl(canvasRoot, panManager);
+    PointConverter providePointConverter(@CanvasRoot RelativeLayout canvasRoot) {
+        return new PointConverterImpl(canvasRoot);
     }
 
     @Provides @Singleton
@@ -181,14 +173,12 @@ public class PlaygroundModule {
     @Provides @Singleton
     CanvasManager provideTopLevelExpressionManager(
             AppState appState, ExpressionControllerFactoryFactory controllerFactoryFactory,
-            PointConverter pointConverter, PanManager panManager,
-            DefinitionManager definitionManager, @Lambda PaletteView lambdaPaletteView,
-            @Definition PaletteView definitionPaletteView, PaletteDrawerManager drawerManager,
-            UserDefinitionManager userDefinitionManager) {
+            PointConverter pointConverter, DefinitionManager definitionManager,
+            @Lambda PaletteView lambdaPaletteView, @Definition PaletteView definitionPaletteView,
+            PaletteDrawerManager drawerManager, UserDefinitionManager userDefinitionManager) {
         return new CanvasManagerImpl(
-                appState, controllerFactoryFactory, pointConverter, panManager,
-                definitionManager, lambdaPaletteView, definitionPaletteView, drawerManager,
-                userDefinitionManager);
+                appState, controllerFactoryFactory, pointConverter, definitionManager,
+                lambdaPaletteView, definitionPaletteView, drawerManager, userDefinitionManager);
     }
 
     @Provides
