@@ -10,8 +10,6 @@ import com.alangpierce.lambdacalculusplayground.drag.DragObservableGenerator;
 import com.alangpierce.lambdacalculusplayground.drag.DragObservableGeneratorImpl;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManager;
 import com.alangpierce.lambdacalculusplayground.drag.TouchObservableManagerImpl;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragManagerImpl;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactory.ExpressionControllerFactoryFactory;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionControllerFactoryImpl;
 import com.alangpierce.lambdacalculusplayground.geometry.PointConverter;
@@ -100,11 +98,6 @@ public class PlaygroundModule {
         return new TouchObservableManagerImpl();
     }
 
-    @Provides @Singleton
-    DragManager provideDragManager() {
-        return new DragManagerImpl();
-    }
-
     @Provides
     ExpressionViewRenderer provideExpressionViewRenderer(
             Context context, LayoutInflater layoutInflater) {
@@ -120,9 +113,9 @@ public class PlaygroundModule {
     @Provides
     ExpressionControllerFactoryFactory provideExpressionControllerFactory(
             ExpressionViewRenderer viewRenderer, DragObservableGenerator dragObservableGenerator,
-            PointConverter pointConverter, DragManager dragManager,
-            @CanvasRoot RelativeLayout canvasRoot, @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
+            PointConverter pointConverter, @CanvasRoot RelativeLayout canvasRoot,
+            @AbovePaletteRoot RelativeLayout abovePaletteRoot) {
         return ExpressionControllerFactoryImpl.createFactory(viewRenderer, dragObservableGenerator,
-                pointConverter, dragManager, canvasRoot, abovePaletteRoot);
+                pointConverter, canvasRoot, abovePaletteRoot);
     }
 }

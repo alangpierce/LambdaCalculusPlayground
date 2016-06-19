@@ -7,7 +7,6 @@ import android.view.View.MeasureSpec;
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.ScreenExpression;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
 import com.alangpierce.lambdacalculusplayground.geometry.CanvasPoint;
 import com.alangpierce.lambdacalculusplayground.geometry.DrawableAreaPoint;
@@ -29,7 +28,6 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 public class TopLevelExpressionControllerImpl implements TopLevelExpressionController {
-    private final CanvasManager canvasManager;
     private final TopLevelExpressionView view;
     private final PointConverter pointConverter;
 
@@ -41,11 +39,9 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
             dragActionSubject = PublishSubject.create();
     private @Nullable Subscription dragActionSubscription;
 
-    public TopLevelExpressionControllerImpl(
-            CanvasManager canvasManager, TopLevelExpressionView view,
+    public TopLevelExpressionControllerImpl(TopLevelExpressionView view,
             PointConverter pointConverter, ScreenExpression screenExpression,
             ExpressionController expressionController) {
-        this.canvasManager = canvasManager;
         this.view = view;
         this.pointConverter = pointConverter;
         this.screenExpression = screenExpression;
@@ -131,15 +127,6 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
     }
 
     @Override
-    public List<DragSource> getDragSources() {
-        // TODO: Put this in a better place or re-purpose this function.
-        view.setOnExecuteListener(this::handleExecuteClick);
-
-        updateDragActionSubscription();
-        return ImmutableList.of(new TopLevelExpressionDragSource());
-    }
-
-    @Override
     public void invalidateDefinitions() {
         view.setIsExecutable(false);
         expressionController.invalidateDefinitions();
@@ -153,46 +140,5 @@ public class TopLevelExpressionControllerImpl implements TopLevelExpressionContr
         }
         view.decommission();
         return expressionController;
-    }
-
-    @Override
-    public void destroy() {
-        decommission();
-    }
-
-    @Override
-    public boolean intersectsWith(View otherView) {
-        return Views.viewsIntersect(otherView, this.view.getNativeView());
-    }
-
-    private class TopLevelExpressionDragSource implements DragSource {
-        @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return dragActionSubject;
-        }
-        @Override
-        public TopLevelExpressionController handleStartDrag() {
-            return TopLevelExpressionControllerImpl.this;
-        }
-    }
-
-    @Override
-    public <T> T visit(Visitor<TopLevelExpressionController, T> expressionVisitor) {
-        return expressionVisitor.accept(this);
-    }
-
-    @Override
-    public void startDrag() {
-        view.startDrag();
-    }
-
-    @Override
-    public void setScreenPos(ScreenPoint screenPos) {
-        view.setScreenPos(screenPos);
-    }
-
-    @Override
-    public void endDrag() {
-        view.endDrag();
     }
 }

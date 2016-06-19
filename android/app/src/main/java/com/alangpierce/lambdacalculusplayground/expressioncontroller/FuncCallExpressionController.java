@@ -2,9 +2,6 @@ package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserFuncCall;
@@ -70,17 +67,6 @@ public class FuncCallExpressionController implements ExpressionController {
         return onChangeCallback;
     }
 
-    @Override
-    public List<DragSource> getDragSources() {
-        updateDragActionSubscription();
-        return ImmutableList.of(new ArgDragSource());
-    }
-
-    @Override
-    public List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory) {
-        return ImmutableList.of(new FuncCallDropTarget(this, view, funcCallFactory));
-    }
-
     public void handleFuncChange(ExpressionControllerProvider funcControllerProvider) {
         setFuncViewEnabled(true);
         // Start accepting touch events for the arg view.
@@ -139,19 +125,5 @@ public class FuncCallExpressionController implements ExpressionController {
      */
     private void setFuncViewEnabled(boolean enabled) {
         funcController.getView().getNativeView().setEnabled(enabled);
-    }
-
-    private class ArgDragSource implements DragSource {
-        @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return argDragActionSubject;
-        }
-        @Override
-        public TopLevelExpressionController handleStartDrag() {
-            ScreenPoint screenPos = view.getScreenPos();
-            decommission();
-            onChangeCallback.onChange(() -> funcController);
-            return canvasManager.sendExpressionToTopLevel(argController, screenPos);
-        }
     }
 }

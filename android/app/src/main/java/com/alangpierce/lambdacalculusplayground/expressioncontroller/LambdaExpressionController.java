@@ -5,9 +5,6 @@ import com.alangpierce.lambdacalculusplayground.component.ProducerController;
 import com.alangpierce.lambdacalculusplayground.component.ProducerControllerParent;
 import com.alangpierce.lambdacalculusplayground.component.SlotController;
 import com.alangpierce.lambdacalculusplayground.component.SlotControllerParent;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
-import com.alangpierce.lambdacalculusplayground.expressioncontroller.FuncCallDropTarget.FuncCallControllerFactory;
 import com.alangpierce.lambdacalculusplayground.geometry.ScreenPoint;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserLambda;
@@ -90,18 +87,4 @@ public class LambdaExpressionController implements ExpressionController {
         return view;
     }
 
-    @Override
-    public List<DragSource> getDragSources() {
-        return ImmutableList.of(
-                parameterProducerController.getDragSource(),
-                bodySlotController.getDragSource());
-    }
-
-    @Override
-    public List<DropTarget<?>> getDropTargets(FuncCallControllerFactory funcCallFactory) {
-        return ImmutableList.of(
-                parameterProducerController.getDropTarget(),
-                bodySlotController.getDropTarget(),
-                new FuncCallDropTarget(this, view, funcCallFactory));
-    }
 }

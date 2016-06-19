@@ -1,7 +1,5 @@
 package com.alangpierce.lambdacalculusplayground.expressioncontroller;
 
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserExpression;
 import com.alangpierce.lambdacalculusplayground.userexpression.UserVariable;
 import com.alangpierce.lambdacalculusplayground.view.ExpressionView;
@@ -43,15 +41,5 @@ public class VariableExpressionController implements ExpressionController {
     @Override
     public void invalidateDefinitions() {
         // Do nothing; variables can't contain definitions.
-    }
-
-    @Override
-    public List<DragSource> getDragSources() {
-        return ImmutableList.of();
-    }
-
-    @Override
-    public List<DropTarget<?>> getDropTargets(FuncCallDropTarget.FuncCallControllerFactory funcCallFactory) {
-        return ImmutableList.of(new FuncCallDropTarget(this, view, funcCallFactory));
     }
 }

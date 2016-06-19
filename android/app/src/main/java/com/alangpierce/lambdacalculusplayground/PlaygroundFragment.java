@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragManager;
 import com.alangpierce.lambdacalculusplayground.reactnative.ReactNativeManager;
 
 import javax.inject.Inject;
@@ -28,7 +27,6 @@ public class PlaygroundFragment extends Fragment {
 
     @Inject CanvasManager canvasManager;
     @Inject ExpressionCreator expressionCreator;
-    @Inject DragManager dragManager;
     @Inject ReactNativeManager reactNativeManager;
 
     public static PlaygroundFragment create() {

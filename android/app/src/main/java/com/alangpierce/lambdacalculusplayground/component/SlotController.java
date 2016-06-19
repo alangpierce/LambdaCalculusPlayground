@@ -2,8 +2,6 @@ package com.alangpierce.lambdacalculusplayground.component;
 
 import com.alangpierce.lambdacalculusplayground.CanvasManager;
 import com.alangpierce.lambdacalculusplayground.drag.PointerMotionEvent;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DragSource;
-import com.alangpierce.lambdacalculusplayground.dragdrop.DropTarget;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.ExpressionController.ExpressionControllerProvider;
 import com.alangpierce.lambdacalculusplayground.expressioncontroller.TopLevelExpressionController;
@@ -69,66 +67,6 @@ public class SlotController {
                 view.getObservable();
         if (observable != null) {
             dragActionSubscription = observable.subscribe(dragActionSubject);
-        }
-    }
-
-    public DropTarget<?> getDropTarget() {
-        return new SlotDropTarget();
-    }
-
-    public DragSource getDragSource() {
-        // TODO: It's ugly to do this in a method with a "getter" name.
-        updateDragActionSubscription();
-        return new SlotDragSource();
-    }
-
-    private class SlotDragSource implements DragSource {
-        @Override
-        public Observable<? extends Observable<PointerMotionEvent>> getDragObservable() {
-            return dragActionSubject;
-        }
-        @Override
-        public TopLevelExpressionController handleStartDrag() {
-            ScreenPoint screenPos = view.getPos();
-            ExpressionController controllerToDrag = exprController;
-            // This detaches the view from the UI, so it's safe to add the root view as a parent. It
-            // also changes some class fields, so we need to grab them above.
-            // TODO: Try to make things immutable to avoid this complexity.
-            handleChange(() -> null);
-            return canvasManager.sendExpressionToTopLevel(controllerToDrag, screenPos);
-        }
-    }
-
-    private class SlotDropTarget implements DropTarget<TopLevelExpressionController> {
-        @Override
-        public int hitTest(TopLevelExpressionController dragController) {
-            if (exprController == null && view.intersectsWith(dragController.getView())) {
-                return view.getViewDepth();
-            } else {
-                return DropTarget.NOT_HIT;
-            }
-        }
-        @Override
-        public void handleEnter(TopLevelExpressionController expressionController) {
-            view.handleDragEnter();
-        }
-        @Override
-        public void handleExit() {
-            // Don't change our display unless we're actually accepting drops.
-            if (exprController != null) {
-                return;
-            }
-            view.handleDragExit();
-        }
-        @Override
-        public void handleDrop(TopLevelExpressionController expressionController) {
-            view.handleDragExit();
-            ExpressionController exprController = expressionController.decommission();
-            handleChange(() -> exprController);
-        }
-        @Override
-        public Class<TopLevelExpressionController> getDataClass() {
-            return TopLevelExpressionController.class;
         }
     }
 }
